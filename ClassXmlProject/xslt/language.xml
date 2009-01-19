@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <PrefixList>List</PrefixList>
+  <SuffixIterator>Iterator</SuffixIterator>
+  <GetName>Get</GetName>
+  <SetName>Set</SetName>
+  <PrefixMember>m_</PrefixMember>
+  <PrefixArray>Array</PrefixArray>
+  <SetParam>Value</SetParam>
+</root>
