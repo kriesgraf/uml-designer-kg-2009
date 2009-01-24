@@ -1,0 +1,7 @@
+#summary One-sentence summary of this page.
+
+= Document layer =
+
+<img src="http://uml-designer-kg-2009.googlecode.com/svn/trunk/ClassXmlProject/Resources/CopyToolStripMenuItem.Image.bmp"/>
+
+== Overview ==
