@@ -1,4 +1,7 @@
-﻿Public Class UmlMemberValue : Inherits System.ComponentModel.StringConverter
+﻿Imports System.ComponentModel
+
+Public Class UmlMemberValue
+    Inherits StringConverter
 
     Dim m_astrValue As String() = New String() {"val", "ref"}
 

@@ -1,4 +1,7 @@
-﻿Public Class UmlMemberVisibility : Inherits System.ComponentModel.StringConverter
+﻿Imports System.ComponentModel
+
+Public Class UmlMemberVisibility
+    Inherits StringConverter
 
     Dim m_astrVisibility As String() = New String() {"no", "private", "protected", "public"}
 
