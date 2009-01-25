@@ -1,5 +1,9 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Windows.Forms
+Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class XmlImportView
     Inherits XmlImportSpec
@@ -67,7 +71,7 @@ Public Class XmlImportView
         Return frmResult
     End Function
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingName(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
         Catch ex As Exception
@@ -75,7 +79,7 @@ Public Class XmlImportView
         End Try
     End Sub
 
-    Public Sub InitBindingFullpathName(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingFullpathName(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Parameter")
         Catch ex As Exception
@@ -98,7 +102,7 @@ Public Class XmlImportView
         m_chkInterface = dataControl
     End Sub
 
-    Public Sub InitBindingBodyInterface(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingBodyInterface(ByVal dataControl As Control)
         If Me.InlineBody IsNot Nothing Then dataControl.Text = Me.InlineBody.CodeSource()
         m_txtInterface = dataControl
     End Sub
@@ -295,7 +299,7 @@ Public Class XmlImportView
             dlgOpenFile.Title = "Select a package references file..."
             dlgOpenFile.Filter = "Package references (*.ximp)|*.ximp|Doxygen TAG file (*.tag)|*.tag"
 
-            If (dlgOpenFile.ShowDialog() = System.Windows.Forms.DialogResult.OK) _
+            If (dlgOpenFile.ShowDialog() = DialogResult.OK) _
             Then
                 Dim FileName As System.IO.FileInfo = My.Computer.FileSystem.GetFileInfo(dlgOpenFile.FileName)
                 MyBase.LoadDocument(FileName, eMode)

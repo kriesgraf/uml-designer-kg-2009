@@ -1,4 +1,5 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
 
 Public Class dlgXmlNodeProperties
     Public Shared Function DisplayProperties(ByVal myobject As Object) As Boolean

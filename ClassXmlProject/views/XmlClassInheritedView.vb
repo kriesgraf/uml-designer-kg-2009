@@ -1,4 +1,5 @@
 ﻿Imports System.Xml
+Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlClassInheritedView

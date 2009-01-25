@@ -1,4 +1,6 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlMethodView
@@ -73,7 +75,7 @@ Public Class XmlMethodView
         Return bResult
     End Function
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingName(ByVal dataControl As TextBox)
         m_txtName = dataControl
         dataControl.Width = cstTextBoxNameSize
 
@@ -84,7 +86,7 @@ Public Class XmlMethodView
             dataControl.Visible = False
         End If
     End Sub
-    Public Sub InitBindingOperator(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingOperator(ByVal dataControl As TextBox)
         m_txtOperator = dataControl
         dataControl.Width = cstTextBoxNameSize
 
@@ -112,7 +114,7 @@ Public Class XmlMethodView
         End If
     End Sub
 
-    Public Sub InitBindingCheckOperator(ByVal dataControl As Windows.Forms.CheckBox)
+    Public Sub InitBindingCheckOperator(ByVal dataControl As CheckBox)
         Try
             m_chkOperator = dataControl
             m_bInitProceed = True
@@ -217,7 +219,7 @@ Public Class XmlMethodView
         End Try
     End Sub
 
-    Public Sub InitBindingBehaviour(ByVal dataControl As Windows.Forms.ComboBox, ByVal label As Label)
+    Public Sub InitBindingBehaviour(ByVal dataControl As ComboBox, ByVal label As Label)
         Try
             If Me.Tag <> ELanguage.Language_Vbasic Then
                 dataControl.Enabled = False

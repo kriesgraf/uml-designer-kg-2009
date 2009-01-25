@@ -1,5 +1,10 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Drawing
+Imports System.Windows.Forms
+Imports System.Xml
+Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class XmlProjectMemberView
     Inherits XmlComposite
@@ -362,7 +367,7 @@ Public Class XmlProjectMemberView
         Return iResult
     End Function
 
-    Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent) As System.Xml.XmlNode
+    Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent) As XmlNode
         ' We choose the wright component to go the good insertion
         Dim xmlcpnt As XmlComponent = CreateDocument(Me.Node)
         Return xmlcpnt.AppendComponent(nodeXml)

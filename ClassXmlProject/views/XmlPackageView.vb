@@ -1,4 +1,8 @@
-﻿Public Class XmlPackageView
+﻿Imports System
+Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
+
+Public Class XmlPackageView
     Inherits XmlPackageSpec
     Implements InterfViewForm
 
@@ -35,7 +39,7 @@
         End Try
     End Sub
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingName(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 
@@ -44,7 +48,7 @@
         End Try
     End Sub
 
-    Public Sub InitBindingCheckFolder(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingCheckFolder(ByVal dataControl As Control)
         Try
             m_chkFolder = dataControl
             m_xmlBindingsList.AddBinding(dataControl, Me, "IsFolder", "Checked")
@@ -54,7 +58,7 @@
         End Try
     End Sub
 
-    Public Sub InitBindingTextFolder(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingTextFolder(ByVal dataControl As Control)
         Try
             m_txtFolder = dataControl
             m_xmlBindingsList.AddBinding(dataControl, Me, "Folder")
@@ -107,7 +111,7 @@
             dlgOpenFile.Title = "Select a project file..."
             dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj"
 
-            If dlgOpenFile.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            If dlgOpenFile.ShowDialog() = DialogResult.OK Then
 
                 Dim FileName As String = dlgOpenFile.FileName
                 Dim i As Integer = InStrRev(FileName, "\")

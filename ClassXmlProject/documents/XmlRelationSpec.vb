@@ -1,4 +1,5 @@
-﻿Imports System.ComponentModel
+﻿Imports System
+Imports System.ComponentModel
 Imports System.Xml
 
 Public Class XmlRelationSpec
@@ -115,7 +116,7 @@ Public Class XmlRelationSpec
         End Get
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing)
         MyBase.New(xmlNode)
     End Sub
 

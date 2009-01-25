@@ -1,6 +1,9 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Windows.Forms
 Imports ClassXmlProject.XmlMethodSpec
 Imports ClassXmlProject.UmlCodeGenerator
+Imports Microsoft.VisualBasic
 
 Public Class XmlClassMemberView
     Inherits XmlComponent

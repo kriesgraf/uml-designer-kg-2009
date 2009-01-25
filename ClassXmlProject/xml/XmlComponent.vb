@@ -1,6 +1,10 @@
 ﻿Imports ClassXmlProject.XmlProjectTools
+Imports System.Windows.Forms
 Imports System.ComponentModel
 Imports System.Xml
+Imports System
+Imports System.Collections
+Imports Microsoft.VisualBasic
 
 #Region "Interfaces"
 
@@ -275,7 +279,7 @@ Public Class XmlComponent
 
     Protected Friend Function GetNodeString(ByVal xpath As String) As String
         Dim strResult As String = ""
-        Dim nodeXml As Xml.XmlNode
+        Dim nodeXml As XmlNode
         Try
             nodeXml = GetNode(xpath)
             If nodeXml IsNot Nothing Then
@@ -349,7 +353,7 @@ Public Class XmlComponent
 
     Protected Friend Function GetAttribute(ByVal name As String, Optional ByVal xpath As String = "") As String
         Dim strResult As String = Nothing
-        Dim nodeXml As Xml.XmlNode
+        Dim nodeXml As XmlNode
         Try
             If m_xmlNode IsNot Nothing Then
                 If xpath = "" Then
@@ -512,7 +516,7 @@ Public Class XmlComponent
 
     Protected Friend Function RemoveSingleNode(ByVal xpath As String) As Boolean
         Dim bResult As Boolean = False
-        Dim xmlRemovedNode As Xml.XmlNode
+        Dim xmlRemovedNode As XmlNode
         Try
             xmlRemovedNode = m_xmlNode.SelectSingleNode(xpath)
             If xmlRemovedNode IsNot Nothing Then
@@ -531,7 +535,7 @@ Public Class XmlComponent
         Dim bResult As Boolean = False
 
         Try
-            Dim list As Xml.XmlNodeList
+            Dim list As XmlNodeList
 
             list = m_xmlNode.SelectNodes(xpath)
 

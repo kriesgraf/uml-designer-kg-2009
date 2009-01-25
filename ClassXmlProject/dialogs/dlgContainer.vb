@@ -1,5 +1,7 @@
-﻿Imports System.Windows.Forms
+﻿Imports System
+Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class dlgContainer
     Implements InterfFormDocument
@@ -27,14 +29,14 @@ Public Class dlgContainer
         Catch ex As Exception
             MsgExceptionBox(ex)
         Finally
-            Me.DialogResult = System.Windows.Forms.DialogResult.OK
+            Me.DialogResult = DialogResult.OK
             Me.Close()
         End Try
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -103,7 +105,7 @@ Public Class dlgContainer
             = MsgBoxResult.Yes Then
             If m_xmlView.RemoveMe() Then
                 Me.Tag = True
-                Me.DialogResult = System.Windows.Forms.DialogResult.OK
+                Me.DialogResult = DialogResult.OK
                 Me.Close()
             End If
         End If

@@ -1,4 +1,6 @@
-﻿Imports System.ComponentModel
+﻿Imports System
+Imports System.Xml
+Imports System.ComponentModel
 Imports ClassXmlProject.XmlReferenceNodeCounter
 
 Public Class XmlElementSpec
@@ -120,7 +122,7 @@ Public Class XmlElementSpec
 
 #Region "Public methods"
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing)
         MyBase.New(xmlNode)
     End Sub
 

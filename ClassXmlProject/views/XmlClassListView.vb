@@ -1,4 +1,7 @@
+Imports System
+Imports System.Windows.Forms
 Imports System.Xml
+Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlCodeGenerator
 

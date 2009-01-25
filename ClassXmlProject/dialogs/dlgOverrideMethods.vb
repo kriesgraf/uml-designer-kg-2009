@@ -8,13 +8,13 @@ Public Class dlgOverrideMethods
         If m_xmlView.AddMethods(lstOverrideMethods) _
         Then
             Me.Tag = True
-            Me.DialogResult = System.Windows.Forms.DialogResult.OK
+            Me.DialogResult = DialogResult.OK
             Me.Close()
         End If
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 

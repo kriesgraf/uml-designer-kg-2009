@@ -1,5 +1,7 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
 Imports System.Collections
+Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlSuperClassView

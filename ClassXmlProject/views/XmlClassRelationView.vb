@@ -1,4 +1,7 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 
 Public Class XmlClassRelationView
     Inherits XmlCollaborationSpec

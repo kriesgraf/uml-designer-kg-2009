@@ -1,4 +1,6 @@
-﻿Imports System.Windows.Forms
+﻿Imports System
+Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 
 Public Class MDIParent
 
@@ -41,7 +43,7 @@ Public Class MDIParent
             dlgOpenFile.Title = "Select a project file..."
             dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj|Doxygen XML index file|index.xml"
 
-            If (dlgOpenFile.ShowDialog(Me) = System.Windows.Forms.DialogResult.OK) _
+            If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
                 Dim FileName As String = dlgOpenFile.FileName
                 Dim bFromDoxygenIndex As Boolean = False
@@ -92,7 +94,7 @@ Public Class MDIParent
             dlgOpenFile.Title = "Select the Doxygen index file..."
             dlgOpenFile.Filter = "Doxygen XML index file|index.xml"
 
-            If (dlgOpenFile.ShowDialog(Me) = System.Windows.Forms.DialogResult.OK) _
+            If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
                 Dim strTempFile As String = ""
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
@@ -128,7 +130,7 @@ Public Class MDIParent
             dlgOpenFile.Title = "Select a project file..."
             dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj"
 
-            If (dlgOpenFile.ShowDialog(Me) = System.Windows.Forms.DialogResult.OK) _
+            If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
                 Dim strNewProject As String = ""
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)

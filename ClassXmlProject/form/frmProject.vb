@@ -1,4 +1,7 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 
 Public Class frmProject
 
@@ -97,7 +100,7 @@ Public Class frmProject
 
             dlgSaveFile.FileName = m_xmlProject.Name
 
-            If (dlgSaveFile.ShowDialog(Me) = System.Windows.Forms.DialogResult.OK) Then
+            If (dlgSaveFile.ShowDialog(Me) = DialogResult.OK) Then
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgSaveFile.FileName)
                 m_xmlProject.SaveAs(dlgSaveFile.FileName)
                 lvwProjectMembers.UpdatePath()

@@ -1,4 +1,7 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Windows.Forms
+Imports System.Xml
+Imports System.Collections
 
 Public Class XmlRefRedundancyView
     Inherits XmlComponent

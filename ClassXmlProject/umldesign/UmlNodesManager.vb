@@ -1,9 +1,14 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
+Imports System.Text
+Imports Microsoft.VisualBasic
+
 #If _APP_UML = "1" Then
 Imports ClassXmlProject.UmlCodeGenerator
 #End If
-Imports System.Text
+
 
 Public Enum ELanguage
     Language_CplusPlus = 0
@@ -113,7 +118,7 @@ Public Class UmlNodesManager
         source.LoadXml(strXML)
 
         Dim child As XmlNode
-        Dim listID As New Collections.SortedList
+        Dim listID As New SortedList
 
         child = node.CloneNode(True)
 
@@ -319,7 +324,7 @@ Public Class UmlNodesManager
         Return strXML
     End Function
 
-    Private Shared Sub GetListDescendant(ByRef node As XmlNode, ByRef list As Collections.SortedList, ByVal strQuery As String, Optional ByVal strName As String = ".")
+    Private Shared Sub GetListDescendant(ByRef node As XmlNode, ByRef list As SortedList, ByVal strQuery As String, Optional ByVal strName As String = ".")
         Dim listNodes As XmlNodeList
         Dim child As XmlNode
         Dim strID As String
@@ -347,7 +352,7 @@ Public Class UmlNodesManager
         Next child
     End Sub
 
-    Private Shared Sub ExportRelationships(ByRef source As XmlDocument, ByVal treeNode As XmlNode, ByRef listID As Collections.SortedList)
+    Private Shared Sub ExportRelationships(ByRef source As XmlDocument, ByVal treeNode As XmlNode, ByRef listID As SortedList)
         Dim relation As XmlNode
 
         For i As Integer = 0 To listID.Count - 1

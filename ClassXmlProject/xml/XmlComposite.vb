@@ -1,6 +1,6 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
 Imports System.ComponentModel
-Imports System.Windows.Forms
 Imports System.Collections
 
 Public Class XmlComposite

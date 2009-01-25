@@ -1,5 +1,7 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
 Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class XmlNodeCounter
 

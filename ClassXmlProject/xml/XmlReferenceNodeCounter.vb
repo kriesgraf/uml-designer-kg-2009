@@ -1,4 +1,5 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
 Imports ClassXmlProject.XmlNodeCounter
 
 Public Class XmlReferenceNodeCounter

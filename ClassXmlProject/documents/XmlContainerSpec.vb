@@ -1,7 +1,10 @@
-﻿Public Class XmlContainerSpec
+﻿Imports System
+Imports System.Xml
+
+Public Class XmlContainerSpec
     Inherits XmlTypedefSpec
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
         Try
             ChangeReferences(bLoadChildren)
@@ -10,7 +13,7 @@
         End Try
     End Sub
 
-    Protected Friend Overrides Function CreateNode(ByVal name As String) As System.Xml.XmlNode
+    Protected Friend Overrides Function CreateNode(ByVal name As String) As XmlNode
         If name = "container_doc" Then
             Return MyBase.CreateNode("typedef")
         End If

@@ -1,4 +1,5 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
 Imports System.ComponentModel
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
@@ -61,7 +62,7 @@ Public Class XmlInheritSpec
         End Set
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing)
         MyBase.New(xmlNode)
     End Sub
 

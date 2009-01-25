@@ -1,4 +1,5 @@
 ﻿Imports System.Xml
+Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlNodeListView

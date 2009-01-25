@@ -1,4 +1,6 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlCodeGenerator
 Imports Microsoft.VisualBasic.Compatibility.VB6
 
 Public Class XmlPropertyView
@@ -90,7 +92,7 @@ Public Class XmlPropertyView
         InitBindingOption(m_ArrayButton)
     End Sub
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingName(ByVal dataControl As TextBox)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
         Catch ex As Exception
@@ -98,7 +100,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingBriefComment(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingBriefComment(ByVal dataControl As TextBox)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
         Catch ex As Exception
@@ -106,7 +108,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingRange(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingRange(ByVal dataControl As ComboBox)
         Try
             dataControl.DropDownStyle = ComboBoxStyle.DropDownList
             dataControl.Items.AddRange(New Object() {"private", "protected", "public"})
@@ -116,7 +118,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingMember(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingMember(ByVal dataControl As ComboBox)
         Try
             dataControl.DropDownStyle = ComboBoxStyle.DropDownList
             dataControl.Items.AddRange(New Object() {"object", "class"})
@@ -126,7 +128,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingGetModifier(ByVal dataControl As Windows.Forms.CheckBox)
+    Public Sub InitBindingGetModifier(ByVal dataControl As CheckBox)
         Try
             If Me.Tag <> ELanguage.Language_CplusPlus Then
                 dataControl.Enabled = False
@@ -140,7 +142,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingGetAccess(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingGetAccess(ByVal dataControl As ComboBox)
         Try
             dataControl.DropDownStyle = ComboBoxStyle.DropDownList
             dataControl.Items.AddRange(New Object() {"no", "protected", "public"})
@@ -150,7 +152,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingGetBy(ByVal dataControl As Windows.Forms.ComboBox, ByVal label As Label)
+    Public Sub InitBindingGetBy(ByVal dataControl As ComboBox, ByVal label As Label)
         Try
             If Me.Tag <> ELanguage.Language_CplusPlus Then
                 dataControl.Enabled = False
@@ -166,7 +168,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingSetAccess(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingSetAccess(ByVal dataControl As ComboBox)
         Try
             dataControl.DropDownStyle = ComboBoxStyle.DropDownList
             dataControl.Items.AddRange(New Object() {"no", "protected", "public"})
@@ -176,7 +178,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingBehaviour(ByVal dataControl As Windows.Forms.ComboBox, ByVal label As Label)
+    Public Sub InitBindingBehaviour(ByVal dataControl As ComboBox, ByVal label As Label)
         Try
             If Me.Tag <> ELanguage.Language_Vbasic Then
                 dataControl.Enabled = False
@@ -192,7 +194,7 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub InitBindingSetby(ByVal dataControl As Windows.Forms.ComboBox, ByVal label As Label)
+    Public Sub InitBindingSetby(ByVal dataControl As ComboBox, ByVal label As Label)
         Try
             If Me.Tag <> ELanguage.Language_CplusPlus Then
                 dataControl.Enabled = False

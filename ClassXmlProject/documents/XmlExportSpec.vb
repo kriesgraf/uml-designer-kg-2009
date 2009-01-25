@@ -1,6 +1,8 @@
-﻿Imports ClassXmlProject.XmlProjectTools
+﻿Imports System
+Imports ClassXmlProject.XmlProjectTools
 Imports System.Xml
 Imports System.IO
+Imports Microsoft.VisualBasic
 
 Public Class XmlExportSpec
     Inherits XmlComposite
@@ -41,11 +43,11 @@ Public Class XmlExportSpec
         End Try
     End Sub
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 
-    Protected Friend Overrides Function AppendNode(ByVal nodeXml As System.Xml.XmlNode) As System.Xml.XmlNode
+    Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode) As XmlNode
         If nodeXml.Name = "reference" Then
             Return MyBase.AppendNode(nodeXml)
         End If

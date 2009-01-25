@@ -1,4 +1,6 @@
-﻿Public Class XmlParamView
+﻿Imports System.Windows.Forms
+
+Public Class XmlParamView
     Inherits XmlParamSpec
     Implements InterfViewForm
 
@@ -19,11 +21,11 @@
         Return frmResult
     End Function
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingName(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
     End Sub
 
-    Public Sub InitBindingComment(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingComment(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
     End Sub
 

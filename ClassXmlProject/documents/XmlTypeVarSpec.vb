@@ -1,6 +1,9 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Windows.Forms
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class XmlTypeVarSpec
     Inherits XmlComposite
@@ -323,7 +326,7 @@ Public Class XmlTypeVarSpec
 
 #Region "Constructor/Destructor"
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 #End Region

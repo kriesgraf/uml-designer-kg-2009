@@ -1,4 +1,6 @@
-﻿Public Class XmlEnumView
+﻿Imports System.Windows.Forms
+
+Public Class XmlEnumView
     Inherits XmlEnumSpec
     Implements InterfViewControl
     Implements InterfGridViewNotifier

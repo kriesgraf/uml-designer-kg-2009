@@ -1,4 +1,6 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Windows.Forms
 Imports ClassXmlProject.UmlCodeGenerator
 
 Public Class XmlClassDependencyView

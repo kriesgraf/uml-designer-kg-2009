@@ -1,5 +1,7 @@
+Imports System
 Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class dlgTypedef
     Implements InterfFormDocument
@@ -26,14 +28,14 @@ Public Class dlgTypedef
         Catch ex As Exception
             MsgExceptionBox(ex)
         Finally
-            Me.DialogResult = System.Windows.Forms.DialogResult.OK
+            Me.DialogResult = DialogResult.OK
             Me.Close()
         End Try
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
     Private Sub dlgMember_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -70,7 +72,7 @@ Public Class dlgTypedef
         If MsgBox(m_xmlView.Name + " will be deleted, please confirm ?", cstMsgYesNoQuestion) _
             = MsgBoxResult.Yes Then
             If m_xmlView.RemoveMe() Then
-                Me.DialogResult = System.Windows.Forms.DialogResult.OK
+                Me.DialogResult = DialogResult.OK
                 Me.Close()
             End If
         End If
