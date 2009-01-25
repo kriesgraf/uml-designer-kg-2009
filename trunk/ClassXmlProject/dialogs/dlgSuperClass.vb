@@ -1,3 +1,4 @@
+Imports System
 Imports System.Windows.Forms
 
 Public Class dlgSuperClass
@@ -13,14 +14,14 @@ Public Class dlgSuperClass
         Catch ex As Exception
             MsgExceptionBox(ex)
         Finally
-            Me.DialogResult = System.Windows.Forms.DialogResult.OK
+            Me.DialogResult = DialogResult.OK
             Me.Close()
         End Try
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 

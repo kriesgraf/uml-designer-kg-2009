@@ -1,4 +1,6 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlCodeGenerator
 
 Public Class XmlConstructorView
     Inherits XmlConstructorSpec
@@ -55,21 +57,21 @@ Public Class XmlConstructorView
         Return bResult
     End Function
 
-    Public Sub InitBindingRange(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingRange(ByVal dataControl As ComboBox)
         dataControl.DropDownStyle = ComboBoxStyle.DropDownList
         dataControl.Items.AddRange(New Object() {"private", "protected", "public"})
         m_xmlBindingsList.AddBinding(dataControl, Me, "Range")
     End Sub
 
-    Public Sub InitBindingBrief(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingBrief(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "BriefComment")
     End Sub
 
-    Public Sub InitBindingComment(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingComment(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
     End Sub
 
-    Public Sub InitBindingCheckCopy(ByVal dataControl As Windows.Forms.CheckBox)
+    Public Sub InitBindingCheckCopy(ByVal dataControl As CheckBox)
         If Me.Tag <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
@@ -78,7 +80,7 @@ Public Class XmlConstructorView
         End If
     End Sub
 
-    Public Sub InitBindingCheckInline(ByVal dataControl As Windows.Forms.CheckBox, ByVal btnControl As Button)
+    Public Sub InitBindingCheckInline(ByVal dataControl As CheckBox, ByVal btnControl As Button)
         If Me.Tag <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False

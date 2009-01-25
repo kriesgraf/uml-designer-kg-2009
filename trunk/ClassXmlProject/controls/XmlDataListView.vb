@@ -1,11 +1,16 @@
-﻿Public Class XmlDataListView
+﻿Imports System
+Imports System.Windows.Forms
+Imports System.Drawing
+Imports System.Collections
+
+Public Class XmlDataListView
     Inherits DataListView
 
 #Region "Class declarations"
 
     Private m_xmlBinding As XmlBindingDataListView
-    Private m_lstMenus As Collections.SortedList
-    Private m_lstViews As Collections.SortedList
+    Private m_lstMenus As SortedList
+    Private m_lstViews As SortedList
     Private m_lviCurrent As ListViewItem
     Private m_strContext As String
 
@@ -64,8 +69,8 @@
 
     Public Sub New()
         m_xmlBinding = New XmlBindingDataListView(Me)
-        m_lstMenus = New Collections.SortedList
-        m_lstViews = New Collections.SortedList
+        m_lstMenus = New SortedList
+        m_lstViews = New SortedList
     End Sub
 
     Public Function UpdatePath() As String

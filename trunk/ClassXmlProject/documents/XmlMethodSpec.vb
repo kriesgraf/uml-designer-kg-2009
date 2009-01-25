@@ -1,4 +1,5 @@
-﻿Imports ClassXmlProject.XmlReferenceNodeCounter
+﻿Imports System
+Imports ClassXmlProject.XmlReferenceNodeCounter
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
 Imports System.ComponentModel
@@ -286,7 +287,7 @@ Public Class XmlMethodSpec
         End Try
     End Sub
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 

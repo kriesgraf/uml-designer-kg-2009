@@ -1,4 +1,5 @@
-﻿Imports ClassXmlProject.XmlProjectTools
+﻿Imports System
+Imports ClassXmlProject.XmlProjectTools
 Imports System.ComponentModel
 Imports System.Xml
 
@@ -52,7 +53,7 @@ Public Class XmlExceptionSpec
         End Get
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
         Try
             ChangeReferences(bLoadChildren)

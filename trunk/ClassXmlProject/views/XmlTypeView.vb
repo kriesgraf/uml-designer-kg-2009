@@ -1,8 +1,12 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Windows.Forms
+Imports System.Collections
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
 Imports Microsoft.VisualBasic.Compatibility.VB6
 Imports ClassXmlProject.UmlNodesManager
+Imports Microsoft.VisualBasic
 
 Public Class XmlTypeView
     Inherits XmlTypeVarSpec

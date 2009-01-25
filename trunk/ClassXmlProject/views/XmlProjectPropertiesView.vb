@@ -1,4 +1,7 @@
-﻿Imports Microsoft.VisualBasic.Compatibility.VB6
+﻿Imports System
+Imports System.Windows.Forms
+Imports System.Collections.Generic
+Imports Microsoft.VisualBasic.Compatibility.VB6
 
 Public Class XmlProjectPropertiesView
     Inherits XmlProjectProperties
@@ -22,7 +25,7 @@ Public Class XmlProjectPropertiesView
         m_xmlBindingsList.UpdateValues()
     End Sub
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingName(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 

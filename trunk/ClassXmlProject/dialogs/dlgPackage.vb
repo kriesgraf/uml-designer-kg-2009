@@ -1,3 +1,4 @@
+Imports System
 Imports System.Windows.Forms
 
 Public Class dlgPackage
@@ -37,7 +38,7 @@ Public Class dlgPackage
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
-        Me.DialogResult = System.Windows.Forms.DialogResult.OK
+        Me.DialogResult = DialogResult.OK
         m_xmlView.UpdateValues()
         Me.Tag = True
         Me.Close()
@@ -45,7 +46,7 @@ Public Class dlgPackage
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -132,7 +133,7 @@ Public Class dlgPackage
             End If
             dlg.RootFolder = Environment.SpecialFolder.Desktop
             dlg.SelectedPath = absolutePath
-            If dlg.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            If dlg.ShowDialog() = DialogResult.OK Then
                 txtFolder.Text = UmlNodesManager.ComputeRelativePath(m_strProjectFolder, dlg.SelectedPath)
             End If
         Catch ex As Exception

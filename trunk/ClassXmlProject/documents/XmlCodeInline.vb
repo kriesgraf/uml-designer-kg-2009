@@ -1,5 +1,7 @@
-﻿Imports ClassXmlProject.XmlProjectTools
+﻿Imports System
+Imports ClassXmlProject.XmlProjectTools
 Imports System.Xml
+Imports Microsoft.VisualBasic
 
 Public Class XmlCodeInline
     Inherits XmlComponent
@@ -22,7 +24,7 @@ Public Class XmlCodeInline
         End Set
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing)
         MyBase.New(xmlNode)
     End Sub
 

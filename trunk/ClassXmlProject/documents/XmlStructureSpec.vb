@@ -1,4 +1,6 @@
-﻿Imports System.ComponentModel
+﻿Imports System
+Imports System.Xml
+Imports System.ComponentModel
 Public Class XmlStructureSpec
     Inherits XmlTypedefSpec
 
@@ -17,7 +19,7 @@ Public Class XmlStructureSpec
         End Set
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
         Try
             ChangeReferences(bLoadChildren)
@@ -26,7 +28,7 @@ Public Class XmlStructureSpec
         End Try
     End Sub
 
-    Protected Friend Overrides Function CreateNode(ByVal name As String) As System.Xml.XmlNode
+    Protected Friend Overrides Function CreateNode(ByVal name As String) As XmlNode
         If name = "structure_doc" Then
             Return MyBase.CreateNode("typedef")
         End If

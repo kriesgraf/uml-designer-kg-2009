@@ -1,4 +1,6 @@
-﻿Public Class XmlInlineView
+﻿Imports System.Windows.Forms
+
+Public Class XmlInlineView
     Inherits XmlCodeInline
     Implements InterfViewForm
 

@@ -1,4 +1,9 @@
-﻿Public Class XmlBindingsList
+﻿Imports System
+Imports System.Collections
+Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
+
+Public Class XmlBindingsList
 
     Private m_BindingManager As ArrayList
 

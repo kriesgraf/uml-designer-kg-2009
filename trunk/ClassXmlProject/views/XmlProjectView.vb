@@ -1,10 +1,13 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.UmlNodesManager
 Imports ClassXmlProject.XmlProjectTools
 Imports System.Xml
 Imports System.IO
 Imports System.Text
 Imports System.Xml.Schema
+Imports Microsoft.VisualBasic
 
 Public Class XmlProjectView
 
@@ -198,7 +201,7 @@ Public Class XmlProjectView
             dlgSaveFile.Filter = "UML project (*.xprj)|*.xprj"
             dlgSaveFile.FileName = GetName(node)
 
-            If dlgSaveFile.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            If dlgSaveFile.ShowDialog() = DialogResult.OK Then
 
                 Dim FileName As String = dlgSaveFile.FileName
                 Dim i As Integer = InStrRev(FileName, "\")
@@ -262,7 +265,7 @@ Public Class XmlProjectView
             dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj"
             dlgOpenFile.FileName = GetName(node)
 
-            If dlgOpenFile.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            If dlgOpenFile.ShowDialog() = DialogResult.OK Then
 
                 Dim FileName As String = dlgOpenFile.FileName
                 Dim i As Integer = InStrRev(FileName, "\")
@@ -296,7 +299,7 @@ Public Class XmlProjectView
             dlgSaveFile.Filter = "Package references (*.ximp)|*.ximp"
             dlgSaveFile.FileName = GetName(node)
 
-            If dlgSaveFile.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            If dlgSaveFile.ShowDialog() = DialogResult.OK Then
 
                 Dim FileName As String = dlgSaveFile.FileName
                 If FileName.EndsWith(".ximp") = False Then

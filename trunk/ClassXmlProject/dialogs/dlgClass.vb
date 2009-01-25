@@ -1,6 +1,8 @@
+Imports System
 Imports ClassXmlProject.XmlProjectTools
 Imports System.Windows.Forms
 Imports System.Xml
+Imports Microsoft.VisualBasic
 
 Public Class dlgClass
     Implements InterfFormDocument
@@ -93,7 +95,7 @@ Public Class dlgClass
         Try
             If m_xmlView.UpdateValues() Then
                 Me.Tag = True
-                Me.DialogResult = System.Windows.Forms.DialogResult.OK
+                Me.DialogResult = DialogResult.OK
                 Me.Close()
             End If
         Catch ex As Exception
@@ -103,7 +105,7 @@ Public Class dlgClass
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -112,7 +114,7 @@ Public Class dlgClass
             = MsgBoxResult.Yes Then
             If m_xmlView.RemoveMe() Then
                 Me.Tag = True
-                Me.DialogResult = System.Windows.Forms.DialogResult.OK
+                Me.DialogResult = DialogResult.OK
                 Me.Close()
             End If
         End If

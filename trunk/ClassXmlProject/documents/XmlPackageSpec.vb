@@ -1,4 +1,5 @@
-﻿Imports System.ComponentModel
+﻿Imports System
+Imports System.ComponentModel
 Imports System.Xml
 
 Public Class XmlPackageSpec
@@ -79,7 +80,7 @@ Public Class XmlPackageSpec
 
 #End Region
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 
@@ -120,7 +121,7 @@ Public Class XmlPackageSpec
         End Try
     End Sub
 
-    Protected Friend Overrides Function AppendNode(ByVal child As System.Xml.XmlNode) As System.Xml.XmlNode
+    Protected Friend Overrides Function AppendNode(ByVal child As XmlNode) As XmlNode
         Dim before As XmlNode = Nothing
         Select Case child.Name
             Case "import"

@@ -1,4 +1,5 @@
-﻿Imports System.ComponentModel
+﻿Imports System
+Imports System.ComponentModel
 Imports ClassXmlProject.XmlReferenceNodeCounter
 Imports System.Xml
 
@@ -48,7 +49,7 @@ Public Class XmlParamSpec
         End Set
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
         Try
             ChangeReferences(bLoadChildren)

@@ -1,4 +1,7 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Windows.Forms
+Imports System.Xml
+Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.UmlNodesManager
@@ -46,26 +49,26 @@ Public Class XmlContainerView
         m_xmlBindingsList.UpdateValues()
     End Sub
 
-    Public Sub InitBindingRange(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingRange(ByVal dataControl As ComboBox)
         dataControl.DropDownStyle = ComboBoxStyle.DropDownList
         dataControl.Items.AddRange(New Object() {"private", "protected", "public"})
         m_xmlBindingsList.AddBinding(dataControl, Me, "Range")
     End Sub
 
-    Public Sub InitBindingBrief(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingBrief(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
     End Sub
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingName(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
     End Sub
 
-    Public Sub InitBindingType(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingType(ByVal dataControl As ComboBox)
         InitTypedefCombo(dataControl)
         m_xmlComboTypedef = New XmlBindingCombo(dataControl, Me.TypeVarDefinition, "Descriptor", "Reference")
     End Sub
 
-    Public Sub InitBindingContainer(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingContainer(ByVal dataControl As ComboBox)
         Dim iContainer As Integer = 1
         If Me.TypeVarDefinition.Indexed Then iContainer = 2
         InitTypedefCombo(dataControl, iContainer)
@@ -78,12 +81,12 @@ Public Class XmlContainerView
         InitTypedefCombo(m_xmlComboContainer.Control, iContainer, True)
     End Sub
 
-    Public Sub InitBindingComboIndex(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingComboIndex(ByVal dataControl As ComboBox)
         InitTypedefCombo(dataControl, -1)
         m_xmlComboIndex = New XmlBindingCombo(dataControl, Me.TypeVarDefinition, "IndexDesc", "IndexRef")
     End Sub
 
-    Public Sub InitBindingLevel(ByVal dataControl As Windows.Forms.ComboBox, ByVal label As Label)
+    Public Sub InitBindingLevel(ByVal dataControl As ComboBox, ByVal label As Label)
         If Me.Tag <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
@@ -95,7 +98,7 @@ Public Class XmlContainerView
         End If
     End Sub
 
-    Public Sub InitBindingIndexLevel(ByVal dataControl As Windows.Forms.ComboBox, ByVal label As Label)
+    Public Sub InitBindingIndexLevel(ByVal dataControl As ComboBox, ByVal label As Label)
         If Me.Tag <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
@@ -107,7 +110,7 @@ Public Class XmlContainerView
         End If
     End Sub
 
-    Public Sub InitBindingIterator(ByVal dataControl As Windows.Forms.CheckBox)
+    Public Sub InitBindingIterator(ByVal dataControl As CheckBox)
         If Me.Tag <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
@@ -116,11 +119,11 @@ Public Class XmlContainerView
         End If
     End Sub
 
-    Public Sub InitBindingCheckIndex(ByVal dataControl As Windows.Forms.CheckBox)
+    Public Sub InitBindingCheckIndex(ByVal dataControl As CheckBox)
         m_xmlBindingsList.AddBinding(dataControl, Me.TypeVarDefinition, "Indexed", "Checked")
     End Sub
 
-    Public Sub InitBindingModifier(ByVal dataControl As Windows.Forms.CheckBox)
+    Public Sub InitBindingModifier(ByVal dataControl As CheckBox)
         If Me.Tag <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
@@ -129,7 +132,7 @@ Public Class XmlContainerView
         End If
     End Sub
 
-    Private Sub InitTypedefCombo(ByVal dataControl As Windows.Forms.ComboBox, Optional ByVal iContainer As Integer = 0, Optional ByVal bClear As Boolean = False)
+    Private Sub InitTypedefCombo(ByVal dataControl As ComboBox, Optional ByVal iContainer As Integer = 0, Optional ByVal bClear As Boolean = False)
         Try
             Dim myList As New ArrayList
 

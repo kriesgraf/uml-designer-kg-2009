@@ -1,4 +1,5 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlReferenceNodeCounter
 Imports System.ComponentModel
 Imports System.Xml
@@ -171,7 +172,7 @@ Public Class XmlPropertySpec
 
 #Region "Constructor/Destructor"
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
         Try
             ChangeReferences(bLoadChildren)

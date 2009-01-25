@@ -1,4 +1,9 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
+Imports System.Windows.Forms
+Imports System.Collections
+Imports System.Collections.Generic
+Imports Microsoft.VisualBasic
 
 Public Interface InterfListViewNotifier
 

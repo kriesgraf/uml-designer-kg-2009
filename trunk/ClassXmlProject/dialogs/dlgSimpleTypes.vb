@@ -1,4 +1,7 @@
-﻿Imports ClassXmlProject.XmlProjectTools
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class dlgSimpleTypes
 

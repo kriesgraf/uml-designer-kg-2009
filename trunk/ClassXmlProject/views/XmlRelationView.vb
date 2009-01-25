@@ -1,6 +1,9 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
 Imports System.Xml
+Imports Microsoft.VisualBasic
 
 Public Class XmlRelationView
     Inherits XmlRelationSpec

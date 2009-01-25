@@ -1,4 +1,7 @@
-﻿Public Class XmlReferenceView
+﻿Imports System
+Imports System.Windows.Forms
+
+Public Class XmlReferenceView
     Inherits XmlReferenceSpec
     Implements InterfViewForm
 
@@ -20,7 +23,7 @@
         Return frmResult
     End Function
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingName(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 
@@ -29,7 +32,7 @@
         End Try
     End Sub
 
-    Public Sub InitBindingParentClass(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingParentClass(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "ParentClass")
 
@@ -38,7 +41,7 @@
         End Try
     End Sub
 
-    Public Sub InitBindingPackage(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingPackage(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Package")
 
@@ -47,7 +50,7 @@
         End Try
     End Sub
 
-    Public Sub InitBindingContainer(ByVal combo As Windows.Forms.ComboBox)
+    Public Sub InitBindingContainer(ByVal combo As ComboBox)
         Try
             combo.DropDownStyle = ComboBoxStyle.DropDownList
             combo.Items.AddRange(New Object() {"none", "simple", "indexed"})
@@ -59,7 +62,7 @@
         End Try
     End Sub
 
-    Public Sub InitBindingType(ByVal combo As Windows.Forms.ComboBox)
+    Public Sub InitBindingType(ByVal combo As ComboBox)
         Try
             combo.DropDownStyle = ComboBoxStyle.DropDownList
             combo.Sorted = True

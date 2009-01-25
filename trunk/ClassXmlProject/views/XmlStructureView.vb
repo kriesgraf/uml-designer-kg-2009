@@ -1,4 +1,6 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlCodeGenerator
 
 Public Class XmlStructureView
     Inherits XmlStructureSpec
@@ -43,21 +45,21 @@ Public Class XmlStructureView
         m_xmlBindingsList.UpdateValues()
     End Sub
 
-    Public Sub InitBindingRange(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingRange(ByVal dataControl As ComboBox)
         dataControl.DropDownStyle = ComboBoxStyle.DropDownList
         dataControl.Items.AddRange(New Object() {"private", "protected", "public"})
         m_xmlBindingsList.AddBinding(dataControl, Me, "Range")
     End Sub
 
-    Public Sub InitBindingBrief(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingBrief(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
     End Sub
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingName(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
     End Sub
 
-    Public Sub InitBindingUnion(ByVal dataControl As Windows.Forms.CheckBox)
+    Public Sub InitBindingUnion(ByVal dataControl As CheckBox)
         If Me.Tag <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False

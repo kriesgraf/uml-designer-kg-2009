@@ -1,3 +1,4 @@
+Imports System
 Imports System.Windows.Forms
 
 Public Class dlgTypeVar
@@ -24,7 +25,7 @@ Public Class dlgTypeVar
         Try
             If m_xmlView.UpdateValues() Then
                 Me.Tag = True
-                Me.DialogResult = System.Windows.Forms.DialogResult.OK
+                Me.DialogResult = DialogResult.OK
                 Me.Close()
             End If
         Catch ex As Exception
@@ -37,9 +38,9 @@ Public Class dlgTypeVar
         If m_xmlView.ConfirmCancel(bOk) Then
             If bOk Then
                 Me.Tag = True
-                Me.DialogResult = System.Windows.Forms.DialogResult.OK
+                Me.DialogResult = DialogResult.OK
             Else
-                Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+                Me.DialogResult = DialogResult.Cancel
                 Me.Tag = m_xmlView.Updated
             End If
             Me.Close()

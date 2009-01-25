@@ -70,160 +70,174 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Drawing" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.Windows.Forms" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="bindings\XmlBindingDataListView.vb">
     </Compile>
     <Compile Include="controls\DataListView.vb">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="controls\XmlDataListView.vb">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="controls\XmlDocumentView.vb">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="dialogs\dlgAlertException.Designer.vb">
       <DependentUpon>dlgAlertException.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgAlertException.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgAlertWarning.Designer.vb">
       <DependentUpon>dlgAlertWarning.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgAlertWarning.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgDependencies.Designer.vb">
       <DependentUpon>dlgDependencies.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgDependencies.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgException.designer.vb">
       <DependentUpon>dlgException.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgException.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgClass.designer.vb">
       <DependentUpon>dlgClass.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgClass.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgConstructor.Designer.vb">
       <DependentUpon>dlgConstructor.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgConstructor.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgContainer.Designer.vb">
       <DependentUpon>dlgContainer.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgContainer.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgElement.Designer.vb">
       <DependentUpon>dlgElement.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgElement.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgImport.designer.vb">
       <DependentUpon>dlgImport.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgImport.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgInlineCode.Designer.vb">
       <DependentUpon>dlgInlineCode.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgInlineCode.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgMethod.designer.vb">
       <DependentUpon>dlgMethod.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgMethod.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgOverrideMethods.Designer.vb">
       <DependentUpon>dlgOverrideMethods.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgOverrideMethods.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgPackage.designer.vb">
       <DependentUpon>dlgPackage.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgPackage.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgParam.Designer.vb">
       <DependentUpon>dlgParam.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgParam.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgProjectProperties.Designer.vb">
       <DependentUpon>dlgProjectProperties.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgProjectProperties.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgProperty.designer.vb">
       <DependentUpon>dlgProperty.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgProperty.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgRedundancy.Designer.vb">
       <DependentUpon>dlgRedundancy.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgRedundancy.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgReference.Designer.vb">
       <DependentUpon>dlgReference.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgReference.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgRelation.Designer.vb">
       <DependentUpon>dlgRelation.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgRelation.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgRelationParent.Designer.vb">
       <DependentUpon>dlgRelationParent.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgRelationParent.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgSimpleTypes.Designer.vb">
       <DependentUpon>dlgSimpleTypes.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgSimpleTypes.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgStructure.Designer.vb">
       <DependentUpon>dlgStructure.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgStructure.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgSuperClass.designer.vb">
       <DependentUpon>dlgSuperClass.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgSuperClass.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgTypedef.designer.vb">
       <DependentUpon>dlgTypedef.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgTypedef.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgTypeVar.designer.vb">
       <DependentUpon>dlgTypeVar.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgTypeVar.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgXmlNodeProperties.Designer.vb">
       <DependentUpon>dlgXmlNodeProperties.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgXmlNodeProperties.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="documents\XmlConstructorSpec.vb" />
     <Compile Include="documents\XmlContainerSpec.vb" />
@@ -239,11 +253,13 @@
       <DependentUpon>frmProject.vb</DependentUpon>
     </Compile>
     <Compile Include="form\frmProject.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="form\MDIParent.Designer.vb">
       <DependentUpon>MDIParent.vb</DependentUpon>
     </Compile>
     <Compile Include="form\MDIParent.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -292,6 +308,7 @@
     <Compile Include="xml\XmlComponent.vb" />
     <Compile Include="xml\XmlComposite.vb" />
     <Compile Include="controls\XmlDataGridView.vb">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="documents\XmlDependencySpec.vb" />
     <Compile Include="documents\XmlElementSpec.vb" />
@@ -567,6 +584,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System.Diagnostics" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,8 +1,14 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Windows.Forms
+Imports System.Collections.Generic
+Imports System.Collections
+Imports System.Xml
 Imports System.Xml.Schema
 Imports System.IO
 Imports System.Text.RegularExpressions
 Imports ClassXmlProject.UmlNodesManager
+Imports Microsoft.VisualBasic
+
 #If _APP_UML = "1" Then
 Imports ClassXmlProject.UmlCodeGenerator
 #End If
@@ -343,7 +349,7 @@ Public Class XmlProjectTools
             dlgOpenFile.Title = "Select a patch file..."
             dlgOpenFile.Filter = "UML  patch (*.xptch)|*.xptch"
 
-            If (dlgOpenFile.ShowDialog() = System.Windows.Forms.DialogResult.OK) _
+            If (dlgOpenFile.ShowDialog() = DialogResult.OK) _
             Then
                 ParentForm.Cursor = Cursors.WaitCursor
 

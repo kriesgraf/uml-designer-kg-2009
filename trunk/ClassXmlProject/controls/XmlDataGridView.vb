@@ -1,4 +1,9 @@
-﻿Imports ClassXmlProject.XmlProjectTools
+﻿Imports System
+Imports ClassXmlProject.XmlProjectTools
+Imports System.Windows.Forms
+Imports System.Collections
+Imports System.Drawing
+Imports Microsoft.VisualBasic
 
 Public Class XmlDataGridView
     Inherits DataGridView

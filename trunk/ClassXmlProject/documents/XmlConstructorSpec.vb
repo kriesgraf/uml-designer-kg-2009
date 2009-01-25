@@ -1,4 +1,5 @@
-﻿Imports ClassXmlProject.XmlReferenceNodeCounter
+﻿Imports System
+Imports ClassXmlProject.XmlReferenceNodeCounter
 Imports System.ComponentModel
 Imports System.Xml
 
@@ -18,7 +19,7 @@ Public Class XmlConstructorSpec
         End Set
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
         Try
             ChangeReferences(bLoadChildren)
@@ -114,7 +115,7 @@ Public Class XmlConstructorSpec
         NumId = GenerateNumericId(Me.Node.ParentNode, "method", "CONST")
     End Sub
 
-    Protected Friend Overrides Function CreateNode(ByVal name As String) As System.Xml.XmlNode
+    Protected Friend Overrides Function CreateNode(ByVal name As String) As XmlNode
         Return MyBase.CreateNode("method")
     End Function
 

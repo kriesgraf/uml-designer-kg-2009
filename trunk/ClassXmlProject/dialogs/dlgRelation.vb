@@ -1,5 +1,7 @@
-﻿Imports ClassXmlProject.XmlProjectTools
+﻿Imports System
+Imports ClassXmlProject.XmlProjectTools
 Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 
 Public Class dlgRelation
     Implements InterfFormDocument
@@ -18,14 +20,14 @@ Public Class dlgRelation
         Catch ex As Exception
             MsgExceptionBox(ex)
         Finally
-            Me.DialogResult = System.Windows.Forms.DialogResult.OK
+            Me.DialogResult = DialogResult.OK
             Me.Close()
         End Try
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.DialogResult = DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -230,7 +232,7 @@ Public Class dlgRelation
             = MsgBoxResult.Yes Then
             If m_xmlView.RemoveMe() Then
                 Me.Tag = True
-                Me.DialogResult = System.Windows.Forms.DialogResult.OK
+                Me.DialogResult = DialogResult.OK
                 Me.Close()
             End If
         End If

@@ -1,4 +1,7 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Windows.Forms
+Imports System.Xml
+Imports System.Collections
 
 Public Class XmlNodeManager
     Inherits Object
@@ -6,8 +9,8 @@ Public Class XmlNodeManager
 #Region "Class declarations"
 
     ' Object member
-    Private m_xmlListDocuments As Collections.SortedList
-    Private m_xmlListViews As Collections.SortedList
+    Private m_xmlListDocuments As SortedList
+    Private m_xmlListViews As SortedList
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
 #End Region
 
@@ -171,8 +174,8 @@ Public Class XmlNodeManager
 #End Region
 
     Public Sub New()
-        m_xmlListDocuments = New Collections.SortedList
-        m_xmlListViews = New Collections.SortedList
+        m_xmlListDocuments = New SortedList
+        m_xmlListViews = New SortedList
     End Sub
 
     Protected Overrides Sub Finalize()

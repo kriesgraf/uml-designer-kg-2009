@@ -1,7 +1,11 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlNodesManager
 Imports System.Xml
+Imports System.Collections
+Imports Microsoft.VisualBasic
 
 Public Class XmlElementView
     Inherits XmlElementSpec
@@ -31,15 +35,15 @@ Public Class XmlElementView
         m_xmlBindingsList.UpdateValues()
     End Sub
 
-    Public Sub InitBindingBrief(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingBrief(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
     End Sub
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.TextBox)
+    Public Sub InitBindingName(ByVal dataControl As TextBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
     End Sub
 
-    Public Sub InitBindingType(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingType(ByVal dataControl As ComboBox)
         Try
             Dim myList As New ArrayList
 
@@ -65,7 +69,7 @@ Public Class XmlElementView
         End Try
     End Sub
 
-    Public Sub InitBindingSize(ByVal dataControl As Windows.Forms.ComboBox)
+    Public Sub InitBindingSize(ByVal dataControl As ComboBox)
         Try
             Dim myList As New ArrayList
 

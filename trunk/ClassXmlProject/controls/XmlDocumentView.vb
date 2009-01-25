@@ -1,9 +1,10 @@
+Imports System
+Imports System.Collections.Generic
 Imports ClassXmlProject.UmlCodeGenerator
 Imports System.Windows.Forms
 Imports System.Xml.Serialization
 Imports System.IO
 Imports System.Xml
-Imports System.Xml.Xsl
 
 Public Enum XmlDocumentViewMode
     Unknown

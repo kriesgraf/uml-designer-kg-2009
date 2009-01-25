@@ -1,6 +1,10 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Windows.Forms
+Imports System.Xml
+Imports System.Collections.Generic
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class XmlClassGlobalView
     Inherits XmlClassSpec
@@ -82,7 +86,7 @@ Public Class XmlClassGlobalView
         Return bResult
     End Function
 
-    Public Sub InitBindingName(ByVal dataControl As Windows.Forms.Control)
+    Public Sub InitBindingName(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 

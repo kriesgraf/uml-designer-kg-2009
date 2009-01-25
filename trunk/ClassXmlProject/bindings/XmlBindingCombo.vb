@@ -1,4 +1,7 @@
-﻿Public Class XmlBindingCombo
+﻿Imports System
+Imports System.Windows.Forms
+
+Public Class XmlBindingCombo
 
     Private m_Control As ComboBox
     Private m_strDataText As String

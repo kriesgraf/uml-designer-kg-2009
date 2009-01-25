@@ -1,7 +1,10 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlNodesManager
 Imports System.Xml
+Imports System.Collections
 Imports Microsoft.VisualBasic.Compatibility.VB6
 
 Public Class XmlRelationParentView

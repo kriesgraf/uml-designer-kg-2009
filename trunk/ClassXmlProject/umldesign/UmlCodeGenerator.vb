@@ -1,5 +1,9 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Windows.Forms
+Imports System.Collections.Generic
+Imports System.Xml
 Imports System.IO
+Imports Microsoft.VisualBasic
 
 Public Class UmlCodeGenerator
 

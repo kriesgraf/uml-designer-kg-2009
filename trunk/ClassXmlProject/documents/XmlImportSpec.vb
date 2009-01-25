@@ -1,6 +1,9 @@
-﻿Imports ClassXmlProject.UmlCodeGenerator
+﻿Imports System
+Imports ClassXmlProject.UmlCodeGenerator
 Imports System.ComponentModel
+Imports System.Collections
 Imports System.Xml
+Imports Microsoft.VisualBasic
 
 Public Class XmlImportSpec
     Inherits XmlComponent
@@ -169,7 +172,7 @@ Public Class XmlImportSpec
         End Try
     End Sub
 
-    Public Overrides Function AppendComponent(ByVal document As XmlComponent) As System.Xml.XmlNode
+    Public Overrides Function AppendComponent(ByVal document As XmlComponent) As XmlNode
         If document.NodeName = "export" Then
             Me.Parameter = CType(document, XmlExportSpec).Source
             Me.Name = CType(document, XmlExportSpec).Name
@@ -183,7 +186,7 @@ Public Class XmlImportSpec
         Return GetExportNode().InsertComponent(document, before)
     End Function
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
         Try
             ChangeReferences(bLoadChildren)

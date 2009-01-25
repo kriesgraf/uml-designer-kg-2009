@@ -1,4 +1,7 @@
-﻿Public Class XmlVariableSpec
+﻿Imports System
+Imports System.Xml
+
+Public Class XmlVariableSpec
     Inherits XmlComponent
 
     Public Property Range() As String
@@ -10,7 +13,7 @@
         End Set
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing)
         MyBase.New(xmlNode)
     End Sub
 

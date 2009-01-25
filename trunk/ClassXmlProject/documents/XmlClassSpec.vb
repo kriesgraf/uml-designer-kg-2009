@@ -1,7 +1,9 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
 Imports System.ComponentModel
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlCodeGenerator
+Imports Microsoft.VisualBasic
 
 Public Class XmlClassSpec
     Inherits XmlComposite
@@ -177,7 +179,7 @@ Public Class XmlClassSpec
 
 #Region "Public methods"
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 

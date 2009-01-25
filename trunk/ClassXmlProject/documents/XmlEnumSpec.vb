@@ -1,4 +1,5 @@
-﻿Imports System.ComponentModel
+﻿Imports System
+Imports System.ComponentModel
 Imports System.Xml
 Imports ClassXmlProject.XmlNodeCounter
 
@@ -69,7 +70,7 @@ Public Class XmlEnumSpec
         End Set
     End Property
 
-    Public Sub New(Optional ByRef xmlNode As Xml.XmlNode = Nothing)
+    Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing)
         MyBase.New(xmlNode)
     End Sub
 
