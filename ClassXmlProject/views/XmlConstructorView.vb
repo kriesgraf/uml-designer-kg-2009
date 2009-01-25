@@ -7,7 +7,7 @@ Public Class XmlConstructorView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    Private m_xmlNodeManager As XmlNodeManager
+    'Private m_xmlNodeManager As XmlNodeManager
 
     Public Overrides Property Name() As String
         Get

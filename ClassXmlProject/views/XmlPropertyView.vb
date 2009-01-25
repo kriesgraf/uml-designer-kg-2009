@@ -8,7 +8,7 @@ Public Class XmlPropertyView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    Private m_xmlNodeManager As XmlNodeManager
+    'Private m_xmlNodeManager As XmlNodeManager
     Private m_ArrayButton As RadioButtonArray
 
     Public Function CreateForm(ByVal document As XmlComponent) As System.Windows.Forms.Form Implements InterfViewForm.CreateForm

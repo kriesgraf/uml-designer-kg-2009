@@ -14,7 +14,7 @@ Public Class XmlElementView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    Private m_xmlNodeManager As XmlNodeManager
+    'Private m_xmlNodeManager As XmlNodeManager
     Private m_xmlComboTypedef As XmlBindingCombo
     Private m_xmlComboSize As XmlBindingCombo
 

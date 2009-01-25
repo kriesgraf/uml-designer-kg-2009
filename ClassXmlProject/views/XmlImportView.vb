@@ -15,7 +15,7 @@ Public Class XmlImportView
     Private m_chkInterface As CheckBox
     Private m_bClassInterface As Boolean
     Private m_xmlBindingsList As XmlBindingsList
-    Private m_xmlNodeManager As XmlNodeManager
+    'Private m_xmlNodeManager As XmlNodeManager
 
 #End Region
 
