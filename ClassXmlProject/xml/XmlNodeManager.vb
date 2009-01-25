@@ -11,7 +11,6 @@ Public Class XmlNodeManager
     ' Object member
     Private m_xmlListDocuments As SortedList
     Private m_xmlListViews As SortedList
-    Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
 #End Region
 
 #Region "Singleton pattern"
