@@ -1,7 +1,17 @@
-#summary One-sentence summary of this page.
+#summary Soft ware design part 1.
+<wiki:toc max_depth="2" />
 
 = Packages overview =
 
-You can find in SVN repository the [http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20Package%20diagram.PNG diagram].
+You can find in SVN repository the http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20Package%20diagram.PNG 
 
-== Overview ==
+Sometimes I will use the term <i>namespace</i> instead of package because this term appears in this diagram.
+
+== Package xml ==
+
+The keystones are defined in package <b>xml</b>. For now look at sources in SVN repository
+in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/?r=13#trunk/ClassXmlProject/xml svn/trunk/ClassXmlProject/xml/], in class declaration, namespace is not yet declared! It's not a mistake, this application is still experimental!
+
+Other classes are declared in this package and assume some interactions with DOM elements.
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Xml%20package%20class%20diagram.PNG
