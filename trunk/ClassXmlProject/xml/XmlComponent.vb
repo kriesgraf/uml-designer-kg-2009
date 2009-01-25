@@ -74,12 +74,14 @@ Public Class XmlComponent
 
 #Region "Class declarations"
 
+    Protected Friend m_bCreateNodeNow As Boolean
+    Protected m_xmlNodeManager As XmlNodeManager
+
     Private Shared m_xmlClipBoardComponent As New XmlClipboard
 
     Private m_iTag As Integer
     Private m_xmlNode As XmlNode
     Private m_xmlDocument As XmlDocument
-    Protected Friend m_bCreateNodeNow As Boolean
     Private m_bUpdated As Boolean = False
 #End Region
 
