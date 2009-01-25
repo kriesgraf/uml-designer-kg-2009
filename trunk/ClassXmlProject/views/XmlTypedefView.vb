@@ -11,7 +11,7 @@ Public Class XmlTypedefView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    Private m_xmlNodeManager As XmlNodeManager
+    'Private m_xmlNodeManager As XmlNodeManager
     Private m_xmlComboTypedef As XmlBindingCombo
     Private m_xmlComboContainer As XmlBindingCombo
     Private m_xmlComboIndex As XmlBindingCombo

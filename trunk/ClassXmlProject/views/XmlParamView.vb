@@ -5,7 +5,7 @@ Public Class XmlParamView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    Private m_xmlNodeManager As XmlNodeManager
+    'Private m_xmlNodeManager As XmlNodeManager
 
     Public Sub LoadValues()
         m_xmlBindingsList.Init()

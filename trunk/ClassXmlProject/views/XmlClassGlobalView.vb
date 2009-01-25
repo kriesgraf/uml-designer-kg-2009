@@ -13,7 +13,7 @@ Public Class XmlClassGlobalView
 
     Private m_bInitProcessing As Boolean = False
     Private m_xmlBindingsList As XmlBindingsList
-    Private m_xmlNodeManager As XmlNodeManager
+    'Private m_xmlNodeManager As XmlNodeManager
 
     Private WithEvents m_cmbImplementation As ComboBox
     Private m_lblInline As Label
