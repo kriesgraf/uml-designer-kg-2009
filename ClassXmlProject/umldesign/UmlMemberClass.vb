@@ -1,4 +1,8 @@
-﻿Public Class UmlMemberClass : Inherits System.ComponentModel.StringConverter
+﻿Imports System.ComponentModel
+
+Public Class UmlMemberClass
+    Inherits StringConverter
+
     Dim m_astrMember As String() = New String() {"object", "class"}
 
     Public Overloads Overrides Function GetStandardValues(ByVal context As System.ComponentModel.ITypeDescriptorContext) As System.ComponentModel.TypeConverter.StandardValuesCollection
