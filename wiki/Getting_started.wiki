@@ -2,4 +2,22 @@
 
 = Quick tips =
 
+== Pop-up-menu ==
+
+Most orders can be accessed by right click on the mouse. 
+
+Usually an icon is associated with each menu item to find it faster. Moreover, objects appear in data list views have the same icon than the command to create them.
+
+A Menu item anavailable for an object is not yet disable but cause no error.
+
+== Mouse double-click ==
+
+The Edit command is always reachable with a mouse double-click.
+
+== Drag and drop ==
+
+The drag and drop command is available to reorder objects in a list box or data grid view. But this command is not available when the order is unnecessary.
+
+This is available too to move objects down below a sub-package.
+
 To be continue....
