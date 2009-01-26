@@ -3,7 +3,9 @@
 
 = Packages overview =
 
-You can find in SVN repository the http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20Package%20diagram.PNG 
+You can find in SVN repository all diagrams presented in this document. 
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20Package%20diagram.PNG 
 
 Sometimes I will use the term <i>namespace</i> instead of package because this term appears in this diagram.
 
