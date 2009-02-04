@@ -14,6 +14,18 @@ Sometimes I will use the term <i>namespace</i> instead of package because this t
 The keystones are defined in package <b>xml</b>. For now look at sources in SVN repository
 in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/?r=13#trunk/ClassXmlProject/xml svn/trunk/ClassXmlProject/xml/], in class declaration, namespace is not yet declared! It's not a mistake, this application is still experimental!
 
-Other classes are declared in this package and assume some interactions with DOM elements.
+Other classes are declared in this package and assume some interactions with DOM elements:
+ * XslSimpleTransform encapsulates class XslCompiledTransform to provide new interface methods.
+ * XmlReferenceNodeCounter and XmlNodeCounter generate unique ID for XML attributes ID and IDREF.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Xml%20package%20class%20diagram.PNG
+
+== Package document ==
+
+As we saw in the introduction, the classes of this package have the same ancestor XmlComponent.
+
+The aim of this package is to provide in interface some business classes which expose only properties and methods. The interface with DOM objets is hidden (protected methods). 
+
+Each class of this package has the burden to build DOM objects: which tag name, which attributes, which children, these impose the structure (DTD) of the XML document.
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Documents%20package%20class%20diagram.PNG
