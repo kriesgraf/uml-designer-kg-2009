@@ -1,47 +1,64 @@
 #summary Soft ware design part 1.
-<wiki:toc max_depth="2" />
+<wiki:toc max_depth="3" />
 
 = Packages overview =
 
-You can find in SVN repository all diagrams presented in this document. 
-
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20Package%20diagram.PNG 
 
-Sometimes I will use the term <i>namespace</i> instead of package because this term appears in this diagram.
+Sometimes I will use the term <i>namespace</i> instead of package because this is the VB syntax term.
 
 == Package xml ==
 
 The keystones are defined in package <b>xml</b>. For now look at sources in SVN repository
-in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/?r=13#trunk/ClassXmlProject/xml svn/trunk/ClassXmlProject/xml/], in class declaration, namespace is not yet declared! It's not a mistake, this application is still experimental!
+in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/xml svn/trunk/ClassXmlProject/xml/], in class declaration, namespace is not yet declared! It's not a mistake, this application is still experimental!
 
 Other classes are declared in this package and assume some interactions with DOM elements:
- * XslSimpleTransform encapsulates class XslCompiledTransform to provide new interface methods.
- * XmlReferenceNodeCounter and XmlNodeCounter generate unique ID for XML attributes ID and IDREF.
+ * <b>XslSimpleTransform</b> encapsulates class <b>XslCompiledTransform</b> from package System.Xml.Xsl to provide new interface methods.
+ * <b>XmlReferenceNodeCounter</b> and <b>XmlNodeCounter</b> generate unique ID for XML attributes ID and IDREF.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Xml%20package%20class%20diagram.PNG
 
-== Package document ==
+== Package documents ==
 
-As we saw in the introduction, the classes of this package have the same ancestor XmlComponent.
+As we saw in the introduction, the classes of this package have the same ancestor <b>XmlComponent</b>. Look at sources in SVN repository
+in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/documents svn/trunk/ClassXmlProject/documents/]
 
-The aim of this package is to provide in interface some business classes which expose only properties and methods. The interface with DOM objets is hidden (protected methods). 
+The aim of this package is to provide in interface some business classes which expose only properties and methods. The interface with DOM objects is hidden (protected methods). 
 
 Each class of this package has the burden to build DOM objects: which tag name, which attributes, which children, these impose the structure (DTD) of the XML document.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Documents%20package%20class%20diagram.PNG
 
+== Package bindings ==
+
+As we will often mention these classes in the following class diagrams, it was preferable to present them now.
+
+ * The class <b>XmlBindingList</b> manages a pool of <b>Binding</b> objects from package System.Windows.Forms. Each one binds a property of an object <b>Control</b>, for example property <i>Text</i> for a <b>TextBox</b>, with a property of a package view class.
+
+ * The class <b>XmlBindingDataGridView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataGridView</b>. It wa necessary to design this class to maximize usage of polymorph calls to set special DataGridView properties, to fill colums and rows (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfGridViewNotifier</b>).  
+
+ * The class <b>XmlBindingDataListView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataListView</b>. The DataListView is not a class from package System.Windows.Forms. We decided to design this class to have the same level of collaboration than a <b>DataGridView</b> class. It wa necessary to design XmlBindingDataListView to maximize usage of polymorph calls to set special ListView properties, to draw objects (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfListViewNotifier</b>). The XmlBindingDataListView provides a hierachical view of a UML project, a double mouse click allows to explore sub-levels, a drag & drop move a object to a sub-level. The relation <i>Stack</i> allows to save history and go back from sub-levels and <i>ParentNode</i> save current level.
+
+ * The class <b>XmlBindingCombo</b> manages only one combo. It was necessary to design this class, similar as a <b>Binding</b>, because <b>ComboBox</b> can display a list of data or can be used as a simple input field like a <b>TextBox</b>.
+
+ * As against, it was not necessary to specialise class <b>ListBox</b> because this already owns a <i>DataSource</i> property. For example, we can build an <b>ArrayList</b> of <b>XmlComponent</b> objects and use it as DataSource.
+
+http://uml-designer-kg-2009.googlecode.com/svn-history/r22/trunk/Software%20design/ClassXmlProject/Bindings%20package%20classes%20diagram.PNG
+
 == Package view ==
 
-As we saw in the introduction, the classes of this package have the same ancestor XmlComponent.
+As we saw in the introduction, the classes of this package have the same ancestor <b>XmlComponent</b>.
 
-Each class of this package provides an interface between package document and graphical components of package System.Windows.Forms.
+Each class of this package provides an interface between a package documents class and a graphical component class from package System.Windows.Forms. 
 
 === Class Global View ===
 
-This class has burden to create/update each Xml tag "class" of the UML project data file.
+The class <b>XmlClassGlobalView</b> has burden to create/update each Xml tag "class" of the UML project data file.
 
-The class dlgClass with its own controls manage the GUI. In this window form, we can find ComboBox, TextBox and DataGridView controls.
+The class dlgClass with its own controls manage the GUI. In this window form, we can find <b>ComboBox</b>, <b>TextBox</b> and <b>DataGridView</b> controls.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%201-2.PNG
+
+=== Class Global View children ===
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%202-2.PNG
