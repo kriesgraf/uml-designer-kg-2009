@@ -29,3 +29,19 @@ The aim of this package is to provide in interface some business classes which e
 Each class of this package has the burden to build DOM objects: which tag name, which attributes, which children, these impose the structure (DTD) of the XML document.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Documents%20package%20class%20diagram.PNG
+
+== Package view ==
+
+As we saw in the introduction, the classes of this package have the same ancestor XmlComponent.
+
+Each class of this package provides an interface between package document and graphical components of package System.Windows.Forms.
+
+=== Class Global View ===
+
+This class has burden to create/update each Xml tag "class" of the UML project data file.
+
+The class dlgClass with its own controls manage the GUI. In this window form, we can find ComboBox, TextBox and DataGridView controls.
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%201-2.PNG
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%202-2.PNG
