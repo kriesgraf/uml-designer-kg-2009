@@ -18,6 +18,6 @@ The Edit command is always reachable with a mouse double-click.
 
 The drag and drop command is available to reorder objects in a list box or data grid view. But this command is not available when the order is unnecessary.
 
-This is available too to move objects down below a sub-package.
+This is available too to move objects down below into a sub-package.
 
 To be continue....
