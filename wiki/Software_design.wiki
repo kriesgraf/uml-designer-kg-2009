@@ -33,7 +33,7 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlP
 
 As we will often mention these classes in the following class diagrams, it was preferable to present them now.
 
- * The class <b>XmlBindingList</b> manages a pool of <b>Binding</b> objects from package System.Windows.Forms. Each one binds a property of an object <b>Control</b>, for example property <i>Text</i> for a <b>TextBox</b>, with a property of a package view class.
+ * The class <b>XmlBindingList</b> manages a pool of <b>Binding</b> objects from package System.Windows.Forms. Each one binds a property of a <b>package view</b> class with a property of a <b>Control</b> object, example: property <i>Text</i> for a <b>TextBox</b>.
 
  * The class <b>XmlBindingDataGridView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataGridView</b>. It wa necessary to design this class to maximize usage of polymorph calls to set special DataGridView properties, to fill colums and rows (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfGridViewNotifier</b>).  
 
