@@ -1,4 +1,5 @@
 #summary Software design part 2.
+#sidebar TableOfContents
 
 <wiki:toc max_depth="2" />
 
@@ -15,5 +16,3 @@ We have choose ml format for project data file to allow a loads of possible conv
 === Xml "class" node structure ===
 
 <img src="http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20project%20data%20file%20class%20node%20structure.PNG"/> Text
-
-
