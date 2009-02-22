@@ -1,4 +1,6 @@
-#summary One-sentence summary of this page.
+#summary Getting started
+
+<wiki:toc max_depth="2" />
 
 = Quick tips =
 
