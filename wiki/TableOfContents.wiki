@@ -1,13 +1,8 @@
 #summary Table of contents
 
-= Introduction =
-
+= [http://code.google.com/p/uml-designer-kg-2009/ Project home] =
 Add your content here.
 
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= [Software_design Software design] =
+ * [Software_design Package overview]
+ * [Software_design_2 UML Project data file structure]
