@@ -10,6 +10,10 @@ Sometimes I will use the term _namespace_ instead of package because this is the
 
 The keystones are defined in package *xml*. Look at sources in SVN repository
 in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/xml svn/trunk/ClassXmlProject/xml/], in class declaration, namespace is not yet declared! It's not a mistake, this application is still experimental!
+ * The Design Pattern [http://www.dofactory.com/Patterns/Patterns.aspx (ToBeDefined)], <b>XmlComponent</b> in this project, assumes data exchange with [http://www.w3.org/DOM/ DOM objects] of namespace [http://msdn.microsoft.com/en-us/library/system.xmlaspx System.Xml] (element nodes and attribute nodes).
+ * The Design Pattern [http://www.dofactory.com/Patterns/PatternComposite.aspx Composite], <b>XmlComposite</b> in this project, provides a second coverage of the DOM tree pointing only business objets. Inherits <b>XmlComponent</b>.
+ * The Design Pattern [http://www.dofactory.com/Patterns/PatternPrototype.aspx Prototype], <b>XmlNodeManager</b> in this project, has the burden to create objects needed for data display/update managements.
+
 
 Other classes are declared in this package and assume some interactions with DOM elements:
  * *XslSimpleTransform* encapsulates class [http://msdn.microsoft.com/en-us/library/system.xml.xsl.xslcompiledtransform.aspx XslCompiledTransform] from package System.Xml.Xsl to provide new interface methods.
@@ -54,9 +58,9 @@ Each class of this package provides an interface between a package documents cla
 
 === Class Global View ===
 
-The class *XmlClassGlobalView* has burden to create/update each Xml tag [Software_design_2 class] of the UML project data file.
+The class *XmlClassGlobalView* has burden to create/update each Xml tag [Software_design_2 class] node of the UML project data file.
 
-The class dlgClass with its own controls manage the GUI. In this window form, we can find [http://msdn.microsoft.com/en-us/library/system.windows.forms.combobox.aspx ComboBox], [http://msdn.microsoft.com/en-us/library/system.windows.forms.textbox.aspx TextBox] and [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView] controls.
+The class dlgClass with its own controls manage the GUI. In this window form, we can find [http://msdn.microsoft.com/en-us/library/system.windows.forms.combobox.aspx ComboBox], [http://msdn.microsoft.com/en-us/library/system.windows.forms.textbox.aspx TextBox] and [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView] controls, this last use is detailed in next paragraph.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%201-2.PNG
 
@@ -64,9 +68,11 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlP
 
 The Xml tag [Software_design_2 class] node of the UML project data file has several children:
 
- * Node "collaboration": this references a "relation" node that declares a collaboration between to classes. Project data updates is managed by *XmlClassRelationView* and is parent class *XmlCollaborationSpec*.
+ * Node [Software_design_2 collaboration]: this references a "relation" node that declares a collaboration between to classes. *XmlClassRelationView* and is parent class *XmlCollaborationSpec* manage display in [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView] and cells updates.
 
- * Node "dependency": this references a "class" node that is in dependency with this class. Project data updates is managed by *XmlClassDependencyView* and is parent class *XmlDependencySpec*.
+ * Node [Software_design_2 dependency]: this references another <u>class</u> node that is in dependency. *XmlClassDependencyView* and is parent class *XmlDependencySpec* manage display in DataGridView and cells updates.
+
+ * *XmlClassMemberView* manages display in DataGridView and cells updates for nodes : [Software_design_2 typedef], [Software_design_2 property] and [Software_design_2 method].
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%202-2.PNG
 
