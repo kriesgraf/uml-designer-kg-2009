@@ -1,7 +1,4 @@
-#summary Software design part 2.
 #sidebar TableOfContents
-
-<wiki:toc max_depth="2" />
 
 = UML project data file structure =
 
