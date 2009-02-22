@@ -9,7 +9,7 @@ Sometimes I will use the term <i>namespace</i> instead of package because this i
 
 == Package xml ==
 
-The keystones are defined in package <b>xml</b>. For now look at sources in SVN repository
+The keystones are defined in package <b>xml</b>. Look at sources in SVN repository
 in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/xml svn/trunk/ClassXmlProject/xml/], in class declaration, namespace is not yet declared! It's not a mistake, this application is still experimental!
 
 Other classes are declared in this package and assume some interactions with DOM elements:
@@ -31,13 +31,14 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlP
 
 == Package bindings ==
 
-As we will often mention these classes in the following class diagrams, it was preferable to present them now.
+As we will often mention these classes in the following class diagrams, it was preferable to present them now. Look at sources in SVN repository
+in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/bindings svn/trunk/ClassXmlProject/bindings/]
 
  * The class <b>XmlBindingList</b> manages a pool of <b>Binding</b> objects from package System.Windows.Forms. Each one binds a property of a <b>package view</b> class with a property of a <b>Control</b> object, example: property <i>Text</i> for a <b>TextBox</b>.
 
- * The class <b>XmlBindingDataGridView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataGridView</b>. It wa necessary to design this class to maximize usage of polymorph calls to set special DataGridView properties, to fill colums and rows (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfGridViewNotifier</b>).  
+ * The class <b>XmlBindingDataGridView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataGridView</b>. <br/>It was necessary to design this class to maximize usage of polymorph calls to set special DataGridView properties, to fill colums and rows (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfGridViewNotifier</b>).  
 
- * The class <b>XmlBindingDataListView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataListView</b>. The DataListView is not a class from package System.Windows.Forms. We decided to design this class to have the same level of collaboration than a <b>DataGridView</b> class. It wa necessary to design XmlBindingDataListView to maximize usage of polymorph calls to set special ListView properties, to draw objects (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfListViewNotifier</b>). The XmlBindingDataListView provides a hierachical view of a UML project, a double mouse click allows to explore sub-levels, a drag & drop move a object to a sub-level. The relation <i>Stack</i> allows to save history and go back from sub-levels and <i>ParentNode</i> save current level.
+ * The class <b>XmlBindingDataListView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataListView</b>. The DataListView is not a class from package System.Windows.Forms, we decided to design this class to have the same level of collaboration than a <b>DataGridView</b> class. <br/>It was necessary to design XmlBindingDataListView to maximize usage of polymorph calls to set special ListView properties, to draw objects (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfListViewNotifier</b>). <br/>The XmlBindingDataListView provides a hierachical view of a UML project, a double mouse click allows to explore sub-levels, a drag & drop move an object to a sub-level. The relation <i>Stack</i> allows to save history and go back from sub-levels and relation <i>ParentNode</i> save current level.
 
  * The class <b>XmlBindingCombo</b> manages only one combo. It was necessary to design this class, similar as a <b>Binding</b>, because <b>ComboBox</b> can display a list of data or can be used as a simple input field like a <b>TextBox</b>.
 
