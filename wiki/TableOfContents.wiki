@@ -1,8 +1,10 @@
 #summary Table of contents
 
-= [http://code.google.com/p/uml-designer-kg-2009/ Project home] =
-Add your content here.
+== [http://code.google.com/p/uml-designer-kg-2009/ Project home] ==
 
-= [Software_design Software design] =
+== [Getting_started User manual] ==
+ * [Getting_started  Getting started]
+
+== [Software_design Software design] ==
  * [Software_design Package overview]
  * [Software_design_2 UML Project data file structure]
