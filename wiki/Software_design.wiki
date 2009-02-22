@@ -36,9 +36,9 @@ in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/tru
 
  * The class <b>XmlBindingList</b> manages a pool of <b>Binding</b> objects from package System.Windows.Forms. Each one binds a property of a <b>package view</b> class with a property of a <b>Control</b> object, example: property <i>Text</i> for a <b>TextBox</b>.
 
- * The class <b>XmlBindingDataGridView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataGridView</b>. <br/>It was necessary to design this class to maximize usage of polymorph calls to set special DataGridView properties, to fill colums and rows (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfGridViewNotifier</b>).  
+ * The class <b>XmlBindingDataGridView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataGridView</b>. <br/>It was necessary to design this class to maximize usage of polymorphic calls to set special DataGridView properties, to fill colums and rows (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfGridViewNotifier</b>).  
 
- * The class <b>XmlBindingDataListView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataListView</b>. The DataListView is not a class from package System.Windows.Forms, we decided to design this class to have the same level of collaboration than a <b>DataGridView</b> class. <br/>It was necessary to design XmlBindingDataListView to maximize usage of polymorph calls to set special ListView properties, to draw objects (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfListViewNotifier</b>). <br/>The XmlBindingDataListView provides a hierachical view of a UML project, a double mouse click allows to explore sub-levels, a drag & drop move an object to a sub-level. The relation <i>Stack</i> allows to save history and go back from sub-levels and relation <i>ParentNode</i> save current level.
+ * The class <b>XmlBindingDataListView</b> manages data bindings between the children of a <b>XmlComposite</b> object and a <b>DataListView</b>. The DataListView is not a class from package System.Windows.Forms, we decided to design this class to have the same level of collaboration than a <b>DataGridView</b> class. <br/>It was necessary to design XmlBindingDataListView to maximize usage of polymorphic calls to set special ListView properties, to draw objects (see interface <b>InterfViewControl</b>). And also to answer to Windows events: click, delete, add, drag, etc (See interface <b>InterfListViewNotifier</b>). <br/>The XmlBindingDataListView provides a hierachical view of a UML project, a double mouse click allows to explore sub-levels, a drag & drop move an object to a sub-level. The relation <i>Stack</i> allows to save history and go back from sub-levels and relation <i>ParentNode</i> save current level.
 
  * The class <b>XmlBindingCombo</b> manages only one combo. It was necessary to design this class, similar as a <b>Binding</b>, because <b>ComboBox</b> can display a list of data or can be used as a simple input field like a <b>TextBox</b>.
 
@@ -48,7 +48,8 @@ http://uml-designer-kg-2009.googlecode.com/svn-history/r22/trunk/Software%20desi
 
 == Package view ==
 
-As we saw in the introduction, the classes of this package have the same ancestor <b>XmlComponent</b>.
+As we saw in the introduction, the classes of this package have the same ancestor <b>XmlComponent</b>. Look at sources in SVN repository
+in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/view svn/trunk/ClassXmlProject/view/]
 
 Each class of this package provides an interface between a package documents class and a graphical component class from package System.Windows.Forms. 
 
@@ -61,5 +62,11 @@ The class dlgClass with its own controls manage the GUI. In this window form, we
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%201-2.PNG
 
 === Class Global View children ===
+
+The Xml tag "class" node of the UML project data file has several children:
+
+ * Node "collaboration": this references a "relation" node that declares a collaboration between to classes. Project data updates is managed by <b>XmlClassRelationView</b> and is parent class <b>XmlCollaborationSpec</b>.
+
+ * Node "dependency": this references a "class" node that is in dependency with this class. Project data updates is managed by <b>XmlClassDependencyView</b> and is parent class <b>XmlDependencySpec</b>.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%202-2.PNG
