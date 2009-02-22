@@ -1,5 +1,4 @@
-#summary Soft ware design part 1.
-<wiki:toc max_depth="2" />
+#sidebar TableOfContents
 
 = Packages overview =
 
