@@ -47,7 +47,14 @@ in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/tru
 
  * As against, it was not necessary to specialise class [http://msdn.microsoft.com/en-us/library/system.windows.forms.listbox.aspx ListBox] because this already owns a _DataSource_ property. For example, we can build an [http://msdn.microsoft.com/en-us/library/system.collections.arraylist.aspx ArrayList] of *XmlComponent* objects and use it as DataSource.
 
-http://uml-designer-kg-2009.googlecode.com/svn-history/r22/trunk/Software%20design/ClassXmlProject/Bindings%20package%20classes%20diagram.PNG
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Bindings%20package%20classes%20diagram.PNG
+
+== Package controls ==
+
+As we will often mention these classes in the following class diagrams, it was preferable to present them now. Look at sources in SVN repository
+in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/controls svn/trunk/ClassXmlProject/controls/]
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Controls%20package%20class%20diagram.PNG
 
 == Package view ==
 
