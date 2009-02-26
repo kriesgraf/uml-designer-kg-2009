@@ -1,14 +1,22 @@
 #sidebar TableOfContents
 
+=Installation=
+
+First download the current release [http://uml-designer-kg-2009.googlecode.com/files/ClassXmlProject_1_0_0_3.exe 1.0.0.3] and save it in a specific folder, for example: {{{C:\ClassXmlProject}}}. 
+
+When you execute this auto-extractible archive, you will inflate setup application and resources in this folder. Remain it for future release because you can recover previous releases easily. 
+
+Program {{{setup.exe}}} will install all files, resources and framework that is required . If the setup fails to install the *Microsoft .NET* framework you can download it [http://search.microsoft.com/results.aspx?form=MSHOME&mkt=en-US&setlang=en-US&q=Microsoft%20.NET%20Framework%203.5 there]. 
+
 = Quick tips =
 
 == Pop-up-menu ==
 
-Most orders can be accessed by right click on the mouse. 
+Most commands can be accessed by right click on the mouse. 
 
-Usually an icon is associated with each menu item to find it faster. Moreover, objects appear in data list views have the same icon than the command to create them.
+Usually an icon is associated with each menu item to find it faster. Moreover, the objects and commands that can create them have the same icon.
 
-A Menu item anavailable for an object is not yet disable but cause no error.
+A Menu item unavailable for an object is not yet disable but cause no error.
 
 == Mouse double-click ==
 
@@ -16,8 +24,8 @@ The Edit command is always reachable with a mouse double-click.
 
 == Drag and drop ==
 
-The drag and drop command is available to reorder objects in a list box or data grid view. But this command is not available when the order is unnecessary.
+The drag and drop command is available to reorder objects in a list box or data grid views. But this command is not available when the order is unnecessary.
 
-This is available too to move objects down below into a sub-package.
+This is available too to move objects down below into a sub-package in list views.
 
 To be continue....
