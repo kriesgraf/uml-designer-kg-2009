@@ -98,3 +98,10 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlP
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Property%20Param%20view%20diagram.PNG
 
 To be continue...
+
+=== Method View ===
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Method%20Constructor%20view%20diagram.PNG
+
+To be continue...
+
