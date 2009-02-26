@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<root version="1.2" name="Doxygen_project">
+  <generation destination="C:\" language="0"/>
+  <comment brief="A brief comment">A detailed comment
+      </comment>
+  <class visibility="package" name="New_class1" id="class_new__class1" inline="none" implementation="simple" constructor="public" destructor="public">
+    <comment>
+      <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a brief comment. </para>    </briefdescription>
+      <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here details </para>    </detaileddescription>
+    </comment>
+    <typedef name="New_typedef" id="class_new__class1_1d1a9c5aca9b85d9089e449d2d0c50b0a">
+      <type modifier="var" level="0" by="val">
+        <enumvalue name="NEW_ENUM1" value="">
+Brief comment 1.           </enumvalue>
+        <enumvalue name="NEW_ENUM2" value="12">
+Brief comment 2.           </enumvalue>
+        <enumvalue name="NEW_ENUM3" value="13">
+Brief comment 3.           </enumvalue>
+      </type>
+      <variable range="public"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+    </typedef>
+    <typedef name="TListNew_child" id="class_new__class1_15a0138dff1d9a770bd1b9868a45dbb5e">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ref refid="class_new__class4" kindref="compound">New_class4</ref>&lt; bool, <ref refid="class_new__class3" kindref="compound">New_class3</ref> &gt;</type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+    </typedef>
+    <typedef name="TNew_childIterator" id="class_new__class1_18bbc4d90701702ff7df9d390c733db32">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TListNew_child::iterator</type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+    </typedef>
+    <typedef name="TListNew_child" id="class_new__class1_1bff5313b4b9b5cb3021268129748fad3">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ref refid="class_new__class4" kindref="compound">New_class4</ref>&lt; unsigned short, <ref refid="class_new__class2" kindref="compound">New_class2</ref> &gt;</type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+    </typedef>
+    <!--memberdef-variable:class_new__class1_1cdeded49eb3622188aae862f2bfaa902-->
+    <property name="m_New_child" num-id="1" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ref refid="class_new__class2" kindref="compound">New_class2</ref>
+      </type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Relation "New_relation1" to 1 <ref refid="class_new__class2" kindref="compound">New_class2</ref>. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <!--memberdef-variable:class_new__class1_169f36f4d09fa81e1e39677e2e5dd6c00-->
+    <property name="m_tListNew_child" num-id="2" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ref refid="class_new__class4" kindref="compound">TListNew_child</ref>
+      </type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Relation "New_relation2" to 0n <ref refid="class_new__class3" kindref="compound">New_class3</ref>. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Relation "New_relation3" to 0n <ref refid="class_new__class2" kindref="compound">New_class2</ref>. </para>        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <method constructor="no" num-id="1" name="GetNew_child" member="object" implementation="simple">
+      <return>
+        <type>
+          <ref refid="class_new__class2" kindref="compound" xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">New_class2</ref>
+        </type>
+        <variable range="public"/>
+        <comment/>
+      </return>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+    </method>
+  </class>
+  <class visibility="package" name="New_class2" id="class_new__class2" inline="none" implementation="simple" constructor="public" destructor="public">
+    <comment>
+      <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a brief comment. </para>    </briefdescription>
+      <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here details </para>    </detaileddescription>
+    </comment>
+    <!--memberdef-variable:class_new__class2_109d88730640164465bec32b96a4f1138-->
+    <property name="m_eNew_property1" num-id="1" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ref refid="class_new__class1_1d1a9c5aca9b85d9089e449d2d0c50b0a" kindref="member">New_class1::New_typedef</ref>
+      </type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <!--memberdef-variable:class_new__class2_1907a973a52a8d18a95434113e4cd157f-->
+    <property name="m_New_father" num-id="2" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ref refid="class_new__class1" kindref="compound">New_class1</ref>
+      </type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Relation "New_relation1" to 1 <ref refid="class_new__class1" kindref="compound">New_class1</ref>. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Relation "New_relation3" to 1 <ref refid="class_new__class1" kindref="compound">New_class1</ref>. </para>        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <method constructor="no" num-id="1" name="GetNew_property1" member="object" implementation="simple">
+      <return>
+        <type>
+          <ref refid="class_new__class1_1d1a9c5aca9b85d9089e449d2d0c50b0a" kindref="member" xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">New_class1::New_typedef</ref>
+        </type>
+        <variable range="public"/>
+        <comment/>
+      </return>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+    </method>
+    <method constructor="no" num-id="2" name="SetNew_father" member="object" implementation="simple">
+      <return>
+        <type>void</type>
+        <variable range="public"/>
+        <comment/>
+      </return>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <param name="New_father" num-id="1">
+        <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <ref refid="class_new__class1" kindref="compound">New_class1</ref>
+        </type>
+        <variable range="private"/>
+        <comment/>
+      </param>
+    </method>
+  </class>
+  <class visibility="package" name="New_class3" id="class_new__class3" inline="constructor" implementation="simple" constructor="public" destructor="public">
+    <inherited idref="class_new__class1" range="public"/>
+    <comment>
+      <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a brief comment. </para>    </briefdescription>
+      <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here details </para>    </detaileddescription>
+    </comment>
+    <!--memberdef-variable:class_new__class3_13fc3f9aac6b4882dda1ea868ab667660-->
+    <property name="m_sNew_property1" num-id="1" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">short</type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <!--memberdef-variable:class_new__class3_157d8bc59b459edf0826b05249bd12e2e-->
+    <property name="m_lNew_property2" num-id="2" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">long</type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <!--memberdef-variable:class_new__class3_1e63142db9111835cebff13b01e09836b-->
+    <property name="m_strNew_property3" num-id="3" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">std::string</type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <!--memberdef-variable:class_new__class3_1cbb56350952ac926e82125f68700e60c-->
+    <property name="m_New_father" num-id="4" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ref refid="class_new__class1" kindref="compound">New_class1</ref>
+      </type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Relation "New_relation2" to 1 <ref refid="class_new__class1" kindref="compound">New_class1</ref>. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+  </class>
+  <class visibility="package" name="New_class4" id="class_new__class4" inline="both" implementation="container" constructor="public" destructor="public">
+    <model name="A"/>
+    <model name="B"/>
+    <comment>
+      <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a brief comment. </para>    </briefdescription>
+      <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here details </para>    </detaileddescription>
+    </comment>
+    <typedef name="New_container" id="class_new__class4_1c6b759dfa090e7b725e2da8581d9bac0">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">undef_template&lt; unsigned short &gt;</type>
+      <variable range="public"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+    </typedef>
+    <!--memberdef-variable:class_new__class4_12eabd73c461b64d0b7fad42a8ef4e78d-->
+    <property name="m_tmplNew_property1" num-id="1" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">B</type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <!--memberdef-variable:class_new__class4_14c8c285b52bbc3d86646e8dd6b7419d1-->
+    <property name="m_tmplNew_property2" num-id="2" member="object">
+      <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">A</type>
+      <variable range="private"/>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        </detaileddescription>
+      </comment>
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </property>
+    <method constructor="no" num-id="1" name="New_method1" member="object" implementation="simple">
+      <return>
+        <type>unsigned short</type>
+        <variable range="protected"/>
+        <comment>Return comment </comment>
+      </return>
+      <comment>
+        <briefdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Brief comment. </para>        </briefdescription>
+        <detaileddescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment 
+
+</para>        </detaileddescription>
+      </comment>
+      <param name="New_param" num-id="1">
+        <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">long</type>
+        <variable range="private"/>
+        <comment>
+          <parameterdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment </para></parameterdescription>
+        </comment>
+      </param>
+      <param name="New_param2" num-id="2">
+        <type xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">unsigned short</type>
+        <variable range="private"/>
+        <comment>
+          <parameterdescription xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<para>Insert here a comment2 </para></parameterdescription>
+        </comment>
+      </param>
+    </method>
+  </class>
+</root>
