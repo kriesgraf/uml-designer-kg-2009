@@ -225,14 +225,22 @@ Public Class MDIParent
 
     Private Sub MDIParent_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
+            If Deployment.Application.ApplicationDeployment.IsNetworkDeployed Then
+                Me.Text = Me.Text + " - " + My.Application.Deployment.CurrentVersion.ToString
+            Else
+                Me.Text = Me.Text + " - " + "Version not published"
+            End If
+
             Dim strTmpFolder As String = My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData
             If My.Computer.FileSystem.DirectoryExists(strTmpFolder) = False Then
                 My.Computer.FileSystem.CreateDirectory(strTmpFolder)
             End If
 
-            XmlProjectTools.CopyDocTypeDeclarationFile(strTmpFolder, False)
+            If XmlProjectTools.CopyDocTypeDeclarationFile(strTmpFolder, False) = False Then
 
-            If My.Application.CommandLineArgs.Count > 0 Then
+                Me.Close()
+
+            ElseIf My.Application.CommandLineArgs.Count > 0 Then
                 Dim strFilename As String = My.Application.CommandLineArgs.Item(0)
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
@@ -263,6 +271,21 @@ Public Class MDIParent
 #End Region
 
     Private Sub AboutToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AboutToolStripMenuItem.Click
-        MsgBox(Application.StartupPath, MsgBoxStyle.Information)
+        Dim msg As String = ""
+        msg += "Application paths and declarations:"
+        msg += vbCrLf + "------------------------------------------------------------------------------------------"
+        msg += vbCrLf + "- Application.CommonAppDataPath:    " + vbTab + Application.CommonAppDataPath
+        msg += vbCrLf + "- Application.CommonAppDataRegistry:" + vbTab + Application.CommonAppDataRegistry.ToString
+        msg += vbCrLf + "- Application.CompanyName:          " + vbTab + Application.CompanyName
+        msg += vbCrLf + "- Application.CurrentCulture:       " + vbTab + Application.CurrentCulture.ToString
+        msg += vbCrLf + "- Application.CurrentInputLanguage: " + vbTab + Application.CurrentInputLanguage.LayoutName
+        msg += vbCrLf + "- Application.ExecutablePath:       " + vbTab + Application.ExecutablePath
+        msg += vbCrLf + "- Application.LocalUserAppDataPath: " + vbTab + Application.LocalUserAppDataPath
+        msg += vbCrLf + "- Application.ProductName:          " + vbTab + Application.ProductName
+        msg += vbCrLf + "- Application.ProductVersion:       " + vbTab + Application.ProductVersion
+        msg += vbCrLf + "- Application.StartupPath:          " + vbTab + Application.StartupPath
+        msg += vbCrLf + "- Application.UserAppDataPath:      " + vbTab + Application.UserAppDataPath
+        msg += vbCrLf + "- Application.UserAppDataRegistry:  " + vbTab + Application.UserAppDataRegistry.ToString
+        MsgBox(msg, MsgBoxStyle.Information, "About " + Me.Text)
     End Sub
 End Class

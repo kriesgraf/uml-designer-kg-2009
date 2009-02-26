@@ -53,6 +53,7 @@ Public Class XmlProjectTools
         NotFound
         Older
         MoreRecent
+        SourceNotFound
     End Enum
 
     Public Structure TSimpleDeclaration
@@ -65,13 +66,15 @@ Public Class XmlProjectTools
 
     Public Shared Function CreateNewProject() As String
         Return "<?xml version='1.0' encoding='utf-8'?>" + vbCrLf + _
-               "<!DOCTYPE root SYSTEM '" + _
-               My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder + cstSchemaName + ".xml") _
-               + "'>" + vbCrLf
+               "<!DOCTYPE root SYSTEM '" + GetDtdRessource() + "'>" + vbCrLf
     End Function
 
     Public Shared Function GetDocTypeDeclarationFile() As String
         Return cstSchemaName + ".dtd"
+    End Function
+
+    Public Shared Function GetDtdRessource() As String
+        Return My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder + cstSchemaName + ".xml")
     End Function
 
     Public Shared Function GetDestinationDtdFile(ByVal strDestinationFolder As String) As String
@@ -80,12 +83,15 @@ Public Class XmlProjectTools
 
     Public Shared Function CheckDocTypeDeclarationFile(ByVal strDestinationFolder As String) As EDtdFileExist
         Dim strDestination As String = GetDestinationDtdFile(strDestinationFolder)
-        Dim strOrigin As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, _
-                                                                     My.Settings.ToolsFolder + cstSchemaName + ".xml")
+        Dim strOrigin As String = GetDtdRessource()
 
         If My.Computer.FileSystem.FileExists(strDestination) = False _
         Then
             Return EDtdFileExist.NotFound
+
+        ElseIf My.Computer.FileSystem.FileExists(strOrigin) = False _
+        Then
+            Return EDtdFileExist.SourceNotFound
         Else
             Dim originInfo As FileInfo = My.Computer.FileSystem.GetFileInfo(strOrigin)
             Dim destInfo As FileInfo = My.Computer.FileSystem.GetFileInfo(strDestination)
@@ -115,6 +121,11 @@ Public Class XmlProjectTools
 
     Public Shared Function UseDocTypeDeclarationFileForProject(ByVal strSourceFolder As String) As Boolean
         Select Case CheckDocTypeDeclarationFile(strSourceFolder)
+
+            Case EDtdFileExist.SourceNotFound
+                MsgBox("The resource " + GetDtdRessource() + " is missing. " + _
+                       vbCrLf + "Please retry installation to replace missing files. ")
+                Return False
 
             Case EDtdFileExist.Equal
                 ' Nothing to do
@@ -162,6 +173,11 @@ Public Class XmlProjectTools
     Public Shared Function UseDocTypeDeclarationFileForImport(ByVal strSourceFolder As String) As Boolean
         Select Case CheckDocTypeDeclarationFile(strSourceFolder)
 
+            Case EDtdFileExist.SourceNotFound
+                MsgBox("The resource " + GetDtdRessource() + " is missing. " + _
+                       vbCrLf + "Please retry installation to replace missing files. ")
+                Return False
+
             Case EDtdFileExist.Equal
                 ' Nothing to do
 
@@ -203,6 +219,11 @@ Public Class XmlProjectTools
         Dim bResult As Boolean = False
         Try
             Select Case CheckDocTypeDeclarationFile(strDestinationFolder)
+
+                Case EDtdFileExist.SourceNotFound
+                    MsgBox("The resource " + GetDtdRessource() + " is missing. " + _
+                           vbCrLf + "Please retry installation to replace missing files. ", MsgBoxStyle.Critical)
+                    Return False
 
                 Case EDtdFileExist.NotFound
                     CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
