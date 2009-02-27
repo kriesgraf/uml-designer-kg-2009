@@ -1,8 +1,8 @@
 = Troubleshooting =
 
-Some warning messages appear when you save/copy/open a project in a different/new folder or when you install a new application release. The primary cause is the file 'class-model.dtd'. 
+Some warning messages appear when you save/copy/open a project in a different/new folder or when you install a new application release. The primary cause is the file 'class-model.dtd'. At each new release installation, original file 'class-model.dtd' in application resources is created and also its file creation date differs from one in your projects' workspace folder.
 
-The DTD version is not yet controlled when file creation date differs between project folder and application resource. This warning message is sometimes inproper but it's better to know now exactly the consequence of a copy of the file 'class-model.dtd'.
+The DTD version (current is 2.1) is not yet controlled. This warning message is sometimes improper but it's better to know now exactly the consequence of copying this file.
 
 == File '... ...\class-model.dtd' is more older than application ressource ==
 
