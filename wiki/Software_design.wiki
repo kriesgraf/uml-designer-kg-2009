@@ -4,42 +4,42 @@
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20Package%20diagram.PNG 
 
-Sometimes I will use the term _namespace_ instead of package because this is the VB syntax term.
+I will use the term _namespace_ instead of package because this is the VB syntax term and this avoids confusion with Xml tag [Software_design_2 nodes] that describes UML projects.
 
-== Package xml ==
+== Namespace xml ==
 
-The keystones are defined in package *xml*. Look at sources in SVN repository
+The keystones are defined in namespace *xml*. Look at sources in SVN repository
 in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/xml svn/trunk/ClassXmlProject/xml/], in class declaration, namespace is not yet declared! It's not a mistake, this application is still experimental!
  * The Design Pattern [http://www.dofactory.com/Patterns/Patterns.aspx (ToBeDefined)], <b>XmlComponent</b> in this project, assumes data exchange with [http://www.w3.org/DOM/ DOM objects] of namespace [http://msdn.microsoft.com/en-us/library/system.xml.aspx System.Xml] (element nodes and attribute nodes).
- * The Design Pattern [http://www.dofactory.com/Patterns/PatternComposite.aspx Composite], <b>XmlComposite</b> in this project, provides a second coverage of the DOM tree pointing only business objets. Inherits <b>XmlComponent</b>.
+ * The Design Pattern [http://www.dofactory.com/Patterns/PatternComposite.aspx Composite], <b>XmlComposite</b> in this project, provides a second coverage of the DOM tree pointing only business objects. Inherits <b>XmlComponent</b>.
  * The Design Pattern [http://www.dofactory.com/Patterns/PatternPrototype.aspx Prototype], <b>XmlNodeManager</b> in this project, has the burden to create objects needed for data display/update managements.
 
 
-Other classes are declared in this package and assume some interactions with DOM elements:
- * *XslSimpleTransform* encapsulates class [http://msdn.microsoft.com/en-us/library/system.xml.xsl.xslcompiledtransform.aspx XslCompiledTransform] from package [http://msdn.microsoft.com/en-us/library/system.xml.xsl.aspx System.Xml.Xsl] to provide new interface methods.
+Other classes are declared in this namespace and assume some interactions with DOM elements:
+ * *XslSimpleTransform* encapsulates class [http://msdn.microsoft.com/en-us/library/system.xml.xsl.xslcompiledtransform.aspx XslCompiledTransform] from namespace [http://msdn.microsoft.com/en-us/library/system.xml.xsl.aspx System.Xml.Xsl] to provide new interface methods.
  * *XmlReferenceNodeCounter* and *XmlNodeCounter* generate unique ID for XML attributes typed [http://www.w3.org/TR/REC-xml/#id ID] and [http://www.w3.org/TR/REC-xml/#idref IDREF].
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Xml%20package%20class%20diagram.PNG
 
-== Package documents ==
+== Namespace documents ==
 
-As we saw in the introduction, the classes of this package have the same ancestor *XmlComponent*. Look at sources in SVN repository
+As we saw in the introduction, the classes of this namespace have the same ancestor *XmlComponent*. Look at sources in SVN repository
 in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/documents svn/trunk/ClassXmlProject/documents/]
 
-The aim of this package is to provide in interface some business classes which expose only properties and methods. The interface with DOM objects is hidden (protected methods). 
+The aim of this namespace is to provide in interface some business classes which expose only properties and methods. The interface with DOM objects is hidden (protected methods). 
 
-Each class of this package has the burden to build DOM objects: which tag name, which attributes, which children, these impose the [Software_design_2 structure (DTD)] of the XML project data document.
+Each class of this namespace has the burden to build DOM objects: which tag name, which attributes, which children, these impose the [Software_design_2 structure (DTD)] of the XML project data document.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Documents%20package%20class%20diagram.PNG
 
-== Package bindings ==
+== Namespace bindings ==
 
 As we will often mention these classes in the following class diagrams, it was preferable to present them now. Look at sources in SVN repository
 in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/bindings svn/trunk/ClassXmlProject/bindings/]
 
- * The class *XmlBindingList* manages a pool of [http://msdn.microsoft.com/en-us/library/system.windows.forms.binding.aspx Binding] objects from package [http://msdn.microsoft.com/en-us/library/system.windows.forms.aspx System.Windows.Forms]. Each one binds a property of a *package view* class with a property of a *Control* object, example: property _Text_ for a [http://msdn.microsoft.com/en-us/library/system.windows.forms.textbox.aspx TextBox].
+ * The class *XmlBindingList* manages a pool of [http://msdn.microsoft.com/en-us/library/system.windows.forms.binding.aspx Binding] objects from namespace [http://msdn.microsoft.com/en-us/library/system.windows.forms.aspx System.Windows.Forms]. Each one binds a property of a *namespace view* class with a property of a *Control* object, example: property _Text_ for a [http://msdn.microsoft.com/en-us/library/system.windows.forms.textbox.aspx TextBox].
 
- * The class *XmlBindingDataGridView* manages data bindings between the children of a *XmlComposite* object and a [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView]. <br/>It was necessary to design this class to maximize usage of polymorphic calls to set special DataGridView properties, to fill colums and rows (see interface [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/ClassXmlProject/xml/XmlComponent.vb InterfViewControl]). And also to answer to Windows events: click, delete, add, drag, etc (See interface [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/ClassXmlProject/bindings/XmlBindingDataGridView.vb InterfGridViewNotifier]).  
+ * The class *XmlBindingDataGridView* manages data bindings between the children of a *XmlComposite* object and a [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView]. <br/>It was necessary to design this class to maximize usage of polymorphic calls to set special DataGridView properties, to fill columns and rows (see interface [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/ClassXmlProject/xml/XmlComponent.vb InterfViewControl]). And also to answer to Windows events: click, delete, add, drag, etc (See interface [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/ClassXmlProject/bindings/XmlBindingDataGridView.vb InterfGridViewNotifier]).  
 
  * The class *XmlBindingDataListView* manages data bindings between the children of a *XmlComposite* object and a *DataListView*. <br/>It was necessary to design *XmlBindingDataListView* to maximize usage of polymorphic calls to set special [http://msdn.microsoft.com/en-us/library/system.windows.forms.listview.aspx ListView] properties, to draw objects (see interface [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/ClassXmlProject/xml/XmlComponent.vb InterfViewControl]). And also to answer to Windows events: click, delete, add, drag, etc (See interface [http://code.google.com/p/uml-designer-kg-2009/source/browse/trunk/ClassXmlProject/bindings/XmlBindingDataListView.vb InterfListViewNotifier]). <br/>The *XmlBindingDataListView* provides a hierachical view of a UML project, a double mouse click allows to explore sub-levels, a drag & drop move an object to a sub-level. The relation _Stack_ allows to save history and go back from sub-levels and relation _ParentNode_ save current level.
 
@@ -49,12 +49,12 @@ in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/tru
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Bindings%20package%20classes%20diagram.PNG
 
-== Package controls ==
+== Namespace controls ==
 
 As we will often mention these classes in the following class diagrams, it was preferable to present them now. Look at sources in SVN repository
 in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/controls svn/trunk/ClassXmlProject/controls/]
 
- * The *DataListView* is not a class from package [http://msdn.microsoft.com/en-us/library/system.windows.forms.aspx System.Windows.Forms], we decided to customize class  [http://msdn.microsoft.com/en-us/library/system.windows.forms.listview.aspx ListView] to have the same level of collaboration than a [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView] class (data binding management). 
+ * The *DataListView* is not a class from namespace [http://msdn.microsoft.com/en-us/library/system.windows.forms.aspx System.Windows.Forms], we decided to customize class  [http://msdn.microsoft.com/en-us/library/system.windows.forms.listview.aspx ListView] to have the same level of collaboration than a [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView] class (data binding management). 
 
  * The *XmlDataListView* customizes class *DataListView* to collaborate with *XmlBindingDataListView*.
 
@@ -64,18 +64,21 @@ in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/tru
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Controls%20package%20class%20diagram.PNG
 
-== Package view ==
+== Namespace view ==
 
-As we saw in the introduction, the classes of this package have the same ancestor *XmlComponent*. Look at sources in SVN repository
-in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/view svn/trunk/ClassXmlProject/view/]
+Each project data display is the collaboration of 3 classes:
+ * _Dialog_ class : display project data in Windows forms. Inherits the class [http://msdn.microsoft.com/en-us/library/system.windows.forms.form.aspx Form].
+ * _Document_ class : allows data exchange with DOM objects from System.Xml. Inherits *XmlComponent* or customize an another _Document_ class.
+ * _View_ class : allows data exchange with controls ([http://msdn.microsoft.com/en-us/library/system.windows.forms.control.aspx System.Windows.Forms.Control]) which owns the _Dialog_ class. Inherits a _Document_ class or customize an another _View_ class.
 
-Each class of this package provides an interface between a package documents class and a graphical component class from package [http://msdn.microsoft.com/en-us/library/system.windows.forms.aspx System.Windows.Forms]. 
+Look at sources in SVN repository
+in folder  [http://code.google.com/p/uml-designer-kg-2009/source/browse/#svn/trunk/ClassXmlProject/view svn/trunk/ClassXmlProject/view/] 
 
 === Class Global View ===
 
 The class *XmlClassGlobalView* has burden to create/update each Xml tag [Software_design_2 class] node of the UML project data file.
 
-The class dlgClass with its own controls manage the GUI. In this window form, we can find [http://msdn.microsoft.com/en-us/library/system.windows.forms.combobox.aspx ComboBox], [http://msdn.microsoft.com/en-us/library/system.windows.forms.textbox.aspx TextBox] and [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView] controls, this last use is detailed in next paragraph.
+The class *dlgClass* with its own controls manage the GUI. In this window form, we can find [http://msdn.microsoft.com/en-us/library/system.windows.forms.combobox.aspx ComboBox], [http://msdn.microsoft.com/en-us/library/system.windows.forms.textbox.aspx TextBox] and [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView] controls, this last use is detailed in next paragraph.
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%201-2.PNG
 
@@ -93,15 +96,42 @@ The Xml tag [Software_design_2 class] node of the UML project data file has seve
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Class%20global%20view%20diagram%202-2.PNG
 
-=== Property and Param View ===
-
-http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Property%20Param%20view%20diagram.PNG
+=== Type and Variable View ===
 
 To be continue...
 
+=== Property and Param View ===
+
+In the UML design model:
+
+ * The property is the member attribute of a class. UML description and code generation info is input in window form: *dlgProperty*.
+
+ * The param is the argument of a class member function. UML description and code generation info is input in window form: *dlgParam*.
+
+In the namespace *view*:
+
+ * The class *XmlPropertyView* has burden to create/update each Xml tag [Software_design_2 property] node of the UML project data file.
+
+ * The class *XmlParamView* has burden to create/update each Xml tag [Software_design_2 param] node of the UML project data file.
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Property%20Param%20view%20diagram.PNG
+
 === Method View ===
+
+In the UML design model, The method is the member function of a class. UML description and code generation info is input in window form: *dlgMethod*.
+
+The class *XmlMethodView* has burden to create/update each Xml tag [Software_design_2 method] node of the UML project data file.
+
+As special class constructors are methods with arguments but without return value, it was easily to customize _method view_ components: *dlgConstructor*, *XmlConstructorSpec* and *XmlConstructorView*. This last creates/updates the same Xml tag [Software_design_2 method] node, only some Xml attributes and children nodes differ than a classical <u>method</u> node.
+
+The Xml tag [Software_design_2 method] node of the UML project data file has two kinds of children:
+
+ * Node [Software_design_2 exception]: this references another <u>class</u> node that is used to raise and throw exceptions.
+
+ * Node [Software_design_2 param]: declares an argument of this method.
+
+The *XmlMethodMemberView* class manages display in [http://msdn.microsoft.com/en-us/library/system.windows.forms.datagridview.aspx DataGridView] and cells updates for nodes : [Software_design_2 exception] and [Software_design_2 param].
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/Method%20Constructor%20view%20diagram.PNG
 
 To be continue...
-
