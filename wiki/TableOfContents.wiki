@@ -3,7 +3,9 @@
 == [http://code.google.com/p/uml-designer-kg-2009/ Project home] ==
 
 == [Getting_started User manual] ==
- * [Getting_started  Getting started]
+ * [Getting_started Getting started]
+ * [Troubleshooting Troubleshooting ]
+
 
 == [Software_design Software design] ==
  * [Software_design Package overview]
