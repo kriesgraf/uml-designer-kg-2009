@@ -39,6 +39,19 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlP
  * Attributes *comment* is used to declare comment for Doxygen, Visual Studio comment tools or javadoc (or other in future). 
  * Following nodes *import*, *class*, *package* can have a cardinal of 0..n according to the project description. Each nodes is detailed in a specific paragraph.
 
+== Xml "property" node structure ==
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20project%20data%20file%20property%20node%20structure.PNG
+
+ * To be continue...
+
+
+== Xml "method" node structure ==
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20project%20data%20file%20method%20node%20structure.PNG
+
+ * To be continue...
+
+
 
 To be continue...
-
