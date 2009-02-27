@@ -2,8 +2,30 @@
 
 Some warning messages appear when you save/copy/open a project in a different/new folder or when you install a new application release. The primary cause is the file 'class-model.dtd'. At each new release installation, original file 'class-model.dtd' in application resources is created and also its file creation date differs from one in your projects' workspace folder.
 
-The DTD version (current is 2.1) is not yet controlled. This warning message is sometimes improper but it's better to know now exactly the consequence of copying this file.
+The DTD version (current is 2.1) is not yet verified. This warning message is sometimes improper but it's better to know now exactly the consequence of copying this file.
+
+In a future release, the DTD version will be verified but the following warning messages will remain.
+
+== can't find File '... ...\class-model.dtd' ==
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20local%20project%20DTD%20does%20not%20exist.png
+
+The project you try to open has been moved from its previous workspace folder or its associated file 'class-model.dtd' has been moved/renamed/deleted by mistake.
+
+if you confirm the question, a new file 'class-model.dtd' will be created in this folder.
 
 == File '... ...\class-model.dtd' is more older than application ressource ==
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20local%20project%20DTD%20older%20than%20resource.png
+
+You have installed a new release and the original file 'class-model.dtd' in application resources is also more recent.
+
+We suggest you to save your current project in a different folder. But if you confirm the question and tick the check box, an original file 'class-model.dtd' will be copied in your project workspace folder.
+
+== File '... ...\class-model.dtd' is more recent than application ressource ==
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20more%20recent%20than%20resource.png
+
+You have installed or recover an older release and the original file 'class-model.dtd' in application resources is also older.
+
+We suggest you not to confirm question. But if you want do it, an original file 'class-model.dtd' will be copied in your project workspace folder.
