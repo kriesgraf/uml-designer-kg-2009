@@ -1,11 +1,9 @@
 = Troubleshooting =
 
-Add your content here.
+Some warning messages appear when you save/copy/open a project in a different/new folder or when you install a new application release. The primary cause is the file 'class-model.dtd'. 
 
+The DTD version is not yet controlled when file creation date differs between project folder and application resource. This warning message is sometimes inproper but it's better to know now exactly the consequence of a copy of the file 'class-model.dtd'.
 
-= Details =
+== File '... ...\class-model.dtd' is more older than application ressource ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic [Software_design links] to other wiki pages
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20local%20project%20DTD%20older%20than%20resource.png
