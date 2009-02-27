@@ -1,3 +1,5 @@
+#sidebar TableOfContents
+
 = Troubleshooting =
 
 Some warning messages appear when you save/copy/open a project in a different/new folder or when you install a new application release. The primary cause is the file 'class-model.dtd'. At each new release installation, original file 'class-model.dtd' in application resources is created and also its file creation date differs from one in your projects' workspace folder.
