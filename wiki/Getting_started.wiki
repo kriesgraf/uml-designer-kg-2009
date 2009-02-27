@@ -2,7 +2,7 @@
 
 =Installation=
 
-First download the current release [http://uml-designer-kg-2009.googlecode.com/files/ClassXmlProject_1_0_0_3.exe 1.0.0.3] and save it in a specific folder, for example: {{{C:\ClassXmlProject}}}. 
+First download the current [http://code.google.com/p/uml-designer-kg-2009/downloads/list release] and save it in a specific folder, for example: {{{C:\ClassXmlProject}}}. 
 
 When you execute this auto-extractible archive, you will inflate setup application and resources in this folder. Remain it for future release because you can recover previous releases easily. 
 
