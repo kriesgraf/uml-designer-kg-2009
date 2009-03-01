@@ -115,8 +115,7 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function GetProjectPath(ByVal strFullpathFilename As String) As String
-        ' Remain "\" at the of string
-        Return Left(strFullpathFilename, InStrRev(strFullpathFilename, "\") - 1)
+        Return System.IO.Path.GetDirectoryName(strFullpathFilename)
     End Function
 
     Public Shared Function UseDocTypeDeclarationFileForProject(ByVal strSourceFolder As String) As Boolean
