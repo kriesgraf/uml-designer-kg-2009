@@ -817,22 +817,27 @@ Public Class UmlNodesManager
         Return strResult
     End Function
 
-    Public Shared Function ComputeRelativePath(ByVal strProjectPath As String, _
+    Public Shared Function ComputeRelativePath(ByVal strRootPath As String, _
                                                ByVal strCurrentPath As String) As String
 
         Dim strRelative As String = strCurrentPath
         Try
-            If strCurrentPath.StartsWith(strProjectPath) Then
-                strRelative = strCurrentPath.Substring(strProjectPath.Length)
+            If strCurrentPath.StartsWith(strRootPath) Then
+                strRelative = strCurrentPath.Substring(strRootPath.Length)
             Else
                 Dim strDisk As String = ""
-                If strProjectPath.Chars(2) = ":" _
+                Dim i As Integer = InStr(strRootPath, System.IO.Path.VolumeSeparatorChar)
+                If i > 0 Then
+                    strDisk = Left(strRootPath, i - 1)
+                Else
+                    i = InStr(strRootPath, "\\")
+                    If i > 0 Then
+                        strDisk = Left(strRootPath, InStr(i + 2, strRootPath, System.IO.Path.VolumeSeparatorChar) - 1)
+                    End If
+                End If
+                If Left(strCurrentPath, strDisk.Length) = strDisk _
                 Then
-                    strDisk = Left(strProjectPath, 2)
-
-                ElseIf Left(strProjectPath, 2) = "\\" _
-                Then
-                    strDisk = Left(strProjectPath, InStr(3, strProjectPath, "\") - 1)
+                    strRelative = GetRelativePath(strRootPath.Substring(strDisk.Length + 2), strCurrentPath.Substring(strDisk.Length + 2))
                 End If
             End If
         Catch ex As Exception
@@ -841,137 +846,32 @@ Public Class UmlNodesManager
         Return strRelative
     End Function
 
-    Public Shared Function GetRelativePath(ByVal LINKINGFOLDER As String, _
-       ByVal LINKEDFOLDER As String) As String
+    Public Shared Function GetRelativePath(ByVal strRoot As String, ByVal strFinal As String) As String
 
-        LINKINGFOLDER = LCase(LINKINGFOLDER)
-        LINKEDFOLDER = LCase(LINKEDFOLDER)
-        Dim OLDarrLinking As Object
-        Dim OLDarrLinked As Object
-        Dim arrLinking As Object = Nothing
-        Dim arrLinked As Object = Nothing
-        Dim intFolderCountLinking As Integer
-        Dim intFolderCountLinked As Integer
-        Dim OLDintFolderCountLinking As Integer
-        Dim OLDintFolderCountLinked As Integer
-        Dim Folder As Object ' as loop variable
-        Dim intCounter As Integer 'counts the folders
-        Dim copyOfintCounter As Integer
-        Dim prRelativePath As String = Nothing
-        Dim SameFolder As Boolean
-        'init
-        intFolderCountLinking = -1
-        intFolderCountLinked = -1
-        intCounter = 0
-        SameFolder = True
-        '#
-
-        'make array out of the path
-        OLDarrLinking = Split(LINKINGFOLDER, "\")
-        OLDarrLinked = Split(LINKEDFOLDER, "\")
-
-        'whats the smaller path ?
-        For Each Folder In OLDarrLinking
-            intFolderCountLinking = intFolderCountLinking + 1
-            OLDintFolderCountLinking = intFolderCountLinking
-        Next Folder
-
-        For Each Folder In OLDarrLinked
-            intFolderCountLinked = intFolderCountLinked + 1
-            OLDintFolderCountLinked = intFolderCountLinked
-        Next Folder
-
-        'make array the same length of fields
-        Select Case intFolderCountLinking
-
-            Case intFolderCountLinked 'like case is >intfoldercountlinked AND like case is <intfoldercountlinked
-                ReDim arrLinked(intFolderCountLinking)
-                intCounter = -1
-
-                For Each Folder In OLDarrLinked
-                    intCounter = intCounter + 1
-                    arrLinked(intCounter) = OLDarrLinked(intCounter)
-                Next Folder
-
-                ReDim arrLinking(intFolderCountLinked)
-                intCounter = -1
-
-                For Each Folder In OLDarrLinking
-                    intCounter = intCounter + 1
-                    arrLinking(intCounter) = OLDarrLinking(intCounter)
-                Next Folder
-
-            Case Is > intFolderCountLinked
-                ReDim arrLinked(intFolderCountLinking)
-                intFolderCountLinked = intFolderCountLinking
-                'fill new array with the old values
-                intCounter = -1
-
-                For Each Folder In OLDarrLinked
-                    intCounter = intCounter + 1
-                    arrLinked(intCounter) = OLDarrLinked(intCounter)
-                Next Folder
-
-                arrLinking = OLDarrLinking
-
-            Case Is < intFolderCountLinked
-                ReDim arrLinking(intFolderCountLinked)
-                intFolderCountLinking = intFolderCountLinked
-                'fill new array with the old values
-                intCounter = -1
-
-                For Each Folder In OLDarrLinking
-                    intCounter = intCounter + 1
-                    arrLinking(intCounter) = OLDarrLinking(intCounter)
-                Next Folder
-
-                arrLinked = OLDarrLinked
-        End Select
-        '------------------------------------------------
-        '------------------------------------------------
-        'find last same root folder e.g. from c:\windows\system\test
-        'and c:\windows\something c:\windows is last same root
-        'compare from last element to first element
-        intCounter = -1
-
-        For Each Folder In arrLinked
-            intCounter = intCounter + 1
-            If arrLinked(intCounter) = arrLinking(intCounter) Then
-                'same
-            Else
-                SameFolder = False
-                Exit For
+        Dim reg As New RegularExpressions.Regex("\" + System.IO.Path.DirectorySeparatorChar, RegularExpressions.RegexOptions.Compiled)
+        Dim splitRoot As String() = reg.Split(strRoot)
+        Dim splitFinal As String() = reg.Split(strFinal)
+        Dim result As String = ""
+        Dim indexF As Integer = 0
+        ' First seek path difference
+        While indexF < splitRoot.Length And indexF < splitFinal.Length
+            If splitFinal(indexF) <> splitRoot(indexF) Then
+                Exit While
             End If
-        Next Folder
-
-        If SameFolder = True Then 'exatly the same root
-            GetRelativePath = ""
-            Exit Function
-        End If
-        '------------------------------------------------
-        '------------------------------------------------
-        copyOfintCounter = intCounter 'last same folder
-        'add the subfolders you have to "go" on e.g. test/test2/test3...
-        Do Until copyOfintCounter = intFolderCountLinked + 1
-
-            If arrLinked(intFolderCountLinked - _
-                   copyOfintCounter + intCounter) <> "" Then
-
-                prRelativePath = arrLinked(intFolderCountLinked - _
-                    copyOfintCounter + intCounter) & "/" & prRelativePath
-            End If
-
-            copyOfintCounter = copyOfintCounter + 1
-        Loop
-
-        copyOfintCounter = intCounter 'last same folder
-
-        'add the folders (../) you have to "go" out
-        For Folder = 1 To OLDintFolderCountLinking - intCounter + 1
-            prRelativePath = "../" & prRelativePath
-        Next Folder
-
-        GetRelativePath = prRelativePath
+            indexF += 1
+        End While
+        ' Complete path with ".."
+        Dim indexR As Integer = indexF
+        While indexR < splitRoot.Length
+            result += ".." + System.IO.Path.DirectorySeparatorChar
+            indexR += 1
+        End While
+        ' Complete final path
+        While indexF < splitFinal.Length
+            result += splitFinal(indexF) + System.IO.Path.DirectorySeparatorChar
+            indexF += 1
+        End While
+        Return result
     End Function
 
 End Class
