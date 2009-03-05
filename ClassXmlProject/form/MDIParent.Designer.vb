@@ -35,8 +35,6 @@ Partial Class MDIParent
         Me.mnuPatchApply = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditDatabase = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator
-        Me.mnuFilePrintSetup = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuFileExit = New System.Windows.Forms.ToolStripMenuItem
         Me.ViewMenu = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolBarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -86,7 +84,7 @@ Partial Class MDIParent
         '
         'mnuFile
         '
-        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNew, Me.mnuFileOpen, Me.ToolStripSeparator3, Me.mnuFileNewDoxygenFile, Me.ToolStripMenuItem1, Me.ToolStripSeparator4, Me.mnuFilePrintSetup, Me.ToolStripSeparator5, Me.mnuFileExit})
+        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNew, Me.mnuFileOpen, Me.ToolStripSeparator3, Me.mnuFileNewDoxygenFile, Me.ToolStripMenuItem1, Me.ToolStripSeparator4, Me.mnuFileExit})
         Me.mnuFile.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder
         Me.mnuFile.MergeIndex = 0
         Me.mnuFile.Name = "mnuFile"
@@ -146,17 +144,6 @@ Partial Class MDIParent
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
         Me.ToolStripSeparator4.Size = New System.Drawing.Size(225, 6)
         '
-        'mnuFilePrintSetup
-        '
-        Me.mnuFilePrintSetup.Name = "mnuFilePrintSetup"
-        Me.mnuFilePrintSetup.Size = New System.Drawing.Size(228, 22)
-        Me.mnuFilePrintSetup.Text = "Print setup..."
-        '
-        'ToolStripSeparator5
-        '
-        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(225, 6)
-        '
         'mnuFileExit
         '
         Me.mnuFileExit.Name = "mnuFileExit"
@@ -215,37 +202,37 @@ Partial Class MDIParent
         'NewWindowToolStripMenuItem
         '
         Me.NewWindowToolStripMenuItem.Name = "NewWindowToolStripMenuItem"
-        Me.NewWindowToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.NewWindowToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.NewWindowToolStripMenuItem.Text = "&New window"
         '
         'CascadeToolStripMenuItem
         '
         Me.CascadeToolStripMenuItem.Name = "CascadeToolStripMenuItem"
-        Me.CascadeToolStripMenuItem.Size = New System.Drawing.Size(181, 22)
+        Me.CascadeToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.CascadeToolStripMenuItem.Text = "&Cascade"
         '
         'TileVerticalToolStripMenuItem
         '
         Me.TileVerticalToolStripMenuItem.Name = "TileVerticalToolStripMenuItem"
-        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(154, 22)
+        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.TileVerticalToolStripMenuItem.Text = "Tile &Vertically"
         '
         'TileHorizontalToolStripMenuItem
         '
         Me.TileHorizontalToolStripMenuItem.Name = "TileHorizontalToolStripMenuItem"
-        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(154, 22)
+        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.TileHorizontalToolStripMenuItem.Text = "Tile &Horizontally"
         '
         'CloseAllToolStripMenuItem
         '
         Me.CloseAllToolStripMenuItem.Name = "CloseAllToolStripMenuItem"
-        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(154, 22)
+        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.CloseAllToolStripMenuItem.Text = "&Close all"
         '
         'ArrangeIconsToolStripMenuItem
         '
         Me.ArrangeIconsToolStripMenuItem.Name = "ArrangeIconsToolStripMenuItem"
-        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(154, 22)
+        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.ArrangeIconsToolStripMenuItem.Text = "&Arange icons"
         '
         'HelpMenu
@@ -258,7 +245,6 @@ Partial Class MDIParent
         '
         'ContentsToolStripMenuItem
         '
-        Me.ContentsToolStripMenuItem.Enabled = False
         Me.ContentsToolStripMenuItem.Name = "ContentsToolStripMenuItem"
         Me.ContentsToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F1), System.Windows.Forms.Keys)
         Me.ContentsToolStripMenuItem.Size = New System.Drawing.Size(162, 22)
@@ -266,7 +252,6 @@ Partial Class MDIParent
         '
         'IndexToolStripMenuItem
         '
-        Me.IndexToolStripMenuItem.Enabled = False
         Me.IndexToolStripMenuItem.Image = CType(resources.GetObject("IndexToolStripMenuItem.Image"), System.Drawing.Image)
         Me.IndexToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black
         Me.IndexToolStripMenuItem.Name = "IndexToolStripMenuItem"
@@ -275,7 +260,6 @@ Partial Class MDIParent
         '
         'SearchToolStripMenuItem
         '
-        Me.SearchToolStripMenuItem.Enabled = False
         Me.SearchToolStripMenuItem.Image = CType(resources.GetObject("SearchToolStripMenuItem.Image"), System.Drawing.Image)
         Me.SearchToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black
         Me.SearchToolStripMenuItem.Name = "SearchToolStripMenuItem"
@@ -432,8 +416,6 @@ Partial Class MDIParent
     Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuFileExit As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
-    Friend WithEvents mnuFilePrintSetup As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuFileNew As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuFileOpen As System.Windows.Forms.ToolStripMenuItem
