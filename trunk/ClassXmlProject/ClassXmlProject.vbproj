@@ -39,10 +39,10 @@
     <MapFileExtensions>true</MapFileExtensions>
     <SupportUrl>http://code.google.com/p/uml-designer-kg-2009/</SupportUrl>
     <ProductName>ClassXmlProject</ProductName>
-    <PublisherName>UML Designer</PublisherName>
-    <ApplicationRevision>0</ApplicationRevision>
+    <PublisherName>ClassXmlProject</PublisherName>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
+    <UseApplicationTrust>true</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
