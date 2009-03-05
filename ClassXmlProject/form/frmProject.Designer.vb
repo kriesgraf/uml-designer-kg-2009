@@ -77,6 +77,7 @@ Partial Class frmProject
         Me.mnuFileOpen = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator18 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuFileNewDoxygenFile = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuApplyPatch = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditDatabase = New System.Windows.Forms.ToolStripMenuItem
@@ -173,7 +174,6 @@ Partial Class frmProject
         Me.DeleteReference = New System.Windows.Forms.ToolStripMenuItem
         Me.RemoveAll = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
@@ -450,41 +450,41 @@ Partial Class frmProject
         Me.btnProjectView.Image = Global.ClassXmlProject.My.Resources.Resources.btnProjectView_Image
         Me.btnProjectView.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.btnProjectView.Name = "btnProjectView"
-        Me.btnProjectView.Size = New System.Drawing.Size(92, 22)
-        Me.btnProjectView.Text = "ProjectView"
+        Me.btnProjectView.Size = New System.Drawing.Size(95, 22)
+        Me.btnProjectView.Text = "Project view"
         '
         'LargeIconsToolStripMenuItem
         '
         Me.LargeIconsToolStripMenuItem.Name = "LargeIconsToolStripMenuItem"
-        Me.LargeIconsToolStripMenuItem.Size = New System.Drawing.Size(128, 22)
+        Me.LargeIconsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.LargeIconsToolStripMenuItem.Tag = "0"
         Me.LargeIconsToolStripMenuItem.Text = "Large icons"
         '
         'DetailsToolStripMenuItem
         '
         Me.DetailsToolStripMenuItem.Name = "DetailsToolStripMenuItem"
-        Me.DetailsToolStripMenuItem.Size = New System.Drawing.Size(128, 22)
+        Me.DetailsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.DetailsToolStripMenuItem.Tag = "1"
         Me.DetailsToolStripMenuItem.Text = "Details"
         '
         'SmallIconsToolStripMenuItem
         '
         Me.SmallIconsToolStripMenuItem.Name = "SmallIconsToolStripMenuItem"
-        Me.SmallIconsToolStripMenuItem.Size = New System.Drawing.Size(128, 22)
+        Me.SmallIconsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.SmallIconsToolStripMenuItem.Tag = "2"
         Me.SmallIconsToolStripMenuItem.Text = "Small icons"
         '
         'ListToolStripMenuItem
         '
         Me.ListToolStripMenuItem.Name = "ListToolStripMenuItem"
-        Me.ListToolStripMenuItem.Size = New System.Drawing.Size(128, 22)
+        Me.ListToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.ListToolStripMenuItem.Tag = "3"
         Me.ListToolStripMenuItem.Text = "List"
         '
         'TileToolStripMenuItem
         '
         Me.TileToolStripMenuItem.Name = "TileToolStripMenuItem"
-        Me.TileToolStripMenuItem.Size = New System.Drawing.Size(128, 22)
+        Me.TileToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TileToolStripMenuItem.Tag = "4"
         Me.TileToolStripMenuItem.Text = "Tile"
         '
@@ -532,27 +532,27 @@ Partial Class frmProject
         Me.btnDocView.Image = Global.ClassXmlProject.My.Resources.Resources.btnDocView_Image
         Me.btnDocView.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.btnDocView.Name = "btnDocView"
-        Me.btnDocView.Size = New System.Drawing.Size(76, 22)
-        Me.btnDocView.Text = "DocView"
+        Me.btnDocView.Size = New System.Drawing.Size(109, 22)
+        Me.btnDocView.Text = "Document view"
         '
         'DatabaseToolStripMenuItem
         '
         Me.DatabaseToolStripMenuItem.Name = "DatabaseToolStripMenuItem"
-        Me.DatabaseToolStripMenuItem.Size = New System.Drawing.Size(134, 22)
+        Me.DatabaseToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.DatabaseToolStripMenuItem.Tag = "1"
         Me.DatabaseToolStripMenuItem.Text = "Database"
         '
         'UmlViewToolStripMenuItem
         '
         Me.UmlViewToolStripMenuItem.Name = "UmlViewToolStripMenuItem"
-        Me.UmlViewToolStripMenuItem.Size = New System.Drawing.Size(134, 22)
+        Me.UmlViewToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.UmlViewToolStripMenuItem.Tag = "2"
         Me.UmlViewToolStripMenuItem.Text = "UML view"
         '
         'CodeSourceToolStripMenuItem
         '
         Me.CodeSourceToolStripMenuItem.Name = "CodeSourceToolStripMenuItem"
-        Me.CodeSourceToolStripMenuItem.Size = New System.Drawing.Size(134, 22)
+        Me.CodeSourceToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.CodeSourceToolStripMenuItem.Tag = "3"
         Me.CodeSourceToolStripMenuItem.Text = "Code source"
         '
@@ -591,8 +591,8 @@ Partial Class frmProject
         Me.mnuFile.MergeAction = System.Windows.Forms.MergeAction.Replace
         Me.mnuFile.MergeIndex = 0
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(50, 20)
-        Me.mnuFile.Text = "&Fichier"
+        Me.mnuFile.Size = New System.Drawing.Size(35, 20)
+        Me.mnuFile.Text = "&File"
         '
         'mnuFileNew
         '
@@ -622,6 +622,12 @@ Partial Class frmProject
         Me.mnuFileNewDoxygenFile.Name = "mnuFileNewDoxygenFile"
         Me.mnuFileNewDoxygenFile.Size = New System.Drawing.Size(252, 22)
         Me.mnuFileNewDoxygenFile.Text = "Import from Doxygen XML file..."
+        '
+        'mnuFileNewOmgUmlFile
+        '
+        Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
+        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(252, 22)
+        Me.mnuFileNewOmgUmlFile.Text = "Import from OMG UML  2.1 XMI file..."
         '
         'ToolStripMenuItem1
         '
@@ -718,8 +724,8 @@ Partial Class frmProject
         Me.EditMenu.MergeAction = System.Windows.Forms.MergeAction.Insert
         Me.EditMenu.MergeIndex = 1
         Me.EditMenu.Name = "EditMenu"
-        Me.EditMenu.Size = New System.Drawing.Size(51, 20)
-        Me.EditMenu.Text = "&Edition"
+        Me.EditMenu.Size = New System.Drawing.Size(37, 20)
+        Me.EditMenu.Text = "&Edit"
         '
         'UndoToolStripMenuItem
         '
@@ -1270,12 +1276,6 @@ Partial Class frmProject
         Me.RemoveAll.Name = "RemoveAll"
         Me.RemoveAll.Size = New System.Drawing.Size(188, 22)
         Me.RemoveAll.Text = "Remove all"
-        '
-        'mnuFileNewOmgUmlFile
-        '
-        Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
-        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(252, 22)
-        Me.mnuFileNewOmgUmlFile.Text = "Import from OMG UML  2.1 XMI file..."
         '
         'frmProject
         '
