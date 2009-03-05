@@ -1,12 +1,15 @@
 ﻿Imports System
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
+Imports Microsoft.Win32
 
 Public Class MDIParent
 
 #Region "Class declaration"
 
-    Private m_ChildFormNumber As Integer
+    Private m_iChildFormNumber As Integer
+    Private m_strSetupHeader As String
+    Private m_strSetupFooter As String
 
 #End Region
 
@@ -18,8 +21,8 @@ Public Class MDIParent
         ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
         ChildForm.MdiParent = Me
 
-        m_ChildFormNumber += 1
-        ChildForm.Text = "New project " & m_ChildFormNumber
+        m_iChildFormNumber += 1
+        ChildForm.Text = "New project " & m_iChildFormNumber
         ' this property instantiate the view component
         ChildForm.ProjectName = ""
         ChildForm.Show()
@@ -192,10 +195,6 @@ Public Class MDIParent
         End If
     End Sub
 
-    Public Sub PrintSetup(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFilePrintSetup.Click
-        MsgBox("Not yet implemented !", MsgBoxStyle.Exclamation)
-    End Sub
-
     Private Sub PrintToolStripButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles PrintToolStripButton.Click
         ' TODO
         Dim fen As frmProject = TryCast(Me.ActiveMdiChild, frmProject)
@@ -219,11 +218,31 @@ Public Class MDIParent
     End Sub
 
     Private Sub MDIParent_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
+
+        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\Microsoft\Internet Explorer\PageSetup", True)
+        Try
+            key.SetValue("footer", m_strSetupFooter)
+            key.SetValue("header", m_strSetupHeader)
+
+        Catch ex As Exception
+        Finally
+            key.Close()
+        End Try
         ' Dereference all objects here 
         XmlNodeManager.Destroy()
     End Sub
 
     Private Sub MDIParent_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\Microsoft\Internet Explorer\PageSetup")
+        Try
+            m_strSetupFooter = key.GetValue("footer")
+            m_strSetupHeader = key.GetValue("header")
+
+        Catch ex As Exception
+        Finally
+            key.Close()
+        End Try
+
         Try
             If Deployment.Application.ApplicationDeployment.IsNetworkDeployed Then
                 Me.Text = Me.Text + " - " + My.Application.Deployment.CurrentVersion.ToString
@@ -295,5 +314,25 @@ Public Class MDIParent
 
         form.Message = msg
         form.ShowDialog()
+    End Sub
+
+    Private Sub ContentsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ContentsToolStripMenuItem.Click
+        ' Navigate to a URL.
+        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/wiki/Getting_started")
+    End Sub
+
+    Private Sub IndexToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles IndexToolStripMenuItem.Click
+        ' Navigate to a URL.
+        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/")
+    End Sub
+
+    Private Sub SearchToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SearchToolStripMenuItem.Click
+        ' Navigate to a URL.
+        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/w/list")
+    End Sub
+
+    Private Sub HelpToolStripButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HelpToolStripButton.Click
+        ' Navigate to a URL.
+        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/")
     End Sub
 End Class
