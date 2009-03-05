@@ -236,7 +236,7 @@ Public Class MDIParent
                 My.Computer.FileSystem.CreateDirectory(strTmpFolder)
             End If
 
-            If XmlProjectTools.CopyDocTypeDeclarationFile(strTmpFolder, False) = False Then
+            If XmlProjectTools.CopyDocTypeDeclarationFile(strTmpFolder, True) = False Then
 
                 Me.Close()
 
@@ -272,20 +272,28 @@ Public Class MDIParent
 
     Private Sub AboutToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AboutToolStripMenuItem.Click
         Dim msg As String = ""
-        msg += "Application paths and declarations:"
         msg += vbCrLf + "------------------------------------------------------------------------------------------"
-        msg += vbCrLf + "- Application.CommonAppDataPath:    " + vbTab + Application.CommonAppDataPath
-        msg += vbCrLf + "- Application.CommonAppDataRegistry:" + vbTab + Application.CommonAppDataRegistry.ToString
-        msg += vbCrLf + "- Application.CompanyName:          " + vbTab + Application.CompanyName
-        msg += vbCrLf + "- Application.CurrentCulture:       " + vbTab + Application.CurrentCulture.ToString
-        msg += vbCrLf + "- Application.CurrentInputLanguage: " + vbTab + Application.CurrentInputLanguage.LayoutName
-        msg += vbCrLf + "- Application.ExecutablePath:       " + vbTab + Application.ExecutablePath
-        msg += vbCrLf + "- Application.LocalUserAppDataPath: " + vbTab + Application.LocalUserAppDataPath
-        msg += vbCrLf + "- Application.ProductName:          " + vbTab + Application.ProductName
-        msg += vbCrLf + "- Application.ProductVersion:       " + vbTab + Application.ProductVersion
-        msg += vbCrLf + "- Application.StartupPath:          " + vbTab + Application.StartupPath
-        msg += vbCrLf + "- Application.UserAppDataPath:      " + vbTab + Application.UserAppDataPath
-        msg += vbCrLf + "- Application.UserAppDataRegistry:  " + vbTab + Application.UserAppDataRegistry.ToString
-        MsgBox(msg, MsgBoxStyle.Information, "About " + Me.Text)
+        msg += vbCrLf + "Application paths and declarations:"
+        msg += vbCrLf + "------------------------------------------------------------------------------------------"
+        msg += vbCrLf + "- CommonAppDataPath:    " + (Application.CommonAppDataPath)
+        msg += vbCrLf + "- CommonAppDataRegistry:" + Application.CommonAppDataRegistry.ToString
+        msg += vbCrLf + "- CurrentCulture:       " + Application.CurrentCulture.ToString
+        msg += vbCrLf + "- CurrentInputLanguage: " + Application.CurrentInputLanguage.LayoutName
+        msg += vbCrLf + "- ExecutablePath:       " + (Application.ExecutablePath)
+        msg += vbCrLf + "- LocalUserAppDataPath: " + (Application.LocalUserAppDataPath)
+        msg += vbCrLf + "- StartupPath:          " + (Application.StartupPath)
+        msg += vbCrLf + "- UserAppDataPath:      " + (Application.UserAppDataPath)
+        msg += vbCrLf + "- UserAppDataRegistry:  " + Application.UserAppDataRegistry.ToString
+        msg += vbCrLf + "------------------------------------------------------------------------------------------"
+        msg += vbCrLf + "Computer paths:"
+        msg += vbCrLf + "------------------------------------------------------------------------------------------"
+        msg += vbCrLf + "- CurrentUserApplicationData: " + (My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData)
+        msg += vbCrLf + "- AllUsersApplicationData:    " + (My.Computer.FileSystem.SpecialDirectories.AllUsersApplicationData)
+        msg += vbCrLf + "- MyDocuments:                " + (My.Computer.FileSystem.SpecialDirectories.MyDocuments)
+
+        Dim form As New dlgAboutBox
+
+        form.Message = msg
+        form.ShowDialog()
     End Sub
 End Class
