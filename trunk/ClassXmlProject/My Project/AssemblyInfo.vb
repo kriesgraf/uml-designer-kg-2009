@@ -10,10 +10,10 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("ClassXmlProject")> 
 <Assembly: AssemblyDescription("Simple UML designer and code generator")> 
-<Assembly: AssemblyCompany("UML Designer")> 
+<Assembly: AssemblyCompany("ClassXmlProject")> 
 <Assembly: AssemblyProduct("ClassXmlProject")> 
 <Assembly: AssemblyCopyright("Copyright ©  2009")> 
-<Assembly: AssemblyTrademark("UML Designer")> 
+<Assembly: AssemblyTrademark("ClassXmlProject")> 
 
 <Assembly: ComVisible(False)>
 
