@@ -16,6 +16,7 @@ Imports ClassXmlProject.UmlCodeGenerator
 Public Class XmlProjectTools
 
     Public Const cstMsgYesNoExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
+    Public Const cstMsgYesNoCancelExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNoCancel + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgYesNoQuestion As MsgBoxStyle = CType(MsgBoxStyle.Question + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgOkCancelCritical As MsgBoxStyle = CType(MsgBoxStyle.Critical + MsgBoxStyle.OkCancel + MsgBoxStyle.DefaultButton1, MsgBoxStyle)
 
@@ -130,12 +131,17 @@ Public Class XmlProjectTools
                 ' Nothing to do
 
             Case EDtdFileExist.MoreRecent
-                If MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more recent than application ressource. " + vbCrLf + _
-                       "Maybe this project would corrupt application process. Please confirm opening.", _
-                       cstMsgYesNoExclamation) = MsgBoxResult.No _
-                Then
-                    Return False
-                End If
+                Select Case MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more recent than application resource. " + vbCrLf + _
+                           "Maybe this project would corrupt application process. " + vbCrLf + _
+                           "Please confirm overwriting this file (Yes), open this project as it is (No), don't open this project (Cancel).", _
+                           cstMsgYesNoCancelExclamation)
+
+                    Case MsgBoxResult.No
+                        Return True
+
+                    Case MsgBoxResult.Cancel
+                        Return False
+                End Select
 
             Case EDtdFileExist.NotFound
                 If MsgBox("Can't find File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + _
@@ -146,8 +152,6 @@ Public Class XmlProjectTools
                        = MsgBoxResult.No _
                 Then
                     Return False
-                Else
-                    CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strSourceFolder))
                 End If
 
             Case EDtdFileExist.Older
@@ -156,16 +160,17 @@ Public Class XmlProjectTools
                     "Maybe oldest version projects remain in this folder, overwrite this file would corrupt these projects." + vbCrLf + _
                     "If you confirm this operation, you would have to apply a patch to each project in this folder." + vbCrLf + _
                     "Also, we recommend you to move manually this project file in an other folder and press Cancel now. !") _
-                    = DialogResult.OK _
+                    = DialogResult.Cancel _
                 Then
-                    CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strSourceFolder))
-                Else
                     Return False
                 End If
 
             Case Else
                 Throw New Exception("Method 'CheckDocTypeDeclarationFile' has returned a wrong value")
         End Select
+
+        CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strSourceFolder))
+
         Return True
     End Function
 
@@ -231,7 +236,8 @@ Public Class XmlProjectTools
                 Case EDtdFileExist.MoreRecent
                     If bNoAdvertising _
                     Then
-                        Throw New Exception("File '" + GetDestinationDtdFile(strDestinationFolder) + "', is more recent than application ressource.")
+                        CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
+                        bResult = True
 
                     ElseIf MsgBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more recent than application ressource." + vbCrLf + _
                               "Please confirm overwrite this file ?", _
@@ -246,6 +252,7 @@ Public Class XmlProjectTools
                     If bNoAdvertising _
                     Then
                         CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
+                        bResult = True
 
                     ElseIf MsgWarningBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more older than application ressource. " + vbCrLf + _
                         "Maybe oldest version projects remain in this folder. Overwrite this file would corrupt these projects." + vbCrLf + _
