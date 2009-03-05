@@ -90,8 +90,8 @@ Partial Class MDIParent
         Me.mnuFile.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder
         Me.mnuFile.MergeIndex = 0
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(50, 20)
-        Me.mnuFile.Text = "&Fichier"
+        Me.mnuFile.Size = New System.Drawing.Size(35, 20)
+        Me.mnuFile.Text = "&File"
         '
         'mnuFileNew
         '
@@ -161,15 +161,15 @@ Partial Class MDIParent
         '
         Me.mnuFileExit.Name = "mnuFileExit"
         Me.mnuFileExit.Size = New System.Drawing.Size(228, 22)
-        Me.mnuFileExit.Text = "&Quitter"
+        Me.mnuFileExit.Text = "&Quit"
         '
         'ViewMenu
         '
         Me.ViewMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolBarToolStripMenuItem, Me.StatusBarToolStripMenuItem})
         Me.ViewMenu.MergeIndex = 3
         Me.ViewMenu.Name = "ViewMenu"
-        Me.ViewMenu.Size = New System.Drawing.Size(65, 20)
-        Me.ViewMenu.Text = "&Affichage"
+        Me.ViewMenu.Size = New System.Drawing.Size(41, 20)
+        Me.ViewMenu.Text = "&View"
         '
         'ToolBarToolStripMenuItem
         '
@@ -177,8 +177,8 @@ Partial Class MDIParent
         Me.ToolBarToolStripMenuItem.CheckOnClick = True
         Me.ToolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
         Me.ToolBarToolStripMenuItem.Name = "ToolBarToolStripMenuItem"
-        Me.ToolBarToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
-        Me.ToolBarToolStripMenuItem.Text = "&Barre d'outils"
+        Me.ToolBarToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ToolBarToolStripMenuItem.Text = "&Tools' bar"
         '
         'StatusBarToolStripMenuItem
         '
@@ -186,21 +186,22 @@ Partial Class MDIParent
         Me.StatusBarToolStripMenuItem.CheckOnClick = True
         Me.StatusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
         Me.StatusBarToolStripMenuItem.Name = "StatusBarToolStripMenuItem"
-        Me.StatusBarToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
-        Me.StatusBarToolStripMenuItem.Text = "&Barre d'état"
+        Me.StatusBarToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.StatusBarToolStripMenuItem.Text = "&Status bar"
         '
         'ToolsMenu
         '
         Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OptionsToolStripMenuItem})
         Me.ToolsMenu.MergeIndex = 4
         Me.ToolsMenu.Name = "ToolsMenu"
-        Me.ToolsMenu.Size = New System.Drawing.Size(46, 20)
-        Me.ToolsMenu.Text = "&Outils"
+        Me.ToolsMenu.Size = New System.Drawing.Size(44, 20)
+        Me.ToolsMenu.Text = "&Tools"
         '
         'OptionsToolStripMenuItem
         '
+        Me.OptionsToolStripMenuItem.Enabled = False
         Me.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem"
-        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(111, 22)
+        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.OptionsToolStripMenuItem.Text = "&Options"
         '
         'WindowsMenu
@@ -214,8 +215,8 @@ Partial Class MDIParent
         'NewWindowToolStripMenuItem
         '
         Me.NewWindowToolStripMenuItem.Name = "NewWindowToolStripMenuItem"
-        Me.NewWindowToolStripMenuItem.Size = New System.Drawing.Size(181, 22)
-        Me.NewWindowToolStripMenuItem.Text = "&Nouvelle fenêtre"
+        Me.NewWindowToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.NewWindowToolStripMenuItem.Text = "&New window"
         '
         'CascadeToolStripMenuItem
         '
@@ -226,37 +227,38 @@ Partial Class MDIParent
         'TileVerticalToolStripMenuItem
         '
         Me.TileVerticalToolStripMenuItem.Name = "TileVerticalToolStripMenuItem"
-        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(181, 22)
-        Me.TileVerticalToolStripMenuItem.Text = "Mosaïque &verticale"
+        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(154, 22)
+        Me.TileVerticalToolStripMenuItem.Text = "Tile &Vertically"
         '
         'TileHorizontalToolStripMenuItem
         '
         Me.TileHorizontalToolStripMenuItem.Name = "TileHorizontalToolStripMenuItem"
-        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(181, 22)
-        Me.TileHorizontalToolStripMenuItem.Text = "Mosaïque &horizontale"
+        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(154, 22)
+        Me.TileHorizontalToolStripMenuItem.Text = "Tile &Horizontally"
         '
         'CloseAllToolStripMenuItem
         '
         Me.CloseAllToolStripMenuItem.Name = "CloseAllToolStripMenuItem"
-        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(181, 22)
-        Me.CloseAllToolStripMenuItem.Text = "&Fermer tout"
+        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(154, 22)
+        Me.CloseAllToolStripMenuItem.Text = "&Close all"
         '
         'ArrangeIconsToolStripMenuItem
         '
         Me.ArrangeIconsToolStripMenuItem.Name = "ArrangeIconsToolStripMenuItem"
-        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(181, 22)
-        Me.ArrangeIconsToolStripMenuItem.Text = "&Réorganiser les icônes"
+        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(154, 22)
+        Me.ArrangeIconsToolStripMenuItem.Text = "&Arange icons"
         '
         'HelpMenu
         '
         Me.HelpMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ContentsToolStripMenuItem, Me.IndexToolStripMenuItem, Me.SearchToolStripMenuItem, Me.ToolStripSeparator8, Me.AboutToolStripMenuItem})
         Me.HelpMenu.MergeIndex = 6
         Me.HelpMenu.Name = "HelpMenu"
-        Me.HelpMenu.Size = New System.Drawing.Size(24, 20)
-        Me.HelpMenu.Text = "&?"
+        Me.HelpMenu.Size = New System.Drawing.Size(40, 20)
+        Me.HelpMenu.Text = "&Help"
         '
         'ContentsToolStripMenuItem
         '
+        Me.ContentsToolStripMenuItem.Enabled = False
         Me.ContentsToolStripMenuItem.Name = "ContentsToolStripMenuItem"
         Me.ContentsToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F1), System.Windows.Forms.Keys)
         Me.ContentsToolStripMenuItem.Size = New System.Drawing.Size(162, 22)
@@ -264,6 +266,7 @@ Partial Class MDIParent
         '
         'IndexToolStripMenuItem
         '
+        Me.IndexToolStripMenuItem.Enabled = False
         Me.IndexToolStripMenuItem.Image = CType(resources.GetObject("IndexToolStripMenuItem.Image"), System.Drawing.Image)
         Me.IndexToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black
         Me.IndexToolStripMenuItem.Name = "IndexToolStripMenuItem"
@@ -272,11 +275,12 @@ Partial Class MDIParent
         '
         'SearchToolStripMenuItem
         '
+        Me.SearchToolStripMenuItem.Enabled = False
         Me.SearchToolStripMenuItem.Image = CType(resources.GetObject("SearchToolStripMenuItem.Image"), System.Drawing.Image)
         Me.SearchToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black
         Me.SearchToolStripMenuItem.Name = "SearchToolStripMenuItem"
         Me.SearchToolStripMenuItem.Size = New System.Drawing.Size(162, 22)
-        Me.SearchToolStripMenuItem.Text = "&Rechercher"
+        Me.SearchToolStripMenuItem.Text = "&Search for help on"
         '
         'ToolStripSeparator8
         '
@@ -287,7 +291,7 @@ Partial Class MDIParent
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
         Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(162, 22)
-        Me.AboutToolStripMenuItem.Text = "À pr&opos de..."
+        Me.AboutToolStripMenuItem.Text = "&About..."
         '
         'ToolStrip
         '
