@@ -53,11 +53,11 @@ Public Class frmProject
     End Sub
 
     Public Sub PrintPreview()
-        MsgBox("Not yet implemented !", MsgBoxStyle.Exclamation)
+        Me.docvwProjectDisplay.ShowPrintPreviewDialog()
     End Sub
 
     Public Sub PrintPage()
-        MsgBox("Not yet implemented !", MsgBoxStyle.Exclamation)
+        Me.docvwProjectDisplay.ShowPrintDialog()
     End Sub
 
 #End Region
@@ -302,20 +302,11 @@ Public Class frmProject
     End Sub
 
     Private Sub mnuFilePrint_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFilePrint.Click
-        ' TODO
+        Me.PrintPage()
     End Sub
 
     Private Sub mnuFilePrintPreview_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFilePrintPreview.Click
-        ' TODO
-    End Sub
-
-    Private Sub mnuFilePrintSetup_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFilePrintSetup.Click
-        Try
-            Me.Mainframe.PrintSetup(sender, e)
-
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        End Try
+        Me.PrintPreview()
     End Sub
 
     Private Sub mnuFileExit_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileExit.Click
