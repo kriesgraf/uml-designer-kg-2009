@@ -38,6 +38,10 @@ Public Class XmlClassListView
                                           ByVal xmlDocument As XmlDocument, _
                                           ByVal eTag As ELanguage)
         Try
+            Dim list As ArrayList = GetListComponents(xmlDocument, eTag)
+            If list.Count = 0 Then
+                list = Nothing
+            End If
             With CType(column, DataGridViewComboBoxColumn)
                 'Debug.Print("DataPropertyName=" + DataPropertyName + ";ValueMember=" + XmlClassListView.cstValueMember)
                 .Name = "ControlName_" + DataPropertyName
@@ -49,7 +53,7 @@ Public Class XmlClassListView
                 .MaxDropDownItems = 10
                 .FlatStyle = FlatStyle.Flat
 
-                .DataSource = GetListComponents(xmlDocument, eTag)
+                .DataSource = list
                 .ValueMember = XmlClassListView.cstValueMember
                 .DisplayMember = XmlClassListView.cstDisplayMember
             End With
