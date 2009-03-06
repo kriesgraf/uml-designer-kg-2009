@@ -1,4 +1,6 @@
-﻿Imports System
+﻿Imports System.Resources
+
+Imports System
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 
@@ -15,7 +17,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyCopyright("Copyright ©  2009")> 
 <Assembly: AssemblyTrademark("ClassXmlProject")> 
 
-<Assembly: ComVisible(False)>
+<Assembly: ComVisible(False)> 
 
 'Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
 <Assembly: Guid("e68ffbf0-78a8-4868-a053-ebb3c377306f")> 
@@ -33,3 +35,5 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyVersion("1.0.1.0")> 
 <Assembly: AssemblyFileVersion("1.0.1.0")> 
+
+<Assembly: NeutralResourcesLanguageAttribute("en")> 
