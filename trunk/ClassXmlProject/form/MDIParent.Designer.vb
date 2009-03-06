@@ -42,7 +42,6 @@ Partial Class MDIParent
         Me.ToolsMenu = New System.Windows.Forms.ToolStripMenuItem
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.WindowsMenu = New System.Windows.Forms.ToolStripMenuItem
-        Me.NewWindowToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.CascadeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.TileVerticalToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.TileHorizontalToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -66,7 +65,6 @@ Partial Class MDIParent
         Me.StatusStrip = New System.Windows.Forms.StatusStrip
         Me.ToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me.PageSetupDialog1 = New System.Windows.Forms.PageSetupDialog
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
         Me.StatusStrip.SuspendLayout()
@@ -164,7 +162,7 @@ Partial Class MDIParent
         Me.ToolBarToolStripMenuItem.CheckOnClick = True
         Me.ToolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
         Me.ToolBarToolStripMenuItem.Name = "ToolBarToolStripMenuItem"
-        Me.ToolBarToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ToolBarToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
         Me.ToolBarToolStripMenuItem.Text = "&Tools' bar"
         '
         'StatusBarToolStripMenuItem
@@ -173,7 +171,7 @@ Partial Class MDIParent
         Me.StatusBarToolStripMenuItem.CheckOnClick = True
         Me.StatusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
         Me.StatusBarToolStripMenuItem.Name = "StatusBarToolStripMenuItem"
-        Me.StatusBarToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.StatusBarToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
         Me.StatusBarToolStripMenuItem.Text = "&Status bar"
         '
         'ToolsMenu
@@ -188,51 +186,45 @@ Partial Class MDIParent
         '
         Me.OptionsToolStripMenuItem.Enabled = False
         Me.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem"
-        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(111, 22)
         Me.OptionsToolStripMenuItem.Text = "&Options"
         '
         'WindowsMenu
         '
-        Me.WindowsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewWindowToolStripMenuItem, Me.CascadeToolStripMenuItem, Me.TileVerticalToolStripMenuItem, Me.TileHorizontalToolStripMenuItem, Me.CloseAllToolStripMenuItem, Me.ArrangeIconsToolStripMenuItem})
+        Me.WindowsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CascadeToolStripMenuItem, Me.TileVerticalToolStripMenuItem, Me.TileHorizontalToolStripMenuItem, Me.CloseAllToolStripMenuItem, Me.ArrangeIconsToolStripMenuItem})
         Me.WindowsMenu.MergeIndex = 5
         Me.WindowsMenu.Name = "WindowsMenu"
         Me.WindowsMenu.Size = New System.Drawing.Size(62, 20)
-        Me.WindowsMenu.Text = "F&enêtres"
-        '
-        'NewWindowToolStripMenuItem
-        '
-        Me.NewWindowToolStripMenuItem.Name = "NewWindowToolStripMenuItem"
-        Me.NewWindowToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
-        Me.NewWindowToolStripMenuItem.Text = "&New window"
+        Me.WindowsMenu.Text = "&Windows"
         '
         'CascadeToolStripMenuItem
         '
         Me.CascadeToolStripMenuItem.Name = "CascadeToolStripMenuItem"
-        Me.CascadeToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.CascadeToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.CascadeToolStripMenuItem.Text = "&Cascade"
         '
         'TileVerticalToolStripMenuItem
         '
         Me.TileVerticalToolStripMenuItem.Name = "TileVerticalToolStripMenuItem"
-        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TileVerticalToolStripMenuItem.Text = "Tile &Vertically"
         '
         'TileHorizontalToolStripMenuItem
         '
         Me.TileHorizontalToolStripMenuItem.Name = "TileHorizontalToolStripMenuItem"
-        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TileHorizontalToolStripMenuItem.Text = "Tile &Horizontally"
         '
         'CloseAllToolStripMenuItem
         '
         Me.CloseAllToolStripMenuItem.Name = "CloseAllToolStripMenuItem"
-        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
-        Me.CloseAllToolStripMenuItem.Text = "&Close all"
+        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.CloseAllToolStripMenuItem.Text = "C&lose all"
         '
         'ArrangeIconsToolStripMenuItem
         '
         Me.ArrangeIconsToolStripMenuItem.Name = "ArrangeIconsToolStripMenuItem"
-        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.ArrangeIconsToolStripMenuItem.Text = "&Arange icons"
         '
         'HelpMenu
@@ -293,7 +285,8 @@ Partial Class MDIParent
         Me.NewToolStripButton.ImageTransparentColor = System.Drawing.Color.Black
         Me.NewToolStripButton.Name = "NewToolStripButton"
         Me.NewToolStripButton.Size = New System.Drawing.Size(23, 22)
-        Me.NewToolStripButton.Text = "Nouveau"
+        Me.NewToolStripButton.Text = "New"
+        Me.NewToolStripButton.ToolTipText = "New project"
         '
         'OpenToolStripButton
         '
@@ -302,7 +295,8 @@ Partial Class MDIParent
         Me.OpenToolStripButton.ImageTransparentColor = System.Drawing.Color.Black
         Me.OpenToolStripButton.Name = "OpenToolStripButton"
         Me.OpenToolStripButton.Size = New System.Drawing.Size(23, 22)
-        Me.OpenToolStripButton.Text = "Ouvrir"
+        Me.OpenToolStripButton.Text = "Open"
+        Me.OpenToolStripButton.ToolTipText = "Open existing project"
         '
         'SaveToolStripButton
         '
@@ -311,7 +305,8 @@ Partial Class MDIParent
         Me.SaveToolStripButton.ImageTransparentColor = System.Drawing.Color.Black
         Me.SaveToolStripButton.Name = "SaveToolStripButton"
         Me.SaveToolStripButton.Size = New System.Drawing.Size(23, 22)
-        Me.SaveToolStripButton.Text = "Enregistrer"
+        Me.SaveToolStripButton.Text = "Save"
+        Me.SaveToolStripButton.ToolTipText = "Save current project"
         '
         'ToolStripSeparator1
         '
@@ -325,7 +320,8 @@ Partial Class MDIParent
         Me.PrintToolStripButton.ImageTransparentColor = System.Drawing.Color.Black
         Me.PrintToolStripButton.Name = "PrintToolStripButton"
         Me.PrintToolStripButton.Size = New System.Drawing.Size(23, 22)
-        Me.PrintToolStripButton.Text = "Imprimer"
+        Me.PrintToolStripButton.Text = "Print"
+        Me.PrintToolStripButton.ToolTipText = "Print document view sheet"
         '
         'PrintPreviewToolStripButton
         '
@@ -334,7 +330,8 @@ Partial Class MDIParent
         Me.PrintPreviewToolStripButton.ImageTransparentColor = System.Drawing.Color.Black
         Me.PrintPreviewToolStripButton.Name = "PrintPreviewToolStripButton"
         Me.PrintPreviewToolStripButton.Size = New System.Drawing.Size(23, 22)
-        Me.PrintPreviewToolStripButton.Text = "Aperçu avant impression"
+        Me.PrintPreviewToolStripButton.Text = "Preview print"
+        Me.PrintPreviewToolStripButton.ToolTipText = "Preview print"
         '
         'ToolStripSeparator2
         '
@@ -348,7 +345,8 @@ Partial Class MDIParent
         Me.HelpToolStripButton.ImageTransparentColor = System.Drawing.Color.Black
         Me.HelpToolStripButton.Name = "HelpToolStripButton"
         Me.HelpToolStripButton.Size = New System.Drawing.Size(23, 22)
-        Me.HelpToolStripButton.Text = "Aide"
+        Me.HelpToolStripButton.Text = "Help"
+        Me.HelpToolStripButton.ToolTipText = "Online help"
         '
         'StatusStrip
         '
@@ -396,7 +394,6 @@ Partial Class MDIParent
     Friend WithEvents AboutToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ArrangeIconsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CloseAllToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents NewWindowToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents WindowsMenu As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CascadeToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents TileVerticalToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -424,7 +421,6 @@ Partial Class MDIParent
     Friend WithEvents ToolBarToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents StatusBarToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolsMenu As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents PageSetupDialog1 As System.Windows.Forms.PageSetupDialog
     Friend WithEvents ToolStripSeparator3 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuFileNewDoxygenFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
