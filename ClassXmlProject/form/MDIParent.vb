@@ -8,6 +8,9 @@ Public Class MDIParent
 #Region "Class declaration"
 
     Private m_iChildFormNumber As Integer
+
+    ' Internet Explorer page setup  is used for printing document
+    Private Const cstPrintSetupKey As String = "Software\Microsoft\Internet Explorer\PageSetup"
     Private m_strSetupHeader As String
     Private m_strSetupFooter As String
 
@@ -15,7 +18,7 @@ Public Class MDIParent
 
 #Region "Public methods"
 
-    Public Sub ShowNewForm(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileNew.Click, NewToolStripButton.Click, NewWindowToolStripMenuItem.Click
+    Public Sub ShowNewForm(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileNew.Click, NewToolStripButton.Click
         ' Créez une nouvelle instance du formulaire enfant.
         Dim ChildForm As New frmProject
         ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
@@ -219,28 +222,37 @@ Public Class MDIParent
 
     Private Sub MDIParent_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
 
-        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\Microsoft\Internet Explorer\PageSetup", True)
+        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey(cstPrintSetupKey, True)
         Try
-            key.SetValue("footer", m_strSetupFooter)
-            key.SetValue("header", m_strSetupHeader)
-
+            If key IsNot Nothing Then
+                key.SetValue("footer", m_strSetupFooter)
+                key.SetValue("header", m_strSetupHeader)
+            End If
         Catch ex As Exception
         Finally
-            key.Close()
+            If key IsNot Nothing Then
+                key.Close()
+            End If
         End Try
         ' Dereference all objects here 
         XmlNodeManager.Destroy()
     End Sub
 
     Private Sub MDIParent_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\Microsoft\Internet Explorer\PageSetup")
+        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey(cstPrintSetupKey)
         Try
-            m_strSetupFooter = key.GetValue("footer")
-            m_strSetupHeader = key.GetValue("header")
-
+            If key IsNot Nothing Then
+                m_strSetupFooter = key.GetValue("footer")
+                m_strSetupHeader = key.GetValue("header")
+            Else
+                m_strSetupFooter = "&u&bPage &p sur &P"
+                m_strSetupHeader = "&w&b&d"
+            End If
         Catch ex As Exception
         Finally
-            key.Close()
+            If key IsNot Nothing Then
+                key.Close()
+            End If
         End Try
 
         Try
