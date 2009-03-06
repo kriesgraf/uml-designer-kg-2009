@@ -4,11 +4,19 @@
 
 Some warning messages appear when you save/copy/open a project in a different/new folder or when you install a new application release. The primary cause is the file 'class-model.dtd'. At each new release installation, original file 'class-model.dtd' in application resources is created and also its file creation date differs from one in your projects' workspace folder.
 
-The DTD version (current is 2.1) is not yet verified. This warning message is sometimes improper but it's better to know now exactly the consequence of copying this file.
+The DTD version (current is 2.1) is not yet verified. This warning message is sometimes improper but it's better to know now exactly the consequence of copying this file. In a future release, the DTD version will be verified but the following warning messages will remain.
 
-In a future release, the DTD version will be verified but the following warning messages will remain.
+Other warning messages appear during installation or execution of application, these messages are detailed below and a good or alternative solution is proposed.
 
-== can't find File '... ...\class-model.dtd' ==
+== Cannot start application ==
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Cannot%20start%20application%20from%20this%20location.png
+
+This message appears when you have not follow the installation [Getting_started   guidance]. Two solutions may be proposed:
+ * Inflate last release archive in the same folder as the previous one.
+ * Open the *Control panel* and open tool "*Add or remove programs*" and uninstall previous release.
+
+== Can't find File '... ...\class-model.dtd' ==
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20local%20project%20DTD%20does%20not%20exist.png
 
@@ -27,6 +35,8 @@ We suggest you to save your current project in a different folder. But if you co
 == File '... ...\class-model.dtd' is more recent than application ressource ==
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20more%20recent%20than%20resource.png
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20more%20recent%20than%20resource2.png
 
 You have installed or recover an older release and the original file 'class-model.dtd' in application resources is also older.
 
