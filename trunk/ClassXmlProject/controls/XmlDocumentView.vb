@@ -31,7 +31,10 @@ Public Class XmlDocumentView
     Private Const cstUmlViewStyleSheet As String = "package.xsl"
     Private Const cstCodeSourceHeaderCppStyleSheet As String = "uml2cpp-h.xsl"
     Private Const cstCodeSourceVbDotNetStyleSheet As String = "uml2vbnet.xsl"
-    Private Const cstPrintSetupHeader As String = "&w"
+
+    ' Internet Explorer page setup  is used for printing document
+    Private Const cstPrintSetupKey As String = "Software\Microsoft\Internet Explorer\PageSetup"
+    Private Const cstPrintSetupHeader As String = "&w&b&d"
     Private Const cstPrintSetupFooter As String = "{0}&bPage &p sur &P"
 
 #End Region
@@ -156,41 +159,49 @@ Public Class XmlDocumentView
         End Try
     End Sub
 
+    Private Sub CheckInternetExplorerPageSetup()
+        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey(cstPrintSetupKey, True)
+        Try
+            If key IsNot Nothing Then
+                key.SetValue("footer", String.Format(cstPrintSetupFooter, m_currentNode.OwnerDocument.BaseURI))
+                key.SetValue("header", cstPrintSetupHeader)
+            End If
+
+            MyBase.ShowPageSetupDialog()
+
+            If key Is Nothing Then
+                key = Registry.CurrentUser.OpenSubKey(cstPrintSetupKey, True)
+
+                If key IsNot Nothing Then
+                    key.SetValue("footer", String.Format(cstPrintSetupFooter, m_currentNode.OwnerDocument.BaseURI))
+                    key.SetValue("header", cstPrintSetupHeader)
+                End If
+            End If
+
+        Catch ex As Exception
+        Finally
+            If key IsNot Nothing Then
+                key.Close()
+            End If
+        End Try
+    End Sub
 #End Region
+
+#Region "Public methods"
 
     Public Sub New()
         m_xslStylesheet = New XslSimpleTransform(True)
     End Sub
 
     Public Overloads Sub ShowPrintPreviewDialog()
-        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\Microsoft\Internet Explorer\PageSetup", True)
-        Try
-            key.SetValue("footer", String.Format(cstPrintSetupFooter, m_currentNode.OwnerDocument.BaseURI))
-            key.SetValue("header", cstPrintSetupHeader)
-
-            MyBase.ShowPageSetupDialog()
-
-        Catch ex As Exception
-        Finally
-            key.Close()
-        End Try
-
+        CheckInternetExplorerPageSetup()
         MyBase.ShowPrintPreviewDialog()
     End Sub
 
     Public Overloads Sub ShowPrintDialog()
-        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\Microsoft\Internet Explorer\PageSetup", True)
-        Try
-            key.SetValue("footer", String.Format(cstPrintSetupFooter, m_currentNode.OwnerDocument.BaseURI))
-            key.SetValue("header", cstPrintSetupHeader)
-
-            MyBase.ShowPageSetupDialog()
-
-        Catch ex As Exception
-        Finally
-            key.Close()
-        End Try
-
+        CheckInternetExplorerPageSetup()
         MyBase.ShowPrintDialog()
     End Sub
+#End Region
+
 End Class
