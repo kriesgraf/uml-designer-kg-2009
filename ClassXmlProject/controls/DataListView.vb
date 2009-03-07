@@ -312,7 +312,7 @@ Public Class DataListViewEventArgs
     ''' <remarks></remarks>
     Public SelectedIndex As Integer
 
-    Public Sub New(ByVal value As Integer)
+    Public Sub New(Optional ByVal value As Integer = -1)
         SelectedIndex = value
     End Sub
 End Class
