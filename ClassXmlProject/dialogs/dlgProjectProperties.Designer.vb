@@ -71,7 +71,7 @@ Partial Class dlgProjectProperties
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.DialogResult = DialogResult.Cancel
+        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
@@ -104,8 +104,8 @@ Partial Class dlgProjectProperties
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 56.0!))
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 170.0!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42.0!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 156.0!))
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(443, 338)
         Me.TableLayoutPanel2.TabIndex = 1
         '
@@ -173,22 +173,22 @@ Partial Class dlgProjectProperties
         '
         Me.fileListBox.Dock = System.Windows.Forms.DockStyle.Top
         Me.fileListBox.FormattingEnabled = True
-        Me.fileListBox.Location = New System.Drawing.Point(93, 171)
+        Me.fileListBox.Location = New System.Drawing.Point(93, 185)
         Me.fileListBox.Name = "fileListBox"
         Me.fileListBox.Pattern = "*.*"
-        Me.fileListBox.Size = New System.Drawing.Size(347, 160)
+        Me.fileListBox.Size = New System.Drawing.Size(347, 147)
         Me.fileListBox.TabIndex = 5
         '
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Dock = System.Windows.Forms.DockStyle.Top
-        Me.Label6.Location = New System.Drawing.Point(3, 168)
+        Me.Label6.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label6.Location = New System.Drawing.Point(3, 182)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(84, 13)
+        Me.Label6.Size = New System.Drawing.Size(84, 156)
         Me.Label6.TabIndex = 12
-        Me.Label6.Text = "Content:"
-        Me.Label6.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Label6.Text = "Source location content:"
+        Me.Label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'txtBrief
         '
@@ -204,7 +204,7 @@ Partial Class dlgProjectProperties
         Me.lblPath.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lblPath.Location = New System.Drawing.Point(93, 140)
         Me.lblPath.Name = "lblPath"
-        Me.lblPath.Size = New System.Drawing.Size(347, 28)
+        Me.lblPath.Size = New System.Drawing.Size(347, 42)
         Me.lblPath.TabIndex = 15
         Me.lblPath.Text = "<-- Please click on this button "
         Me.lblPath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -225,9 +225,9 @@ Partial Class dlgProjectProperties
         Me.btnPath.Dock = System.Windows.Forms.DockStyle.Fill
         Me.btnPath.Location = New System.Drawing.Point(3, 143)
         Me.btnPath.Name = "btnPath"
-        Me.btnPath.Size = New System.Drawing.Size(84, 22)
+        Me.btnPath.Size = New System.Drawing.Size(84, 36)
         Me.btnPath.TabIndex = 14
-        Me.btnPath.Text = "Location"
+        Me.btnPath.Text = "Sources location"
         Me.btnPath.UseVisualStyleBackColor = True
         '
         'txtPath
