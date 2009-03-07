@@ -229,7 +229,7 @@ Public Class XmlMethodView
                 dataControl.DropDownStyle = ComboBoxStyle.DropDownList
 
                 dataControl.Items.AddRange(New Object() {"Normal", "Widening", "Narrowing", "Event", "Overloads", _
-                                                         "Delegate", "Partial", "Shadows", "Overloads"})
+                                                         "Delegate", "Partial", "Shadows"})
 
                 m_xmlBindingsList.AddBinding(dataControl, Me, "Behaviour", "SelectedItem")
             End If
