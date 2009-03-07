@@ -25,6 +25,7 @@ Public Class XmlDocumentView
     Private m_eLanguage As ELanguage = ELanguage.Language_CplusPlus
     Private m_bTransformActive As Boolean = False
     Private m_strTransformation As String = ""
+    Private m_iTextSize As Integer = 100
 
     Private Const cstUpdate As String = "__umlTempleFile"
     Private Const cstDatabaseStyleSheet As String = "xsl-idle.xsl"
@@ -202,6 +203,36 @@ Public Class XmlDocumentView
         CheckInternetExplorerPageSetup()
         MyBase.ShowPrintDialog()
     End Sub
+
+    Public Sub DicreaseTextSize()
+        Try
+            If m_iTextSize > 50 Then
+                m_iTextSize -= 10
+                Dim oWebControl As Object = MyBase.ActiveXInstance
+                oWebControl.ExecWB(63, 2, CType(m_iTextSize, Object), Nothing)
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
+
+    Public Sub IncreaseTextSize()
+        Try
+            If m_iTextSize < 200 Then
+                m_iTextSize += 10
+                Dim oWebControl As Object = MyBase.ActiveXInstance
+                oWebControl.ExecWB(63, 2, CType(m_iTextSize, Object), Nothing)
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
 #End Region
 
+    Private Sub XmlDocumentView_Navigated(ByVal sender As Object, ByVal e As System.Windows.Forms.WebBrowserNavigatedEventArgs) Handles Me.Navigated
+        Try
+            Dim oWebControl As Object = MyBase.ActiveXInstance
+            oWebControl.ExecWB(63, 2, CType(m_iTextSize, Object), Nothing)
+
+        Catch ex As Exception
+        End Try
+    End Sub
 End Class
