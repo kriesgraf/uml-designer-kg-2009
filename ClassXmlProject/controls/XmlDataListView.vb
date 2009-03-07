@@ -14,6 +14,8 @@ Public Class XmlDataListView
     Private m_lviCurrent As ListViewItem
     Private m_strContext As String
 
+    Public Event GoHomeLevel(ByVal sender As Object, ByVal e As DataListViewEventArgs)
+    Public Event GoParentLevel(ByVal sender As Object, ByVal e As DataListViewEventArgs)
     Public Event GoChildLevel(ByVal sender As Object, ByVal e As DataListViewEventArgs)
     Public Event ItemChanged(ByVal sender As Object, ByVal e As DataListViewEventArgs)
 
@@ -90,13 +92,15 @@ Public Class XmlDataListView
         m_lstViews.Add(strName, view)
     End Sub
 
-    Public Function GoParentLevel() As Boolean
-        Return m_xmlBinding.PopNode()
-    End Function
+    Public Sub GoBack()
+        m_xmlBinding.PopNode()
+        OnGoParentLevel(New DataListViewEventArgs)
+    End Sub
 
-    Public Function GoHomeLevel() As Boolean
-        Return m_xmlBinding.GoHomeNode()
-    End Function
+    Public Sub GoHome()
+        m_xmlBinding.GoHomeNode()
+        OnGoHomeLevel(New DataListViewEventArgs)
+    End Sub
 
     Public Function CutSelectedItem() As Boolean
         Dim bResult As Boolean = False
@@ -229,6 +233,14 @@ Public Class XmlDataListView
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
+    End Sub
+
+    Private Sub OnGoHomeLevel(ByVal e As DataListViewEventArgs)
+        RaiseEvent GoHomeLevel(Me, e)
+    End Sub
+
+    Private Sub OnGoParentLevel(ByVal e As DataListViewEventArgs)
+        RaiseEvent GoParentLevel(Me, e)
     End Sub
 
     Private Sub OnGoChildLevel(ByVal e As DataListViewEventArgs)
