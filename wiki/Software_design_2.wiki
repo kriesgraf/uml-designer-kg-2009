@@ -4,6 +4,8 @@
 
 We have choose [http://www.w3.org/XML/ XML] format for project data file to allow a loads of possible conversion, at least HTML display and source code generation.
 
+For now the structure of the Xml document is declared in a Document Type Definition file (DTD), which current version is 1.2.
+
 == Overview ===
 
 Xml format offers a tree data structure that is useful to describe Uml project description.
