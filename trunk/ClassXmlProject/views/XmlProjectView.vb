@@ -13,6 +13,7 @@ Public Class XmlProjectView
 
 #Region "Class declarations"
 
+    Private m_Control As XmlDataListView
     Private m_xmlDocument As XmlDocument
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
     Private m_xmlProperties As XmlProjectProperties
@@ -25,6 +26,13 @@ Public Class XmlProjectView
 #End Region
 
 #Region "Properties"
+
+    Public WriteOnly Property ListViewControl() As XmlDataListView
+        Set(ByVal value As XmlDataListView)
+            m_Control = value
+        End Set
+    End Property
+
 
     Public Property Updated() As Boolean
         Get
@@ -113,20 +121,18 @@ Public Class XmlProjectView
             m_xmlDocument.LoadXml(strXML)
             ' After load, document reference change and old nodes must be updated
             m_xmlProperties.Node = m_xmlDocument.LastChild
-            m_xmlProperties.Name = ExtractName(strFilename)
+            m_xmlProperties.Name = GetProjectName(strFilename)
             m_strFilename = strFilename
             Save()
+
+            ' We reload members to be sure to work with last reference of "root" node
+            LoadMembers()
+
             Return True
 
         Catch ex As Exception
             Throw ex
         End Try
-    End Function
-
-    Private Function ExtractName(ByVal strFilename As String) As String
-        Dim slashPosition As Integer = strFilename.LastIndexOf("\")
-        Dim filenameOnly As String = strFilename.Substring(slashPosition + 1)
-        Return filenameOnly.Substring(0, filenameOnly.LastIndexOf("."))
     End Function
 
     Public Function Save() As Boolean
@@ -142,6 +148,26 @@ Public Class XmlProjectView
             MsgExceptionBox(ex)
         End Try
         Return bResult
+    End Function
+
+    Public Function EditProperties() As Boolean
+        If m_xmlProperties.Edit() Then
+            ' We go home to be sure that language info is reflected back to all tree nodes
+            m_Control.GoHome()
+            m_Control.Binding.ResetBindings(True)
+            Me.Updated = True
+            Return True
+        End If
+        Return False
+    End Function
+
+    Public Function EditParameters() As Boolean
+        dlgXmlNodeProperties.DisplayProperties(m_xmlProperties)
+        ' We go home to be sure that language info is reflected back to all tree nodes
+        m_Control.GoHome()
+        m_Control.Binding.ResetBindings(True)
+        Me.Updated = True
+        Return True
     End Function
 
     Public Sub UpdatesCollaborations()
@@ -168,7 +194,10 @@ Public Class XmlProjectView
         Try
             bResult = ExportNodes(component, True)
             ' Set flag Updated to prevent to close project without saving
-            If bResult Then Me.Updated = True
+            If bResult Then
+                Me.Updated = True
+                m_Control.Binding.ResetBindings(True)
+            End If
 
         Catch ex As Exception
             Throw ex
@@ -204,13 +233,7 @@ Public Class XmlProjectView
             If dlgSaveFile.ShowDialog() = DialogResult.OK Then
 
                 Dim FileName As String = dlgSaveFile.FileName
-                Dim i As Integer = InStrRev(FileName, "\")
-
-                If i > 0 Then
-                    My.Settings.ImportFolder = Strings.Left(FileName, i - 1)
-                Else
-                    My.Settings.ImportFolder = dlgSaveFile.InitialDirectory
-                End If
+                UpdateCurrentImportFolder(FileName, dlgSaveFile.InitialDirectory)
 
                 Dim strFullPackage As String
 
@@ -223,8 +246,8 @@ Public Class XmlProjectView
                         UmlNodesManager.ExportNodes(node, dlgSaveFile.FileName, strFullPackage)
                         If bExtractReferences Then
                             strFullPackage = GetFullpathPackage(node, _
-                                                                                Me.Properties.GenerationLanguage, _
-                                                                                GetName(node))
+                                                                Me.Properties.GenerationLanguage, _
+                                                                GetName(node))
                             bResult = UmlNodesManager.ExtractReferences(node, strFullPackage, _
                                                                         GetSeparator(Me.Properties.GenerationLanguage))
                         End If
@@ -268,15 +291,12 @@ Public Class XmlProjectView
             If dlgOpenFile.ShowDialog() = DialogResult.OK Then
 
                 Dim FileName As String = dlgOpenFile.FileName
-                Dim i As Integer = InStrRev(FileName, "\")
-
-                If i > 0 Then
-                    My.Settings.ImportFolder = Strings.Left(FileName, i - 1)
-                Else
-                    My.Settings.ImportFolder = dlgOpenFile.InitialDirectory
-                End If
+                UpdateCurrentImportFolder(FileName, dlgOpenFile.InitialDirectory)
 
                 bResult = UmlNodesManager.ImportNodes(component, FileName, m_xmlReferenceNodeCounter, bUpdateOnly)
+                If bResult Then
+                    m_Control.Binding.ResetBindings(True)
+                End If
             End If
         Catch ex As Exception
             Throw ex
@@ -305,13 +325,7 @@ Public Class XmlProjectView
                 If FileName.EndsWith(".ximp") = False Then
                     FileName += ".ximp"
                 End If
-                Dim i As Integer = InStrRev(FileName, "\")
-
-                If i > 0 Then
-                    My.Settings.ImportFolder = Strings.Left(FileName, i - 1)
-                Else
-                    My.Settings.ImportFolder = dlgSaveFile.InitialDirectory
-                End If
+                UpdateCurrentImportFolder(FileName, dlgSaveFile.InitialDirectory)
 
                 Select Case node.Name
                     Case "root"
@@ -391,27 +405,31 @@ Public Class XmlProjectView
         Return bResult
     End Function
 
-    Public Sub LoadMembers(ByVal control As XmlDataListView)
+    Public Sub LoadMembers()
         Try
-            control.Binding.NodeCounter = m_xmlReferenceNodeCounter
+            m_Control.Binding.NodeCounter = m_xmlReferenceNodeCounter
             Dim xmlcpnt As XmlProjectMemberView = New XmlProjectMemberView(Me.Properties.Node)
-            control.Binding.LoadItems(xmlcpnt, "project_member_view", "import")
-            control.CurrentContext = "project"
+            m_Control.Binding.LoadItems(xmlcpnt, "project_member_view", "import")
+            m_Control.CurrentContext = "project"
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
 
-    Public Sub AddMenuProject(ByVal control As XmlDataListView, ByVal menuStrip As ContextMenuStrip)
-        control.AddContext("project", menuStrip, View.List)
+    Public Sub AddMenuProject(ByVal menuStrip As ContextMenuStrip)
+        m_Control.AddContext("project", menuStrip, Windows.Forms.View.List)
     End Sub
 
-    Public Sub AddMenuPackage(ByVal control As XmlDataListView, ByVal menuStrip As ContextMenuStrip)
-        control.AddContext("package", menuStrip, View.LargeIcon)
+    Public Sub AddMenuPackage(ByVal menuStrip As ContextMenuStrip)
+        m_Control.AddContext("package", menuStrip, Windows.Forms.View.LargeIcon)
     End Sub
 
-    Public Sub AddMenuClass(ByVal control As XmlDataListView, ByVal menuStrip As ContextMenuStrip)
-        control.AddContext("class", menuStrip, View.Details)
+    Public Sub AddMenuClass(ByVal menuStrip As ContextMenuStrip)
+        m_Control.AddContext("class", menuStrip, Windows.Forms.View.Details)
+    End Sub
+
+    Public Sub AddMenuImport(ByVal menuStrip As ContextMenuStrip)
+        m_Control.AddContext("import", menuStrip, Windows.Forms.View.LargeIcon)
     End Sub
 
     Public Sub UpdateMenuClass(ByVal item1 As ToolStripItem)
@@ -422,15 +440,13 @@ Public Class XmlProjectView
         End If
     End Sub
 
-    Public Sub AddMenuImport(ByVal control As XmlDataListView, ByVal menuStrip As ContextMenuStrip)
-        control.AddContext("import", menuStrip, View.LargeIcon)
-    End Sub
-
     Public Function AddReferences(ByVal composite As XmlComposite, ByVal eMode As XmlImportSpec.EImportMode) As Boolean
         Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
         xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
         If xmlcpnt.AddReferences(eMode) Then
             Me.Updated = True
+            m_Control.Binding.ResetBindings(True)
+            m_Control.SelectItem(0)
             Return True
         End If
         Return False
@@ -460,6 +476,7 @@ Public Class XmlProjectView
         Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
         xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
         If xmlcpnt.RemoveAllReferences() Then
+            m_Control.Binding.ResetBindings(True)
             Me.Updated = True
             Return True
         End If
@@ -471,6 +488,7 @@ Public Class XmlProjectView
             Dim xmlcpnt As XmlClassSpec = XmlNodeManager.GetInstance().CreateDocument(composite.Node)
             If xmlcpnt.OverrideProperties() Then
                 Me.Updated = True
+                m_Control.Binding.ResetBindings(True)
                 Return True
             End If
         End If
@@ -482,6 +500,7 @@ Public Class XmlProjectView
             Dim xmlcpnt As XmlClassSpec = XmlNodeManager.GetInstance().CreateDocument(composite.Node)
             If xmlcpnt.OverrideMethods() Then
                 Me.Updated = True
+                m_Control.Binding.ResetBindings(True)
                 Return True
             End If
         End If
@@ -587,10 +606,19 @@ Public Class XmlProjectView
     End Sub
 
     Private Function GetProjectName(ByVal strFullpathFilename As String) As String
-        Dim strProjectName As String = Mid(strFullpathFilename, InStrRev(strFullpathFilename, "\") + 1)
-        strProjectName = Left(strProjectName, InStrRev(strProjectName, ".") - 1)
+        Dim strProjectName As String = Path.GetFileNameWithoutExtension(strFullpathFilename)
         Return strProjectName
     End Function
+
+    Private Sub UpdateCurrentImportFolder(ByVal strFullpathFilename As String, ByVal strDefault As String)
+        Dim i As Integer = InStrRev(Filename, "\")
+
+        If InStr(Filename, "\") > 0 Then
+            My.Settings.ImportFolder = Path.GetFileName(Filename)
+        Else
+            My.Settings.ImportFolder = strDefault
+        End If
+    End Sub
 
 #End Region
 End Class
