@@ -81,7 +81,11 @@ Public Class frmProject
     Private Sub UpdateButtons()
         RefreshProjectDisplay()
         btnHome.Enabled = lvwProjectMembers.Binding.IsNotHome()
-        btnUp.Enabled = lvwProjectMembers.Binding.IsNotHome()
+        btnUp.Enabled = btnHome.Enabled
+        UpdateButtonProjectView()
+    End Sub
+
+    Private Sub UpdateButtonProjectView()
         btnProjectView.Text = btnProjectView.DropDownItems(lvwProjectMembers.View).Text
     End Sub
 
@@ -136,19 +140,21 @@ Public Class frmProject
             End If
 
             With m_xmlProject
-                .AddMenuProject(lvwProjectMembers, mnuProjectList)
-                .AddMenuPackage(lvwProjectMembers, mnuPackageList)
-                .AddMenuClass(lvwProjectMembers, mnuClassMembers)
-                .AddMenuImport(lvwProjectMembers, mnuEditReference)
-                .LoadMembers(lvwProjectMembers)
+                .ListViewControl = lvwProjectMembers
+                .AddMenuProject(mnuProjectList)
+                .AddMenuPackage(mnuPackageList)
+                .AddMenuClass(mnuClassMembers)
+                .AddMenuImport(mnuEditReference)
+                .LoadMembers()
 
-                btnProjectView.Text = lvwProjectMembers.View.ToString
                 docvwProjectDisplay.Language = .Properties.GenerationLanguage
-                docvwProjectDisplay.View = XmlDocumentViewMode.UmlView
-                btnDocView.Text = UmlViewToolStripMenuItem.Text
+                ' change display of docvwProjectDisplay & btnDocView in one shot
+                DocViewMenuItem_Click(UmlViewToolStripMenuItem, Nothing)
 
-                If .IsNew = False _
-                Then
+                If .IsNew Then
+                    docvwProjectDisplay.DataSource = CType(lvwProjectMembers.Binding.Parent, XmlComponent).Node
+                    mnuProjectProperties_Click(Me, Nothing)
+                Else
                     Me.Text = .Name
                     lvwProjectMembers.SelectItem(0)
                     If lvwProjectMembers.SelectedItem IsNot Nothing Then
@@ -210,9 +216,7 @@ Public Class frmProject
 
     Private Sub btnHome_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnHome.Click
         Try
-            lvwProjectMembers.GoHomeLevel()
-            docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
-            UpdateButtons()
+            lvwProjectMembers.GoHome()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -221,10 +225,7 @@ Public Class frmProject
 
     Private Sub btnUp_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnUp.Click
         Try
-            btnUp.Enabled = lvwProjectMembers.GoParentLevel()
-            btnProjectView.Text = lvwProjectMembers.View.ToString
-            docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
-            UpdateButtons()
+            lvwProjectMembers.GoBack()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -250,7 +251,10 @@ Public Class frmProject
         End Try
     End Sub
 
-    Private Sub lvwProjectMembers_GoChildLevel(ByVal sender As Object, ByVal e As DataListViewEventArgs) Handles lvwProjectMembers.GoChildLevel
+    Private Sub lvwProjectMembers_ChangeLevel(ByVal sender As Object, ByVal e As DataListViewEventArgs) _
+                Handles lvwProjectMembers.GoHomeLevel, _
+                        lvwProjectMembers.GoParentLevel, _
+                        lvwProjectMembers.GoChildLevel
         Try
             docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
             UpdateButtons()
@@ -370,10 +374,7 @@ Public Class frmProject
 
     Private Sub mnuProjectProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuProjectProperties.Click
         Try
-            Dim fen As Form = m_xmlProject.Properties.CreateDialogBox()
-            fen.ShowDialog()
-            If CType(fen.Tag, Boolean) = True Then
-                lvwProjectMembers.Binding.ResetBindings(True)
+            If m_xmlProject.EditProperties() Then
                 m_xmlProject.UpdateMenuClass(AddClassTypedef)
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
                 RefreshProjectDisplay(True)
@@ -386,11 +387,10 @@ Public Class frmProject
 
     Private Sub mnuProjectParameters_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuProjectParameters.Click
         Try
-            dlgXmlNodeProperties.DisplayProperties(m_xmlProject.Properties)
-            ' Set flag Updated to prevent to close project without saving
-            RefreshProjectDisplay(True)
-            docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
-
+            If m_xmlProject.EditParameters() Then
+                RefreshProjectDisplay()
+                docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
+            End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -437,8 +437,6 @@ Public Class frmProject
         Try
             If lvwProjectMembers.Binding.Parent IsNot Nothing Then
                 If m_xmlProject.AddReferences(lvwProjectMembers.Binding.Parent, sender.Tag) Then
-                    lvwProjectMembers.Binding.ResetBindings(True)
-                    lvwProjectMembers.SelectItem(0)
                 End If
             End If
         Catch ex As Exception
@@ -465,7 +463,6 @@ Public Class frmProject
         Try
             If lvwProjectMembers.Binding.Parent IsNot Nothing Then
                 If m_xmlProject.RemoveAllReferences(lvwProjectMembers.Binding.Parent) Then
-                    lvwProjectMembers.Binding.ResetBindings(True)
                     docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
                 End If
             End If
@@ -507,10 +504,8 @@ Public Class frmProject
 
     Private Sub mnuOverrideProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuOverrideProperties.Click
         Try
-            If m_xmlProject.OverrideProperties(lvwProjectMembers.Binding.Parent) _
-            Then
-                lvwProjectMembers.Binding.ResetBindings(True)
-            End If
+            m_xmlProject.OverrideProperties(lvwProjectMembers.Binding.Parent)
+
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -518,10 +513,8 @@ Public Class frmProject
 
     Private Sub mnuOverrideMethods_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuOverrideMethods.Click
         Try
-            If m_xmlProject.OverrideMethods(lvwProjectMembers.Binding.Parent) _
-            Then
-                lvwProjectMembers.Binding.ResetBindings(True)
-            End If
+            m_xmlProject.OverrideMethods(lvwProjectMembers.Binding.Parent)
+
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -545,9 +538,8 @@ Public Class frmProject
                 Handles mnuProjectImportNodes.Click, mnuPackageImportNodes.Click
 
         Try
-            If m_xmlProject.ImportNodes(lvwProjectMembers.Binding.Parent) Then
-                lvwProjectMembers.Binding.ResetBindings(True)
-            End If
+            m_xmlProject.ImportNodes(lvwProjectMembers.Binding.Parent)
+
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -563,9 +555,7 @@ Public Class frmProject
         End If
 
         If myobject IsNot Nothing Then
-            If m_xmlProject.ImportNodes(myobject, True) Then
-                lvwProjectMembers.Binding.ResetBindings(True)
-            End If
+            m_xmlProject.ImportNodes(myobject, True)
         End If
     End Sub
 
@@ -606,9 +596,6 @@ Public Class frmProject
             Else
                 bRefresh = m_xmlProject.ExportNodesExtract(lvwProjectMembers.Binding.Parent)
             End If
-            If bRefresh Then
-                lvwProjectMembers.Binding.ResetBindings(True)
-            End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -642,7 +629,7 @@ Public Class frmProject
 
         Try
             lvwProjectMembers.View = sender.Tag
-            btnProjectView.Text = sender.Text
+            UpdateButtonProjectView()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -697,5 +684,13 @@ Public Class frmProject
         lvwProjectMembers.CutSelectedItem()
         mnuEditPaste.Enabled = True
         btnPaste.Enabled = True
+    End Sub
+
+    Private Sub btnZoomIn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnZoomIn.Click
+        docvwProjectDisplay.IncreaseTextSize()
+    End Sub
+
+    Private Sub btnZoomOut_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnZoomOut.Click
+        docvwProjectDisplay.DicreaseTextSize()
     End Sub
 End Class
