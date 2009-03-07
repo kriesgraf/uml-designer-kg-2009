@@ -129,8 +129,8 @@ Public Class XmlRelationSpec
             ' Set an existing class element
             m_xmlFather.Idref = MyBase.GetFirstClassId()
             m_xmlChild.SetDefaultValues(bCreateNodeNow)
-            ' Set an existing class element but different than father
-            m_xmlChild.Idref = MyBase.GetFirstClassId(m_xmlFather.Idref)
+            ' Set an existing class element that could be father
+            m_xmlChild.Idref = MyBase.GetFirstClassId()
             Id = "relation0"
             Action = "New_Action"
             Kind = EKindRelation.Assembly
