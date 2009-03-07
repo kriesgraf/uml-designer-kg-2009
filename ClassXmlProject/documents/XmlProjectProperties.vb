@@ -8,8 +8,10 @@ Imports System.Xml
 Public Class XmlProjectProperties
     Inherits XmlComposite
 
-    Public Function CreateDialogBox() As Form
-        Return XmlNodeManager.GetInstance().CreateForm(Me)
+    Public Function Edit() As Boolean
+        Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me)
+        fen.ShowDialog()
+        Return CType(fen.Tag, Boolean)
     End Function
 
     <CategoryAttribute("Code generation"), _
