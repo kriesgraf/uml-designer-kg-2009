@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 
@@ -117,7 +118,7 @@ Public Class XmlPackageView
                 Dim i As Integer = InStrRev(FileName, "\")
 
                 If i > 0 Then
-                    My.Settings.ImportFolder = Strings.Left(FileName, i - 1)
+                    My.Settings.ImportFolder = Path.GetFileName(FileName)
                 Else
                     My.Settings.ImportFolder = dlgOpenFile.InitialDirectory
                 End If
