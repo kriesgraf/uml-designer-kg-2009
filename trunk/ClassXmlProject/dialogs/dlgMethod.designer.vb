@@ -49,6 +49,7 @@ Partial Class dlgMethod
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
@@ -64,7 +65,6 @@ Partial Class dlgMethod
         Me.btnDelete = New System.Windows.Forms.Button
         Me.txtComment = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         Me.FlowLayoutPanel2.SuspendLayout()
@@ -381,6 +381,13 @@ Partial Class dlgMethod
         Me.mnuPaste.Size = New System.Drawing.Size(189, 22)
         Me.mnuPaste.Text = "Paste"
         '
+        'mnuDuplicate
+        '
+        Me.mnuDuplicate.Name = "mnuDuplicate"
+        Me.mnuDuplicate.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
+        Me.mnuDuplicate.Size = New System.Drawing.Size(189, 22)
+        Me.mnuDuplicate.Text = "Duplicate"
+        '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
@@ -460,7 +467,7 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.55682!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.44318!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 87.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -475,7 +482,6 @@ Partial Class dlgMethod
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.DialogResult = DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(498, 6)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
@@ -485,7 +491,7 @@ Partial Class dlgMethod
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(400, 6)
+        Me.OK_Button.Location = New System.Drawing.Point(399, 6)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 0
@@ -509,13 +515,6 @@ Partial Class dlgMethod
         Me.txtComment.Name = "txtComment"
         Me.txtComment.Size = New System.Drawing.Size(477, 91)
         Me.txtComment.TabIndex = 18
-        '
-        'mnuDuplicate
-        '
-        Me.mnuDuplicate.Name = "mnuDuplicate"
-        Me.mnuDuplicate.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
-        Me.mnuDuplicate.Size = New System.Drawing.Size(189, 22)
-        Me.mnuDuplicate.Text = "Duplicate"
         '
         'dlgMethod
         '
