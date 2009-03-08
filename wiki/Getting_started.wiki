@@ -2,9 +2,9 @@
 
 =Installation=
 
-First download the current [http://code.google.com/p/uml-designer-kg-2009/downloads/list release] and save it in a specific folder, for example: {{{C:\ClassXmlProject}}}. 
+First download the current [http://code.google.com/p/uml-designer-kg-2009/downloads/list release] and save it in a specific folder, for example: {{{C:\Program files\ClassXmlProject}}}. 
 
-When you execute this auto-extractible archive, you will inflate setup application and resources in this folder. Remain it for future release because you can recover previous releases easily. 
+When you execute this auto-extractible archive, you will inflate setup application and resources in this folder. Remain it because you would have an error when you will install future releases, see [Troubleshooting troubleshooting]. 
 
 Program {{{setup.exe}}} will install all files, resources and frameworks that are required. If the setup fails to install the *Microsoft .NET 3.5* framework or if you wish to install only the *English* pack, you can download framework [http://go.microsoft.com/fwlink/?LinkId=97964 here] or [http://www.microsoft.com/downloads/info.aspx?na=90&p=&SrcDisplayLang=en&SrcCategoryId=&SrcFamilyId=333325fd-ae52-4e35-b531-508d977d32a6&u=http%3a%2f%2fdownload.microsoft.com%2fdownload%2f7%2f0%2f3%2f703455ee-a747-4cc8-bd3e-98a615c3aedb%2fdotNetFx35setup.exe there].
 
