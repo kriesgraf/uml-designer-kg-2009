@@ -513,7 +513,6 @@
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
-    <None Include="My Project\DataSources\XmlBindingDataGridView.datasource" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <CustomToolNamespace>My</CustomToolNamespace>
@@ -524,7 +523,6 @@
     <Content Include="library.ico" />
     <None Include="ClassXmlProject_TemporaryKey.pfx" />
     <None Include="My Project\app.manifest" />
-    <None Include="My Project\VisualBasic" />
     <None Include="Resources\btnDocView.Image.bmp" />
     <None Include="Resources\btnProjectView.Image.bmp" />
     <None Include="Resources\Address-Book.ico" />
@@ -550,6 +548,7 @@
     <None Include="Resources\Stop.ico" />
     <Content Include="Resources\8zoomin16.bmp" />
     <Content Include="Resources\8zoomout16.bmp" />
+    <Content Include="Resources\SnapShot.bmp" />
     <Content Include="xslt\class-model.xml" />
     <None Include="Resources\interdit-64.png" />
     <None Include="Resources\NewToolStripMenuItem.Image.bmp" />
@@ -659,11 +658,8 @@
     </PublishFile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <Target Name="AfterPublish">
+    <Message Text="This is the AfterPublish target" Importance="normal" />
+    <Exec Command="&quot;$(ProjectDir)tools\deploy.bat&quot; &quot;$(OutputPath)app.publish&quot; $(TargetName) &quot;$(ProjectDir)&quot;" IgnoreExitCode="true" />
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
