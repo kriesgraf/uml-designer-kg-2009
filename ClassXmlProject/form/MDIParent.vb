@@ -347,4 +347,9 @@ Public Class MDIParent
         ' Navigate to a URL.
         System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/")
     End Sub
+
+    Private Sub DiffToolStripOption_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DiffToolStripOption.Click
+        Dim fen As Form = New dlgDiffTool
+        fen.ShowDialog()
+    End Sub
 End Class
