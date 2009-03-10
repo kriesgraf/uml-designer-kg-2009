@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Diagnostics
 Imports System.Windows.Forms
 Imports System.Collections.Generic
 Imports System.Xml
@@ -14,6 +15,7 @@ Public Class UmlCodeGenerator
     Private Const cstUpdate As String = "_codegen"
     Private Const cstCodeSourceHeaderCppStyleSheet As String = "uml2cpp-h.xsl"
     Private Const cstCodeSourceVbDotNetStyleSheet As String = "uml2vbnet.xsl"
+    Private Const cstTempExport As String = ".umlexp\"
 
     Private Shared m_bTransformActive As Boolean = False
 #End Region
@@ -154,10 +156,10 @@ Public Class UmlCodeGenerator
                     Case XmlNodeType.Element
                         Select Case reader.Name
                             Case cstFolderElement
-                                ExtractPackage(strFolder, reader)
+                                ExtractPackage(strFolder, reader, True)
 
                             Case cstFileElement
-                                ExtractClass(strFolder, reader)
+                                ExtractClass(strFolder, reader, True)
                             Case Else
                                 'Debug.Print("Node ignored:=" + reader.Name)
                         End Select
@@ -174,7 +176,7 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub ExtractPackage(ByVal currentFolder As String, ByVal reader As XmlTextReader)
+    Private Shared Sub ExtractPackage(ByVal currentFolder As String, ByVal reader As XmlTextReader, Optional ByVal bUseTempFolder As Boolean = False)
 
         reader.MoveToFirstAttribute()
         If reader.Name <> "name" Then
@@ -184,17 +186,17 @@ Public Class UmlCodeGenerator
         Dim strNewFolder As String = reader.Value
         reader.MoveToElement()
 
-        CreateBranch(currentFolder, strNewFolder)
+        strNewFolder = CreateBranch(currentFolder, strNewFolder)
 
         While reader.Read()
             Select Case reader.NodeType
                 Case XmlNodeType.Element
                     Select Case reader.Name
                         Case cstFolderElement
-                            ExtractPackage(currentFolder + strNewFolder + "\", reader)
+                            ExtractPackage(strNewFolder, reader, bUseTempFolder)
 
                         Case cstFileElement
-                            ExtractClass(currentFolder + strNewFolder + "\", reader)
+                            ExtractClass(strNewFolder, reader, bUseTempFolder)
                         Case Else
                             'Debug.Print("Node ignored:=" + reader.Name)
                     End Select
@@ -205,7 +207,7 @@ Public Class UmlCodeGenerator
         End While
     End Sub
 
-    Private Shared Sub ExtractClass(ByVal currentFolder As String, ByVal reader As XmlTextReader)
+    Private Shared Sub ExtractClass(ByVal currentFolder As String, ByVal reader As XmlTextReader, Optional ByVal bUseTempFolder As Boolean = False)
 
         reader.MoveToFirstAttribute()
         If reader.Name <> "name" Then
@@ -216,8 +218,14 @@ Public Class UmlCodeGenerator
         reader.MoveToElement()
 
         'Debug.Print("ExtractClass:=" + currentFolder + strNewFile)
+        Dim strTempFile As String = My.Computer.FileSystem.CombinePath(currentFolder, strNewFile)
+        Dim strReleaseFile As String = strTempFile
+        Dim bSourceExists As Boolean = My.Computer.FileSystem.FileExists(strReleaseFile)
 
-        Using sw As StreamWriter = New StreamWriter(currentFolder + strNewFile)
+        If bUseTempFolder And bSourceExists Then
+            strTempFile = My.Computer.FileSystem.CombinePath(CreateTempFolder(currentFolder), strNewFile)
+        End If
+        Using sw As StreamWriter = New StreamWriter(strTempFile)
             While reader.Read()
                 Select Case reader.NodeType
                     Case XmlNodeType.Element
@@ -233,19 +241,61 @@ Public Class UmlCodeGenerator
                 End Select
             End While
         End Using
+        If bUseTempFolder And bSourceExists Then
+            CompareAndMergeFiles(strTempFile, strReleaseFile)
+        End If
     End Sub
 
-    Private Shared Sub CreateBranch(ByVal ExistingPath As String, ByVal NewBranch As String)
+    Private Shared Function CreateBranch(ByVal ExistingPath As String, ByVal NewBranch As String) As String
+        Dim strResult As String = My.Computer.FileSystem.CombinePath(ExistingPath, NewBranch)
         Try
 
-            If My.Computer.FileSystem.DirectoryExists(ExistingPath + NewBranch) = False _
+            If My.Computer.FileSystem.DirectoryExists(strResult) = False _
             Then
-                My.Computer.FileSystem.CreateDirectory(ExistingPath + NewBranch)
-                'Debug.Print("CreateBranch:=" + ExistingPath + NewBranch)
+                My.Computer.FileSystem.CreateDirectory(strResult)
+                'Debug.Print("CreateBranch:=" + strResult)
             End If
         Catch ex As Exception
             Throw ex
         End Try
+        Return strResult
+    End Function
+
+    Private Shared Function CreateTempFolder(ByVal ExistingPath As String) As String
+        Dim strResult As String = My.Computer.FileSystem.CombinePath(ExistingPath, cstTempExport)
+        Try
+
+            If My.Computer.FileSystem.DirectoryExists(strResult) = False _
+            Then
+                My.Computer.FileSystem.CreateDirectory(strResult)
+                Dim Info As DirectoryInfo = My.Computer.FileSystem.GetDirectoryInfo(strResult)
+                Info.Attributes = Info.Attributes Or FileAttributes.Hidden
+                'Debug.Print("CreateTempFolder:=" + strResult)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strResult
+    End Function
+
+    Private Shared Sub CompareAndMergeFiles(ByVal strTempFile As String, ByVal strReleaseFile As String)
+        Dim proc As New Process()
+        If My.Computer.FileSystem.FileExists(My.Settings.DiffTool) = False Then
+            Dim fen As Form = New dlgDiffTool
+            If fen.ShowDialog() = DialogResult.Cancel Then
+                MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical)
+                Exit Sub
+            End If
+        End If
+        If My.Computer.FileSystem.FileExists(My.Settings.DiffTool) = False Then
+            MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical)
+            Exit Sub
+        End If
+        proc.StartInfo.FileName = My.Settings.DiffTool
+        proc.StartInfo.Arguments = Chr(34) + strTempFile + Chr(34) + " " + Chr(34) + strReleaseFile + Chr(34)
+        ' Run it.
+        proc.Start()
     End Sub
+
 #End Region
 End Class
