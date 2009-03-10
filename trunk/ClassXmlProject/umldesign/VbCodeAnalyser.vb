@@ -1,6 +1,8 @@
-﻿Imports System.Xml
+﻿Imports System
+Imports System.Xml
 Imports System.IO
 Imports System.Text.RegularExpressions
+Imports Microsoft.VisualBasic
 
 Public Class VbCodeAnalyser
 
@@ -153,8 +155,8 @@ Public Class VbCodeAnalyser
 
         Catch E As Exception
             ' Let the user know what went wrong.
-            Console.WriteLine("The file could not be read:")
-            Console.WriteLine(E.Message)
+            'Console.WriteLine("The file could not be read:")
+            'Console.WriteLine(E.Message)
         Finally
             m_textWriter = Nothing
             m_streamReader = Nothing
@@ -394,8 +396,8 @@ Public Class VbCodeAnalyser
             Dim iPos As Integer = GetPosition(regPackageDeclaration, strInstruction, iStartLine)
 
             Dim split As String() = regPackageDeclaration.Split(strInstruction)
-            Console.WriteLine(iStartLine.ToString + " (" + iPos.ToString + ")->Detect package: " + split(3).Trim())
-            Console.WriteLine("Package name: " + split(3).Trim())
+            'Console.WriteLine(iStartLine.ToString + " (" + iPos.ToString + ")->Detect package: " + split(3).Trim())
+            'Console.WriteLine("Package name: " + split(3).Trim())
 
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
@@ -418,8 +420,8 @@ Public Class VbCodeAnalyser
 
             Dim split As String() = regClassDeclaration.Split(strInstruction)
             strStatement = split(3).Trim()
-            Console.WriteLine(iStartLine.ToString + " (" + iPos.ToString + ")->Detect class: " + split(5).Trim())
-            Console.WriteLine(strStatement + " name: " + split(5).Trim())
+            'Console.WriteLine(iStartLine.ToString + " (" + iPos.ToString + ")->Detect class: " + split(5).Trim())
+            'Console.WriteLine(strStatement + " name: " + split(5).Trim())
 
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
@@ -441,8 +443,8 @@ Public Class VbCodeAnalyser
             Dim iPos = GetPosition(regAttributeDeclaration, strInstruction, iStartLine)
 
             Dim split As String() = regAttributeDeclaration.Split(strInstruction)
-            Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Attribute: " + strInstruction)
-            Console.WriteLine("Attribute name: " + split(3).Trim())
+            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Attribute: " + strInstruction)
+            'Console.WriteLine("Attribute name: " + split(3).Trim())
 
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
@@ -460,8 +462,8 @@ Public Class VbCodeAnalyser
             Dim iPos = GetPosition(regPropertyDeclaration, strInstruction, iStartLine)
 
             Dim split As String() = regPropertyDeclaration.Split(strInstruction)
-            Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Property: " + strInstruction)
-            Console.WriteLine("Property name: " + split(4).Trim())
+            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Property: " + strInstruction)
+            'Console.WriteLine("Property name: " + split(4).Trim())
 
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
@@ -478,8 +480,8 @@ Public Class VbCodeAnalyser
             Dim iPos = GetPosition(regTypedefDeclaration, strInstruction, iStartLine)
 
             Dim split As String() = regTypedefDeclaration.Split(strInstruction)
-            Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Typedef: " + strInstruction)
-            Console.WriteLine("Typedef name: " + split(5).Trim())
+            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Typedef: " + strInstruction)
+            'Console.WriteLine("Typedef name: " + split(5).Trim())
 
             strStatement = split(3).Trim()
 
@@ -499,8 +501,8 @@ Public Class VbCodeAnalyser
                 Dim iPos = GetPosition(regAbstractMethod, strInstruction, iStartLine)
 
                 Dim split As String() = regAbstractMethod.Split(strInstruction)
-                Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method: " + strInstruction)
-                Console.WriteLine("Method name: " + split(3).Trim())
+                'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method: " + strInstruction)
+                'Console.WriteLine("Method name: " + split(3).Trim())
 
                 m_textWriter.Flush()
                 m_textWriter.WriteString(vbCrLf)
@@ -522,8 +524,8 @@ Public Class VbCodeAnalyser
             Dim iPos = GetPosition(regMethodDeclaration, strInstruction, iStartLine)
 
             Dim split As String() = regMethodDeclaration.Split(strInstruction)
-            Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method: " + strInstruction)
-            Console.WriteLine("Method name: " + split(7).Trim())
+            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method: " + strInstruction)
+            'Console.WriteLine("Method name: " + split(7).Trim())
             strStatement = split(5).Trim()
 
             m_textWriter.Flush()
@@ -553,8 +555,8 @@ Public Class VbCodeAnalyser
             Dim iPos = GetPosition(regOperatorDeclaration, strInstruction, iStartLine)
 
             Dim split As String() = regOperatorDeclaration.Split(strInstruction)
-            Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method: " + strInstruction)
-            Console.WriteLine("Operator name: " + split(5).Trim())
+            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method: " + strInstruction)
+            'Console.WriteLine("Operator name: " + split(5).Trim())
             strStatement = "Operator"
 
             m_textWriter.Flush()
@@ -579,7 +581,7 @@ Public Class VbCodeAnalyser
         If regAccessorGetDeclaration.IsMatch(strInstruction) Then
 
             Dim iPos = InStr(strInstruction, "Get")
-            Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method Get" + strInstruction)
+            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method Get" + strInstruction)
 
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
@@ -593,7 +595,7 @@ Public Class VbCodeAnalyser
         ElseIf regAccessorSetDeclaration.IsMatch(strInstruction) Then
 
             Dim iPos = InStr(strInstruction, "Set")
-            Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method Set: " + strInstruction)
+            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Method Set: " + strInstruction)
 
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
@@ -613,7 +615,7 @@ Public Class VbCodeAnalyser
             If InStr(strReadLine, "'") > 0 Then
                 If regStringDeclaration.IsMatch(strReadLine) Then
                     strReadLine = regStringDeclaration.Replace(strReadLine, cstStringReplace)
-                    Console.WriteLine("String detected: " + strReadLine)
+                    'Console.WriteLine("String detected: " + strReadLine)
                 End If
                 Dim i As Integer = InStr(strReadLine, "'")
                 If i > 0 Then
@@ -622,7 +624,7 @@ Public Class VbCodeAnalyser
             End If
             Return True
         Else
-            'Console.WriteLine("VB-Doc: " + strReadLine)
+            ''Console.WriteLine("VB-Doc: " + strReadLine)
 
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
@@ -642,7 +644,7 @@ Public Class VbCodeAnalyser
                         m_textWriter.WriteEndElement()
                         Return True
                     Else
-                        'Console.WriteLine("VB-Doc: " + strReadLine)
+                        ''Console.WriteLine("VB-Doc: " + strReadLine)
                         m_textWriter.WriteString(strReadLine + vbCrLf)
                     End If
                 End If
@@ -660,7 +662,7 @@ Public Class VbCodeAnalyser
 
         If split.Length > 1 Then
             iStartLine += split.Length - 1
-            iPos = split.Last.Length
+            iPos = split(split.Length - 1).Length
         End If
         Return iPos + 1
     End Function
