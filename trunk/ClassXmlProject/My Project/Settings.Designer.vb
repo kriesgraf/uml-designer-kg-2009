@@ -86,6 +86,18 @@ Namespace My
                 Me("ImportFolder") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("""C:\Program Files\WinMerge\WinMergeU.exe""")>  _
+        Public Property DiffTool() As String
+            Get
+                Return CType(Me("DiffTool"),String)
+            End Get
+            Set
+                Me("DiffTool") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
