@@ -24,7 +24,7 @@ A Menu item unavailable for an object is not yet disable but cause no error.
 
 == Mouse double-click ==
 
-The Edit command is always reachable with a mouse double-click.
+The Edit command is always reachable with a mouse double-click, except in project list view. When an object hasn't child elements, a double-click open the associated editor window. When it has child elements, a double-click open a sub-level in project list view.
 
 == Drag and drop ==
 
