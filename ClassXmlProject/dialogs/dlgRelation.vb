@@ -11,6 +11,7 @@ Public Class dlgRelation
     Private m_bEnableMemberAttributes As Boolean = True
     Private m_bChildCardinalChange As Boolean = False
     Private m_bFatherCardinalChange As Boolean = False
+    Private m_bInit As Boolean = False
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         Try
@@ -56,6 +57,7 @@ Public Class dlgRelation
         Try
 
             With m_xmlView
+                m_bInit = True
                 .LoadValues()
 
                 ' Relationship attributes
@@ -89,11 +91,13 @@ Public Class dlgRelation
             End With
         Catch ex As Exception
             MsgExceptionBox(ex)
+        Finally
+            m_bInit = False
         End Try
     End Sub
 
     Private Sub cmbFatherCardinal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbFatherCardinal.SelectedIndexChanged
-        If cmbFatherCardinal.Enabled = False Then
+        If cmbFatherCardinal.Enabled = False Or m_bInit Then
             ' Nothing to do
         Else
             ChangeFatherCardinal()
@@ -164,6 +168,7 @@ Public Class dlgRelation
                                     , cmbFatherLevel.SelectedIndexChanged _
                                     , cmbChildClass.SelectedIndexChanged _
                                     , cmbChildLevel.SelectedIndexChanged
+        If m_bInit Then Exit Sub
 
         Me.btnFatherType.Text = m_xmlView.FatherType
         Me.btnChildType.Text = m_xmlView.ChildType
