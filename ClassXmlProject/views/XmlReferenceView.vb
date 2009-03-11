@@ -53,7 +53,7 @@ Public Class XmlReferenceView
     Public Sub InitBindingContainer(ByVal combo As ComboBox)
         Try
             combo.DropDownStyle = ComboBoxStyle.DropDownList
-            combo.Items.AddRange(New Object() {"none", "simple", "indexed"})
+            combo.Items.AddRange(New Object() {"none", "simple", "indexed", "object-based"})
 
             m_xmlBindingsList.AddBinding(combo, Me, "Container", "SelectedIndex")
 
