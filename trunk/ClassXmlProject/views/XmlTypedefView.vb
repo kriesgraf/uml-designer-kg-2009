@@ -123,7 +123,7 @@ Public Class XmlTypedefView
                 dataControl.Items().Clear()
             End If
 
-            If iContainer > 0 Then
+            If iContainer > 0 And iContainer < 3 Then
                 AddNodeList(myList, "//class[@implementation='container' and model[last()=" + CStr(iContainer) + "]]")
                 AddNodeList(myList, "//reference[@container='" + CStr(iContainer) + "']")
 
