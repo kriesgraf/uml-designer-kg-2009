@@ -340,8 +340,13 @@ Public Class XmlRelationParentSpec
                 End If
                 strTempo = strTempo + DisplayLevel(IndexLevel, CType(Me.Tag, ELanguage)) + ", "
                 strResult = strTempo + strResult
+            ElseIf TestNode("id(list/@idref)[@container='3']") Then
+                If CType(Me.Tag, ELanguage) <> ELanguage.Language_CplusPlus Then
+                    strResult = "Object"
+                Else
+                    strResult = "CObject"
+                End If
             End If
-
             strResult = GetBeginContainer(CType(Me.Tag, ELanguage)) + strResult + GetEndContainer(CType(Me.Tag, ELanguage))
         End If
         Return strResult
