@@ -525,16 +525,28 @@ End Namespace
         <xsl:with-param name="CurrentPackage" select="id($CurrentClassID)/parent::package/@name"/>
       </xsl:apply-templates><xsl:if test="@level='1'">*</xsl:if>
     </xsl:variable>
+    <xsl:variable name="Container">
+      <xsl:choose>
+        <xsl:when test="id(@idref)[self::reference]"><xsl:value-of select="id(@idref)/@container"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="count(id(@idref)/model)"/></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="TypeList">
       <xsl:apply-templates select="@desc"/>
       <xsl:apply-templates select="id(@idref)" mode="FullPackageName">
         <xsl:with-param name="CurrentPackage" select="id($CurrentClassID)/parent::package/@name"/>
       </xsl:apply-templates>
-      <xsl:text>(Of </xsl:text>
-      <xsl:if test="@type='indexed'"><xsl:value-of select="concat($Index,', ')"/></xsl:if>
-      <xsl:value-of select="$ClassName"/>
-      <xsl:text>)</xsl:text>
+      <xsl:choose>
+        <xsl:when test="number($Container)=2">
+          <xsl:text>(Of </xsl:text><xsl:value-of select="$Index"/>, <xsl:value-of select="$ClassName"/><xsl:text>)</xsl:text>
+        </xsl:when>
+        <xsl:when test="number($Container)=1">
+          <xsl:text>(Of </xsl:text><xsl:value-of select="$ClassName"/><xsl:text>)</xsl:text>
+        </xsl:when>
+      </xsl:choose>
     </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="number($Container)!=3">
 <xsl:text xml:space="preserve">
     </xsl:text>
     <xsl:value-of select="$Range"/>Class <xsl:value-of select="concat('TList',$MemberName)"/>
@@ -546,6 +558,15 @@ End Namespace
     <xsl:value-of select="concat($PrefixMember,'t',$PrefixList,$MemberName,' As ','TList',$MemberName)"/>
     <xsl:text>
     </xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+    ''' &lt;summary&gt;<xsl:value-of select="$Comment"/>&lt;/summary&gt;
+    <xsl:value-of select="$Range"/><xsl:if test="@member='class'">Shared </xsl:if>
+    <xsl:value-of select="concat($PrefixMember,'t',$PrefixList,$MemberName,' As ',$TypeList)"/>
+    <xsl:text>
+    </xsl:text>
+    </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="array">
