@@ -134,7 +134,13 @@ Public Class XmlRelationParentView
 
                 AddSimpleTypesList(myList, Me.Tag)
 
-            ElseIf iContainer > 0 _
+            ElseIf iContainer = 1 _
+            Then
+                ' Specific container type
+                AddNodeList(myList, "//class[@implementation='container' and model[last()=" + CStr(iContainer) + "]]")
+                AddNodeList(myList, "//reference[@container='3' or @container='" + CStr(iContainer) + "']")
+
+            ElseIf iContainer = 2 _
             Then
                 ' Specific container type
                 AddNodeList(myList, "//class[@implementation='container' and model[last()=" + CStr(iContainer) + "]]")
