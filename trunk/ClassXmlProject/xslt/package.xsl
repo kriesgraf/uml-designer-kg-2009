@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:msxsl="urn:schemas-microsoft-com:xslt">
 	<xsl:output method="html" indent="yes"/>
+	<!-- ======================================================================= -->
 	<xsl:param name="IconsFolder">./</xsl:param>
+	<!-- ======================================================================= -->
+    <xsl:key match="reference" name="package" use="@package"/>
 	<!-- ======================================================================= -->
 	<xsl:variable name="Separator">
 	  <xsl:choose>
@@ -169,13 +172,37 @@ th   {background:white; color:black;}
 				<td/>
 				<td/>
 				<td>
-					<xsl:apply-templates select="package" mode="Package"/>
+					<xsl:apply-templates select="package" mode="Package">
+                      <xsl:with-param name="View">Nok</xsl:with-param>
+                    </xsl:apply-templates>
 				</td>
 			</tr>
 		</table>
+		<xsl:apply-templates select="." mode="PackageView"/>
+	</xsl:template>
+	<!-- ======================================================================= -->
+	<xsl:template match="root" mode="PackageView">
+  	  <p>External dependencies:</p>
+      <table border="0">
+        <tr>
+          <td valign="top"><xsl:apply-templates select="." mode="PackageImg"/></td>
+          <td><xsl:call-template name="ExternalPackageView"/></td>
+        </tr>
+  	  </table>
+	</xsl:template>
+	<!-- ======================================================================= -->
+	<xsl:template match="package" mode="PackageView">
+  	  <p>Package dependencies:</p>
+      <table border="0">
+        <tr>
+  	      <td><xsl:apply-templates select="." mode="PackageImg"/></td>
+          <td><xsl:call-template name="PackageView"/></td>
+        </tr>
+  	  </table>
 	</xsl:template>
 	<!-- ======================================================================= -->
 	<xsl:template match="package" mode="Package">
+        <xsl:param name="View"/>
 		<table border="0">
 			<tr>
 				<td class="package">
@@ -192,6 +219,9 @@ th   {background:white; color:black;}
 			</tr>
 			<xsl:apply-templates select="class" mode="Package"/>
 		</table>
+		<xsl:if test="$View=''">
+          <xsl:apply-templates select="." mode="PackageView"/>
+        </xsl:if>
 	</xsl:template>
 	<!-- ======================================================================= -->
 	<xsl:template match="class" mode="Package">
@@ -843,6 +873,111 @@ th   {background:white; color:black;}
 		<xsl:if test="not(@name)">&lt;Constructor&gt;</xsl:if>
 	</xsl:template>
 	<!-- ======================================================================= -->
+	<xsl:template name="ExternalPackageView">
+	<xsl:for-each select="//import">
+      <table border="0">
+        <tr>
+          <td><img src="{$IconsFolder}HorizD.GIF"/></td>
+          <td><img src="{$IconsFolder}LeftD.GIF"/></td>
+          <td><xsl:apply-templates select="." mode="PackageImg"/></td>
+        </tr>
+      </table>
+    </xsl:for-each>
+    </xsl:template>
+	<!-- ======================================================================= -->
+    <xsl:template name="PackageView">
+    <xsl:variable name="Request">
+    <xsl:comment>class//type</xsl:comment>
+    <xsl:for-each select="class//type">
+      <xsl:choose>
+        <xsl:when test="@idref">
+          <xsl:apply-templates select="id(@idref)" mode="PackageView"/>
+        </xsl:when>
+        <xsl:when test="id(list/@idref)/self::reference">
+          <xsl:apply-templates select="id(list/@idref)" mode="PackageView"/>
+        </xsl:when>
+        <xsl:when test="id(list/@index-idref)/self::reference">
+          <xsl:apply-templates select="id(list/@index-idref)" mode="PackageView"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:for-each>
+    <xsl:comment>class/inherited</xsl:comment>
+    <xsl:for-each select="class/inherited">
+      <xsl:apply-templates select="id(@idref)" mode="PackageView"/>
+    </xsl:for-each>
+    <xsl:comment>class/dependency</xsl:comment>
+    <xsl:for-each select="class/dependency">
+      <xsl:apply-templates select="id(@idref)" mode="PackageView"/>
+    </xsl:for-each>
+    <xsl:comment>class/collaboration</xsl:comment>
+    <xsl:for-each select="class[collaboration]">
+      <xsl:variable name="ClassID" select="@id"/>
+      <xsl:apply-templates select="id(collaboration/@idref)/*[@idref!=$ClassID]" mode="PackageView"/>
+    </xsl:for-each>
+    </xsl:variable>
+    <xsl:for-each select="msxsl:node-set($Request)//reference[generate-id()=generate-id(key('package',@package)[1])]">
+      <xsl:apply-templates select="." mode="PackageImg"/>
+    </xsl:for-each>
+    </xsl:template>
+	<!-- ======================================================================= -->
+    <xsl:template match="father | child" mode="PackageView">
+      <xsl:apply-templates select="id(@idref)" mode="PackageView"/>
+    </xsl:template>
+	<!-- ======================================================================= -->
+    <xsl:template match="reference" mode="PackageView">
+         <xsl:element name="reference">
+           <xsl:copy-of select="@name"/>
+          <xsl:attribute name="package">
+            <xsl:value-of select="ancestor::import/@name"/>
+            <xsl:if test="@package"><xsl:value-of select="$Separator"/><xsl:value-of select="@package"/></xsl:if>
+          </xsl:attribute>
+        </xsl:element><xsl:text>
+</xsl:text>
+    </xsl:template>
+	<!-- ======================================================================= -->
+    <xsl:template match="class" mode="PackageView">
+         <xsl:element name="reference">
+           <xsl:copy-of select="@name"/>
+          <xsl:attribute name="package">
+            <xsl:value-of select="parent::*/@name"/>
+          </xsl:attribute>
+        </xsl:element><xsl:text>
+</xsl:text>
+    </xsl:template>
+	<!-- ======================================================================= -->
+    <xsl:template match="typedef" mode="PackageView">
+         <xsl:element name="reference">
+           <xsl:copy-of select="@name"/>
+          <xsl:attribute name="package">
+            <xsl:value-of select="parent::class/parent::*/@name"/>
+          </xsl:attribute>
+        </xsl:element><xsl:text>
+</xsl:text>
+    </xsl:template>
+	<!-- ======================================================================= -->
+	<xsl:template match="reference" mode="PackageImg">
+      <table border="0">
+        <tr>
+          <td><img src="{$IconsFolder}HorizD.GIF"/></td>
+          <td><img src="{$IconsFolder}LeftD.GIF"/></td>
+          <td>
+          	  <table border="0">
+                <tr><td><img src="{$IconsFolder}Package.gif"/></td></tr>
+                <tr><td align="center"><xsl:value-of select="@package"/></td></tr>
+              </table>
+          </td>
+        </tr>
+      </table>
+    </xsl:template>
+	<!-- ======================================================================= -->
+	<xsl:template match="*" mode="PackageImg">
+  	  <table border="0">
+        <tr><td><img src="{$IconsFolder}Package.gif"/></td></tr>
+        <tr><td align="center"><xsl:value-of select="@name"/></td></tr>
+      </table>
+    </xsl:template>
+	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
