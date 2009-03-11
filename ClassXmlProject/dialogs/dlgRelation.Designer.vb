@@ -96,7 +96,7 @@ Partial Class dlgRelation
         Me.tabButtons.ColumnCount = 3
         Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 87.0!))
         Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.0!))
-        Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 87.0!))
+        Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90.0!))
         Me.tabButtons.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.tabButtons.Controls.Add(Me.OK_Button, 1, 0)
         Me.tabButtons.Controls.Add(Me.btnDelete, 0, 0)
@@ -111,8 +111,8 @@ Partial Class dlgRelation
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.DialogResult = DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(590, 5)
+        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.Cancel_Button.Location = New System.Drawing.Point(589, 5)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -121,7 +121,7 @@ Partial Class dlgRelation
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(509, 5)
+        Me.OK_Button.Location = New System.Drawing.Point(506, 5)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(66, 23)
         Me.OK_Button.TabIndex = 0
