@@ -452,7 +452,10 @@ Public Class XmlProjectTools
 
     Private Shared Function CreateAppendCollaboration(ByVal node As XmlNode) As XmlNode
         Dim collaboration As XmlNode = CreateNode(node, "collaboration")
-        Dim before As XmlNode = node.SelectSingleNode("comment")
+        Dim before As XmlNode = node.SelectSingleNode("inline")
+        If before Is Nothing Then
+            before = node.SelectSingleNode("comment")
+        End If
         node.InsertBefore(collaboration, before)
         Return collaboration
     End Function
