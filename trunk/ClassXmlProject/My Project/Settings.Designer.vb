@@ -89,7 +89,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("""C:\Program Files\WinMerge\WinMergeU.exe""")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("C:\Program Files\WinMerge\WinMergeU.exe")>  _
         Public Property DiffTool() As String
             Get
                 Return CType(Me("DiffTool"),String)
