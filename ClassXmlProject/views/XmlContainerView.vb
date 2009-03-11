@@ -149,7 +149,7 @@ Public Class XmlContainerView
 
                 AddSimpleTypesList(myList, Me.Tag)
 
-            ElseIf iContainer > 0 _
+            ElseIf iContainer > 0 And iContainer < 3 _
             Then
                 ' Specific container type
                 AddNodeList(myList, "//class[@implementation='container' and model[last()=" + CStr(iContainer) + "]]")
