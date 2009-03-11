@@ -271,4 +271,8 @@ Public Class XmlDataGridView
     Private Sub OnItemChanged()
         RaiseEvent RowValuesChanged(Me)
     End Sub
+
+    Private Sub XmlDataGridView_CellValueChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles Me.CellValueChanged
+        RaiseEvent RowValuesChanged(Me)
+    End Sub
 End Class
