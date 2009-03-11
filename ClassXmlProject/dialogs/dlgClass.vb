@@ -296,8 +296,4 @@ Public Class dlgClass
         End If
         PasteMember.Enabled = False
     End Sub
-
-    Private Sub mnuAddMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddTypedef.Click, AddStructure.Click, AddProperty.Click, AddMethod.Click, AddContainer.Click, AddConstructor.Click
-
-    End Sub
 End Class
