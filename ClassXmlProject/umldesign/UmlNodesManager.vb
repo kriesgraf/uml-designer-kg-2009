@@ -219,12 +219,16 @@ Public Class UmlNodesManager
 
             For Each ref As XmlNode In node.ChildNodes
                 Dim xmlcpnt As XmlReferenceSpec = XmlNodeManager.GetInstance().CreateDocument(ref)
-                xmlcpnt.RemoveCollaboration("")
                 strXML += vbCrLf + xmlcpnt.OuterXml
             Next
             strXML += vbCrLf + "</export>"
             'Debug.Print(strXML)
             source.LoadXml(strXML)
+            Dim list As XmlNodeList = source.SelectNodes("//collaboration")
+            For Each child As XmlNode In list
+                child.ParentNode.RemoveChild(child)
+            Next child
+
             source.Save(strFilename)
 
         Catch ex As Exception
