@@ -2,6 +2,10 @@
 Imports System.ComponentModel
 Imports System.Xml
 
+Public Interface InterfFormCollaboration
+    WriteOnly Property ClassID() As String
+End Interface
+
 Public Class XmlCollaborationSpec
     Inherits XmlComponent
 
@@ -144,10 +148,14 @@ Public Class XmlCollaborationSpec
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
-        Me.RelationSpec.Father.Idref = Me.ClassId
-        Me.RelationSpec.Child.Idref = MyBase.GetFirstClassId(Me.ClassId)
-        ' No update father because first created collaboration owns father
-        Me.RelationSpec.Child.UpdateRelation("")
+
+        m_xmlRelation.Father.Idref = ClassId
+        Dim strChildID As String = MyBase.GetFirstClassId(ClassId)
+        If strChildID.Length = 0 Then
+            m_xmlRelation.Child.Idref = MyBase.GetFirstClassId()
+        Else
+            m_xmlRelation.Child.Idref = strChildID
+        End If
     End Sub
 
     Protected Friend Overrides Function RemoveMe() As Boolean

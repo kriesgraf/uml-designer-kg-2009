@@ -134,6 +134,8 @@ Public Class XmlRelationSpec
             Dim strChildID As String = MyBase.GetFirstClassId(strFatherID)
             If strChildID.Length = 0 Then
                 m_xmlChild.Idref = MyBase.GetFirstClassId()
+            Else
+                m_xmlChild.Idref = strChildID
             End If
             Id = "relation0"
             Action = "New_Action"
@@ -154,8 +156,11 @@ Public Class XmlRelationSpec
 
         Id = xmlRefNodeCounter.GetNewRelationId()
         Name = "New_" + Id
-        If bParam = False Then m_xmlFather.UpdateRelation("")
-        m_xmlChild.UpdateRelation("")
+    End Sub
+
+    Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
+        XmlProjectTools.UpdateOneCollaboration(Me.Document, m_xmlFather.Idref)
+        XmlProjectTools.UpdateOneCollaboration(Me.Document, m_xmlChild.Idref)
     End Sub
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)

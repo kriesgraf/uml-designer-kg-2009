@@ -6,12 +6,21 @@ Imports Microsoft.VisualBasic
 Public Class dlgRelation
     Implements InterfFormDocument
     Implements InterfNodeCounter
+    Implements InterfFormCollaboration
 
     Private m_xmlView As XmlRelationView
-    Private m_bEnableMemberAttributes As Boolean = True
+    Private m_bEnableFather As Boolean = True
+    Private m_bEnableChild As Boolean = True
     Private m_bChildCardinalChange As Boolean = False
     Private m_bFatherCardinalChange As Boolean = False
     Private m_bInit As Boolean = False
+    Private m_strClassCollaborationtID As String
+
+    Public WriteOnly Property ClassID() As String Implements InterfFormCollaboration.ClassID
+        Set(ByVal value As String)
+            m_strClassCollaborationtID = value
+        End Set
+    End Property
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         Try
@@ -33,7 +42,13 @@ Public Class dlgRelation
     End Sub
 
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
-        m_bEnableMemberAttributes = False
+        If m_xmlView.Father.Idref = m_strClassCollaborationtID _
+        Then
+            m_bEnableFather = False
+        ElseIf m_xmlView.Child.Idref = m_strClassCollaborationtID _
+        Then
+            m_bEnableChild = False
+        End If
     End Sub
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
@@ -88,6 +103,9 @@ Public Class dlgRelation
                 Me.Text = .Name
 
                 m_bChildCardinalChange = False
+
+                cmbChildClass.Enabled = m_bEnableChild
+                cmbFatherClass.Enabled = m_bEnableFather
             End With
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -140,7 +158,7 @@ Public Class dlgRelation
 
     Private Sub cmbFatherRange_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbFatherRange.SelectedIndexChanged
         If cmbFatherRange.SelectedItem = "no" Then
-            cmbFatherClass.Enabled = m_bEnableMemberAttributes
+            cmbFatherClass.Enabled = False
             lblFatherLevel.Enabled = False
             cmbFatherLevel.Enabled = False
             lblFatherCardinal.Enabled = False
@@ -153,7 +171,7 @@ Public Class dlgRelation
             btnFatherType.Enabled = False
             lblFatherType.Enabled = False
         Else
-            cmbFatherClass.Enabled = m_bEnableMemberAttributes
+            cmbFatherClass.Enabled = m_bEnableFather
             lblFatherLevel.Enabled = True
             cmbFatherLevel.Enabled = True
             lblFatherCardinal.Enabled = True

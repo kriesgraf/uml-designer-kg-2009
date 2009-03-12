@@ -3,11 +3,6 @@ Imports System.Xml
 Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
 
-Public Interface InterfRelation
-    Sub AddCollaboration(ByVal strId As String)
-    Function RemoveCollaboration(ByVal strId As String) As Boolean
-End Interface
-
 Public Class XmlRelationParentSpec
     Inherits XmlComponent
 
@@ -387,32 +382,4 @@ Public Class XmlRelationParentSpec
             Throw ex
         End Try
     End Sub
-
-    Protected Friend Sub UpdateRelation(ByVal strOldClass As String)
-        Dim strId As String = Me.GetAttribute("id", "parent::*")
-        Dim xmlNode As XmlNode = Me.GetElementById(strOldClass)
-        Dim xmlClass As InterfRelation
-
-        If xmlNode IsNot Nothing Then
-            xmlClass = CType(CreateDocument(xmlNode), InterfRelation)
-            xmlClass.RemoveCollaboration(strId)
-        End If
-
-        xmlNode = Me.GetElementById(Me.Idref)
-
-        xmlClass = CreateDocument(xmlNode)
-        xmlClass.AddCollaboration(strId)
-    End Sub
-
-    Protected Friend Overrides Function RemoveMe() As Boolean
-        Dim strId As String = Me.GetAttribute("id", "parent::*")
-        Dim xmlNode As XmlNode = Me.GetElementById(Me.Idref)
-
-        If xmlNode IsNot Nothing Then
-            Dim xmlClass As InterfRelation
-            xmlClass = CType(CreateDocument(xmlNode), InterfRelation)
-            xmlClass.RemoveCollaboration(strId)
-        End If
-        Return MyBase.RemoveMe()
-    End Function
 End Class

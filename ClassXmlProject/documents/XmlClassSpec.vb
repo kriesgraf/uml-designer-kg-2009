@@ -8,7 +8,6 @@ Imports Microsoft.VisualBasic
 Public Class XmlClassSpec
     Inherits XmlComposite
     Implements InterfNodeCounter
-    Implements InterfRelation
 
     Private m_xmlInlineConst As XmlCodeInline
     Private m_xmlInlineDest As XmlCodeInline
@@ -232,28 +231,6 @@ Public Class XmlClassSpec
             Throw ex
         End Try
         Return strDocName
-    End Function
-
-    Public Sub AddCollaboration(ByVal strId As String) Implements InterfRelation.AddCollaboration
-        If strId = "" Then
-            Throw New Exception("Fails to add a collaboration to " + Me.ToString + " because Id is null")
-        End If
-        m_bCreateNodeNow = True
-        AddAttribute("idref", strId, "collaboration")
-        m_bCreateNodeNow = False
-    End Sub
-
-    Public Function RemoveCollaboration(ByVal strId As String) As Boolean Implements InterfRelation.RemoveCollaboration
-        Try
-            If strId = "" Then
-                RemoveAllNodes("collaboration")
-            Else
-                Dim xpath As String = "collaboration[@idref='" + strId + "']"
-                RemoveSingleNode(xpath)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
     End Function
 
     Public Function OverrideProperties() As Boolean
