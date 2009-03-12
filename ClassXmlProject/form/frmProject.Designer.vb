@@ -70,6 +70,8 @@ Partial Class frmProject
         Me.DatabaseToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.UmlViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.CodeSourceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.btnZoomIn = New System.Windows.Forms.ToolStripButton
+        Me.btnZoomOut = New System.Windows.Forms.ToolStripButton
         Me.ToolStripContainer1 = New System.Windows.Forms.ToolStripContainer
         Me.mnuBar = New System.Windows.Forms.MenuStrip
         Me.mnuFile = New System.Windows.Forms.ToolStripMenuItem
@@ -173,8 +175,6 @@ Partial Class frmProject
         Me.DeleteReference = New System.Windows.Forms.ToolStripMenuItem
         Me.RemoveAll = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.btnZoomIn = New System.Windows.Forms.ToolStripButton
-        Me.btnZoomOut = New System.Windows.Forms.ToolStripButton
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
@@ -201,8 +201,8 @@ Partial Class frmProject
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.docvwProjectDisplay)
-        Me.SplitContainer1.Size = New System.Drawing.Size(738, 610)
-        Me.SplitContainer1.SplitterDistance = 430
+        Me.SplitContainer1.Size = New System.Drawing.Size(897, 610)
+        Me.SplitContainer1.SplitterDistance = 267
         Me.SplitContainer1.TabIndex = 0
         '
         'lvwProjectMembers
@@ -219,7 +219,7 @@ Partial Class frmProject
         Me.lvwProjectMembers.Name = "lvwProjectMembers"
         Me.lvwProjectMembers.ShowGroups = False
         Me.lvwProjectMembers.ShowItemToolTips = True
-        Me.lvwProjectMembers.Size = New System.Drawing.Size(430, 610)
+        Me.lvwProjectMembers.Size = New System.Drawing.Size(267, 610)
         Me.lvwProjectMembers.SmallImageList = Me.SmallIconList
         Me.lvwProjectMembers.TabIndex = 1
         Me.lvwProjectMembers.TileSize = New System.Drawing.Size(160, 90)
@@ -411,7 +411,7 @@ Partial Class frmProject
         Me.docvwProjectDisplay.Location = New System.Drawing.Point(0, 0)
         Me.docvwProjectDisplay.MinimumSize = New System.Drawing.Size(20, 20)
         Me.docvwProjectDisplay.Name = "docvwProjectDisplay"
-        Me.docvwProjectDisplay.Size = New System.Drawing.Size(304, 610)
+        Me.docvwProjectDisplay.Size = New System.Drawing.Size(626, 610)
         Me.docvwProjectDisplay.TabIndex = 0
         Me.docvwProjectDisplay.View = ClassXmlProject.XmlDocumentViewMode.Unknown
         '
@@ -420,7 +420,7 @@ Partial Class frmProject
         Me.tlstrpNavigation.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btnHome, Me.btnUp, Me.ToolStripSeparator30, Me.btnProjectView, Me.ToolStripSeparator31, Me.btnCopy, Me.btnCut, Me.btnPaste, Me.ToolStripSeparator32, Me.btnDocView, Me.btnZoomIn, Me.btnZoomOut})
         Me.tlstrpNavigation.Location = New System.Drawing.Point(0, 0)
         Me.tlstrpNavigation.Name = "tlstrpNavigation"
-        Me.tlstrpNavigation.Size = New System.Drawing.Size(738, 25)
+        Me.tlstrpNavigation.Size = New System.Drawing.Size(897, 25)
         Me.tlstrpNavigation.TabIndex = 1
         Me.tlstrpNavigation.Text = "ToolStrip1"
         '
@@ -541,23 +541,39 @@ Partial Class frmProject
         'DatabaseToolStripMenuItem
         '
         Me.DatabaseToolStripMenuItem.Name = "DatabaseToolStripMenuItem"
-        Me.DatabaseToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.DatabaseToolStripMenuItem.Size = New System.Drawing.Size(134, 22)
         Me.DatabaseToolStripMenuItem.Tag = "1"
         Me.DatabaseToolStripMenuItem.Text = "Database"
         '
         'UmlViewToolStripMenuItem
         '
         Me.UmlViewToolStripMenuItem.Name = "UmlViewToolStripMenuItem"
-        Me.UmlViewToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.UmlViewToolStripMenuItem.Size = New System.Drawing.Size(134, 22)
         Me.UmlViewToolStripMenuItem.Tag = "2"
         Me.UmlViewToolStripMenuItem.Text = "UML view"
         '
         'CodeSourceToolStripMenuItem
         '
         Me.CodeSourceToolStripMenuItem.Name = "CodeSourceToolStripMenuItem"
-        Me.CodeSourceToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.CodeSourceToolStripMenuItem.Size = New System.Drawing.Size(134, 22)
         Me.CodeSourceToolStripMenuItem.Tag = "3"
         Me.CodeSourceToolStripMenuItem.Text = "Code source"
+        '
+        'btnZoomIn
+        '
+        Me.btnZoomIn.Image = CType(resources.GetObject("btnZoomIn.Image"), System.Drawing.Image)
+        Me.btnZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btnZoomIn.Name = "btnZoomIn"
+        Me.btnZoomIn.Size = New System.Drawing.Size(64, 22)
+        Me.btnZoomIn.Text = "Zoom in"
+        '
+        'btnZoomOut
+        '
+        Me.btnZoomOut.Image = CType(resources.GetObject("btnZoomOut.Image"), System.Drawing.Image)
+        Me.btnZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.btnZoomOut.Name = "btnZoomOut"
+        Me.btnZoomOut.Size = New System.Drawing.Size(72, 22)
+        Me.btnZoomOut.Text = "Zoom out"
         '
         'ToolStripContainer1
         '
@@ -566,13 +582,13 @@ Partial Class frmProject
         'ToolStripContainer1.ContentPanel
         '
         Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.SplitContainer1)
-        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(738, 610)
+        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(897, 610)
         Me.ToolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ToolStripContainer1.LeftToolStripPanelVisible = False
         Me.ToolStripContainer1.Location = New System.Drawing.Point(0, 25)
         Me.ToolStripContainer1.Name = "ToolStripContainer1"
         Me.ToolStripContainer1.RightToolStripPanelVisible = False
-        Me.ToolStripContainer1.Size = New System.Drawing.Size(738, 610)
+        Me.ToolStripContainer1.Size = New System.Drawing.Size(897, 610)
         Me.ToolStripContainer1.TabIndex = 2
         Me.ToolStripContainer1.Text = "ToolStripContainer1"
         Me.ToolStripContainer1.TopToolStripPanelVisible = False
@@ -1274,27 +1290,11 @@ Partial Class frmProject
         Me.RemoveAll.Size = New System.Drawing.Size(188, 22)
         Me.RemoveAll.Text = "Remove all"
         '
-        'btnZoomIn
-        '
-        Me.btnZoomIn.Image = CType(resources.GetObject("btnZoomIn.Image"), System.Drawing.Image)
-        Me.btnZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btnZoomIn.Name = "btnZoomIn"
-        Me.btnZoomIn.Size = New System.Drawing.Size(64, 22)
-        Me.btnZoomIn.Text = "Zoom in"
-        '
-        'btnZoomOut
-        '
-        Me.btnZoomOut.Image = CType(resources.GetObject("btnZoomOut.Image"), System.Drawing.Image)
-        Me.btnZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.btnZoomOut.Name = "btnZoomOut"
-        Me.btnZoomOut.Size = New System.Drawing.Size(72, 22)
-        Me.btnZoomOut.Text = "Zoom out"
-        '
         'frmProject
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(738, 635)
+        Me.ClientSize = New System.Drawing.Size(897, 635)
         Me.Controls.Add(Me.ToolStripContainer1)
         Me.Controls.Add(Me.tlstrpNavigation)
         Me.Controls.Add(Me.mnuBar)
