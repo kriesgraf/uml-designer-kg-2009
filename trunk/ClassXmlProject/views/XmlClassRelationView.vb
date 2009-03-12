@@ -91,6 +91,7 @@ Public Class XmlClassRelationView
     Public Function EventDoubleClick(ByVal dataMember As String) As Boolean Implements InterfGridViewNotifier.EventDoubleClick
         Try
             Dim frmResult As Form = XmlNodeManager.GetInstance().CreateForm(MyBase.RelationSpec)
+            CType(frmResult, InterfFormCollaboration).ClassID = Me.ClassId
             CType(frmResult, InterfFormDocument).DisableMemberAttributes()
             frmResult.ShowDialog()
             Return CType(frmResult.Tag, Boolean)

@@ -276,31 +276,33 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Sub UpdatesCollaborations(ByVal document As XmlDocument)
+        For Each node As XmlNode In document.SelectNodes("//class")
+            UpdateOneCollaboration(document, GetID(node))
+        Next
+    End Sub
 
+    Public Shared Sub UpdateOneCollaboration(ByVal document As XmlDocument, ByVal strID As String)
         Dim strQuery As String
-        Dim strID As String
         Dim list As XmlNodeList
         Dim collaboration As XmlNode
 
-        For Each node As XmlNode In document.SelectNodes("//class")
+        Dim node As XmlNode = document.SelectSingleNode("//class[@id='" + strID + "']")
 
-            strQuery = "collaboration"
-            list = SelectNodes(node, strQuery)
+        strQuery = "collaboration"
+        list = SelectNodes(node, strQuery)
 
-            For Each child In list
-                node.RemoveChild(child)
-            Next child
+        For Each child In list
+            node.RemoveChild(child)
+        Next child
 
-            strQuery = "//relationship[*/@idref='" + GetID(node) + "']"
-            list = SelectNodes(node, strQuery)
+        strQuery = "//relationship[*/@idref='" + GetID(node) + "']"
+        list = SelectNodes(node, strQuery)
 
-            For Each child As XmlNode In list
-                strID = GetID(child)
-                collaboration = CreateAppendCollaboration(node)
-                AddAttributeValue(collaboration, "idref", strID)
-            Next
+        For Each child As XmlNode In list
+            strID = GetID(child)
+            collaboration = CreateAppendCollaboration(node)
+            AddAttributeValue(collaboration, "idref", strID)
         Next
-
     End Sub
 
     Public Shared Sub ConvertDoxygenIndexFile(ByVal strFilename As String, ByRef strTempFile As String)

@@ -88,13 +88,23 @@ Public Class XmlRelationView
         Try
             m_xmlBindingsList.UpdateValues()
 
-            If MyBase.Father.Idref <> m_strOldFather Then
-                MyBase.Father.UpdateRelation(m_strOldFather)
+            Dim bParentDifferent As Boolean = (MyBase.Child.Idref <> MyBase.Father.Idref)
+            Dim bFatherChanged As Boolean = (MyBase.Father.Idref <> m_strOldFather)
+            Dim bChildChanged As Boolean = (MyBase.Child.Idref <> m_strOldChild)
+
+            If bFatherChanged Then
+                XmlProjectTools.UpdateOneCollaboration(Me.Document, m_strOldFather)
+                XmlProjectTools.UpdateOneCollaboration(Me.Document, MyBase.Father.Idref)
             End If
 
-            If MyBase.Child.Idref <> m_strOldChild Then
-                MyBase.Child.UpdateRelation(m_strOldChild)
+            If bChildChanged And m_strOldChild <> m_strOldFather Then
+                XmlProjectTools.UpdateOneCollaboration(Me.Document, m_strOldChild)
             End If
+
+            If bChildChanged And bParentDifferent Then
+                XmlProjectTools.UpdateOneCollaboration(Me.Document, MyBase.Child.Idref)
+            End If
+
         Catch ex As Exception
             Throw ex
         End Try

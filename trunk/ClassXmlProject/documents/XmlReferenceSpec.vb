@@ -5,7 +5,6 @@ Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlReferenceSpec
     Inherits XmlComponent
-    Implements InterfRelation
 
     Public ReadOnly Property Comment() As String
         Get
@@ -104,25 +103,4 @@ Public Class XmlReferenceSpec
         Name = "New_reference_" + Id
     End Sub
 
-    Public Sub AddCollaboration(ByVal strId As String) Implements InterfRelation.AddCollaboration
-        If strId = "" Then
-            Throw New Exception("Fails to add a collaboration to " + Me.ToString + " because Id is null")
-        End If
-        m_bCreateNodeNow = True
-        AddAttribute("idref", strId, "collaboration")
-        m_bCreateNodeNow = False
-    End Sub
-
-    Public Function RemoveCollaboration(ByVal strId As String) As Boolean Implements InterfRelation.RemoveCollaboration
-        Try
-            If strId = "" Then
-                RemoveAllNodes("collaboration")
-            Else
-                Dim xpath As String = "collaboration[@idref='" + strId + "']"
-                RemoveSingleNode(xpath)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
 End Class
