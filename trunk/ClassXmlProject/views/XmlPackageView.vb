@@ -90,7 +90,7 @@ Public Class XmlPackageView
     Public Sub LoadClasses(ByVal dataControl As XmlDataGridView)
         Try
             m_dataControl = dataControl
-            dataControl.Binding.LoadXmlNodes(Me, "class | package", "package_class_view")
+            dataControl.Binding.LoadXmlNodes(Me, "import | class | package", "package_class_view")
             dataControl.Binding.NodeCounter = m_xmlReferenceNodeCounter
 
         Catch ex As Exception
