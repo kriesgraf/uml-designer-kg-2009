@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.Xml
 Imports System.IO
+Imports System.Collections.Generic
 Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic
 
@@ -22,6 +23,7 @@ Public Class VbCodeAnalyser
     Private Const cstStringReplace As String = Chr(34) + "[REPLACE]" + Chr(34)
     Private Const cstParameter As String = cstVarTypeFuncClassName + " " + cstLineFeed + "As " + cstLineFeed + cstNamespace
     Private Const cstEndStatement As String = "(End )" + cstLineFeed + "({0})"
+    Private Const cstImportsDeclaration As String = "(Imports )" + cstLineFeed + cstNamespace
 
     ' Class & Package declarations
     Private Const cstClassDeclaration As String = cstAccessModifier + cstAllText + "(Class |Interface )" + cstLineFeed + cstVarTypeFuncClassName
@@ -42,6 +44,7 @@ Public Class VbCodeAnalyser
 
 #Region "Shared class members"
 
+    Private Shared regImportsDeclaration As New Regex(cstImportsDeclaration)
     Private Shared regPackageDeclaration As New Regex(cstPackageDeclaration)
     Private Shared regClassDeclaration As New Regex(cstClassDeclaration)
     Private Shared regStringDeclaration As New Regex(cstStringDeclaration)
@@ -63,6 +66,25 @@ Public Class VbCodeAnalyser
     Private m_iNbLine As Integer = 0
     Private m_textWriter As XmlTextWriter = Nothing
     Private m_streamReader As StreamReader = Nothing
+    Private m_xmlDocument As New XmlDocument
+    '    Private m_listLines As New SortedList(Of Integer, Long)
+    Private m_strFilename As String
+
+#End Region
+
+#Region "Properties"
+
+    Public ReadOnly Property Document() As XmlDocument
+        Get
+            Return m_xmlDocument
+        End Get
+    End Property
+
+    Public ReadOnly Property Filename() As String
+        Get
+            Return m_strFilename
+        End Get
+    End Property
 
 #End Region
 
@@ -90,9 +112,11 @@ Public Class VbCodeAnalyser
 
 #Region "Public methods"
 
-    Public Function Analyse(ByVal strFolder As String, ByVal strName As String, Optional ByVal strTempFolder As String = "") As Boolean
+    Public Function Analyse(ByVal strFolder As String, ByVal strName As String, Optional ByVal strSuffix As String = "", Optional ByVal strTempFolder As String = "") As Boolean
+        Dim strXmlBaseReferences As String = My.Computer.FileSystem.CombinePath(strFolder, strTempFolder)
+        strXmlBaseReferences = My.Computer.FileSystem.CombinePath(strXmlBaseReferences, strName + strSuffix + ".xml")
         Try
-            Using textWriter As XmlTextWriter = New XmlTextWriter(strFolder + strTempFolder + strName + ".xml", Nothing)
+            Using textWriter As XmlTextWriter = New XmlTextWriter(strXmlBaseReferences, Nothing)
                 textWriter.Formatting = Formatting.Indented
                 textWriter.Indentation = 4
                 textWriter.IndentChar = Chr(32)
@@ -109,11 +133,14 @@ Public Class VbCodeAnalyser
                                             + vbCrLf + "cstAbstractMethod=" + cstAbstractMethod _
                                             + vbCrLf + "cstTypedef=" + cstTypedef _
                                             + vbCrLf + "cstOperatorDeclaration=" + cstOperatorDeclaration _
+                                            + vbCrLf + "cstImportsDeclaration=" + cstImportsDeclaration _
                                             + vbCrLf + "cstParameter=" + cstParameter + vbCrLf
 
                 textWriter.WriteComment(strComment)
 
-                Using streamReader As StreamReader = New StreamReader(strFolder + strName + ".vb")
+                m_strFilename = My.Computer.FileSystem.CombinePath(strFolder, strName)
+
+                Using streamReader As StreamReader = New StreamReader(m_strFilename)
                     m_textWriter = textWriter
                     m_streamReader = streamReader
                     m_iNbLine = 0
@@ -124,6 +151,7 @@ Public Class VbCodeAnalyser
                     Dim strStatement As String = ""
                     Do
                         m_iNbLine += 1
+                        'm_listLines.Add(m_iNbLine, streamReader.BaseStream.Position)
                         strReadLine = streamReader.ReadLine()
 
                         If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
@@ -135,6 +163,10 @@ Public Class VbCodeAnalyser
                             ElseIf CheckPackageInstruction(iStartLine, iStopLine, strInstruction) _
                             Then
                                 ParsePackageDeclaration()
+
+                            ElseIf CheckImportsInstruction(iStartLine, iStopLine, strInstruction) _
+                            Then
+                                ParseImportsDeclaration()
                             End If
 
                             strInstruction = ""
@@ -153,19 +185,86 @@ Public Class VbCodeAnalyser
                 textWriter.Close()
             End Using
 
-        Catch E As Exception
-            ' Let the user know what went wrong.
-            'Console.WriteLine("The file could not be read:")
-            'Console.WriteLine(E.Message)
+        Catch ex As Exception
+            MsgBox(ex.Message)
         Finally
             m_textWriter = Nothing
             m_streamReader = Nothing
         End Try
+
+        Try
+            m_xmlDocument.Load(strXmlBaseReferences)
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+    End Function
+
+    Public Function LoadLines(ByVal iStartLine As Integer, ByVal iStopLine As Integer)
+        Dim strResult As String = ""
+        Try
+            If iStopLine < iStartLine Then
+                Return ""
+            End If
+
+            Dim iNbLines As Integer = 0
+            Using streamReader As StreamReader = New StreamReader(m_strFilename)
+                '                streamReader.BaseStream.Seek(m_listLines(iStartLine), SeekOrigin.Begin)
+
+                Dim strReadLine As String
+                Do
+                    iNbLines += 1
+                    strReadLine = streamReader.ReadLine()
+                    If iNbLines > iStopLine _
+                    Then
+                        Exit Do
+
+                    ElseIf strReadLine IsNot Nothing And iNbLines >= iStartLine _
+                    Then
+                        strResult += strReadLine + vbCrLf
+                    End If
+                Loop Until strReadLine Is Nothing
+
+                streamReader.Close()
+            End Using
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+        Return strResult
     End Function
 
 #End Region
 
 #Region "Private methods"
+
+    Private Sub ParseImportsDeclaration()
+        Dim iStartLine As Integer = 0
+        Dim iStopLine As Integer = 0
+        Dim strReadLine As String
+        Dim strInstruction As String = ""
+        Do
+            m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
+            strReadLine = m_streamReader.ReadLine()
+
+            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            Then
+                If regImportsDeclaration.IsMatch(strInstruction) = False Then
+                    Exit Do
+                End If
+
+                strInstruction = ""
+                iStartLine = 0
+                iStopLine = 0
+            End If
+        Loop Until strReadLine Is Nothing
+
+        m_textWriter.Flush()
+        m_textWriter.WriteString(vbCrLf)
+        m_textWriter.WriteElementString("end-imports", CStr(m_iNbLine - 1))
+        m_textWriter.WriteString(vbCrLf)
+        m_textWriter.WriteEndElement()
+    End Sub
 
     Private Sub ParsePackageDeclaration()
         Dim iStartLine As Integer = 0
@@ -176,6 +275,7 @@ Public Class VbCodeAnalyser
         Dim regex As New Regex("(End )" + cstLineFeed + "(Namespace)")
         Do
             m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
@@ -214,6 +314,7 @@ Public Class VbCodeAnalyser
         Dim bInterface As Boolean = (strStatement = "Interface")
         Do
             m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
 
             If strReadLine IsNot Nothing Then
@@ -222,9 +323,8 @@ Public Class VbCodeAnalyser
 
                 ElseIf InStr(strReadLine, "Inherits") > 0 And iStopClassDeclaration > 0 Then
                     iStopClassDeclaration = m_iNbLine
-                End If
 
-                If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+                ElseIf ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
                 Then
                     If iStopClassDeclaration > 0 Then
                         m_textWriter.WriteAttributeString("end", iStopClassDeclaration.ToString)
@@ -232,6 +332,9 @@ Public Class VbCodeAnalyser
                     End If
 
                     If regex.IsMatch(strInstruction) Then
+                        If iStopClassDeclaration > 0 Then
+                            m_textWriter.WriteAttributeString("end", iStopClassDeclaration.ToString)
+                        End If
                         Exit Do
                     End If
 
@@ -240,13 +343,13 @@ Public Class VbCodeAnalyser
                             ParsePropertyBody()
 
                         Case ClassMember.ImplementedMethod
-                            ParseEndStatement(strStatement, "method")
+                            ParseEndStatement(strStatement, "method", False)
 
                         Case ClassMember.NestedClass
-                            ParseEndStatement(strStatement, "class")
+                            ParseEndStatement(strStatement, "class", False)
 
                         Case ClassMember.TypedefElt
-                            ParseEndStatement(strStatement, "typedef")
+                            ParseEndStatement(strStatement, "typedef", False)
                     End Select
                     strInstruction = ""
                     iStartLine = 0
@@ -271,6 +374,7 @@ Public Class VbCodeAnalyser
 
         Do
             m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
@@ -300,6 +404,7 @@ Public Class VbCodeAnalyser
 
         Do
             m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
@@ -327,7 +432,7 @@ Public Class VbCodeAnalyser
         m_textWriter.WriteEndElement()
     End Sub
 
-    Private Sub ParseEndStatement(ByVal strStatement As String, ByVal strElement As String)
+    Private Sub ParseEndStatement(ByVal strStatement As String, ByVal strElement As String, Optional ByVal bCheckComment As Boolean = True)
         Dim iStartLine As Integer = 0
         Dim iStopLine As Integer = 0
         Dim strReadLine As String
@@ -336,9 +441,10 @@ Public Class VbCodeAnalyser
 
         Do
             m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
 
-            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine, bCheckComment) = ProcessState.Instruction _
                 Then
                 If regex.IsMatch(strInstruction) Then
                     Exit Do
@@ -354,10 +460,10 @@ Public Class VbCodeAnalyser
     End Sub
 
     Private Function ParseLine(ByRef strReadLine As String, ByRef strInstruction As String, _
-                               ByRef iStartLine As Integer, ByRef iStopLine As Integer) As ProcessState
+                               ByRef iStartLine As Integer, ByRef iStopLine As Integer, Optional ByVal bCheckComment As Boolean = True) As ProcessState
 
         If strReadLine IsNot Nothing Then
-            If CheckComment(strReadLine) = False Then
+            If CheckComment(strReadLine, bCheckComment) = False Then
                 Return ProcessState.EndOfFile
 
             ElseIf iStartLine > 0 Then
@@ -389,6 +495,28 @@ Public Class VbCodeAnalyser
         Return ProcessState.WaitData
     End Function
 
+    Private Function CheckImportsInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, ByVal strInstruction As String) As Boolean
+
+        If regImportsDeclaration.IsMatch(strInstruction) Then
+
+            Dim iPos As Integer = GetPosition(regImportsDeclaration, strInstruction, iStartLine)
+
+            Dim split As String() = regImportsDeclaration.Split(strInstruction)
+            'Console.WriteLine(iStartLine.ToString + " (" + iPos.ToString + ")->Detect package: " + split(3).Trim())
+            'Console.WriteLine("Imports name: " + split(3).Trim())
+
+            m_textWriter.Flush()
+            m_textWriter.WriteString(vbCrLf)
+            m_textWriter.WriteStartElement("imports")
+            m_textWriter.WriteAttributeString("start", iStartLine.ToString)
+            m_textWriter.WriteAttributeString("pos", iPos.ToString)
+            m_textWriter.WriteAttributeString("name", "Imports")
+
+            Return True
+        End If
+        Return False
+    End Function
+
     Private Function CheckPackageInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, ByVal strInstruction As String) As Boolean
 
         If regPackageDeclaration.IsMatch(strInstruction) Then
@@ -403,7 +531,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("package")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
-            m_textWriter.WriteAttributeString("start", iStopLine.ToString)
+            m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
             m_textWriter.WriteAttributeString("name", split(3).Trim())
 
@@ -610,7 +738,7 @@ Public Class VbCodeAnalyser
         Return ClassMember.UnknownElt
     End Function
 
-    Private Function CheckComment(ByRef strReadLine As String) As Boolean
+    Private Function CheckComment(ByRef strReadLine As String, Optional ByVal bCheckComment As Boolean = True) As Boolean
         If InStr(strReadLine, "'''") = 0 Then
             If InStr(strReadLine, "'") > 0 Then
                 If regStringDeclaration.IsMatch(strReadLine) Then
@@ -627,29 +755,39 @@ Public Class VbCodeAnalyser
             ''Console.WriteLine("VB-Doc: " + strReadLine)
 
             m_textWriter.Flush()
-            m_textWriter.WriteString(vbCrLf)
-            m_textWriter.WriteStartElement("vb-doc")
-            m_textWriter.WriteAttributeString("start", m_iNbLine.ToString)
-            m_textWriter.WriteString(strReadLine + vbCrLf)
+
+            If bCheckComment Then
+                m_textWriter.WriteString(vbCrLf)
+                m_textWriter.WriteStartElement("vb-doc")
+                m_textWriter.WriteAttributeString("start", m_iNbLine.ToString)
+                m_textWriter.WriteString(strReadLine + vbCrLf)
+            End If
 
             Do
                 m_iNbLine += 1
+                'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
                 strReadLine = m_streamReader.ReadLine()
 
                 If strReadLine IsNot Nothing Then
                     If InStr(strReadLine, "'''") = 0 Then
                         m_textWriter.Flush()
-                        m_textWriter.WriteElementString("end-doc", CStr(m_iNbLine - 1))
-                        m_textWriter.WriteString(vbCrLf)
-                        m_textWriter.WriteEndElement()
+
+                        If bCheckComment Then
+                            m_textWriter.WriteElementString("end-doc", CStr(m_iNbLine - 1))
+                            m_textWriter.WriteString(vbCrLf)
+                            m_textWriter.WriteEndElement()
+                        End If
+
                         Return True
                     Else
                         ''Console.WriteLine("VB-Doc: " + strReadLine)
-                        m_textWriter.WriteString(strReadLine + vbCrLf)
+                        If bCheckComment Then m_textWriter.WriteString(strReadLine + vbCrLf)
                     End If
                 End If
             Loop Until strReadLine Is Nothing
-            m_textWriter.WriteEndElement()
+
+            If bCheckComment Then m_textWriter.WriteEndElement()
+
             Return False
         End If
     End Function
