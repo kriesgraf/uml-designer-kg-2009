@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.ComponentModel
 Imports System.Xml
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlNodeCounter
 
 Public Class XmlEnumSpec
@@ -18,9 +19,11 @@ Public Class XmlEnumSpec
             If MyBase.Name = cstInitialName Then
                 ' If value is/contains  "cstInitialName" we refused to update "Name"
                 ' Because use Name and typedef ID to make a unique ID
-                If value.Contains(cstInitialName) = False Then
+                If value.StartsWith(cstInitialName) = False Then
                     Me.Id = Me.Id + "_" + value
                     MyBase.Name = value
+                Else
+                    MsgBox("Please choose a name different than '" + cstInitialName + "'", MsgBoxStyle.Exclamation)
                 End If
             Else
                 MyBase.Name = value
