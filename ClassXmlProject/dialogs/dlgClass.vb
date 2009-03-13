@@ -82,6 +82,8 @@ Public Class dlgClass
                 .LoadInheritedMembers(gridInherited)
                 .LoadMembers(gridMembers)
                 .LoadRelations(gridRelations)
+
+                .UpdateMenuClass(AddTypedef)
             End With
 
             PasteMember.Enabled = XmlComponent.Clipboard.CanPaste
