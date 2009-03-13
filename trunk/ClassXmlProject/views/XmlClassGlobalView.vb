@@ -86,6 +86,14 @@ Public Class XmlClassGlobalView
         Return bResult
     End Function
 
+    Public Sub UpdateMenuClass(ByVal menuitem As ToolStripItem)
+        If MyBase.GenerationLanguage <> ELanguage.Language_Vbasic Then
+            menuitem.Text = "Typedef"
+        Else
+            menuitem.Text = "Enumeration"
+        End If
+    End Sub
+
     Public Sub InitBindingName(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
