@@ -6,6 +6,7 @@ Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic
 
 Public Class VbCodeAnalyser
+    Implements IDisposable
 
 #Region "Constants"
 
@@ -66,7 +67,7 @@ Public Class VbCodeAnalyser
     Private m_iNbLine As Integer = 0
     Private m_textWriter As XmlTextWriter = Nothing
     Private m_streamReader As StreamReader = Nothing
-    Private m_xmlDocument As New XmlDocument
+    Private m_xmlDocument As XmlDocument = Nothing
     '    Private m_listLines As New SortedList(Of Integer, Long)
     Private m_strFilename As String
 
@@ -193,6 +194,7 @@ Public Class VbCodeAnalyser
         End Try
 
         Try
+            m_xmlDocument = New XmlDocument
             m_xmlDocument.Load(strXmlBaseReferences)
 
         Catch ex As Exception
@@ -200,7 +202,7 @@ Public Class VbCodeAnalyser
         End Try
     End Function
 
-    Public Function LoadLines(ByVal iStartLine As Integer, ByVal iStopLine As Integer)
+    Public Function LoadLines(ByVal iStartLine As Integer, ByVal iStopLine As Integer) As String
         Dim strResult As String = ""
         Try
             If iStopLine < iStartLine Then
@@ -460,7 +462,8 @@ Public Class VbCodeAnalyser
     End Sub
 
     Private Function ParseLine(ByRef strReadLine As String, ByRef strInstruction As String, _
-                               ByRef iStartLine As Integer, ByRef iStopLine As Integer, Optional ByVal bCheckComment As Boolean = True) As ProcessState
+                               ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
+                               Optional ByVal bCheckComment As Boolean = True) As ProcessState
 
         If strReadLine IsNot Nothing Then
             If CheckComment(strReadLine, bCheckComment) = False Then
@@ -495,7 +498,8 @@ Public Class VbCodeAnalyser
         Return ProcessState.WaitData
     End Function
 
-    Private Function CheckImportsInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, ByVal strInstruction As String) As Boolean
+    Private Function CheckImportsInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
+                                             ByVal strInstruction As String) As Boolean
 
         If regImportsDeclaration.IsMatch(strInstruction) Then
 
@@ -508,6 +512,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("imports")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
             m_textWriter.WriteAttributeString("name", "Imports")
@@ -517,7 +522,8 @@ Public Class VbCodeAnalyser
         Return False
     End Function
 
-    Private Function CheckPackageInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, ByVal strInstruction As String) As Boolean
+    Private Function CheckPackageInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
+                                             ByVal strInstruction As String) As Boolean
 
         If regPackageDeclaration.IsMatch(strInstruction) Then
 
@@ -530,6 +536,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("package")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -540,7 +547,8 @@ Public Class VbCodeAnalyser
         Return False
     End Function
 
-    Private Function CheckClassInstruction(ByRef iStartLine As Integer, ByVal strInstruction As String, ByRef strStatement As String) As Boolean
+    Private Function CheckClassInstruction(ByRef iStartLine As Integer, ByVal strInstruction As String, _
+                                           ByRef strStatement As String) As Boolean
         strStatement = ""
         If regClassDeclaration.IsMatch(strInstruction) Then
 
@@ -554,6 +562,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("class")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
             m_textWriter.WriteAttributeString("name", split(5).Trim())
@@ -564,7 +573,8 @@ Public Class VbCodeAnalyser
     End Function
 
     Private Function CheckMemberInstruction(ByRef iStartLine As Integer, ByVal iStopLine As Integer, _
-                                            ByVal strInstruction As String, ByRef strStatement As String, ByVal bInterface As Boolean) As ClassMember
+                                            ByVal strInstruction As String, ByRef strStatement As String, _
+                                            ByVal bInterface As Boolean) As ClassMember
 
         If regAttributeDeclaration.IsMatch(strInstruction) Then
 
@@ -577,6 +587,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("attribute")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -596,6 +607,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("property")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -616,6 +628,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("typedef")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -635,6 +648,7 @@ Public Class VbCodeAnalyser
                 m_textWriter.Flush()
                 m_textWriter.WriteString(vbCrLf)
                 m_textWriter.WriteStartElement("method")
+                m_textWriter.WriteAttributeString("checked", "False")
                 m_textWriter.WriteAttributeString("start", iStartLine.ToString)
                 m_textWriter.WriteAttributeString("end", iStopLine.ToString)
                 m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -659,6 +673,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("method")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -690,6 +705,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("method")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -705,7 +721,8 @@ Public Class VbCodeAnalyser
         Return ClassMember.UnknownElt
     End Function
 
-    Private Function CheckGetSetInstruction(ByVal iStartLine As Integer, ByVal iStopLine As Integer, ByVal strInstruction As String) As ClassMember
+    Private Function CheckGetSetInstruction(ByVal iStartLine As Integer, ByVal iStopLine As Integer, _
+                                            ByVal strInstruction As String) As ClassMember
         If regAccessorGetDeclaration.IsMatch(strInstruction) Then
 
             Dim iPos = InStr(strInstruction, "Get")
@@ -714,6 +731,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("get")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -728,6 +746,7 @@ Public Class VbCodeAnalyser
             m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("set")
+            m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
@@ -739,7 +758,10 @@ Public Class VbCodeAnalyser
     End Function
 
     Private Function CheckComment(ByRef strReadLine As String, Optional ByVal bCheckComment As Boolean = True) As Boolean
-        If InStr(strReadLine, "'''") = 0 Then
+
+        Dim iPos As Integer = InStr(strReadLine, "'''")
+
+        If iPos = 0 Then
             If InStr(strReadLine, "'") > 0 Then
                 If regStringDeclaration.IsMatch(strReadLine) Then
                     strReadLine = regStringDeclaration.Replace(strReadLine, cstStringReplace)
@@ -759,7 +781,9 @@ Public Class VbCodeAnalyser
             If bCheckComment Then
                 m_textWriter.WriteString(vbCrLf)
                 m_textWriter.WriteStartElement("vb-doc")
+                m_textWriter.WriteAttributeString("checked", "False")
                 m_textWriter.WriteAttributeString("start", m_iNbLine.ToString)
+                m_textWriter.WriteAttributeString("pos", iPos.ToString)
                 m_textWriter.WriteString(strReadLine + vbCrLf)
             End If
 
@@ -773,7 +797,7 @@ Public Class VbCodeAnalyser
                         m_textWriter.Flush()
 
                         If bCheckComment Then
-                            m_textWriter.WriteElementString("end-doc", CStr(m_iNbLine - 1))
+                            m_textWriter.WriteElementString("end-vb-doc", CStr(m_iNbLine - 1))
                             m_textWriter.WriteString(vbCrLf)
                             m_textWriter.WriteEndElement()
                         End If
@@ -792,7 +816,9 @@ Public Class VbCodeAnalyser
         End If
     End Function
 
-    Private Function GetPosition(ByVal regEx As Regex, ByVal strInstruction As String, ByRef iStartLine As Integer) As Integer
+    Private Function GetPosition(ByVal regEx As Regex, ByVal strInstruction As String, _
+                                 ByRef iStartLine As Integer) As Integer
+
         Dim groups As GroupCollection = regEx.Match(strInstruction).Groups
         Dim iPos = groups(0).Index
         Dim strPrecedingInstruction As String = Strings.Left(strInstruction, iPos)
@@ -805,6 +831,28 @@ Public Class VbCodeAnalyser
         Return iPos + 1
     End Function
 
+#End Region
+
+#Region " IDisposable Support "
+
+    Private disposedValue As Boolean = False        ' Pour détecter les appels redondants
+
+    ' IDisposable
+    Protected Overridable Sub Dispose(ByVal disposing As Boolean)
+        If Not Me.disposedValue Then
+            If disposing Then
+            End If
+            m_xmlDocument = Nothing
+        End If
+        Me.disposedValue = True
+    End Sub
+
+    ' Ce code a été ajouté par Visual Basic pour permettre l'implémentation correcte du modèle pouvant être supprimé.
+    Public Sub Dispose() Implements IDisposable.Dispose
+        ' Ne modifiez pas ce code. Ajoutez du code de nettoyage dans Dispose(ByVal disposing As Boolean) ci-dessus.
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
 #End Region
 
 End Class
