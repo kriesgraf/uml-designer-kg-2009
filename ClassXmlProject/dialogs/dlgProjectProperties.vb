@@ -87,6 +87,9 @@ Public Class dlgProjectProperties
 
     Private Sub txtPath_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtPath.TextChanged
         Try
+            If My.Computer.FileSystem.DirectoryExists(txtPath.Text) = False Then
+                txtPath.Text = My.Computer.FileSystem.SpecialDirectories.MyDocuments
+            End If
             fileListBox.Path = txtPath.Text
             lblPath.Text = CompactPath(lblPath, txtPath.Text)
         Catch ex As Exception
