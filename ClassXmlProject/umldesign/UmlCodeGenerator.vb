@@ -242,7 +242,11 @@ Public Class UmlCodeGenerator
             End While
         End Using
         If bUseTempFolder And bSourceExists Then
-            CompareAndMergeFiles(strTempFile, strReleaseFile)
+            If My.Settings.VbMergeTool Then
+                VbCodeMerger.Merge(currentFolder, strNewFile, cstTempExport)
+            Else
+                CompareAndMergeFiles(strTempFile, strReleaseFile)
+            End If
         End If
     End Sub
 
