@@ -25,6 +25,7 @@ Public Class VbCodeAnalyser
     Private Const cstParameter As String = cstVarTypeFuncClassName + " " + cstLineFeed + "As " + cstLineFeed + cstNamespace
     Private Const cstEndStatement As String = "(End )" + cstLineFeed + "({0})"
     Private Const cstImportsDeclaration As String = "(Imports )" + cstLineFeed + cstNamespace
+    Private Const cstRegionDeclaration As String = "(\#Region )" + cstLineFeed + "(" + cstStringDeclaration + ")"
 
     ' Class & Package declarations
     Private Const cstClassDeclaration As String = cstAccessModifier + cstAllText + "(Class |Interface )" + cstLineFeed + cstVarTypeFuncClassName
@@ -59,6 +60,7 @@ Public Class VbCodeAnalyser
     Private Shared regAbstractMethod As New Regex(cstAbstractMethod)
     Private Shared regTypedefDeclaration As New Regex(cstTypedef)
     Private Shared regParamDeclaration As New Regex(cstParameter)
+    Private Shared regRegionDeclaration As New Regex(cstRegionDeclaration)
 
 #End Region
 
@@ -135,6 +137,7 @@ Public Class VbCodeAnalyser
                                             + vbCrLf + "cstTypedef=" + cstTypedef _
                                             + vbCrLf + "cstOperatorDeclaration=" + cstOperatorDeclaration _
                                             + vbCrLf + "cstImportsDeclaration=" + cstImportsDeclaration _
+                                            + vbCrLf + "cstRegionDeclaration=" + cstRegionDeclaration _
                                             + vbCrLf + "cstParameter=" + cstParameter + vbCrLf
 
                 textWriter.WriteComment(strComment)
@@ -164,6 +167,10 @@ Public Class VbCodeAnalyser
                             ElseIf CheckPackageInstruction(iStartLine, iStopLine, strInstruction) _
                             Then
                                 ParsePackageDeclaration()
+
+                            ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                            Then
+                                ParseRegionDeclaration(False, False)
 
                             ElseIf CheckImportsInstruction(iStartLine, iStopLine, strInstruction) _
                             Then
@@ -244,6 +251,7 @@ Public Class VbCodeAnalyser
         Dim iStopLine As Integer = 0
         Dim strReadLine As String
         Dim strInstruction As String = ""
+
         Do
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
@@ -251,8 +259,13 @@ Public Class VbCodeAnalyser
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
             Then
-                If regImportsDeclaration.IsMatch(strInstruction) = False Then
+                If regImportsDeclaration.IsMatch(strInstruction) = False _
+                Then
                     Exit Do
+
+                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                Then
+                    Throw New Exception("Do not defined Region inside 'Imports' declarations")
                 End If
 
                 strInstruction = ""
@@ -275,6 +288,52 @@ Public Class VbCodeAnalyser
         Dim strInstruction As String = ""
         Dim strStatement As String = ""
         Dim regex As New Regex("(End )" + cstLineFeed + "(Namespace)")
+
+        Do
+            m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
+            strReadLine = m_streamReader.ReadLine()
+
+            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            Then
+                If regex.IsMatch(strInstruction) _
+                Then
+                    Exit Do
+
+                ElseIf CheckClassInstruction(iStartLine, strInstruction, strStatement) _
+                Then
+                    ParseClassDeclaration(iStopLine, strStatement)
+
+                ElseIf CheckPackageInstruction(iStartLine, iStopLine, strInstruction) _
+                Then
+                    ParsePackageDeclaration()
+
+                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                Then
+                    ParseRegionDeclaration(False, False)
+                End If
+
+                strInstruction = ""
+                iStartLine = 0
+                iStopLine = 0
+            End If
+        Loop Until strReadLine Is Nothing
+
+        m_textWriter.Flush()
+        m_textWriter.WriteString(vbCrLf)
+        m_textWriter.WriteElementString("end-package", m_iNbLine.ToString)
+        m_textWriter.WriteString(vbCrLf)
+        m_textWriter.WriteEndElement()
+    End Sub
+
+    Private Sub ParseRegionDeclaration(ByVal bInterface As Boolean, Optional ByVal bAcceptMembers As Boolean = True)
+        Dim iStartLine As Integer = 0
+        Dim iStopLine As Integer = 0
+        Dim strReadLine As String
+        Dim strInstruction As String = ""
+        Dim strStatement As String = ""
+        Dim regex As New Regex("(End )" + cstLineFeed + "(Region)")
+
         Do
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
@@ -291,9 +350,15 @@ Public Class VbCodeAnalyser
 
                 ElseIf CheckPackageInstruction(iStartLine, iStopLine, strInstruction) _
                 Then
-                    ParsePackageDeclaration()
-                End If
+                    Throw New Exception("Do not defined 'Namespace' inside 'Region' declarations")
 
+                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                Then
+                    Throw New Exception("Do not defined interlocked 'Region' declarations")
+
+                ElseIf bAcceptMembers Then
+                    ParseMemberInstruction(iStartLine, iStopLine, strInstruction, bInterface)
+                End If
                 strInstruction = ""
                 iStartLine = 0
                 iStopLine = 0
@@ -302,7 +367,7 @@ Public Class VbCodeAnalyser
 
         m_textWriter.Flush()
         m_textWriter.WriteString(vbCrLf)
-        m_textWriter.WriteElementString("end-package", m_iNbLine.ToString)
+        m_textWriter.WriteElementString("end-region", m_iNbLine.ToString)
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteEndElement()
     End Sub
@@ -314,6 +379,7 @@ Public Class VbCodeAnalyser
         Dim strInstruction As String = ""
         Dim regex As New Regex("(End )" + cstLineFeed + "(" + strStatement + ")")
         Dim bInterface As Boolean = (strStatement = "Interface")
+
         Do
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
@@ -334,25 +400,19 @@ Public Class VbCodeAnalyser
                     End If
 
                     If regex.IsMatch(strInstruction) Then
-                        If iStopClassDeclaration > 0 Then
+                        If iStopClassDeclaration > 0 _
+                        Then
                             m_textWriter.WriteAttributeString("end", iStopClassDeclaration.ToString)
                         End If
+
                         Exit Do
+
+                    ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                    Then
+                        ParseRegionDeclaration(bInterface)
+                    Else
+                        ParseMemberInstruction(iStartLine, iStopLine, strInstruction, bInterface)
                     End If
-
-                    Select Case CheckMemberInstruction(iStartLine, iStopLine, strInstruction, strStatement, bInterface)
-                        Case ClassMember.PropertyElt
-                            ParsePropertyBody()
-
-                        Case ClassMember.ImplementedMethod
-                            ParseEndStatement(strStatement, "method", False)
-
-                        Case ClassMember.NestedClass
-                            ParseEndStatement(strStatement, "class", False)
-
-                        Case ClassMember.TypedefElt
-                            ParseEndStatement(strStatement, "typedef", False)
-                    End Select
                     strInstruction = ""
                     iStartLine = 0
                     iStopLine = 0
@@ -365,6 +425,25 @@ Public Class VbCodeAnalyser
         m_textWriter.WriteElementString("end-class", m_iNbLine.ToString)
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteEndElement()
+    End Sub
+
+    Private Sub ParseMemberInstruction(ByVal iStartLine As Integer, ByVal iStopLine As Integer, _
+                                       ByVal strInstruction As String, ByVal bInterface As Boolean)
+        Dim strStatement As String = ""
+
+        Select Case CheckMemberInstruction(iStartLine, iStopLine, strInstruction, strStatement, bInterface)
+            Case ClassMember.PropertyElt
+                ParsePropertyBody()
+
+            Case ClassMember.ImplementedMethod
+                ParseEndStatement(strStatement, "method", False)
+
+            Case ClassMember.NestedClass
+                ParseEndStatement(strStatement, "class", False)
+
+            Case ClassMember.TypedefElt
+                ParseEndStatement(strStatement, "typedef", False)
+        End Select
     End Sub
 
     Private Sub ParseMethodBody(ByVal strStatement As String)
@@ -540,6 +619,25 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
+            m_textWriter.WriteAttributeString("name", split(3).Trim())
+
+            Return True
+        End If
+        Return False
+    End Function
+
+    Private Function CheckRegionInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
+                                            ByVal strInstruction As String) As Boolean
+        If regRegionDeclaration.IsMatch(strInstruction) Then
+
+            Dim split As String() = regRegionDeclaration.Split(strInstruction)
+
+            m_textWriter.Flush()
+            m_textWriter.WriteString(vbCrLf)
+            m_textWriter.WriteStartElement("region")
+            m_textWriter.WriteAttributeString("checked", "False")
+            m_textWriter.WriteAttributeString("start", iStartLine.ToString)
+            m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("name", split(3).Trim())
 
             Return True
