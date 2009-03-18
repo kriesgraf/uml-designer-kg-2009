@@ -928,7 +928,10 @@ th   {background:white; color:black;}
          <xsl:element name="reference">
            <xsl:copy-of select="@name"/>
           <xsl:attribute name="package">
-            <xsl:value-of select="ancestor::import/@name"/>
+            <xsl:choose>
+              <xsl:when test="string-length(ancestor::import/@param)!=0"><xsl:value-of select="ancestor::import/@param"/></xsl:when>
+              <xsl:otherwise><xsl:value-of select="ancestor::import/@name"/></xsl:otherwise>
+            </xsl:choose>
             <xsl:if test="@package"><xsl:value-of select="$Separator"/><xsl:value-of select="@package"/></xsl:if>
           </xsl:attribute>
         </xsl:element><xsl:text>
@@ -973,11 +976,17 @@ th   {background:white; color:black;}
 	<xsl:template match="*" mode="PackageImg">
   	  <table border="0">
         <tr><td><img src="{$IconsFolder}Package.gif"/></td></tr>
-        <tr><td align="center"><xsl:value-of select="@name"/></td></tr>
+        <tr><td align="center">
+          <xsl:choose>
+            <xsl:when test="string-length(@param)!=0"><xsl:value-of select="@param"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+          </xsl:choose>
+        </td></tr>
       </table>
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
