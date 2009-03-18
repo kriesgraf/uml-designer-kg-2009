@@ -9,33 +9,59 @@ Public Class VbCodeMerger
 
     Public Shared Function Merge(ByVal strFolder As String, ByVal strFilename As String, _
                                  ByVal strTempFolder As String) As Boolean
+
+        Dim strSource As String = Nothing
+        Dim strDestination As String = Nothing
+        Dim strPath As String = My.Computer.FileSystem.CombinePath(strFolder, strTempFolder + strFilename + ".new")
+        Dim bMergeOk As Boolean = False
+
         Try
             Using PreviousModule As New VbCodeAnalyser
                 Using NextModule As New VbCodeAnalyser
 
-                    PreviousModule.Analyse(strFolder, strFilename, ".prev", strTempFolder)
-                    NextModule.Analyse(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder), strFilename, ".next")
+                    strSource = PreviousModule.Analyse(strFolder, strFilename, ".prev", strTempFolder)
+                    strDestination = NextModule.Analyse(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder), strFilename, ".next")
 
                     Dim newDocXml As New XmlDocument
                     newDocXml.AppendChild(newDocXml.CreateNode(XmlNodeType.Element, "root", ""))
 
                     CompareFiles(PreviousModule, NextModule, newDocXml)
-
-                    ' Only for debug version
-                    NextModule.Document.Save(My.Computer.FileSystem.CombinePath(strFolder, ".umlexp\test2.xml"))
-                    newDocXml.Save(My.Computer.FileSystem.CombinePath(strFolder, ".umlexp\test.xml"))
-
+#If DEBUG Then
+                    NextModule.Document.Save(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder+"test2.xml"))
+                    newDocXml.Save(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder+"test.xml"))
+#End If
                     MergeFiles(NextModule, newDocXml)
-
-                    ' Only for debug version
-                    newDocXml.Save(My.Computer.FileSystem.CombinePath(strFolder, ".umlexp\test.xml"))
-
-                    ProcessMerging(newDocXml, PreviousModule, strFolder, strFilename)
+#If DEBUG Then
+                    newDocXml.Save(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder+"test.xml"))
+#End If
+                    bMergeOk = ProcessMerging(newDocXml, PreviousModule, strPath)
                 End Using
             End Using
+
+#If DEBUG Then
+#Else
+            ' Move, rename files outside 'Using' blocks
+            If bMergeOk Then
+                Dim strFinalPath As String = My.Computer.FileSystem.CombinePath(strFolder, strFilename)
+                MoveFile(strFinalPath, strFinalPath + ".bak")
+                MoveFile(strPath, strFinalPath)
+            End If
+#End If
+
         Catch ex As Exception
-            MsgBox(ex.Message)
+#If TARGET = "winexe" Then
+            MsgExceptionBox(ex)
+#Else
+            Console.WriteLine(ex.Message + vbCrLf + ex.StackTrace)
+#End If
+        Finally
+#If DEBUG Then
+#Else
+            RemoveFile(strSource)
+            RemoveFile(strDestination)
+#End If
         End Try
+        Return bMergeOk
     End Function
 
 #End Region
@@ -146,12 +172,13 @@ Public Class VbCodeMerger
 
         Dim vbdoc As XmlNode = Nothing
         Dim previous As XmlNode = Nothing
-        Dim body, clone As XmlNode
+        Dim body, clone, second As XmlNode
 
         For Each child In firstParent.ChildNodes()
-            Select GetNodeName(child)
+            Dim strNodeName As String = GetNodeName(child)
+            Select Case strNodeName
                 Case "region"
-                    Dim second As XmlNode = GetReferenceName(secondParent, child)
+                    second = GetReferenceName(secondParent, child)
                     MergeNodes(child, second, NextModule, newDocXml)
 
                 Case "vb-doc"
@@ -162,9 +189,20 @@ Public Class VbCodeMerger
                 Case Else
                     If IsNotCheck(child) = False _
                     Then
+                        If strNodeName = "property" Then
+                            second = GetReferenceName(secondParent, child)
+                            MergeNodes(child, second, NextModule, newDocXml)
+                        End If
                         previous = child
                     Else
-                        clone = newDocXml.ImportNode(child, True)
+                        If strNodeName = "property" Then
+                            clone = newDocXml.ImportNode(child, False)
+                        Else
+                            clone = newDocXml.ImportNode(child, True)
+                        End If
+
+                        SetCheck(clone)
+
                         Dim iPos As Integer = 0
 
                         If previous IsNot Nothing _
@@ -175,6 +213,10 @@ Public Class VbCodeMerger
                             End If
 
                             If before Is Nothing Then
+                                before = secondParent.SelectSingleNode("end-property")
+                            End If
+
+                            If before Is Nothing Then
                                 before = secondParent.SelectSingleNode("end-region")
                             End If
 
@@ -182,8 +224,8 @@ Public Class VbCodeMerger
                                 before = secondParent.SelectSingleNode("end-class")
                             End If
 
-                            Select GetNodeName(before)
-                                Case "end-class", "end-region"
+                            Select Case GetNodeName(before)
+                                Case "end-class", "end-region", "end-property"
                                     iPos = GetLastEndLine(secondParent)
                                 Case Else
                                     iPos = GetStartLine(before)
@@ -199,14 +241,19 @@ Public Class VbCodeMerger
                         Dim strNewLines As String = ""
 
                         If vbdoc IsNot Nothing Then
-                            strNewLines += vbdoc.FirstChild.InnerText
+                            strNewLines += vbdoc.FirstChild.InnerText + vbCrLf
                         End If
 
                         strNewLines += LoadLines(NextModule, child)
 
                         body = newDocXml.CreateNode(XmlNodeType.Element, "body", "")
                         clone.InsertBefore(body, clone.FirstChild)
-                        body.InnerText = strNewLines + vbCrLf
+                        Select Case strNodeName
+                            Case "get", "set"
+                                body.InnerText = strNewLines
+                            Case Else
+                                body.InnerText = strNewLines + vbCrLf
+                        End Select
 
                         SetPosition(clone, 1)   ' To force write on first column
                         SetInsertLine(clone, iPos)
@@ -331,7 +378,7 @@ Public Class VbCodeMerger
             If strNodeName <> "vb-doc" _
             Then
                 Select Case strNodeName
-                    Case "attribute", "method", "property", "typedef", "class", "region"
+                    Case "attribute", "method", "property", "get", "set", "typedef", "class", "region"
                         replaceChild = GetReferenceName(NextClassNode, child)
 
                         If replaceChild Is Nothing _
@@ -347,50 +394,68 @@ Public Class VbCodeMerger
 
                         If replaceChild IsNot Nothing _
                         Then
-                            SetCheck(replaceChild)
-                            SetCheck(child)
+                            ' If new node is not yet replaced
+                            If IsNotCheck(replaceChild) Then
+                                SetCheck(replaceChild)
+                                SetCheck(child)
 
-                            ' Clone only 'class' node and replace each declaration
-                            If vbdocPrev IsNot Nothing Then
-                                clone = NewClassNode.OwnerDocument.ImportNode(vbdocPrev, True)
-                                NewClassNode.AppendChild(clone)
-                                If vbdocNext IsNot Nothing Then
-                                    SetCheck(clone)
-                                    SetCheck(vbdocNext)
-                                    clone.FirstChild.InnerText = vbdocNext.FirstChild.InnerText
+                                ' Clone only 'class' node and replace each declaration
+                                If vbdocPrev IsNot Nothing Then
+                                    clone = NewClassNode.OwnerDocument.ImportNode(vbdocPrev, True)
+                                    NewClassNode.AppendChild(clone)
+                                    If vbdocNext IsNot Nothing Then
+                                        SetCheck(clone)
+                                        SetCheck(vbdocNext)
+                                        clone.FirstChild.InnerText = vbdocNext.FirstChild.InnerText
+                                    End If
                                 End If
+
+                                clone = NewClassNode.OwnerDocument.ImportNode(child, False)
+                                NewClassNode.AppendChild(clone)
+
+                                Dim strNewLine As String = ""
+
+                                If vbdocPrev Is Nothing And vbdocNext IsNot Nothing Then
+                                    strNewLine = vbdocNext.FirstChild.InnerText
+                                End If
+
+                                body = NewClassNode.OwnerDocument.CreateNode(XmlNodeType.Element, "body", "")
+                                clone.AppendChild(body)
+
+                                Select Case strNodeName
+                                    Case "class", "typedef"         ' Nested classes and Structure, Enum
+                                        SetStopLine(clone, GetLastEndLine(child))
+                                        strNewLine += LoadLines(NextModule, replaceChild)
+                                        body.InnerText = strNewLine
+
+                                    Case "region"
+                                        strNewLine += NextModule.LoadLines(GetStartLine(replaceChild), GetStopLine(replaceChild))
+                                        body.InnerText = strNewLine
+
+                                        ' We reparse 'region' content with same method
+                                        ParseClassDeclaration(child, replaceChild, NextModule, clone)
+
+                                    Case "property"
+                                        strNewLine += NextModule.LoadLines(GetStartLine(replaceChild), GetStopLine(replaceChild))
+                                        body.InnerText = strNewLine
+
+                                        ' We reparse 'property' content with same method
+                                        ParseClassDeclaration(child, replaceChild, NextModule, clone)
+
+                                    Case Else
+                                        strNewLine += NextModule.LoadLines(GetStartLine(replaceChild), GetStopLine(replaceChild))
+                                        body.InnerText = strNewLine
+                                End Select
+                            Else
+                                ' If new node is already replaced
+                                If vbdocPrev IsNot Nothing Then
+                                    clone = NewClassNode.OwnerDocument.ImportNode(vbdocPrev, True)
+                                    NewClassNode.AppendChild(clone)
+                                End If
+                                ' Clone dub 'class' node deeply to see in next pass
+                                clone = NewClassNode.OwnerDocument.ImportNode(child, True)
+                                NewClassNode.AppendChild(clone)
                             End If
-
-                            clone = NewClassNode.OwnerDocument.ImportNode(child, False)
-                            NewClassNode.AppendChild(clone)
-
-                            Dim strNewLine As String = ""
-
-                            If vbdocPrev Is Nothing And vbdocNext IsNot Nothing Then
-                                strNewLine = vbdocNext.FirstChild.InnerText
-                            End If
-
-                            body = NewClassNode.OwnerDocument.CreateNode(XmlNodeType.Element, "body", "")
-                            clone.AppendChild(body)
-
-                            Select Case strNodeName
-                                Case "class", "typedef"         ' Nested classes and Structure, Enum
-                                    SetStopLine(clone, GetLastEndLine(child))
-                                    strNewLine += LoadLines(NextModule, replaceChild)
-                                    body.InnerText = strNewLine
-
-                                Case "region"
-                                    strNewLine += NextModule.LoadLines(GetStartLine(replaceChild), GetStopLine(replaceChild))
-                                    body.InnerText = strNewLine
-
-                                    ' We reparse 'region' content with same method
-                                    ParseClassDeclaration(child, replaceChild, NextModule, clone)
-
-                                Case Else
-                                    strNewLine += NextModule.LoadLines(GetStartLine(replaceChild), GetStopLine(replaceChild))
-                                    body.InnerText = strNewLine
-                            End Select
-
                         Else
                             If vbdocPrev IsNot Nothing Then
                                 clone = NewClassNode.OwnerDocument.ImportNode(vbdocPrev, True)
@@ -402,13 +467,13 @@ Public Class VbCodeMerger
                         End If
 
                     Case Else
-                        If vbdocPrev IsNot Nothing Then
-                            clone = NewClassNode.OwnerDocument.ImportNode(vbdocPrev, True)
+                            If vbdocPrev IsNot Nothing Then
+                                clone = NewClassNode.OwnerDocument.ImportNode(vbdocPrev, True)
+                                NewClassNode.AppendChild(clone)
+                            End If
+                            ' Clone sub 'class' node deeply to see in next pass
+                            clone = NewClassNode.OwnerDocument.ImportNode(child, True)
                             NewClassNode.AppendChild(clone)
-                        End If
-                        ' Clone sub 'class' node deeply to see in next pass
-                        clone = NewClassNode.OwnerDocument.ImportNode(child, True)
-                        NewClassNode.AppendChild(clone)
                 End Select
 
                 vbdocPrev = Nothing
@@ -421,12 +486,13 @@ Public Class VbCodeMerger
         Next
     End Sub
 
-    Private Shared Sub ProcessMerging(ByVal docXml As XmlDocument, ByVal VbCode As VbCodeAnalyser, _
-                               ByVal strFolder As String, ByVal strFilename As String)
+    Private Shared Function ProcessMerging(ByVal docXml As XmlDocument, ByVal VbCode As VbCodeAnalyser, _
+                                            ByVal strPath As String) As Boolean
+
+        Dim bResult As Boolean = False
         Dim iStartLine As Integer = 1
         Dim iStopLine As Integer = 1
-        Dim strTemp As String = My.Computer.FileSystem.CombinePath(strFolder, ".umlexp")
-        Dim strPath As String = My.Computer.FileSystem.CombinePath(strTemp, strFilename + ".new")
+
         Try
             Using streamWriter As StreamWriter = New StreamWriter(strPath)
 
@@ -477,17 +543,36 @@ Public Class VbCodeMerger
                     End If
                 Next
                 streamWriter.Close()
+                bResult = True
             End Using
-
-            Dim strFinalPath As String = My.Computer.FileSystem.CombinePath(strFolder, strFilename)
-
-            'My.Computer.FileSystem.MoveFile(strFinalPath, strFinalPath + ".bak")
-            'My.Computer.FileSystem.MoveFile(strPath, strFinalPath)
-
         Catch ex As Exception
-            MsgBox(ex.Message)
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Private Shared Sub RemoveFile(ByVal filename As String)
+        Try
+            If filename IsNot Nothing Then
+                If My.Computer.FileSystem.FileExists(filename) _
+                Then
+                    My.Computer.FileSystem.DeleteFile(filename)
+                End If
+            End If
+        Catch ex As Exception
+            Throw New Exception("Fails to remove file:" + filename, ex)
         End Try
     End Sub
+
+    Private Shared Sub MoveFile(ByVal strSource As String, ByVal strDestination As String)
+        Try
+            My.Computer.FileSystem.MoveFile(strSource, strDestination, True)
+
+        Catch ex As Exception
+            Throw New Exception("Fails to move file:" + strSource + " to:" + strDestination, ex)
+        End Try
+    End Sub
+
 
     Private Shared Sub PackageMerging(ByVal node As XmlNode, ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
                              ByVal VbCode As VbCodeAnalyser, ByVal streamWriter As StreamWriter)
@@ -544,7 +629,7 @@ Public Class VbCodeMerger
             Dim strNodename As String = GetNodeName(child)
 
             Select Case strNodename
-                Case "vb-doc", "region", "class", "typedef", "method", "attribute"
+                Case "vb-doc", "region", "class", "typedef", "property", "get", "set", "method", "attribute"
                     iStopLine = GetStartLine(child) - 1
                     WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
             End Select
@@ -560,10 +645,19 @@ Public Class VbCodeMerger
                     iStartLine = GetStopLine(child) + 1
                     ClassMerging(child, iStartLine, iStopLine, VbCode, streamWriter)
 
+                Case "property"
+                    If IsNotCheck(child) Then
+                        OtherNodeMerge(child, iStartLine, iStopLine, VbCode, streamWriter)
+                    Else
+                        WriteStreamBody(streamWriter, child, VbCode)
+                        iStartLine = GetStopLine(child) + 1
+                        RegionMerging(child, iStartLine, iStopLine, VbCode, streamWriter)
+                    End If
+
                 Case "body"
                     ' Ignore
 
-                Case "end-region"
+                Case "end-region", "end-property"
                     iStopLine = GetLastEndLine(node)    ' node is used, see GetLastEndLine!
                     WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
                     iStartLine = iStopLine + 1
@@ -625,9 +719,6 @@ Public Class VbCodeMerger
 
         Dim strNodename As String = GetNodeName(child)
 
-        iStopLine = GetStartLine(child) - 1
-        WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
-
         Dim body As XmlNode = child.SelectSingleNode("body")
 
         If body IsNot Nothing _
@@ -642,26 +733,65 @@ Public Class VbCodeMerger
                     Throw New Exception("Node '" + strNodename + "' has neither attribute 'end' nor child 'end-" + strNodename + "' or value is 0")
                 End If
             End If
-            WriteStreamLines(streamWriter, VbCode, GetStartLine(child), iStopLine)
+            WriteStreamLines(streamWriter, VbCode, GetStartLine(child), iStopLine, IsNotCheck(child))
             iStartLine = iStopLine + 1
         End If
     End Sub
 
-    Private Shared Function GetReferenceName(ByVal node As XmlNode, ByVal Child As XmlNode) As XmlNode
-        Dim strName As String = GetName(Child)
-        Dim strNodeName As String = GetNodeName(Child)
+    Private Shared Function GetReferenceName(ByVal parent As XmlNode, ByVal currentNode As XmlNode) As XmlNode
+        Dim strName As String = GetName(currentNode)
+        Dim strNodeName As String = GetNodeName(currentNode)
         Dim strQuery As String = strNodeName + "[@name='" + strName + "']"
+        Dim list As XmlNodeList = Nothing
+        Dim result As XmlNode = Nothing
 
         Select Case strNodeName
             Case "method"
                 If strName = "New" Then
-                    strQuery = "method[@name='New' and @params='" + GetParams(Child) + "']"
+                    strQuery = "method[@name='New' and @params='" + GetParams(currentNode) + "']"
+                    result = parent.SelectSingleNode(strQuery)
+
+                    If result Is Nothing Then
+                        strQuery = "method[@name='New' and @types='" + GetParamTypes(currentNode) + "']"
+                        result = parent.SelectSingleNode(strQuery)
+                    End If
+                Else
+                    strQuery = "method[@name='" + strName + "' and @params='" + GetParams(currentNode) + "']"
+                    result = parent.SelectSingleNode(strQuery)
+
+                    If result Is Nothing Then
+                        strQuery = "method[@name='" + strName + "' and @types='" + GetParamTypes(currentNode) + "']"
+                        result = parent.SelectSingleNode(strQuery)
+                    End If
+
+                    If result Is Nothing Then
+                        strQuery = "method[@name='" + strName + "']"
+                        list = parent.SelectNodes(strQuery)
+                        If list.Count > 0 Then
+                            result = list.Item(0)
+                            Dim i As Integer
+
+                            While i < list.Count And IsNotCheck(result) = False
+                                i += 1
+                                result = list.Item(i)
+                            End While
+
+                            If IsNotCheck(result) = False Then
+                                result = Nothing
+                            End If
+                        End If
+                    End If
                 End If
 
-            Case "region"
+            Case "get", "set"
+                strQuery = strNodeName + "[parent::property/@name='" + strName + "']"
+                result = parent.SelectSingleNode(strQuery)
+
+            Case Else
                 strQuery = strNodeName + "[@name='" + strName + "']"
+                result = parent.SelectSingleNode(strQuery)
         End Select
-        Return node.SelectSingleNode(strQuery)
+        Return result
     End Function
 
     Private Shared Function GetNodeName(ByVal node As XmlNode) As String
@@ -672,7 +802,12 @@ Public Class VbCodeMerger
     End Function
 
     Private Shared Function GetName(ByVal node As XmlNode) As String
-        Return node.Attributes.GetNamedItem("name").Value
+        Select Case node.Name
+            Case "get", "set"
+                Return node.ParentNode.Attributes.GetNamedItem("name").Value
+            Case Else
+                Return node.Attributes.GetNamedItem("name").Value
+        End Select
     End Function
 
     Private Shared Function LoadLines(ByVal VbCode As VbCodeAnalyser, ByVal node As XmlNode) As String
@@ -725,6 +860,13 @@ Public Class VbCodeMerger
         Return 0
     End Function
 
+    Private Shared Function GetParamTypes(ByVal node As XmlNode) As String
+        If node.Attributes.GetNamedItem("types") IsNot Nothing Then
+            Return node.Attributes.GetNamedItem("types").Value
+        End If
+        Return "False"
+    End Function
+
     Private Shared Function GetParams(ByVal node As XmlNode) As String
         If node.Attributes.GetNamedItem("params") IsNot Nothing Then
             Return node.Attributes.GetNamedItem("params").Value
@@ -772,7 +914,18 @@ Public Class VbCodeMerger
         Dim iPos As Integer = GetPosition(node)
         Dim iStart As Integer = GetStartLine(node)
 
-        WriteStreamCode(stream, node.FirstChild, iPos, iStart)
+        If IsNotCheck(node) Then
+            Dim body As String() = node.FirstChild.InnerText.Split(vbLf)
+            Dim tempo As String = "'    " + body(0).Replace("'", " ")
+
+            For i As Integer = 1 To body.Length - 1
+                tempo += vbLf + "'    " + body(i).Replace("'", " ")
+            Next
+
+            WriteStream(stream, tempo)
+        Else
+            WriteStreamCode(stream, node.FirstChild, iPos, iStart)
+        End If
     End Sub
 
     Private Shared Sub WriteStreamBody(ByVal stream As StreamWriter, ByVal node As XmlNode, ByVal VbCode As VbCodeAnalyser)
@@ -786,7 +939,9 @@ Public Class VbCodeMerger
     Private Shared Sub WriteStreamCode(ByVal stream As StreamWriter, ByVal node As XmlNode, _
                                        ByVal iPos As Integer, ByVal iStart As Integer, _
                                        Optional ByVal VbCode As VbCodeAnalyser = Nothing)
-
+        If node Is Nothing Then
+            Exit Sub
+        End If
         Dim body As String() = node.InnerText.Split(vbLf)
         Dim tempo As String = body(0)
 
@@ -804,33 +959,40 @@ Public Class VbCodeMerger
             End If
         End If
 
-        WriteStream(stream, tempo + vbLf)
-
-        Dim iStop As Integer = body.Length - 1
-        If body(iStop) = "" Then iStop -= 1
-
-        For i As Integer = 1 To iStop
-            WriteStream(stream, strSpaces + body(i) + vbLf)
+        For i As Integer = 1 To body.Length - 1
+            tempo += vbLf + strSpaces + body(i)
         Next
+
+        WriteStream(stream, tempo)
     End Sub
 
-    Private Shared Sub WriteStreamLines(ByVal streamWriter As StreamWriter, ByVal VbCode As VbCodeAnalyser, _
-                                 ByVal iStartLine As Integer, ByVal iStopLine As Integer)
+    Private Shared Sub WriteStreamLines(ByVal stream As StreamWriter, ByVal VbCode As VbCodeAnalyser, _
+                                 ByVal iStartLine As Integer, ByVal iStopLine As Integer, _
+                                 Optional ByVal bIsNotChecked As Boolean = False)
 
         If iStartLine <= iStopLine Then
-            WriteStream(streamWriter, VbCode.LoadLines(iStartLine, iStopLine))
+
+            Debug.Print("WriteStreamLines: start=" + iStartLine.ToString + " - stop=" + iStopLine.ToString)
+
+            If bIsNotChecked Then
+                Dim body As String() = VbCode.LoadLines(iStartLine, iStopLine).Split(vbLf)
+                Dim tempo As String = "'    " + body(0)
+
+                For i As Integer = 1 To body.Length - 1
+                    tempo += vbLf + "'    " + body(i)
+                Next
+
+                WriteStream(stream, tempo)
+            Else
+                WriteStream(stream, VbCode.LoadLines(iStartLine, iStopLine))
+            End If
+            Debug.Print("WriteStreamLines ==========================================")
         End If
     End Sub
 
     Private Shared Sub WriteStream(ByVal stream As StreamWriter, ByVal text As String)
-
-        stream.Write(text)
-
-        Dim tempo As String = text
-        If Strings.Right(tempo, 2) = vbCrLf Then
-            tempo = tempo.Substring(0, tempo.Length - 2)
-        End If
-        Debug.Print(tempo)
+        stream.WriteLine(text)
+        Debug.Print(text)
     End Sub
 #End Region
 
