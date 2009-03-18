@@ -282,6 +282,8 @@ Public Class MDIParent
                 OpenFile(sender, e)
             End If
 
+            Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
+
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -299,7 +301,6 @@ Public Class MDIParent
     Private Sub mnuEditDatabase_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuEditDatabase.Click
         MsgBox("Not yet implemented !", MsgBoxStyle.Exclamation)
     End Sub
-#End Region
 
     Private Sub AboutToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AboutToolStripMenuItem.Click
         Dim msg As String = ""
@@ -352,4 +353,12 @@ Public Class MDIParent
         Dim fen As Form = New dlgDiffTool
         fen.ShowDialog()
     End Sub
+
+    Private Sub VbMergeToolStripOption_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles VbMergeToolStripOption.Click
+        My.Settings.VbMergeTool = Not (My.Settings.VbMergeTool)
+        Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
+    End Sub
+
+#End Region
+
 End Class
