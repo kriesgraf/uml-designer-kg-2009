@@ -78,9 +78,9 @@
 
     <xsl:variable name="Request1"><xsl:call-template name="FullIncludeName"/></xsl:variable>
     <xsl:variable name="Request3"><xsl:call-template name="FullReferenceName"/></xsl:variable>
+    <!--
     <INC><xsl:copy-of select="$Request1"/></INC>
     <REF><xsl:copy-of select="$Request3"/></REF>
-    <!--
      -->
     <xsl:variable name="Request2">
     <xsl:for-each select="msxsl:node-set($Request3)/reference">
