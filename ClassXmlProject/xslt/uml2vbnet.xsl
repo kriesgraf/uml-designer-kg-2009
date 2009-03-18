@@ -94,8 +94,8 @@
     <xsl:element name="code">
       <xsl:attribute name="name"><xsl:value-of select="@name"/>.vb</xsl:attribute>
     <xsl:variable name="Request1"><xsl:call-template name="FullImportName"/></xsl:variable>
-    <IMPORTS><xsl:copy-of select="$Request1"/></IMPORTS>
     <!--
+    <IMPORTS><xsl:copy-of select="$Request1"/></IMPORTS>
      -->
     <xsl:variable name="CurrentPackage"><xsl:value-of select="parent::package/@name"/></xsl:variable>
     <xsl:for-each select="msxsl:node-set($Request1)//reference[generate-id()=generate-id(key('include',@value)[1])]">
@@ -167,6 +167,9 @@ Public </xsl:if>
     <xsl:with-param name="Implementation" select="@implementation"/>
     <xsl:with-param name="ImplementedMethods" select="$ImplementedMethods"/>
   </xsl:call-template>
+#End Region
+
+#Region "Other declarations (Not managed)"
 #End Region
 
 <xsl:if test="not(parent::package)">
@@ -417,7 +420,7 @@ End Namespace
         Return <xsl:value-of select="$VarName"/>
     End Get</xsl:if>
     <xsl:if test="set[@range!='no']">
-    Set <xsl:value-of select="concat('(ByVal ',$SetParam,' As ',$Type)"/>)
+    Set<xsl:value-of select="concat('(ByVal ',$SetParam,' As ',$Type)"/>)
         <xsl:value-of select="concat($VarName,' = ',$SetParam)"/>
     End Set</xsl:if>
     End Property
