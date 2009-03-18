@@ -263,6 +263,7 @@
     <Compile Include="documents\XmlStructureSpec.vb" />
     <Compile Include="umldesign\UmlNodesManager.vb" />
     <Compile Include="umldesign\VbCodeAnalyser.vb" />
+    <Compile Include="umldesign\VbCodeMerger.vb" />
     <Compile Include="views\XmlClassOverrideMethodsView.vb" />
     <Compile Include="views\XmlOverrideMemberView.vb" />
     <Compile Include="views\XmlRefRedundancyView.vb" />
