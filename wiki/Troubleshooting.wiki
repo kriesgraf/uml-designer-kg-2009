@@ -8,13 +8,15 @@ The DTD version (current is 1.2) is not yet verified. This warning message is so
 
 Other warning messages appear during installation or execution of application, these messages are detailed below and a good or alternative solution is proposed.
 
+Some errors can be unrecoverable, an *Exception* message is also displayed. This message confirms that current action has failed and stopped, but the current edited project is not lost. Sometimes, you could continue edit this and save later without any trouble.
+
 == Cannot start application ==
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Cannot%20start%20application%20from%20this%20location.png
 
 This message appears when you have not follow the installation [Getting_started   guidance]. Two solutions may be proposed:
  * Inflate last release archive in the same folder as the previous one.
- * Open the *Control panel* and open tool "*Add or remove programs*" and uninstall previous release.
+ * Open the *Control panel* and the launch tool "*Add or remove programs*". The select ClassXmlProject application and uninstall it. Then a message box proposes to you: 1) recover previous release, 2) remove all releases, choose last one, please.
 
 == Can't find File '... ...\class-model.dtd' ==
 
@@ -41,3 +43,33 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProje
 You have installed or recover an older release and the original file 'class-model.dtd' in application resources is also older.
 
 We suggest you not to confirm question. But if you want do it, an original file 'class-model.dtd' will be copied in your project workspace folder.
+
+== Exception messages ==
+
+The exceptions are raised by program, while:
+ * some mathematic operations are incorrect, 
+ * some object references are lost, 
+ * the use of framework component is incorrect, 
+ * a file operation is forbidden and was not controled preventively: file does not exist, file cannot be overwritten, current user has no right to read/write in the target folder,
+ * etc.
+
+This message is displayed with a technical description and a _call stack_: an history of all methods called before raising this exception . 
+
+Click on the big icon and you will have an history of methods called in *.NET* framework, but only if this exception is raised inside.
+
+Click on the technical description and all details of error is copied to clipboard. 
+
+http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Exception%20-%20Project%20incompatible%20with%20DTD.PNG
+
+This image describes the most common exception, or the only one that could have occurred. You overwrote the DTD file in you project workspace, but the project that you attempt to open is to old and has not been upgraded.
+
+Apart from this characteristic error, the other should be more episodic and caused by a particular configuration of your computer or a particular structure of your project. 
+
+Also we do not detail but we will show you how to proceed:
+ * Read the message carefully and calmly, but do not press the OK button frantically!
+ * If you have understand why this error occurs, press OK and retry you last operation carefully, fill out the forms with the correct values, choose the correct file, the correct folder and go.
+ * If you do not understand, remember your last four actions, you write these actions on a scrap paper.
+ * Click on the technical description to copy details to clipboard, then press OK!
+ * Paste clipboard in a text file and save it after writing inside you "last four actions".
+ * Go to page [http://code.google.com/p/uml-designer-kg-2009/issues/list issues] and create a new issue, copy line by line your "last four actions" and paste at the end of text box the error detailed text. 
+ * You can attach a project file that can reproduce this exception.
