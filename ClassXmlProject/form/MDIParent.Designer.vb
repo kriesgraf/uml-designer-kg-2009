@@ -40,6 +40,7 @@ Partial Class MDIParent
         Me.ToolBarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.StatusBarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolsMenu = New System.Windows.Forms.ToolStripMenuItem
+        Me.DiffToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.WindowsMenu = New System.Windows.Forms.ToolStripMenuItem
         Me.CascadeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -65,7 +66,8 @@ Partial Class MDIParent
         Me.StatusStrip = New System.Windows.Forms.StatusStrip
         Me.ToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me.DiffToolStripOption = New System.Windows.Forms.ToolStripMenuItem
+        Me.VbMergeToolStripOption = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
         Me.StatusStrip.SuspendLayout()
@@ -177,17 +179,23 @@ Partial Class MDIParent
         '
         'ToolsMenu
         '
-        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DiffToolStripOption, Me.OptionsToolStripMenuItem})
+        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DiffToolStripOption, Me.VbMergeToolStripOption, Me.ToolStripSeparator5, Me.OptionsToolStripMenuItem})
         Me.ToolsMenu.MergeIndex = 4
         Me.ToolsMenu.Name = "ToolsMenu"
         Me.ToolsMenu.Size = New System.Drawing.Size(44, 20)
         Me.ToolsMenu.Text = "&Tools"
         '
+        'DiffToolStripOption
+        '
+        Me.DiffToolStripOption.Name = "DiffToolStripOption"
+        Me.DiffToolStripOption.Size = New System.Drawing.Size(189, 22)
+        Me.DiffToolStripOption.Text = "External Diff/Merge tool"
+        '
         'OptionsToolStripMenuItem
         '
         Me.OptionsToolStripMenuItem.Enabled = False
         Me.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem"
-        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
         Me.OptionsToolStripMenuItem.Text = "&Options"
         '
         'WindowsMenu
@@ -363,11 +371,17 @@ Partial Class MDIParent
         Me.ToolStripStatusLabel.Name = "ToolStripStatusLabel"
         Me.ToolStripStatusLabel.Size = New System.Drawing.Size(0, 17)
         '
-        'DiffToolStripOption
+        'VbMergeToolStripOption
         '
-        Me.DiffToolStripOption.Name = "DiffToolStripOption"
-        Me.DiffToolStripOption.Size = New System.Drawing.Size(152, 22)
-        Me.DiffToolStripOption.Text = "Diff tool"
+        Me.VbMergeToolStripOption.CheckOnClick = True
+        Me.VbMergeToolStripOption.Name = "VbMergeToolStripOption"
+        Me.VbMergeToolStripOption.Size = New System.Drawing.Size(189, 22)
+        Me.VbMergeToolStripOption.Text = "Visual Basic merge tool"
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(186, 6)
         '
         'MDIParent
         '
@@ -434,5 +448,7 @@ Partial Class MDIParent
     Friend WithEvents mnuPatchApply As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuEditDatabase As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents DiffToolStripOption As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents VbMergeToolStripOption As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
 
 End Class
