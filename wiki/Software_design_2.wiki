@@ -1,4 +1,6 @@
 #sidebar TableOfContents
+<h2>Content:</h2>
+<wiki:toc max_depth="2" />
 
 = UML project data file structure =
 
