@@ -1,5 +1,6 @@
 ﻿Imports System
 Imports System.Xml
+Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 
@@ -93,7 +94,7 @@ Public Class frmProject
         Try
             Dim dlgSaveFile As New SaveFileDialog
 
-            If My.Settings.CurrentFolder = ".\" Then
+            If My.Settings.CurrentFolder = "." + Path.DirectorySeparatorChar.ToString Then
                 dlgSaveFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgSaveFile.InitialDirectory = My.Settings.CurrentFolder
@@ -403,6 +404,7 @@ Public Class frmProject
                     If m_xmlProject.MoveUpNode(.Binding.Parent, .SelectedItem) Then
                         .Binding.ResetBindings(True)
                         docvwProjectDisplay.DataSource = .Binding.Parent.Node
+                        RefreshProjectDisplay(True)
                     End If
                 End If
             End With
@@ -437,6 +439,7 @@ Public Class frmProject
         Try
             If lvwProjectMembers.Binding.Parent IsNot Nothing Then
                 If m_xmlProject.AddReferences(lvwProjectMembers.Binding.Parent, sender.Tag) Then
+                    RefreshProjectDisplay(True)
                 End If
             End If
         Catch ex As Exception
@@ -451,6 +454,7 @@ Public Class frmProject
                     If m_xmlProject.RemoveRedundantReference(.Binding.Parent, .SelectedItem) Then
                         .Binding.ResetBindings(True)
                         docvwProjectDisplay.DataSource = .Binding.Parent.Node
+                        RefreshProjectDisplay(True)
                     End If
                 End If
             End With
@@ -464,6 +468,7 @@ Public Class frmProject
             If lvwProjectMembers.Binding.Parent IsNot Nothing Then
                 If m_xmlProject.RemoveAllReferences(lvwProjectMembers.Binding.Parent) Then
                     docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
+                    RefreshProjectDisplay(True)
                 End If
             End If
         Catch ex As Exception
