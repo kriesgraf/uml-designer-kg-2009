@@ -1,4 +1,6 @@
 #sidebar TableOfContents
+<h2>Content:</h2>
+<wiki:toc max_depth="2" />
 
 = Troubleshooting =
 
@@ -26,7 +28,7 @@ The project you try to open has been moved from its previous workspace folder or
 
 if you confirm the question, a new file 'class-model.dtd' will be created in this folder.
 
-== File '... ...\class-model.dtd' is more older than application ressource ==
+== File '... ...\class-model.dtd' is more older than application resource ==
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20local%20project%20DTD%20older%20than%20resource.png
 
@@ -34,7 +36,7 @@ You have installed a new release and the original file 'class-model.dtd' in appl
 
 We suggest you to save your current project in a different folder. But if you confirm the question and tick the check box, an original file 'class-model.dtd' will be copied in your project workspace folder.
 
-== File '... ...\class-model.dtd' is more recent than application ressource ==
+== File '... ...\class-model.dtd' is more recent than application resource ==
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProject/Class%20model%20conflict%20-%20more%20recent%20than%20resource.png
 
@@ -47,10 +49,10 @@ We suggest you not to confirm question. But if you want do it, an original file 
 == Exception messages ==
 
 The exceptions are raised by program, while:
- * some mathematic operations are incorrect, 
+ * some mathematical operations are incorrect, 
  * some object references are lost, 
  * the use of framework component is incorrect, 
- * a file operation is forbidden and was not controled preventively: file does not exist, file cannot be overwritten, current user has no right to read/write in the target folder,
+ * a file operation is forbidden and was not controlled preventively: file does not exist, file cannot be overwritten, current user has no right to read/write in the target folder,
  * etc.
 
 This message is displayed with a technical description and a _call stack_: an history of all methods called before raising this exception . 
