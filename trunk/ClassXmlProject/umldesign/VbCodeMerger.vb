@@ -7,34 +7,36 @@ Public Class VbCodeMerger
 
 #Region "Public methods"
 
-    Public Shared Function Merge(ByVal strFolder As String, ByVal strFilename As String, _
-                                 ByVal strTempFolder As String) As Boolean
+    Public Shared Sub Merge(ByVal strFolder As String, ByVal strFilename As String, _
+                                 ByVal strTempFolder As String)
 
         Dim strSource As String = Nothing
         Dim strDestination As String = Nothing
-        Dim strPath As String = My.Computer.FileSystem.CombinePath(strFolder, strTempFolder + strFilename + ".new")
+        Dim strTempPath As String = My.Computer.FileSystem.CombinePath(strFolder, strTempFolder)
         Dim bMergeOk As Boolean = False
+
+        Dim strTempFilename As String = My.Computer.FileSystem.CombinePath(strTempPath, strFilename + ".new")
 
         Try
             Using PreviousModule As New VbCodeAnalyser
                 Using NextModule As New VbCodeAnalyser
 
                     strSource = PreviousModule.Analyse(strFolder, strFilename, ".prev", strTempFolder)
-                    strDestination = NextModule.Analyse(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder), strFilename, ".next")
+                    strDestination = NextModule.Analyse(strTempPath, strFilename, ".next")
 
                     Dim newDocXml As New XmlDocument
                     newDocXml.AppendChild(newDocXml.CreateNode(XmlNodeType.Element, "root", ""))
 
                     CompareFiles(PreviousModule, NextModule, newDocXml)
 #If DEBUG Then
-                    NextModule.Document.Save(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder+"test2.xml"))
-                    newDocXml.Save(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder+"test.xml"))
+                    NextModule.Document.Save(My.Computer.FileSystem.CombinePath(strTempPath, "test2.xml"))
+                    newDocXml.Save(My.Computer.FileSystem.CombinePath(strTempPath, "test.xml"))
 #End If
                     MergeFiles(NextModule, newDocXml)
 #If DEBUG Then
-                    newDocXml.Save(My.Computer.FileSystem.CombinePath(strFolder, strTempFolder+"test.xml"))
+                    newDocXml.Save(My.Computer.FileSystem.CombinePath(strTempPath, "test.xml"))
 #End If
-                    bMergeOk = ProcessMerging(newDocXml, PreviousModule, strPath)
+                    bMergeOk = ProcessMerging(newDocXml, PreviousModule, strTempFilename)
                 End Using
             End Using
 
@@ -44,25 +46,20 @@ Public Class VbCodeMerger
             If bMergeOk Then
                 Dim strFinalPath As String = My.Computer.FileSystem.CombinePath(strFolder, strFilename)
                 MoveFile(strFinalPath, strFinalPath + ".bak")
-                MoveFile(strPath, strFinalPath)
+                MoveFile(strTempFilename, strFinalPath)
+            else
+                MsgBox("Automatic merge tool has not found find code to add or update in module '"+strFilename+"'" + _
+                       vbcrlf+vbCrLf+"We invite you to look at temporary & hidden folder '"+strTempPath+"'.",MsgBoxStyle.Critical)
             End If
-#End If
-
-        Catch ex As Exception
-#If TARGET = "winexe" Then
-            MsgExceptionBox(ex)
-#Else
-            Console.WriteLine(ex.Message + vbCrLf + ex.StackTrace)
-#End If
-        Finally
-#If DEBUG Then
-#Else
+            ' Remove temporay files, except VB generated one
             RemoveFile(strSource)
             RemoveFile(strDestination)
 #End If
+
+        Catch ex As Exception
+            Throw ex
         End Try
-        Return bMergeOk
-    End Function
+    End Sub
 
 #End Region
 
@@ -176,30 +173,33 @@ Public Class VbCodeMerger
 
         For Each child In firstParent.ChildNodes()
             Dim strNodeName As String = GetNodeName(child)
-            Select Case strNodeName
-                Case "region"
-                    second = GetReferenceName(secondParent, child)
-                    MergeNodes(child, second, NextModule, newDocXml)
-
-                Case "vb-doc"
-                    If IsNotCheck(child) Then
-                        vbdoc = child
-                    End If
-
-                Case Else
-                    If IsNotCheck(child) = False _
-                    Then
-                        If strNodeName = "property" Then
-                            second = GetReferenceName(secondParent, child)
-                            MergeNodes(child, second, NextModule, newDocXml)
-                        End If
+            If IsNotCheck(child) = False _
+            Then
+                Select Case strNodeName
+                    Case "region", "property"
+                        second = GetReferenceName(secondParent, child)
+                        MergeNodes(child, second, NextModule, newDocXml)
                         previous = child
-                    Else
-                        If strNodeName = "property" Then
-                            clone = newDocXml.ImportNode(child, False)
-                        Else
-                            clone = newDocXml.ImportNode(child, True)
-                        End If
+
+                    Case "vb-doc"
+						' Ignore 
+
+					Case Else
+                        previous = child
+                End Select
+            Else
+                Select Case strNodeName
+                    Case "vb-doc"
+                        vbdoc = child
+
+                    Case Else
+                        Select Case strNodeName
+                            Case "region", "property"
+                                clone = newDocXml.ImportNode(child, False)
+
+                            Case Else
+                                clone = newDocXml.ImportNode(child, True)
+                        End Select
 
                         SetCheck(clone)
 
@@ -261,8 +261,8 @@ Public Class VbCodeMerger
                         SetCheck(child)
                         previous = child
                         vbdoc = Nothing
-                    End If
-            End Select
+                End Select
+            End If
         Next
     End Sub
 
@@ -497,6 +497,7 @@ Public Class VbCodeMerger
             Using streamWriter As StreamWriter = New StreamWriter(strPath)
 
                 For Each child As XmlNode In docXml.SelectNodes("/root/*")
+                    bResult = True
 
                     iStopLine = GetStartLine(child) - 1
                     WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
@@ -543,7 +544,6 @@ Public Class VbCodeMerger
                     End If
                 Next
                 streamWriter.Close()
-                bResult = True
             End Using
         Catch ex As Exception
             Throw ex
