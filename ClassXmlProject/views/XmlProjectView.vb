@@ -22,7 +22,7 @@ Public Class XmlProjectView
     Private m_bUpdated As Boolean = False
 
     Private Shared m_bPrototypesLoaded As Boolean = InitPrototypes()
-
+    Private Shared m_strCurrentFolder As String = "." + Path.DirectorySeparatorChar.ToString
 #End Region
 
 #Region "Properties"
@@ -221,7 +221,7 @@ Public Class XmlProjectView
             Dim node As XmlNode = component.Node
             Dim dlgSaveFile As New SaveFileDialog
 
-            If My.Settings.ImportFolder = ".\" Then
+            If My.Settings.ImportFolder = m_strCurrentFolder Then
                 dlgSaveFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
@@ -278,7 +278,7 @@ Public Class XmlProjectView
             Dim node As XmlNode = component.Node
             Dim dlgOpenFile As New OpenFileDialog
 
-            If My.Settings.ImportFolder = ".\" Then
+            If My.Settings.ImportFolder = m_strCurrentFolder Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgOpenFile.InitialDirectory = My.Settings.ImportFolder
@@ -310,7 +310,7 @@ Public Class XmlProjectView
             Dim dlgSaveFile As New SaveFileDialog
             Dim strFullPackage As String
 
-            If My.Settings.ImportFolder = ".\" Then
+            If My.Settings.ImportFolder = m_strCurrentFolder Then
                 dlgSaveFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
@@ -611,9 +611,9 @@ Public Class XmlProjectView
     End Function
 
     Private Sub UpdateCurrentImportFolder(ByVal strFullpathFilename As String, ByVal strDefault As String)
-        Dim i As Integer = InStrRev(Filename, "\")
+        Dim i As Integer = InStr(Filename, Path.DirectorySeparatorChar.ToString)
 
-        If InStr(Filename, "\") > 0 Then
+        If i > 0 Then
             My.Settings.ImportFolder = Path.GetFileName(Filename)
         Else
             My.Settings.ImportFolder = strDefault

@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.IO
 Imports System.Xml
 Imports System.Windows.Forms
 Imports System.Collections
@@ -290,7 +291,7 @@ Public Class XmlImportView
         Dim bResult As Boolean = False
         Try
             Dim dlgOpenFile As New OpenFileDialog
-            If My.Settings.CurrentFolder = ".\" Then
+            If My.Settings.CurrentFolder = "." + Path.DirectorySeparatorChar.ToString Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder
