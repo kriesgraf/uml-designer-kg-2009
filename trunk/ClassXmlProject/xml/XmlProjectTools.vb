@@ -67,14 +67,14 @@ Public Class XmlProjectTools
 
     Public Shared Function CreateNewProject() As String
         Return "<?xml version='1.0' encoding='utf-8'?>" + vbCrLf + _
-               "<!DOCTYPE root SYSTEM '" + GetDtdRessource() + "'>" + vbCrLf
+               "<!DOCTYPE root SYSTEM '" + GetDtdResource() + "'>" + vbCrLf
     End Function
 
     Public Shared Function GetDocTypeDeclarationFile() As String
         Return cstSchemaName + ".dtd"
     End Function
 
-    Public Shared Function GetDtdRessource() As String
+    Public Shared Function GetDtdResource() As String
         Return My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder + cstSchemaName + ".xml")
     End Function
 
@@ -84,7 +84,7 @@ Public Class XmlProjectTools
 
     Public Shared Function CheckDocTypeDeclarationFile(ByVal strDestinationFolder As String) As EDtdFileExist
         Dim strDestination As String = GetDestinationDtdFile(strDestinationFolder)
-        Dim strOrigin As String = GetDtdRessource()
+        Dim strOrigin As String = GetDtdResource()
 
         If My.Computer.FileSystem.FileExists(strDestination) = False _
         Then
@@ -123,7 +123,7 @@ Public Class XmlProjectTools
         Select Case CheckDocTypeDeclarationFile(strSourceFolder)
 
             Case EDtdFileExist.SourceNotFound
-                MsgBox("The resource " + GetDtdRessource() + " is missing. " + _
+                MsgBox("The resource " + GetDtdResource() + " is missing. " + _
                        vbCrLf + "Please retry installation to replace missing files. ")
                 Return False
 
@@ -145,8 +145,8 @@ Public Class XmlProjectTools
 
             Case EDtdFileExist.NotFound
                 If MsgBox("Can't find File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + _
-                          "An application ressource file will be copy in this folder to replace it. " + vbCrLf + _
-                       "Maybe this project would be incompatible with this ressource file and  would corrupt application process." + vbCrLf + _
+                          "An application resource file will be copy in this folder to replace it. " + vbCrLf + _
+                       "Maybe this project would be incompatible with this resource file and  would corrupt application process." + vbCrLf + _
                        "Maybe you should apply a patch to upgrade this project and remove this warning." + vbCrLf + _
                        "Please confirm replace.", cstMsgYesNoExclamation) _
                        = MsgBoxResult.No _
@@ -156,7 +156,7 @@ Public Class XmlProjectTools
 
             Case EDtdFileExist.Older
                 If MsgWarningBox("File '" + GetDestinationDtdFile(strSourceFolder) + "'," + vbCrLf + _
-                    "is more older than application ressource. " + vbCrLf + _
+                    "is more older than application resource. " + vbCrLf + _
                     "Maybe oldest version projects remain in this folder, overwrite this file would corrupt these projects." + vbCrLf + _
                     "If you confirm this operation, you would have to apply a patch to each project in this folder." + vbCrLf + _
                     "Also, we recommend you to move manually this project file in an other folder and press Cancel now. !") _
@@ -178,7 +178,7 @@ Public Class XmlProjectTools
         Select Case CheckDocTypeDeclarationFile(strSourceFolder)
 
             Case EDtdFileExist.SourceNotFound
-                MsgBox("The resource " + GetDtdRessource() + " is missing. " + _
+                MsgBox("The resource " + GetDtdResource() + " is missing. " + _
                        vbCrLf + "Please retry installation to replace missing files. ")
                 Return False
 
@@ -186,7 +186,7 @@ Public Class XmlProjectTools
                 ' Nothing to do
 
             Case EDtdFileExist.MoreRecent
-                If MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more recent than application ressource. " + vbCrLf + _
+                If MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more recent than application resource. " + vbCrLf + _
                        "Maybe this import would corrupt current project. Please confirm importation.", _
                        cstMsgYesNoExclamation) = MsgBoxResult.No _
                 Then
@@ -195,8 +195,8 @@ Public Class XmlProjectTools
 
             Case EDtdFileExist.NotFound
                 If MsgBox("Can't find File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + _
-                          "An application ressource file will be copy in this folder to replace it. " + vbCrLf + _
-                       "Maybe this import would be incompatible with this ressource file. Please confirm replace.", _
+                          "An application resource file will be copy in this folder to replace it. " + vbCrLf + _
+                       "Maybe this import would be incompatible with this resource file. Please confirm replace.", _
                        cstMsgYesNoExclamation) = MsgBoxResult.No _
                 Then
                     Return False
@@ -205,7 +205,7 @@ Public Class XmlProjectTools
                 End If
 
             Case EDtdFileExist.Older
-                If MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more older than application ressource. " + vbCrLf + _
+                If MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more older than application resource. " + vbCrLf + _
                        "Maybe this import would corrupt current project. Please confirm importation.", _
                        cstMsgYesNoExclamation) = MsgBoxResult.No _
                 Then
@@ -225,7 +225,7 @@ Public Class XmlProjectTools
             Select Case CheckDocTypeDeclarationFile(strDestinationFolder)
 
                 Case EDtdFileExist.SourceNotFound
-                    MsgBox("The resource " + GetDtdRessource() + " is missing. " + _
+                    MsgBox("The resource " + GetDtdResource() + " is missing. " + _
                            vbCrLf + "Please retry installation to replace missing files. ", MsgBoxStyle.Critical)
                     Return False
 
@@ -239,7 +239,7 @@ Public Class XmlProjectTools
                         CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
                         bResult = True
 
-                    ElseIf MsgBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more recent than application ressource." + vbCrLf + _
+                    ElseIf MsgBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more recent than application resource." + vbCrLf + _
                               "Please confirm overwrite this file ?", _
                                cstMsgOkCancelCritical) _
                                 = MsgBoxResult.Ok _
@@ -254,7 +254,7 @@ Public Class XmlProjectTools
                         CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
                         bResult = True
 
-                    ElseIf MsgWarningBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more older than application ressource. " + vbCrLf + _
+                    ElseIf MsgWarningBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more older than application resource. " + vbCrLf + _
                         "Maybe oldest version projects remain in this folder. Overwrite this file would corrupt these projects." + vbCrLf + _
                         "Also, we recommend you to choose an other folder and press Cancel now. !") _
                         = DialogResult.OK _
@@ -315,7 +315,7 @@ Public Class XmlProjectTools
                                                              cstTempDoxygenFile + ".xprj")
 
             Dim argList As New Dictionary(Of String, String)
-            argList.Add("DoxFolder", GetProjectPath(strFilename) + "\")
+            argList.Add("DoxFolder", GetProjectPath(strFilename) + Path.DirectorySeparatorChar.ToString)
 
             ' This transformation generates anmetafile 80% compliant with end-generated file
             styleXsl.Transform(strFilename, strTempFile, argList)
@@ -1473,9 +1473,9 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Private Shared Sub CopyResourceFile(ByVal strRessource As String, ByVal strDestinationFile As String)
+    Private Shared Sub CopyResourceFile(ByVal strResource As String, ByVal strDestinationFile As String)
         Dim strOrigin As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, _
-                                                                     My.Settings.ToolsFolder + strRessource)
+                                                                     My.Settings.ToolsFolder + strResource)
         File.Copy(strOrigin, strDestinationFile, True)
 
     End Sub
@@ -1510,7 +1510,7 @@ Public Class XmlProjectTools
             child = document.SelectSingleNode("//generation")
             new_child = document.CreateNode(XmlNodeType.Element, "generation", "")
 
-            Dim strProjectPath As String = GetProjectPath(child.FirstChild.InnerText.Replace("/", "\"))
+            Dim strProjectPath As String = GetProjectPath(child.FirstChild.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
             AddAttributeValue(new_child, "language", CStr(CType(eLang, Integer)))
             AddAttributeValue(new_child, "destination", strProjectPath)
             child.ParentNode.ReplaceChild(new_child, child)
@@ -1520,7 +1520,7 @@ Public Class XmlProjectTools
             Dim strCurrentPath As String
             For Each child In list
                 new_child = GetNode(child, "location")
-                strCurrentPath = GetProjectPath(new_child.InnerText.Replace("/", "\"))
+                strCurrentPath = GetProjectPath(new_child.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
                 child.RemoveChild(new_child)
                 strCurrentPath = ComputeRelativePath(strProjectPath, strCurrentPath)
                 If GetName(child) <> strCurrentPath Then
