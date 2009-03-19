@@ -5,6 +5,7 @@ Imports System.IO
 Imports System.Xml.Xsl
 Imports System.Collections.Generic
 Imports System.Xml.XPath
+Imports Microsoft.VisualBasic
 
 Public Class XslSimpleTransform
     Private m_oStylesheet As XslCompiledTransform
@@ -18,13 +19,19 @@ Public Class XslSimpleTransform
     ''' <remarks>This class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace. 
     ''' Supports XSLT import, include elements, the XSLT document() function and embedded script blocks.</remarks>
     Public Sub Load(ByVal stylesheetUri As String, Optional ByVal resolver As XmlResolver = Nothing)
-        If resolver IsNot Nothing Then
-            m_oResolver = resolver
-        Else
-            m_oResolver = New XmlUrlResolver
-            m_oResolver.Credentials = System.Net.CredentialCache.DefaultCredentials
-        End If
-        m_oStylesheet.Load(stylesheetUri, New XsltSettings(True, True), m_oResolver)
+        Try
+
+            If resolver IsNot Nothing Then
+                m_oResolver = resolver
+            Else
+                m_oResolver = New XmlUrlResolver
+                m_oResolver.Credentials = System.Net.CredentialCache.DefaultCredentials
+            End If
+            m_oStylesheet.Load(stylesheetUri, New XsltSettings(True, True), m_oResolver)
+
+        Catch ex As Exception
+            Throw New Exception("Can't load XSL stylesheet: " + vbCrLf + stylesheetUri, ex)
+        End Try
     End Sub
 
     ''' <summary>
@@ -62,7 +69,7 @@ Public Class XslSimpleTransform
                 fo.Close()
             End Using
         Catch ex As Exception
-            Throw ex
+            Throw New Exception("Can't apply stylesheet to file: " + vbCrLf + inputUri, ex)
         End Try
     End Sub
     ''' <summary>
