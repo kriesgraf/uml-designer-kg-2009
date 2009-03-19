@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 Imports Microsoft.Win32
@@ -13,6 +14,7 @@ Public Class MDIParent
     Private Const cstPrintSetupKey As String = "Software\Microsoft\Internet Explorer\PageSetup"
     Private m_strSetupHeader As String
     Private m_strSetupFooter As String
+    Private m_strCurrentFolder As String = "." + Path.DirectorySeparatorChar.ToString
 
 #End Region
 
@@ -40,7 +42,7 @@ Public Class MDIParent
         Dim oldCursor As Cursor = Me.Cursor
         Try
             Dim dlgOpenFile As New OpenFileDialog
-            If My.Settings.CurrentFolder = ".\" Then
+            If My.Settings.CurrentFolder = m_strCurrentFolder Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder
@@ -91,7 +93,7 @@ Public Class MDIParent
         Dim oldCursor As Cursor = Me.Cursor
         Try
             Dim dlgOpenFile As New OpenFileDialog
-            If My.Settings.CurrentFolder = ".\" Then
+            If My.Settings.CurrentFolder = m_strCurrentFolder Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder
@@ -127,7 +129,7 @@ Public Class MDIParent
     Public Sub ApplyPatch()
         Try
             Dim dlgOpenFile As New OpenFileDialog
-            If My.Settings.CurrentFolder = ".\" Then
+            If My.Settings.CurrentFolder = m_strCurrentFolder Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder

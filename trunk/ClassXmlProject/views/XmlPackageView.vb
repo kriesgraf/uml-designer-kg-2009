@@ -103,7 +103,7 @@ Public Class XmlPackageView
         Try
             Dim dlgOpenFile As New OpenFileDialog
 
-            If My.Settings.ImportFolder = ".\" Then
+            If My.Settings.ImportFolder = "." + Path.DirectorySeparatorChar.ToString Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgOpenFile.InitialDirectory = My.Settings.ImportFolder
@@ -115,10 +115,10 @@ Public Class XmlPackageView
             If dlgOpenFile.ShowDialog() = DialogResult.OK Then
 
                 Dim FileName As String = dlgOpenFile.FileName
-                Dim i As Integer = InStrRev(FileName, "\")
+                Dim i As Integer = InStrRev(FileName, Path.DirectorySeparatorChar.ToString)
 
                 If i > 0 Then
-                    My.Settings.ImportFolder = Path.GetFileName(FileName)
+                    My.Settings.ImportFolder = XmlProjectTools.GetProjectPath(FileName)
                 Else
                     My.Settings.ImportFolder = dlgOpenFile.InitialDirectory
                 End If
