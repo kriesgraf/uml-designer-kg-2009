@@ -1,5 +1,6 @@
 ﻿Imports System
 Imports System.Xml
+Imports System.IO
 Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
 Imports System.Text
@@ -830,13 +831,13 @@ Public Class UmlNodesManager
                 strRelative = strCurrentPath.Substring(strRootPath.Length)
             Else
                 Dim strDisk As String = ""
-                Dim i As Integer = InStr(strRootPath, System.IO.Path.VolumeSeparatorChar)
+                Dim i As Integer = InStr(strRootPath, Path.VolumeSeparatorChar)
                 If i > 0 Then
                     strDisk = Left(strRootPath, i - 1)
                 Else
-                    i = InStr(strRootPath, "\\")
+                    i = InStr(strRootPath, "\\")    ' TODO: convet to special constant
                     If i > 0 Then
-                        strDisk = Left(strRootPath, InStr(i + 2, strRootPath, System.IO.Path.VolumeSeparatorChar) - 1)
+                        strDisk = Left(strRootPath, InStr(i + 2, strRootPath, Path.DirectorySeparatorChar) - 1)
                     End If
                 End If
                 If Left(strCurrentPath, strDisk.Length) = strDisk _
@@ -852,7 +853,7 @@ Public Class UmlNodesManager
 
     Public Shared Function GetRelativePath(ByVal strRoot As String, ByVal strFinal As String) As String
 
-        Dim reg As New RegularExpressions.Regex("\" + System.IO.Path.DirectorySeparatorChar, RegularExpressions.RegexOptions.Compiled)
+        Dim reg As New RegularExpressions.Regex("\" + Path.DirectorySeparatorChar, RegularExpressions.RegexOptions.Compiled)
         Dim splitRoot As String() = reg.Split(strRoot)
         Dim splitFinal As String() = reg.Split(strFinal)
         Dim result As String = ""
@@ -867,12 +868,12 @@ Public Class UmlNodesManager
         ' Complete path with ".."
         Dim indexR As Integer = indexF
         While indexR < splitRoot.Length
-            result += ".." + System.IO.Path.DirectorySeparatorChar
+            result += ".." + Path.DirectorySeparatorChar
             indexR += 1
         End While
         ' Complete final path
         While indexF < splitFinal.Length
-            result += splitFinal(indexF) + System.IO.Path.DirectorySeparatorChar
+            result += splitFinal(indexF) + Path.DirectorySeparatorChar
             indexF += 1
         End While
         Return result
