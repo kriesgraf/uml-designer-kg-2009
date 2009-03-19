@@ -24,6 +24,7 @@ Public Class XmlDocumentView
     Private m_eCurrentView As XmlDocumentViewMode = XmlDocumentViewMode.Unknown
     Private m_eLanguage As ELanguage = ELanguage.Language_CplusPlus
     Private m_bTransformActive As Boolean = False
+    Private m_bTransformLoaded As Boolean = False
     Private m_strTransformation As String = ""
     Private m_iTextSize As Integer = 100
 
@@ -114,7 +115,11 @@ Public Class XmlDocumentView
                     strStyleSheet = My.Computer.FileSystem.CombinePath(strUmlFolder, cstUmlViewStyleSheet)
             End Select
 
+            ' To control stylesheet loading errors
+            m_bTransformLoaded = False
             m_xslStylesheet.Load(strStyleSheet)
+            m_bTransformLoaded = True
+
             UpdateXslTransformation(navXml)
 
         Catch ex As Exception
@@ -124,6 +129,7 @@ Public Class XmlDocumentView
 
     Private Sub UpdateXslTransformation(ByVal navXml As XmlNode)
         Try
+            If m_bTransformLoaded = False Then Exit Sub
             If m_bTransformActive Then Exit Sub
 
             m_bTransformActive = True
@@ -132,6 +138,7 @@ Public Class XmlDocumentView
             Dim strTmpFolder As String = My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData
 
             Dim argList As New Dictionary(Of String, String)
+            Dim sep As String = Path.DirectorySeparatorChar.ToString
 
             Select Case m_eCurrentView
                 Case XmlDocumentViewMode.Database
@@ -139,11 +146,11 @@ Public Class XmlDocumentView
 
                 Case XmlDocumentViewMode.CodeSource
                     m_strTransformation = My.Computer.FileSystem.CombinePath(strTmpFolder, cstUpdate + ".xml")
-                    argList.Add("UmlFolder", strUmlFolder + "\")
+                    argList.Add("UmlFolder", strUmlFolder + sep)
 
                 Case Else
                     m_strTransformation = My.Computer.FileSystem.CombinePath(strTmpFolder, cstUpdate + ".html")
-                    argList.Add("IconsFolder", strUmlFolder + "\")
+                    argList.Add("IconsFolder", strUmlFolder + sep)
             End Select
 
             If navXml IsNot Nothing Then
