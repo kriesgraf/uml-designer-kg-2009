@@ -172,12 +172,15 @@ Public </xsl:if>
 #Region "Other declarations (Not managed)"
 #End Region
 
-<xsl:if test="not(parent::package)">
-End <xsl:apply-templates select="@implementation" mode="Class"/></xsl:if>
-    <xsl:if test="parent::package">
+<xsl:choose>
+<xsl:when test="not(parent::package)">
+End <xsl:apply-templates select="@implementation" mode="Class"/><xsl:text xml:space="preserve">
+</xsl:text></xsl:when>
+  <xsl:otherwise>
     End <xsl:apply-templates select="@implementation" mode="Class"/>
 End Namespace
-    </xsl:if>
+</xsl:otherwise>
+</xsl:choose>
     </xsl:element>
   </xsl:template>
 <!-- ======================================================================= -->
