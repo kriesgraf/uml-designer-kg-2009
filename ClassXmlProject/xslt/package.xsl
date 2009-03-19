@@ -34,14 +34,33 @@
 	font-style: normal;
 	font-size: 100%;
 }
-td   {background:white; color:black;}
-th   {background:white; color:black;}
+table.border
+{
+border-left: 1px solid gray;
+  border-right: 3px solid black;
+  border-top: 1px solid gray;
+  border-bottom: 3px solid black;
+}
+td   {background:white; color:black;
+  }
+td   {background:white; color:black;
+  }
+th   {background:white; color:black;
+border-collapse: collapse
+}
 .code
 {
+border-left: 1px solid gray;
+  border-right: 3px solid black;
+  border-top: 1px solid gray;
+  border-bottom: 3px solid black;
 	font-style: normal;
 	font-size: 100%;
 	color:black;
 }
+.member   {background:white; color:black;
+  border-bottom: 1px solid black;
+  }
 .package
 {
 	font-style: normal;
@@ -445,7 +464,7 @@ th   {background:white; color:black;}
 	</xsl:template>
 	<!-- ======================================================================= -->
 	<xsl:template match="father | child" mode="SimpleClass">
-		<table border="1">
+		<table class="border">
 			<tr class="small">
 				<td>
 					<xsl:apply-templates select="id(@idref)" mode="FullPathName"/>
@@ -455,7 +474,7 @@ th   {background:white; color:black;}
 	</xsl:template>
 	<!-- ======================================================================= -->
 	<xsl:template match="class | reference" mode="SimpleClass">
-		<table border="1">
+		<table class="border">
 			<tr class="small">
 				<td>
 					<xsl:apply-templates select="." mode="FullPathName"/>
@@ -492,9 +511,9 @@ th   {background:white; color:black;}
 		<table border="0">
 			<tr>
 				<td>
-					<table class="code" border="1">
+					<table class="code">
 						<tr>
-							<td align="center">
+							<td class="member" align="center">
 								<xsl:call-template name="Formater">
 									<xsl:with-param name="Text">
 										<xsl:if test="@implementation!='simple'">&lt;<xsl:value-of select="@implementation"/>&gt;</xsl:if>
@@ -518,12 +537,12 @@ th   {background:white; color:black;}
 							</td>
 						</tr>
 						<tr>
-							<td>
+							<td class="member">
 								<xsl:apply-templates select="property" mode="Class"/>
 							</td>
 						</tr>
 						<tr>
-							<td>
+							<td class="member">
 								<xsl:if test="@constructor='public'">
 									<xsl:apply-templates select="@constructor"/>
 									<b>Default constructor</b>
@@ -915,8 +934,9 @@ th   {background:white; color:black;}
       <xsl:apply-templates select="id(collaboration/@idref)/*[@idref!=$ClassID]" mode="PackageView"/>
     </xsl:for-each>
     </xsl:variable>
+    <xsl:variable name="Name" select="@name"/>
     <xsl:for-each select="msxsl:node-set($Request)//reference[generate-id()=generate-id(key('package',@package)[1])]">
-      <xsl:apply-templates select="." mode="PackageImg"/>
+      <xsl:apply-templates select="self::*[@package!=$Name]" mode="PackageImg"/>
     </xsl:for-each>
     </xsl:template>
 	<!-- ======================================================================= -->
@@ -986,6 +1006,7 @@ th   {background:white; color:black;}
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
