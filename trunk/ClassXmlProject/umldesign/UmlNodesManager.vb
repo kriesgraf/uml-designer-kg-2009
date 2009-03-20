@@ -829,6 +829,9 @@ Public Class UmlNodesManager
         Try
             If strCurrentPath.StartsWith(strRootPath) Then
                 strRelative = strCurrentPath.Substring(strRootPath.Length)
+                If strRelative.StartsWith(Path.DirectorySeparatorChar.ToString) Then
+                    strRelative = strRelative.Substring(1)
+                End If
             Else
                 Dim strDisk As String = ""
                 Dim i As Integer = InStr(strRootPath, Path.VolumeSeparatorChar)
@@ -842,7 +845,7 @@ Public Class UmlNodesManager
                 End If
                 If Left(strCurrentPath, strDisk.Length) = strDisk _
                 Then
-                    strRelative = GetRelativePath(strRootPath.Substring(strDisk.Length + 2), strCurrentPath.Substring(strDisk.Length + 2))
+                    strRelative = GetRelativePath(strRootPath.Substring(strDisk.Length), strCurrentPath.Substring(strDisk.Length))
                 End If
             End If
         Catch ex As Exception
