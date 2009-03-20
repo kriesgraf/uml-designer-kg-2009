@@ -640,7 +640,6 @@ Public Class frmProject
             MsgExceptionBox(ex)
         End Try
     End Sub
-#End Region
 
     Private Sub mnuEditDatabase_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuEditDatabase.Click
         MsgBox("Not yet implemented !", MsgBoxStyle.Exclamation)
@@ -692,10 +691,25 @@ Public Class frmProject
     End Sub
 
     Private Sub btnZoomIn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnZoomIn.Click
-        docvwProjectDisplay.IncreaseTextSize()
+        If docvwProjectDisplay.IncreaseTextSize() = False Then
+            MouseWheelMsg()
+        End If
     End Sub
 
     Private Sub btnZoomOut_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnZoomOut.Click
-        docvwProjectDisplay.DicreaseTextSize()
+        If docvwProjectDisplay.DicreaseTextSize() = False Then
+            MouseWheelMsg()
+        End If
     End Sub
+
+    Private Sub MouseWheelMsg()
+        MsgBox("The document view uses Internet Explorer application to display project info." + _
+                vbCrLf + "But your IE version is not compatible with this command, also we invite you to use the mouse wheel." + _
+                vbCrLf + vbCrLf + "To zoom out with mouse whell:" + vbCrLf + "Please click inside document view, press the key 'Ctrl' and hold down while rotate the wheel.", _
+                MsgBoxStyle.Critical)
+
+        btnZoomIn.Enabled = False
+        btnZoomOut.Enabled = False
+    End Sub
+#End Region
 End Class
