@@ -81,7 +81,7 @@ Public Class XmlNodeCounter
         Dim strID As String
 
         Try
-            strID = AfterStr(GetID(node), "")
+            strID = AfterStr(GetID(node), m_strPrefix)
             If CInt(strID) <> 0 Then
                 m_CountDeletedList.Add(CInt(strID), strID)
             End If
