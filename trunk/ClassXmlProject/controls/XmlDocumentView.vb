@@ -187,6 +187,7 @@ Public Class XmlDocumentView
             End If
 
         Catch ex As Exception
+            MsgExceptionBox(ex)
         Finally
             If key IsNot Nothing Then
                 key.Close()
@@ -211,7 +212,7 @@ Public Class XmlDocumentView
         MyBase.ShowPrintDialog()
     End Sub
 
-    Public Sub DicreaseTextSize()
+    Public Function DicreaseTextSize() As Boolean
         Try
             If m_iTextSize > 50 Then
                 m_iTextSize -= 10
@@ -219,10 +220,12 @@ Public Class XmlDocumentView
                 oWebControl.ExecWB(63, 2, CType(m_iTextSize, Object), Nothing)
             End If
         Catch ex As Exception
+            Return False
         End Try
-    End Sub
+        Return True
+    End Function
 
-    Public Sub IncreaseTextSize()
+    Public Function IncreaseTextSize() As Boolean
         Try
             If m_iTextSize < 200 Then
                 m_iTextSize += 10
@@ -230,8 +233,10 @@ Public Class XmlDocumentView
                 oWebControl.ExecWB(63, 2, CType(m_iTextSize, Object), Nothing)
             End If
         Catch ex As Exception
+            Return False
         End Try
-    End Sub
+        Return True
+    End Function
 #End Region
 
     Private Sub XmlDocumentView_Navigated(ByVal sender As Object, ByVal e As System.Windows.Forms.WebBrowserNavigatedEventArgs) Handles Me.Navigated
@@ -240,6 +245,7 @@ Public Class XmlDocumentView
             oWebControl.ExecWB(63, 2, CType(m_iTextSize, Object), Nothing)
 
         Catch ex As Exception
+            ' Ignore  and wait that user calls method 'IncreaseTextSize' or 'DicreaseTextSize'
         End Try
     End Sub
 End Class
