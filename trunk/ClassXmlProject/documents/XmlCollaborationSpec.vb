@@ -155,6 +155,7 @@ Public Class XmlCollaborationSpec
             m_xmlRelation.Child.Idref = MyBase.GetFirstClassId()
         Else
             m_xmlRelation.Child.Idref = strChildID
+            XmlProjectTools.UpdateOneCollaboration(Me.Document, strChildID)
         End If
     End Sub
 
