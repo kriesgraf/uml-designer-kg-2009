@@ -413,7 +413,8 @@ Public Class XmlProjectMemberView
                        cstMsgYesNoQuestion, _
                        xmlcpnt.Label(0)) = MsgBoxResult.Yes _
             Then
-                If MyBase.RemoveComponent(xmlcpnt) Then
+                Dim component As XmlComponent = CreateDocument(xmlcpnt.Node)
+                If MyBase.RemoveComponent(component) Then
                     bResult = True
                 End If
             End If

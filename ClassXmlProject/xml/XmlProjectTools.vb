@@ -276,7 +276,7 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Sub UpdatesCollaborations(ByVal document As XmlDocument)
-        For Each node As XmlNode In document.SelectNodes("//class")
+        For Each node As XmlNode In document.SelectNodes("//class | //reference")
             UpdateOneCollaboration(document, GetID(node))
         Next
     End Sub
@@ -286,7 +286,7 @@ Public Class XmlProjectTools
         Dim list As XmlNodeList
         Dim collaboration As XmlNode
 
-        Dim node As XmlNode = document.SelectSingleNode("//class[@id='" + strID + "']")
+        Dim node As XmlNode = document.SelectSingleNode("(//class | //reference)[@id='" + strID + "']")
 
         strQuery = "collaboration"
         list = SelectNodes(node, strQuery)

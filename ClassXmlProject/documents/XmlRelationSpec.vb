@@ -181,9 +181,17 @@ Public Class XmlRelationSpec
             Throw ex
         End Try
     End Sub
+
     Protected Friend Overrides Function RemoveMe() As Boolean
-        m_xmlFather.RemoveMe()
-        m_xmlChild.RemoveMe()
-        Return MyBase.RemoveMe()
+        Dim strFatherID As String = m_xmlFather.Idref
+        Dim strChildID As String = m_xmlChild.Idref
+        If MyBase.RemoveMe() Then
+            XmlProjectTools.UpdateOneCollaboration(Me.Document, strFatherID)
+            If strFatherID <> strChildID Then
+                XmlProjectTools.UpdateOneCollaboration(Me.Document, strChildID)
+            End If
+            Return True
+        End If
+        Return False
     End Function
 End Class
