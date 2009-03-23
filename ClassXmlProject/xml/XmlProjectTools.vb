@@ -22,8 +22,10 @@ Public Class XmlProjectTools
 
     Private Const cstSchemaName As String = "class-model"
     Private Const cstTempDoxygenFile As String = "__doxygenTempFile"
+    Private Const cstTempUmlFile As String = "__umlTempFile"
     Private Const cstTag2ImportStyle As String = "tag2imp.xsl"
     Private Const cstDoxygen2ProjectStyle As String = "dox2prj.xsl"
+    Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
 
     Public Enum ECardinal
         EFix
@@ -305,69 +307,153 @@ Public Class XmlProjectTools
         Next
     End Sub
 
-    Public Shared Sub ConvertDoxygenIndexFile(ByVal strFilename As String, ByRef strTempFile As String)
+    Public Shared Function ConvertOmgUmlModel(ByVal strFilename As String, ByRef strTempFile As String) As Boolean
+        Dim bResult As Boolean = False
+        strTempFile = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+                                                         cstTempUmlFile + ".xprj")
+        Try
+            Dim styleXsl As New XslSimpleTransform(True)
+            styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
+                                                             My.Settings.ToolsFolder + cstXmi2ProjectStyle))
+
+            Dim argList As New Dictionary(Of String, String)
+            argList.Add("FolderDTD", My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData + Path.DirectorySeparatorChar)
+
+            ' This transformation generates a metafile 85% compliant with end-generated file
+            styleXsl.Transform(strFilename, strTempFile, argList)
+        Catch ex As Exception
+            Throw ex
+        End Try
+
+        Dim stage As String = "Format final project to UML Designer"
+
+        Try
+            Dim document As New XmlDocument
+            LoadDocument(document, strTempFile)
+
+            stage = "Merge iterator with container"
+            MergeIteratorContainer(document)
+
+            stage = "Find template C++ class"
+            FindTemplateClasses(document)
+
+            ' Temporary saving to check result before renumber
+            document.Save(strTempFile)
+
+            stage = "Apply UML Designer element indexation"
+            RenumberProject(document, True)
+
+            stage = "Remove prefix in properties"
+            CleanPrefixProperties(document)
+
+            stage = "Merge properties and accessors"
+            MergeAccessorProperties(document)
+
+            stage = "Update nodes collabration"
+            UpdatesCollaborations(document)
+
+            stage = "Final saving"
+            document.Save(strTempFile)
+
+            stage = "Reload to check DTD"
+            LoadDocument(document, strTempFile)
+
+            bResult = True
+
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        End Try
+        Return bResult
+    End Function
+
+    Public Shared Function ConvertDoxygenIndexFile(ByVal strFilename As String, ByRef strTempFile As String) As Boolean
+        Dim bResult As Boolean = False
+
+        strTempFile = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+                                                         cstTempDoxygenFile + ".xprj")
         Try
             Dim styleXsl As New XslSimpleTransform(True)
             styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
                                                              My.Settings.ToolsFolder + cstDoxygen2ProjectStyle))
 
-            strTempFile = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
-                                                             cstTempDoxygenFile + ".xprj")
-
             Dim argList As New Dictionary(Of String, String)
             argList.Add("DoxFolder", GetProjectPath(strFilename) + Path.DirectorySeparatorChar.ToString)
 
-            ' This transformation generates anmetafile 80% compliant with end-generated file
+            ' This transformation generates a metafile 80% compliant with end-generated file
             styleXsl.Transform(strFilename, strTempFile, argList)
 
-            Dim document As New XmlDocument
+        Catch ex As Exception
+            Throw ex
+        End Try
 
+        Dim stage As String = "Format final project to UML Designer"
+
+        Try
+            Dim document As New XmlDocument
             LoadDocument(document, strTempFile)
 
             ' Some doxygen types reference in "ref" element, the refid references the relationship child class and not the container type
+            stage = "Change Doxygen type references"
             ChangeDoxygenTypeReferences(document)
 
             ' Some doxygen types remain as simple C++ declaration, we must translate them to UML design Xml elements
+            stage = "Rename simple C++ declaration"
             RenameTypeDoxygenResultFile(ELanguage.Language_CplusPlus, document)
 
-            ' Merge iterator with container
+
+            stage = "Merge iterator with container"
             MergeIteratorContainer(document)
 
-            'Find template C++ class
+            stage = "Find template C++ class"
             FindTemplateClasses(document)
 
             ' Temporary saving to check result before renumber
             document.Save(strTempFile)
 
             ' We insert the external DTD file declaration to be sure that generated file is full compliant
+            stage = "Insert the external DTD file declaration"
             Dim docType As XmlDocumentType = document.CreateDocumentType("root", Nothing, "class-model.dtd", "")
             document.InsertBefore(docType, document.FirstChild.NextSibling)
 
-            ' Apply UML Designer element indexation
+            stage = "Apply UML Designer element indexation"
             RenumberProject(document)
 
             ' Temporary saving to check result before renumber
             document.Save(strTempFile)
 
             ' Remove prefix in properties , accessors, convert doxygen comments
+            stage = "Remove prefix in properties"
             CleanPrefixProperties(document)
+
+            stage = "Merge properties and acessors"
             MergeAccessorProperties(document)
+
+            stage = "update Doxygen comments"
             ConvertDoxygenComments(document)
 
             ' Find collaboration
+            stage = "Find collaborations"
             FindCollaborations(document)
 
             ' Find overrided methods
-            'FindOverridedMethods(document)
+            stage = "Find overrided methods"
+            FindOverridedMethods(document)
 
             ' Now document is no more "Standalone"
+            stage = "Final saving"
             CType(document.FirstChild, XmlDeclaration).Standalone = "no"
             document.Save(strTempFile)
 
+            stage = "Reload to check DTD"
+            LoadDocument(document, strTempFile)
+
+            bResult = True
+
         Catch ex As Exception
-            Throw ex
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         End Try
-    End Sub
+        Return bResult
+    End Function
 
     Public Shared Function ApplyPatch(ByVal ParentForm As Form, ByVal strOldFile As String, ByRef strNewFile As String) As Boolean
         Dim oldCursor As Cursor = ParentForm.Cursor
@@ -1270,19 +1356,23 @@ Public Class XmlProjectTools
     End Sub
 
     Private Shared Sub CleanPrefixProperties(ByVal document As XmlDocument, _
-                                             Optional ByVal regexPrefixMember As String = "^m_[a-z]{1,4}", _
+                                             Optional ByVal regexPrefixMember As String = "^(m_|_|)[a-z]{1,4}", _
                                              Optional ByVal prefixMember As String = "m_")
         Dim regex As New Regex(regexPrefixMember, RegexOptions.Compiled)
 
         Try
             For Each name As XmlNode In document.SelectNodes("//property/@name")
-                If regex.IsMatch(name.InnerText) Then
+                Dim strName As String = name.InnerText
+                If regex.IsMatch(strName) Then
                     Dim groups As String() = regex.Split(name.InnerText)
                     If groups.Length > 1 Then
-                        name.InnerText = groups(1)
+                        strName = groups(groups.Length - 1)
                     End If
-                ElseIf name.InnerText.StartsWith(prefixMember) Then
-                    name.InnerText = name.InnerText.Substring(Len(prefixMember))
+                ElseIf strName.StartsWith(prefixMember) Then
+                    strName = strName.Substring(Len(prefixMember))
+                End If
+                If strName.Length > 0 Then
+                    name.InnerText = strName
                 End If
             Next
 
@@ -1348,6 +1438,10 @@ Public Class XmlProjectTools
         Catch ex As Exception
             Throw ex
         End Try
+    End Sub
+
+    Private Shared Sub FindOverridedMethods(ByVal document As XmlDocument)
+
     End Sub
 
     Private Shared Sub FindCollaborations(ByVal document As XmlDocument)

@@ -519,7 +519,7 @@ Public Class UmlNodesManager
         Return bResult
     End Function
 
-    Public Shared Sub RenumberProject(ByRef node As XmlNode)
+    Public Shared Sub RenumberProject(ByRef node As XmlNode, Optional ByVal bChangeRelation As Boolean = False)
         Try
             Dim listID As XmlNodeList
             Dim child As XmlNode
@@ -557,6 +557,16 @@ Public Class UmlNodesManager
                 RenumberRefElement(node, "valref", szOldID, szID)
                 RenumberRefElement(node, "sizeref", szOldID, szID)
             Next child
+
+            If bChangeRelation Then
+                listID = SelectNodes(node, "//relationship")
+                iClassIndex = 1
+
+                For Each child In listID
+                    RenumberElement(child, iClassIndex, "relation")
+                    iClassIndex += 1
+                Next child
+            End If
 
         Catch ex As Exception
             Throw ex

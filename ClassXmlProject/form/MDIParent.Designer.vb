@@ -41,6 +41,8 @@ Partial Class MDIParent
         Me.StatusBarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolsMenu = New System.Windows.Forms.ToolStripMenuItem
         Me.DiffToolStripOption = New System.Windows.Forms.ToolStripMenuItem
+        Me.VbMergeToolStripOption = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.WindowsMenu = New System.Windows.Forms.ToolStripMenuItem
         Me.CascadeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -66,8 +68,7 @@ Partial Class MDIParent
         Me.StatusStrip = New System.Windows.Forms.StatusStrip
         Me.ToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me.VbMergeToolStripOption = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
         Me.StatusStrip.SuspendLayout()
@@ -85,7 +86,7 @@ Partial Class MDIParent
         '
         'mnuFile
         '
-        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNew, Me.mnuFileOpen, Me.ToolStripSeparator3, Me.mnuFileNewDoxygenFile, Me.ToolStripMenuItem1, Me.ToolStripSeparator4, Me.mnuFileExit})
+        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNew, Me.mnuFileOpen, Me.ToolStripSeparator3, Me.mnuFileNewDoxygenFile, Me.mnuFileNewOmgUmlFile, Me.ToolStripMenuItem1, Me.ToolStripSeparator4, Me.mnuFileExit})
         Me.mnuFile.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder
         Me.mnuFile.MergeIndex = 0
         Me.mnuFile.Name = "mnuFile"
@@ -98,7 +99,7 @@ Partial Class MDIParent
         Me.mnuFileNew.ImageTransparentColor = System.Drawing.Color.Black
         Me.mnuFileNew.Name = "mnuFileNew"
         Me.mnuFileNew.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
-        Me.mnuFileNew.Size = New System.Drawing.Size(228, 22)
+        Me.mnuFileNew.Size = New System.Drawing.Size(252, 22)
         Me.mnuFileNew.Text = "&New"
         '
         'mnuFileOpen
@@ -191,11 +192,23 @@ Partial Class MDIParent
         Me.DiffToolStripOption.Size = New System.Drawing.Size(189, 22)
         Me.DiffToolStripOption.Text = "External Diff/Merge tool"
         '
+        'VbMergeToolStripOption
+        '
+        Me.VbMergeToolStripOption.CheckOnClick = True
+        Me.VbMergeToolStripOption.Name = "VbMergeToolStripOption"
+        Me.VbMergeToolStripOption.Size = New System.Drawing.Size(189, 22)
+        Me.VbMergeToolStripOption.Text = "Visual Basic merge tool"
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(186, 6)
+        '
         'OptionsToolStripMenuItem
         '
         Me.OptionsToolStripMenuItem.Enabled = False
         Me.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem"
-        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
+        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(189, 22)
         Me.OptionsToolStripMenuItem.Text = "&Options"
         '
         'WindowsMenu
@@ -371,17 +384,11 @@ Partial Class MDIParent
         Me.ToolStripStatusLabel.Name = "ToolStripStatusLabel"
         Me.ToolStripStatusLabel.Size = New System.Drawing.Size(0, 17)
         '
-        'VbMergeToolStripOption
+        'mnuFileNewOmgUmlFile
         '
-        Me.VbMergeToolStripOption.CheckOnClick = True
-        Me.VbMergeToolStripOption.Name = "VbMergeToolStripOption"
-        Me.VbMergeToolStripOption.Size = New System.Drawing.Size(189, 22)
-        Me.VbMergeToolStripOption.Text = "Visual Basic merge tool"
-        '
-        'ToolStripSeparator5
-        '
-        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(186, 6)
+        Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
+        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(252, 22)
+        Me.mnuFileNewOmgUmlFile.Text = "Import from OMG UML  2.1 XMI file..."
         '
         'MDIParent
         '
@@ -450,5 +457,6 @@ Partial Class MDIParent
     Friend WithEvents DiffToolStripOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents VbMergeToolStripOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents mnuFileNewOmgUmlFile As System.Windows.Forms.ToolStripMenuItem
 
 End Class
