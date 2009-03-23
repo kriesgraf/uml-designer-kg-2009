@@ -82,28 +82,35 @@ Public Class XmlProjectView
 #Region "Public methods"
 
     Public Sub New(Optional ByVal strFilename As String = "")
+        Try
+            m_strFilename = strFilename
+            m_xmlDocument = New XmlDocument
 
-        m_strFilename = strFilename
-        m_xmlDocument = New XmlDocument
+            If strFilename <> "" _
+            Then
+                Dim strTempPath As String = My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData
+                LoadDocument(strFilename)
+                If GetProjectPath(strFilename) = strTempPath Then
+                    m_strFilename = ""
+                End If
+            Else
+                m_xmlProperties = XmlNodeManager.GetInstance().CreateDocument("root", m_xmlDocument)
 
-        If strFilename <> "" _
-        Then
-            Dim strTempPath As String = My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData
-            LoadDocument(strFilename)
-            If GetProjectPath(strFilename) = strTempPath Then
-                m_strFilename = ""
+                Dim strXML As String = CreateNewProject() + m_xmlProperties.Node.OuterXml
+                m_xmlDocument.LoadXml(strXML)
+
+                m_xmlReferenceNodeCounter = New XmlReferenceNodeCounter(m_xmlDocument)
+
+                ' After load, document reference change and old nodes must be updated
+                m_xmlProperties.Node = m_xmlDocument.LastChild
             End If
-        Else
-            m_xmlProperties = XmlNodeManager.GetInstance().CreateDocument("root", m_xmlDocument)
-
-            Dim strXML As String = CreateNewProject() + m_xmlProperties.Node.OuterXml
-            m_xmlDocument.LoadXml(strXML)
-
-            m_xmlReferenceNodeCounter = New XmlReferenceNodeCounter(m_xmlDocument)
-
-            ' After load, document reference change and old nodes must be updated
-            m_xmlProperties.Node = m_xmlDocument.LastChild
-        End If
+        Catch ex As Exception
+            If strFilename.Length = 0 Then
+                Throw New Exception("Fails to created new project object 'XmlProjectView'", ex)
+            Else
+                Throw New Exception("Fails to open project '" + strFilename + "'", ex)
+            End If
+        End Try
     End Sub
 
     Public Function SaveAs(ByVal strFilename As String) As Boolean

@@ -81,7 +81,12 @@ Public Class XmlNodeCounter
         Dim strID As String
 
         Try
-            strID = AfterStr(GetID(node), m_strPrefix)
+            strID = GetID(node)
+            If strID.StartsWith(m_strPrefix) = False Then
+                Throw New Exception("In Node: " + node.OuterXml + vbCrLf + vbCrLf + "Attribute 'id' does not start with prefix '" + m_strPrefix + "'")
+            End If
+
+            strID = AfterStr(strID, m_strPrefix)
             If CInt(strID) <> 0 Then
                 m_CountDeletedList.Add(CInt(strID), strID)
             End If
@@ -110,8 +115,13 @@ Public Class XmlNodeCounter
             iResult = 0
 
             For Each child In list
+                Dim strID As String = GetID(child)
 
-                Id = CInt(AfterStr(GetID(child), m_strPrefix))
+                If strID.StartsWith(m_strPrefix) = False Then
+                    Throw New Exception("In Node: " + child.OuterXml + vbCrLf + vbCrLf + "Attribute 'id' does not start with prefix '" + m_strPrefix + "'")
+                End If
+
+                Id = CInt(AfterStr(strID, m_strPrefix))
 
                 If Id > iResult Then
                     iResult = Id

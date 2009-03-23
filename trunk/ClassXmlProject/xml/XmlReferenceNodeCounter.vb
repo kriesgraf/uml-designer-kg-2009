@@ -1,5 +1,6 @@
 ﻿Imports System
 Imports System.Xml
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlNodeCounter
 
 Public Class XmlReferenceNodeCounter
@@ -35,6 +36,7 @@ Public Class XmlReferenceNodeCounter
     Public Function GetMaxClassId() As Integer
         Try
             Return m_ClassCounter.GetMaxId
+
         Catch ex As Exception
             Throw ex
         End Try
@@ -47,6 +49,7 @@ Public Class XmlReferenceNodeCounter
     Public Function GetMaxRelationId() As Integer
         Try
             Return m_RelationCounter.GetMaxId
+
         Catch ex As Exception
             Throw ex
         End Try
@@ -141,44 +144,60 @@ Public Class XmlReferenceNodeCounter
     Public Shared Function GenerateNumericId(ByVal node As XmlNode, ByVal xpath As String, _
                                              Optional ByVal prefix As String = "", _
                                              Optional ByVal attribute As String = "num-id") As String
-        Dim child As XmlNode
-        Dim Id As Integer
-        Dim list As XmlNodeList
-
-        If prefix <> "" Then
-            list = node.SelectNodes(xpath + "[contains(@num-id,'" + prefix + "')]/@num-id")
-        Else
-            list = node.SelectNodes(xpath + "[@num-id]/@num-id")
-        End If
-
         Dim iResult As Integer = 0
 
-        For Each child In list
+        Try
+            Dim child As XmlNode
+            Dim Id As Integer
+            Dim list As XmlNodeList
 
             If prefix <> "" Then
-                Id = CInt(AfterStr(child.Value, prefix))
-
-            ElseIf child.Value.StartsWith("CONST") = False _
-            Then
-                Id = CInt(child.Value)
+                list = node.SelectNodes(xpath + "[contains(@" + attribute + ",'" + prefix + "')]/@" + attribute + "")
+            Else
+                list = node.SelectNodes(xpath + "[@" + attribute + "]/@" + attribute + "")
             End If
 
-            If Id > iResult Then
-                iResult = Id
-            End If
-        Next child
+            For Each child In list
 
-        iResult = iResult + 1
+                If prefix <> "" Then
+                    If child.Value.StartsWith(prefix) = False Then
+                        Throw New Exception("In Node: " + node.OuterXml + vbCrLf + vbCrLf + "One child node with attribute '" + attribute + "' does not start with prefix '" + prefix + "'")
+                    End If
+                    Id = CInt(AfterStr(child.Value, prefix))
 
+                ElseIf child.Value.StartsWith("CONST") = False _
+                Then
+                    If IsNumeric(child.Value) = False Then
+                        Throw New Exception("In Node: " + node.OuterXml + vbCrLf + vbCrLf + "One child node with attribute '" + attribute + "' is not numeric")
+                    End If
+
+                    Id = CInt(child.Value)
+                End If
+
+                If Id > iResult Then
+                    iResult = Id
+                End If
+            Next child
+
+            iResult = iResult + 1
+
+        Catch ex As Exception
+            Throw ex
+        End Try
         Return prefix + CStr(iResult)
     End Function
 
 #End Region
 
     Public Sub New(ByVal docXML As XmlDocument)
-        m_PackageCounter = New XmlNodeCounter(cstPrefixPackage)
-        m_ClassCounter = New XmlNodeCounter(cstPrefixClass)
-        m_RelationCounter = New XmlNodeCounter(cstPrefixRelation)
-        InitItemCounters(docXML)
+        Try
+            m_PackageCounter = New XmlNodeCounter(cstPrefixPackage)
+            m_ClassCounter = New XmlNodeCounter(cstPrefixClass)
+            m_RelationCounter = New XmlNodeCounter(cstPrefixRelation)
+            InitItemCounters(docXML)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
     End Sub
 End Class
