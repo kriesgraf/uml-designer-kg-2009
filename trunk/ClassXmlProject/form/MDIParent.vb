@@ -49,19 +49,33 @@ Public Class MDIParent
             End If
 
             dlgOpenFile.Title = "Select a project file..."
-            dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj|Doxygen XML index file|index.xml"
+            dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj|Doxygen XML index file|index.xml|UML 2.1 XMI file|*.xmi"
 
             If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
                 Dim FileName As String = dlgOpenFile.FileName
                 Dim bFromDoxygenIndex As Boolean = False
+                Dim bFromOmgXmiFile As Boolean = False
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(FileName)
 
-                If dlgOpenFile.SafeFileName = "index.xml" Then
+                If Path.GetFileName(FileName).ToLower = "index.xml" _
+                Then
                     Me.Cursor = Cursors.WaitCursor
-                    XmlProjectTools.ConvertDoxygenIndexFile(dlgOpenFile.FileName, FileName)
+                    If XmlProjectTools.ConvertDoxygenIndexFile(FileName, FileName) = False Then
+                        Me.Cursor = oldCursor
+                        Exit Sub
+                    End If
                     Me.Cursor = oldCursor
                     bFromDoxygenIndex = True
+                ElseIf Path.GetExtension(FileName).ToLower = ".xmi" _
+                Then
+                    Me.Cursor = Cursors.WaitCursor
+                    If XmlProjectTools.ConvertOmgUmlModel(FileName, FileName) = False Then
+                        Me.Cursor = oldCursor
+                        Exit Sub
+                    End If
+                    Me.Cursor = oldCursor
+                    bFromOmgXmiFile = True
                 End If
 
                 Dim strTempFolder = XmlProjectTools.GetProjectPath(FileName)
@@ -71,7 +85,11 @@ Public Class MDIParent
                     ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
                     ChildForm.ProjectName = FileName
                     ChildForm.MdiParent = Me
-                    If bFromDoxygenIndex Then ChildForm.Text = "From Doxygen index"
+                    If bFromDoxygenIndex Then
+                        ChildForm.Text = "Project imported from Doxygen"
+                    ElseIf bFromOmgXmiFile Then
+                        ChildForm.Text = "Project imported from XMI"
+                    End If
                     ChildForm.Show()
                 End If
             End If
@@ -86,7 +104,39 @@ Public Class MDIParent
     End Sub
 
     Public Sub ImportFromOmgUmlModel()
+        Dim oldCursor As Cursor = Me.Cursor
+        Try
+            Dim dlgOpenFile As New OpenFileDialog
+            If My.Settings.CurrentFolder = m_strCurrentFolder Then
+                dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
+            Else
+                dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder
+            End If
 
+            dlgOpenFile.Title = "Select the OMG UML 2.1 XMI file..."
+            dlgOpenFile.Filter = "UML 2.1 XMI file|*.xml;*.xmi"
+
+            If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
+            Then
+                Dim strTempFile As String = ""
+                My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
+
+                Me.Cursor = Cursors.WaitCursor
+                XmlProjectTools.ConvertOmgUmlModel(dlgOpenFile.FileName, strTempFile)
+
+                Me.Cursor = oldCursor
+
+                Dim ChildForm As New frmProject
+                ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
+                ChildForm.ProjectName = strTempFile
+                ChildForm.MdiParent = Me
+                ChildForm.Text = "Project imported from XMI"
+                ChildForm.Show()
+            End If
+        Catch ex As Exception
+            Me.Cursor = oldCursor
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Public Sub ImportFromDoxygenIndex()
@@ -116,17 +166,17 @@ Public Class MDIParent
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
                 ChildForm.ProjectName = strTempFile
                 ChildForm.MdiParent = Me
-                ChildForm.Text = "From Doxygen index"
+                ChildForm.Text = "Project imported from Doxygen"
                 ChildForm.Show()
             End If
         Catch ex As Exception
-            MsgExceptionBox(ex)
-        Finally
             Me.Cursor = oldCursor
+            MsgExceptionBox(ex)
         End Try
     End Sub
 
     Public Sub ApplyPatch()
+        Dim oldCursor As Cursor = Me.Cursor
         Try
             Dim dlgOpenFile As New OpenFileDialog
             If My.Settings.CurrentFolder = m_strCurrentFolder Then
@@ -143,16 +193,23 @@ Public Class MDIParent
                 Dim strNewProject As String = ""
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
 
+                Me.Cursor = Cursors.WaitCursor
+
                 If XmlProjectTools.ApplyPatch(Me, dlgOpenFile.FileName, strNewProject) Then
+
+                    Me.Cursor = oldCursor
 
                     Dim ChildForm As New frmProject
                     ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
                     ChildForm.ProjectName = strNewProject
                     ChildForm.MdiParent = Me
                     ChildForm.Show()
+                Else
+                    Me.Cursor = oldCursor
                 End If
             End If
         Catch ex As Exception
+            Me.Cursor = oldCursor
             MsgExceptionBox(ex)
         End Try
     End Sub
@@ -296,6 +353,10 @@ Public Class MDIParent
         ImportFromDoxygenIndex()
     End Sub
 
+    Private Sub mnuFileNewOmgUmlFile_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuFileNewOmgUmlFile.Click
+        ImportFromOmgUmlModel()
+    End Sub
+
     Private Sub mnuPatchApply_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuPatchApply.Click
         ApplyPatch()
     End Sub
@@ -360,7 +421,5 @@ Public Class MDIParent
         My.Settings.VbMergeTool = Not (My.Settings.VbMergeTool)
         Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
     End Sub
-
 #End Region
-
 End Class
