@@ -1,3 +1,4 @@
+#labels Phase-Design
 #sidebar TableOfContents
 <h2>Content:</h2>
 <wiki:toc max_depth="2" />
@@ -30,8 +31,7 @@ To simplify the *class* node describes both the module that will be generated an
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20project%20data%20file%20class%20node%20structure.PNG
 
  * Attributes *constructor* and *destructor* are declared according to the code generation language and user choice.
- * Attributes *implementation* declares this class as an interface, a simple and independant class, or is the root, node or leaf of a huge inheritance tree.
- * Attributes *inline* used at origin to save body of C++ inline constructor & destructor will protect in a future version the body of this special methods. 
+ * Attributes *implementation* declares this class as an _interface_, a _simple_ and independant class, or is the _root_, _node_ or _leaf_ of a huge inheritance tree.
  * Attributes *comment* is used to declare comment for Doxygen, Visual Studio comment tools or javadoc (or other in future). 
  * Following nodes *inherited*, *dependency*, *collaboration*, *import*, *typedef*, *property* and *method* can have a cardinal of 0..n according to the project description. Each nodes is detailed in a specific paragraph.
 
@@ -47,8 +47,15 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlP
 
 http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlProject/UML%20project%20data%20file%20property%20node%20structure.PNG
 
- * To be continue...
+ * Attributes *member* declares the property, member of _class_ (static/shared variable) or _object_ (simple variable). 
+ * Nodes *type* and *variable* are described further.
+ * Node *get* declares _getter_ and its visibility: _range_ (public/protected), its return value type: _modifier_ (const/var), _by_ (reference, value).
+ * Node *set* declares _setter_ and its visibility: _range_ (public/protected), its argument value type: _by_ (reference, value).
 
+We provided 3 more optional attributes:
+ * *behaviour*: used at least in Visual Basic,
+ * *overridable*: _yes/no_, future use to allow overriding accessors in a derived class.
+ * *overrides*: *num-id* attribute of the overridden property in base class.
 
 == Xml "method" node structure ==
 
