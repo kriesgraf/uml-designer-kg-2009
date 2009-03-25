@@ -1,18 +1,17 @@
+#labels Phase-Deploy,Phase-UM
 #sidebar TableOfContents
 <h2>Content:</h2>
 <wiki:toc max_depth="2" />
 
 =Installation=
 
-First download the current [http://code.google.com/p/uml-designer-kg-2009/downloads/list release] and save it in a specific folder, for example: {{{C:\Program files\ClassXmlProject}}}. 
+First download the current [http://code.google.com/p/uml-designer-kg-2009/downloads/list release] and execute archive extractor upon file receipt. Save it in a specific folder as it's proposed: {{{C:\Program files\ClassXmlProject}}}. 
 
-When you execute this auto-extractible archive, you will inflate setup application and resources in this folder. Remain it because you would have an error when you will install future releases, see [Troubleshooting troubleshooting]. 
+Remain it because you would have an error when you will install future releases, see [Troubleshooting troubleshooting]. 
 
-Please launch program {{{setup.exe}}} that will install all files, resources and frameworks that are required. If the setup fails to install the *Microsoft .NET 3.5* framework or if you wish to install only the *English* pack, you can download framework [http://go.microsoft.com/fwlink/?LinkId=97964 here] or [http://www.microsoft.com/downloads/info.aspx?na=90&p=&SrcDisplayLang=en&SrcCategoryId=&SrcFamilyId=333325fd-ae52-4e35-b531-508d977d32a6&u=http%3a%2f%2fdownload.microsoft.com%2fdownload%2f7%2f0%2f3%2f703455ee-a747-4cc8-bd3e-98a615c3aedb%2fdotNetFx35setup.exe there].
+Program {{{setup.exe}}} is launched automatically and installs all files, resources and frameworks that are required. If the setup fails to install the *Microsoft .NET 3.5* framework, you can download framework [http://go.microsoft.com/fwlink/?LinkId=97964 here] or [http://www.microsoft.com/downloads/info.aspx?na=90&p=&SrcDisplayLang=en&SrcCategoryId=&SrcFamilyId=333325fd-ae52-4e35-b531-508d977d32a6&u=http%3a%2f%2fdownload.microsoft.com%2fdownload%2f7%2f0%2f3%2f703455ee-a747-4cc8-bd3e-98a615c3aedb%2fdotNetFx35setup.exe there]. 
 
 The old releases remain on disk as long as you don't _remove the application from_ your _computer_. Also you can _restore the application to its previous state_ by descending order history.
-
-In the next release, the auto-extractible archive will proposed you to inflate this file in folder {{{C:\Program files\ClassXmlProject}}} and then launch automatically program {{{setup.exe}}}.
 
 = Quick tips =
 
@@ -24,14 +23,60 @@ Usually an icon is associated with each menu item to find it faster. Moreover, t
 
 A Menu item unavailable for an object is not yet disable but cause no error.
 
-== Mouse double-click ==
+== Edition commands ==
 
-The Edit command is always reachable with a mouse double-click, except in project list view. When an object hasn't child elements, a double-click open the associated editor window. When it has child elements, a double-click open a sub-level in project list view.
+The Edit command is always reachable with a mouse double-click, except in project list view:
+ * An object without child elements: opens the associated editor window. 
+ * An object with children: opens a sub-level in project list view.
+
+Only Copy/Cut/Paste commands are available in menu bar, all others are found in pop-up-menus.
 
 == Drag and drop ==
 
-The drag and drop command is available to reorder objects in a list box or data grid views. But this command is not available when the order is unnecessary.
+The drag and drop command is available to reorder objects in list boxes and data grid views. But this command is not available when the order is unnecessary.
 
-This is available too to move objects down below into a sub-package in list views.
+This is available too in list views:
+ * To move objects down below into a sub-package,
+ * To merge imports that have the same full path name, including empty field.
+
+== Working directory ==
+
+For now, the application does not manage neither project workspaces, nor project files' history. But, maintains a list of folders that you currently use.
+
+= UML concepts =
+
+To make class/collaborations/package diagrams and generate VB.NET code in 10 minutes, we have to reduce UML modelling to *class*, *package* element and *relationship*.
+
+The element *import* takes the concepts of component/interface. But we must think as Java imports, VB namespaces or C++ libraries (DLL/SO).
+
+== Package element == 
+
+This element is a grouping of model elements. Packages themselves may be nested within other packages. A package may contain both subordinate packages and ordinary model elements like *class*.
+
+This can contain *import* elements to improve readability.
+
+== Class element == 
+
+This element is the descriptor for a set of objects with similar structure, behavior, and relationships. 
+
+The parameters of the class are:
+ * *Constructor*: *true/false*, default constructor implemented or not. 
+ * *Destructor*: _true/false_ (only used in C++)
+ * *Package visibility*: *package* (full visibility) / *common* (current package visibility).
+ * *Implementation*: *simple*, *leaf*, *node*, *root*, this four values describes position of the class inside inheritance tree, *interface*, an abstract class, *exception*, a simple class identified in exception handling, *container*, a class with one or more unbound formal parameters that we call usually _template_.
+
+This is a grouping of sub-model elements:
+ * *Property*: this element describes the UML element *attribute* and its own *operations* that we call usually _accessors_ or _getter/setter_.
+ * *Method*: this element describes a general UML element *operation*.
+ * *Constructor*: this element describes a specific *operation* that instantiates this class (Note: the default constructor like destructor are class parameters).
+ * *Typedef*, *Enumeration*, *Container* and *Structure* are UML *nested classes* that define _datatypes_.
+
+To be continue....
+
+== relationship element == 
+
+To be continue....
+
+== import element == 
 
 To be continue....
