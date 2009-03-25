@@ -1,0 +1,678 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7434285E-3E73-4A88-960E-3FB1DB6C9ED3}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>ClassXmlProject.My.MyApplication</StartupObject>
+    <RootNamespace>ClassXmlProject</RootNamespace>
+    <AssemblyName>ClassXmlProject</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>WindowsForms</MyType>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <ApplicationIcon>library.ico</ApplicationIcon>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ManifestCertificateThumbprint>F860A015005055E4EED24598C9F08D6242B51E21</ManifestCertificateThumbprint>
+    <ManifestKeyFile>ClassXmlProject_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <SignManifests>true</SignManifests>
+    <TargetZone>LocalIntranet</TargetZone>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>ClassXmlProject_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+    <PublishUrl>E:\Documents\Mes projets\uml-designer-kg-2009\to_erase\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <SupportUrl>http://code.google.com/p/uml-designer-kg-2009/</SupportUrl>
+    <ProductName>ClassXmlProject</ProductName>
+    <PublisherName>ClassXmlProject</PublisherName>
+    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
+    <UseApplicationTrust>true</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>ClassXmlProject.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42032,42036</NoWarn>
+    <DefineConstants>_APP_UML = "1", _DBG_DEPENDENCY = "0"</DefineConstants>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>ClassXmlProject.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42032,42036</NoWarn>
+    <DefineConstants>_APP_UML = "1", _DBG_DEPENDENCY = "0"</DefineConstants>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic.Compatibility" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="bindings\XmlBindingDataListView.vb">
+    </Compile>
+    <Compile Include="controls\DataListView.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="controls\XmlDataListView.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="controls\XmlDocumentView.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgAboutBox.Designer.vb">
+      <DependentUpon>dlgAboutBox.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgAboutBox.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgAlertException.Designer.vb">
+      <DependentUpon>dlgAlertException.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgAlertException.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgAlertWarning.Designer.vb">
+      <DependentUpon>dlgAlertWarning.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgAlertWarning.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgDependencies.Designer.vb">
+      <DependentUpon>dlgDependencies.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgDependencies.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgDiffTool.Designer.vb">
+      <DependentUpon>dlgDiffTool.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgDiffTool.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgException.designer.vb">
+      <DependentUpon>dlgException.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgException.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgClass.designer.vb">
+      <DependentUpon>dlgClass.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgClass.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgConstructor.Designer.vb">
+      <DependentUpon>dlgConstructor.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgConstructor.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgContainer.Designer.vb">
+      <DependentUpon>dlgContainer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgContainer.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgElement.Designer.vb">
+      <DependentUpon>dlgElement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgElement.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgImport.designer.vb">
+      <DependentUpon>dlgImport.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgImport.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgInlineCode.Designer.vb">
+      <DependentUpon>dlgInlineCode.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgInlineCode.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgMethod.designer.vb">
+      <DependentUpon>dlgMethod.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgMethod.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgOverrideMethods.Designer.vb">
+      <DependentUpon>dlgOverrideMethods.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgOverrideMethods.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgPackage.designer.vb">
+      <DependentUpon>dlgPackage.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgPackage.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgParam.Designer.vb">
+      <DependentUpon>dlgParam.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgParam.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgProjectProperties.Designer.vb">
+      <DependentUpon>dlgProjectProperties.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgProjectProperties.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgProperty.designer.vb">
+      <DependentUpon>dlgProperty.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgProperty.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgRedundancy.Designer.vb">
+      <DependentUpon>dlgRedundancy.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgRedundancy.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgReference.Designer.vb">
+      <DependentUpon>dlgReference.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgReference.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgRelation.Designer.vb">
+      <DependentUpon>dlgRelation.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgRelation.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgRelationParent.Designer.vb">
+      <DependentUpon>dlgRelationParent.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgRelationParent.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgSimpleTypes.Designer.vb">
+      <DependentUpon>dlgSimpleTypes.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgSimpleTypes.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgStructure.Designer.vb">
+      <DependentUpon>dlgStructure.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgStructure.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgSuperClass.designer.vb">
+      <DependentUpon>dlgSuperClass.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgSuperClass.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgTypedef.designer.vb">
+      <DependentUpon>dlgTypedef.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgTypedef.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgTypeVar.designer.vb">
+      <DependentUpon>dlgTypeVar.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgTypeVar.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgXmlNodeProperties.Designer.vb">
+      <DependentUpon>dlgXmlNodeProperties.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgXmlNodeProperties.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="documents\XmlConstructorSpec.vb" />
+    <Compile Include="documents\XmlContainerSpec.vb" />
+    <Compile Include="documents\XmlExceptionSpec.vb" />
+    <Compile Include="documents\XmlExportSpec.vb" />
+    <Compile Include="documents\XmlStructureSpec.vb" />
+    <Compile Include="umldesign\UmlNodesManager.vb" />
+    <Compile Include="umldesign\VbCodeAnalyser.vb" />
+    <Compile Include="umldesign\VbCodeMerger.vb" />
+    <Compile Include="views\XmlClassOverrideMethodsView.vb" />
+    <Compile Include="views\XmlOverrideMemberView.vb" />
+    <Compile Include="views\XmlRefRedundancyView.vb" />
+    <Compile Include="xml\XmlProjectTools.vb" />
+    <Compile Include="form\frmProject.Designer.vb">
+      <DependentUpon>frmProject.vb</DependentUpon>
+    </Compile>
+    <Compile Include="form\frmProject.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\MDIParent.Designer.vb">
+      <DependentUpon>MDIParent.vb</DependentUpon>
+    </Compile>
+    <Compile Include="form\MDIParent.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="bindings\XmlBindingCombo.vb" />
+    <Compile Include="bindings\XmlBindingDataGridView.vb">
+    </Compile>
+    <Compile Include="bindings\XmlBindingsList.vb" />
+    <Compile Include="umldesign\UmlClassVisibility.vb" />
+    <Compile Include="umldesign\UmlCodeGenerator.vb" />
+    <Compile Include="umldesign\UmlMemberClass.vb" />
+    <Compile Include="umldesign\UmlMemberValue.vb" />
+    <Compile Include="umldesign\UmlMemberVisibility.vb" />
+    <Compile Include="views\XmlClassDependencyView.vb" />
+    <Compile Include="views\XmlClassGlobalView.vb" />
+    <Compile Include="views\XmlClassInheritedView.vb" />
+    <Compile Include="views\XmlClassListView.vb" />
+    <Compile Include="views\XmlClassMemberView.vb" />
+    <Compile Include="views\XmlClassRelationView.vb" />
+    <Compile Include="documents\XmlClassSpec.vb" />
+    <Compile Include="documents\XmlCodeInline.vb" />
+    <Compile Include="documents\XmlCollaborationSpec.vb" />
+    <Compile Include="views\XmlConstructorView.vb" />
+    <Compile Include="views\XmlContainerView.vb" />
+    <Compile Include="views\XmlMethodExceptionView.vb" />
+    <Compile Include="views\XmlPackageMemberView.vb" />
+    <Compile Include="views\XmlProjectMemberView.vb" />
+    <Compile Include="views\XmlProjectView.vb" />
+    <Compile Include="views\XmlProjectPropertiesView.vb" />
+    <Compile Include="views\XmlRelationParentView.vb" />
+    <Compile Include="views\XmlRelationView.vb" />
+    <Compile Include="views\XmlStructureView.vb" />
+    <Compile Include="views\XmlSuperClassView.vb" />
+    <Compile Include="xml\XmlComponent.vb" />
+    <Compile Include="xml\XmlComposite.vb" />
+    <Compile Include="controls\XmlDataGridView.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="documents\XmlDependencySpec.vb" />
+    <Compile Include="documents\XmlElementSpec.vb" />
+    <Compile Include="views\XmlElementView.vb" />
+    <Compile Include="documents\XmlEnumSpec.vb" />
+    <Compile Include="views\XmlEnumView.vb" />
+    <Compile Include="documents\XmlImportSpec.vb" />
+    <Compile Include="views\XmlImportView.vb" />
+    <Compile Include="documents\XmlInheritSpec.vb" />
+    <Compile Include="views\XmlInlineView.vb" />
+    <Compile Include="views\XmlMethodMemberView.vb" />
+    <Compile Include="documents\XmlMethodSpec.vb" />
+    <Compile Include="views\XmlMethodView.vb" />
+    <Compile Include="views\XmlNodeListView.vb" />
+    <Compile Include="xml\XmlNodeCounter.vb" />
+    <Compile Include="xml\XmlNodeManager.vb" />
+    <Compile Include="documents\XmlPackageSpec.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="views\XmlPackageView.vb" />
+    <Compile Include="documents\XmlParamSpec.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="views\XmlParamView.vb" />
+    <Compile Include="documents\XmlProjectProperties.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="documents\XmlPropertySpec.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="views\XmlPropertyView.vb" />
+    <Compile Include="documents\XmlReferenceSpec.vb" />
+    <Compile Include="views\XmlReferenceView.vb" />
+    <Compile Include="documents\XmlRelationParentSpec.vb" />
+    <Compile Include="documents\XmlRelationSpec.vb" />
+    <Compile Include="documents\XmlTypedefSpec.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="views\XmlTypedefView.vb" />
+    <Compile Include="documents\XmlTypeVarSpec.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="views\XmlTypeView.vb" />
+    <Compile Include="documents\XmlVariableSpec.vb" />
+    <Compile Include="xml\XmlReferenceNodeCounter.vb" />
+    <Compile Include="xml\XslSimpleTransform.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="controls\DataListView.resx">
+      <DependentUpon>DataListView.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\XmlDataListView.resx">
+      <DependentUpon>XmlDataListView.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgAboutBox.resx">
+      <DependentUpon>dlgAboutBox.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgAlertException.resx">
+      <DependentUpon>dlgAlertException.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgAlertWarning.resx">
+      <DependentUpon>dlgAlertWarning.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgDependencies.resx">
+      <DependentUpon>dlgDependencies.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgDiffTool.resx">
+      <DependentUpon>dlgDiffTool.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgException.resx">
+      <DependentUpon>dlgException.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgClass.resx">
+      <DependentUpon>dlgClass.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgConstructor.resx">
+      <DependentUpon>dlgConstructor.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgContainer.resx">
+      <DependentUpon>dlgContainer.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgElement.resx">
+      <DependentUpon>dlgElement.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgImport.resx">
+      <DependentUpon>dlgImport.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgInlineCode.resx">
+      <DependentUpon>dlgInlineCode.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgMethod.resx">
+      <DependentUpon>dlgMethod.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgOverrideMethods.resx">
+      <DependentUpon>dlgOverrideMethods.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgPackage.resx">
+      <DependentUpon>dlgPackage.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgParam.resx">
+      <DependentUpon>dlgParam.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgProjectProperties.resx">
+      <DependentUpon>dlgProjectProperties.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgProperty.resx">
+      <DependentUpon>dlgProperty.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgRedundancy.resx">
+      <DependentUpon>dlgRedundancy.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgReference.resx">
+      <DependentUpon>dlgReference.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgRelation.resx">
+      <DependentUpon>dlgRelation.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgRelationParent.resx">
+      <DependentUpon>dlgRelationParent.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgSimpleTypes.resx">
+      <DependentUpon>dlgSimpleTypes.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgStructure.resx">
+      <DependentUpon>dlgStructure.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgSuperClass.resx">
+      <DependentUpon>dlgSuperClass.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgTypedef.resx">
+      <DependentUpon>dlgTypedef.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgTypeVar.resx">
+      <DependentUpon>dlgTypeVar.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgXmlNodeProperties.resx">
+      <DependentUpon>dlgXmlNodeProperties.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\frmProject.resx">
+      <DependentUpon>frmProject.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\MDIParent.resx">
+      <DependentUpon>MDIParent.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="bindings\XmlBindingDataGridView.resx">
+      <DependentUpon>XmlBindingDataGridView.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\XmlDataGridView.resx">
+      <DependentUpon>XmlDataGridView.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="library.ico" />
+    <None Include="ClassXmlProject_TemporaryKey.pfx" />
+    <None Include="My Project\app.manifest" />
+    <None Include="Resources\btnDocView.Image.bmp" />
+    <None Include="Resources\btnProjectView.Image.bmp" />
+    <None Include="Resources\Address-Book.ico" />
+    <None Include="Resources\my Documents.ico" />
+    <None Include="Resources\library.ico" />
+    <None Include="Resources\Apps.ico" />
+    <None Include="Resources\Properties.ico" />
+    <None Include="Resources\Move.ico" />
+    <None Include="Resources\Search.ico" />
+    <None Include="Resources\Stop 2.ico" />
+    <None Include="Resources\Rename - Edit.ico" />
+    <None Include="Resources\Copy.ico" />
+    <None Include="Resources\Paste.ico" />
+    <None Include="Resources\List.ico" />
+    <None Include="Resources\network.ico" />
+    <None Include="Resources\Publish.ico" />
+    <None Include="Resources\Forward 2.ico" />
+    <None Include="Resources\Back 2.ico" />
+    <None Include="Resources\up.ico" />
+    <None Include="Resources\Delete.ico" />
+    <None Include="Resources\View Doc.ico" />
+    <None Include="Resources\SFX1.ico" />
+    <None Include="Resources\Stop.ico" />
+    <Content Include="Resources\8zoomin16.bmp" />
+    <Content Include="Resources\8zoomout16.bmp" />
+    <Content Include="Resources\SnapShot.bmp" />
+    <Content Include="xslt\class-model.xml" />
+    <None Include="Resources\interdit-64.png" />
+    <None Include="Resources\NewToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\OpenToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\SaveToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\PrintToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\PrintPreviewToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\UndoToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\CopyToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\CutToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\PasteToolStripMenuItem.Image.bmp" />
+    <None Include="Resources\RedoToolStripMenuItem.Image.bmp" />
+    <Content Include="xslt\combine.xsl" />
+    <Content Include="xslt\cpp-types.xsl" />
+    <Content Include="xslt\dox2prj.xsl" />
+    <Content Include="xslt\HorizD.GIF" />
+    <Content Include="xslt\Horizontal.GIF" />
+    <Content Include="xslt\Inherited.GIF" />
+    <Content Include="xslt\language.xml" />
+    <Content Include="xslt\LanguageCplusPlus.xml" />
+    <Content Include="xslt\LanguageJava.xml" />
+    <Content Include="xslt\LanguageVbasic.xml" />
+    <Content Include="xslt\Left.GIF" />
+    <Content Include="xslt\LeftD.GIF" />
+    <Content Include="xslt\Package.GIF" />
+    <Content Include="xslt\package.xsl" />
+    <Content Include="xslt\Right.GIF" />
+    <Content Include="xslt\RightD.GIF" />
+    <Content Include="xslt\tag2imp.xsl" />
+    <Content Include="xslt\uml2cpp-h.xsl" />
+    <Content Include="xslt\uml2vbnet.xsl" />
+    <Content Include="xslt\vbnet-types.xsl" />
+    <Content Include="xslt\xmi2prj.xsl" />
+    <Content Include="xslt\xsl-idle.xsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System.Diagnostics" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="xslt\class-model.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="xslt\language.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="xslt\LanguageCplusPlus.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="xslt\LanguageJava.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="xslt\LanguageVbasic.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <Target Name="AfterPublish">
+    <Message Text="This is the AfterPublish target" Importance="normal" />
+    <Exec Command="&quot;$(ProjectDir)tools\deploy.bat&quot; &quot;$(OutputPath)app.publish&quot; $(TargetName) &quot;$(ProjectDir)&quot;" IgnoreExitCode="true" />
+  </Target>
+</Project>
