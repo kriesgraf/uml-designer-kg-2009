@@ -45,7 +45,7 @@ For now, the application does not manage neither project workspaces, nor project
 
 = UML concepts =
 
-To make class/collaborations/package diagrams and generate VB.NET code in 10 minutes, we have to reduce UML modelling to *class*, *package* element and *relationship*.
+To make class/collaborations/package diagrams and generate VB.NET code in 10 minutes, we have to reduce UML modelling to *class*, *package* elements and *relationship*.
 
 The element *import* takes the concepts of component/interface. But we must think as Java imports, VB namespaces or C++ libraries (DLL/SO).
 
@@ -60,10 +60,10 @@ This can contain *import* elements to improve readability.
 This element is the descriptor for a set of objects with similar structure, behavior, and relationships. 
 
 The parameters of the class are:
- * *Constructor*: *true/false*, default constructor implemented or not. 
+ * *Constructor*: _true/false_, default constructor implemented or not. 
  * *Destructor*: _true/false_ (only used in C++)
- * *Package visibility*: *package* (full visibility) / *common* (current package visibility).
- * *Implementation*: *simple*, *leaf*, *node*, *root*, this four values describes position of the class inside inheritance tree, *interface*, an abstract class, *exception*, a simple class identified in exception handling, *container*, a class with one or more unbound formal parameters that we call usually _template_.
+ * *Package visibility*: _package_ (full visibility) / _common_ (current package visibility).
+ * *Implementation*: _simple_, _leaf_, _node_, _root_, this four values describes position of the class inside inheritance tree, _interface_, an abstract class, _exception_, a simple class identified in exception handling, _container_, a class with one or more unbound formal parameters that we call usually _template_.
 
 This is a grouping of sub-model elements:
  * *Property*: this element describes the UML element *attribute* and its own *operations* that we call usually _accessors_ or _getter/setter_.
@@ -73,10 +73,10 @@ This is a grouping of sub-model elements:
 
 To be continue....
 
-== relationship element == 
+== Relationship element == 
 
 To be continue....
 
-== import element == 
+== Import element == 
 
 To be continue....
