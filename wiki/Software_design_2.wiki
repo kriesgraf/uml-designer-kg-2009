@@ -63,7 +63,7 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlP
 We provided 3 more optional attributes:
  * *behaviour*: used at least in Visual Basic,
  * *overridable*: _yes/no_, future use to allow overriding accessors in a derived class.
- * *overrides*: *num-id* attribute of the overridden property in base class.
+ * *overrides*: *id* attribute of the inherited *class* node or implemented *interface* node.
 
 == Xml "method" node structure ==
 
@@ -81,7 +81,7 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/Software%20design/ClassXmlP
 We provided 3 more optional attributes:
  * *behaviour*: used at least in Visual Basic,
  * *operator*: declares a special method called _operator_.
- * *overrides*: *num-id* attribute of the overridden method in base class.
+ * *overrides*: *id* attribute of the inherited *class* node or implemented *interface* node.
 
 
 To be continue...
