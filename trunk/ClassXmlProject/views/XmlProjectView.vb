@@ -249,22 +249,22 @@ Public Class XmlProjectView
                         MsgBox("Needless to export a whole project", MsgBoxStyle.Exclamation)
 
                     Case "package"
-                        strFullPackage = GetFullpathPackage(node, Me.Properties.GenerationLanguage)
+                        strFullPackage = GetFullpathPackage(node, CType(Me.Properties.GenerationLanguage, ELanguage))
                         UmlNodesManager.ExportNodes(node, dlgSaveFile.FileName, strFullPackage)
                         If bExtractReferences Then
                             strFullPackage = GetFullpathPackage(node, _
-                                                                Me.Properties.GenerationLanguage, _
+                                                                CType(Me.Properties.GenerationLanguage, ELanguage), _
                                                                 GetName(node))
                             bResult = UmlNodesManager.ExtractReferences(node, strFullPackage, _
-                                                                        GetSeparator(Me.Properties.GenerationLanguage))
+                                                                        GetSeparator(CType(Me.Properties.GenerationLanguage, ELanguage)))
                         End If
 
                     Case "class"
-                        strFullPackage = GetFullpathPackage(node, Me.Properties.GenerationLanguage)
+                        strFullPackage = GetFullpathPackage(node, CType(Me.Properties.GenerationLanguage, ELanguage))
                         UmlNodesManager.ExportNodes(node, dlgSaveFile.FileName, strFullPackage)
                         If bExtractReferences Then
                             bResult = UmlNodesManager.ExtractReferences(node, strFullPackage, _
-                                                                        GetSeparator(Me.Properties.GenerationLanguage))
+                                                                        GetSeparator(CType(Me.Properties.GenerationLanguage, ELanguage)))
                         End If
 
                     Case Else
@@ -338,23 +338,23 @@ Public Class XmlProjectView
                     Case "root"
                         strFullPackage = GetName(node)
                         ExportPackageReferences(node, FileName, strFullPackage, _
-                                                         GetSeparator(Me.Properties.GenerationLanguage))
+                                                         GetSeparator(CType(Me.Properties.GenerationLanguage, ELanguage)))
 
                     Case "package"
-                        strFullPackage = GetFullpathPackage(node, Me.Properties.GenerationLanguage)
+                        strFullPackage = GetFullpathPackage(node, CType(Me.Properties.GenerationLanguage, ELanguage))
 
                         If SelectNodes(node, "descendant::import").Count > 0 Then
                             MsgBox("Import members will not be exported", vbExclamation)
                         End If
                         If SelectNodes(node, "descendant::class[@visibility='package']").Count > 0 Then
                             ExportPackageReferences(node, FileName, strFullPackage, _
-                                                         GetSeparator(Me.Properties.GenerationLanguage))
+                                                         GetSeparator(CType(Me.Properties.GenerationLanguage, ELanguage)))
                         Else
                             MsgBox("Class " + GetName(node) + " has no class members with package visibility", vbExclamation)
                         End If
 
                     Case "class"
-                        strFullPackage = GetFullpathPackage(node, Me.Properties.GenerationLanguage)
+                        strFullPackage = GetFullpathPackage(node, CType(Me.Properties.GenerationLanguage, ELanguage))
 
                         If GetNodeString(node, "@visibility") = "package" Then
                             ExportClassReferences(node, FileName, strFullPackage)
@@ -362,7 +362,7 @@ Public Class XmlProjectView
                             MsgBox("Class " + GetName(node) + " has not a package visibility", vbExclamation)
                         End If
                     Case "typedef"
-                        strFullPackage = GetFullpathPackage(node.ParentNode, Me.Properties.GenerationLanguage)
+                        strFullPackage = GetFullpathPackage(node.ParentNode, CType(Me.Properties.GenerationLanguage, ELanguage))
 
                         If GetNodeString(node.ParentNode, "@visibility") = "package" Then
                             If GetNodeString(node, "variable/@range") = "public" Then
@@ -395,16 +395,16 @@ Public Class XmlProjectView
 
             Case "class"
                 bResult = UmlCodeGenerator.Generate(fen, component.Node, GetID(component.Node), "", _
-                                                      Me.m_xmlProperties.GenerationLanguage, _
+                                                      CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
                                                       Me.m_xmlProperties.GenerationFolder, _
                                                       strTransformation)
             Case "package"
                 bResult = UmlCodeGenerator.Generate(fen, component.Node, "", GetID(component.Node), _
-                                                      Me.m_xmlProperties.GenerationLanguage, _
+                                                      CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
                                                       Me.m_xmlProperties.GenerationFolder, _
                                                       strTransformation)
             Case "root"
-                bResult = UmlCodeGenerator.Generate(fen, component.Node, "", "", Me.m_xmlProperties.GenerationLanguage, _
+                bResult = UmlCodeGenerator.Generate(fen, component.Node, "", "", CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
                                                       Me.m_xmlProperties.GenerationFolder, strTransformation)
             Case Else
                 Throw New Exception("Argument " + component.ToString + " is not compatible with code generation")
@@ -439,11 +439,13 @@ Public Class XmlProjectView
         m_Control.AddContext("import", menuStrip, Windows.Forms.View.LargeIcon)
     End Sub
 
-    Public Sub UpdateMenuClass(ByVal item1 As ToolStripItem)
-        If Me.Properties.GenerationLanguage <> ELanguage.Language_Vbasic Then
-            item1.Text = "Typedef"
+    Public Sub UpdateMenuClass(ByVal mnuTypedef As ToolStripItem, ByVal mnuConstructor As ToolStripItem)
+        If CType(Me.Properties.GenerationLanguage, ELanguage) <> ELanguage.Language_Vbasic Then
+            mnuTypedef.Text = "Typedef"
+            mnuConstructor.Visible = True
         Else
-            item1.Text = "Enumeration"
+            mnuTypedef.Text = "Enumeration"
+            mnuConstructor.Visible = False
         End If
     End Sub
 
@@ -493,7 +495,7 @@ Public Class XmlProjectView
     Public Function OverrideProperties(ByVal composite As XmlComposite) As Boolean
         If composite.NodeName = "class" Then
             Dim xmlcpnt As XmlClassSpec = XmlNodeManager.GetInstance().CreateDocument(composite.Node)
-            If xmlcpnt.OverrideProperties() Then
+            If xmlcpnt.OverrideProperties(xmlcpnt.Implementation) Then
                 Me.Updated = True
                 m_Control.Binding.ResetBindings(True)
                 Return True
@@ -505,7 +507,7 @@ Public Class XmlProjectView
     Public Function OverrideMethods(ByVal composite As XmlComposite) As Boolean
         If composite.NodeName = "class" Then
             Dim xmlcpnt As XmlClassSpec = XmlNodeManager.GetInstance().CreateDocument(composite.Node)
-            If xmlcpnt.OverrideMethods() Then
+            If xmlcpnt.OverrideMethods(xmlcpnt.Implementation) Then
                 Me.Updated = True
                 m_Control.Binding.ResetBindings(True)
                 Return True
@@ -515,7 +517,7 @@ Public Class XmlProjectView
     End Function
 
     Public Sub UpdateSimpleTypes()
-        UmlNodesManager.UpdateSimpleTypes(GetSimpleTypesFilename(Me.Properties.GenerationLanguage))
+        UmlNodesManager.UpdateSimpleTypes(GetSimpleTypesFilename(CType(Me.Properties.GenerationLanguage, ELanguage)))
     End Sub
 
 #End Region
@@ -542,6 +544,7 @@ Public Class XmlProjectView
                 .AddDocument("param", New XmlParamSpec)
                 .AddDocument("property", New XmlPropertySpec)
                 .AddDocument("reference", New XmlReferenceSpec)
+                .AddDocument("interface", New XmlInterfaceSpec)
                 .AddDocument("relationship", New XmlRelationSpec)
                 .AddDocument("root", New XmlProjectProperties)
                 .AddDocument("type", New XmlTypeVarSpec)
@@ -558,6 +561,7 @@ Public Class XmlProjectView
                 .AddView("root", New XmlProjectPropertiesView)
                 .AddView("package", New XmlPackageView)
                 .AddView("reference", New XmlReferenceView)
+                .AddView("interface", New XmlInterfaceView)
                 .AddView("typedef", New XmlTypedefView)
                 .AddView("property", New XmlPropertyView)
                 .AddView("method", New XmlMethodView)
@@ -582,12 +586,14 @@ Public Class XmlProjectView
                 .AddView("class_relation_view", New XmlClassRelationView)
                 .AddView("class_dependency_view", New XmlClassDependencyView)
                 .AddView("class_member_view", New XmlClassMemberView)
+                .AddView("interface_member_view", New XmlInterfaceMemberView)
                 .AddView("method_member_view", New XmlMethodMemberView)
                 .AddView("class_inherited_view", New XmlClassInheritedView)
                 .AddView("type_enumvalue_view", New XmlEnumView)
                 .AddView("type_element_view", New XmlElementView)
                 .AddView("method_exception_view", New XmlMethodExceptionView)
                 .AddView("project_member_view", New XmlProjectMemberView)
+                .AddView("class_override_properties", New XmlClassOverridePropertiesView)
                 .AddView("class_override_methods", New XmlClassOverrideMethodsView)
                 .AddView("reference_redundancy", New XmlRefRedundancyView)
             End With
