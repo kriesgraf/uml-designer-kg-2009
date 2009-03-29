@@ -125,6 +125,7 @@
 <!ATTLIST property
            %display;
            %num-id;
+           attribute (no|yes) "yes"
            overridable (no|yes) "no"
            overrides IDREF #IMPLIED
            behaviour CDATA #IMPLIED
@@ -140,7 +141,7 @@
           param CDATA #IMPLIED
           name CDATA #REQUIRED>
 
-<!ELEMENT export (reference+) >
+<!ELEMENT export (reference|interface)* >
 <!ATTLIST export
           %display;
           source CDATA #IMPLIED
@@ -154,6 +155,14 @@
           class NMTOKEN #IMPLIED
           container CDATA #IMPLIED
           source CDATA #IMPLIED
+          name %name; #REQUIRED>
+
+<!ELEMENT interface (collaboration*,property*,method*) >
+<!ATTLIST interface
+          %id;
+          type CDATA #FIXED "class"
+          package NMTOKEN #IMPLIED
+          container CDATA #FIXED "0"
           name %name; #REQUIRED>
 
 <!ELEMENT inherited (#PCDATA) >
@@ -251,7 +260,7 @@
 <!--Root element-->
 <!ELEMENT root (generation,comment,import*,class*,package*,relationship*)>
 <!ATTLIST root
-		      version CDATA #FIXED "1.2"
+		      version CDATA #FIXED "1.3"
           %display;
           name CDATA #REQUIRED>
 
