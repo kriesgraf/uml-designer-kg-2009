@@ -72,7 +72,7 @@ Public Class XmlDataGridView
     Public Function CopySelectedItem() As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim component As XmlComponent = Me.SelectedItem
+            Dim component As XmlComponent = CType(Me.SelectedItem, XmlComponent)
             bResult = m_xmlBinding.CopyItem(component)
 
         Catch ex As Exception
@@ -84,7 +84,7 @@ Public Class XmlDataGridView
     Public Function CutSelectedItem() As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim component As XmlComponent = Me.SelectedItem
+            Dim component As XmlComponent = CType(Me.SelectedItem, XmlComponent)
             bResult = m_xmlBinding.CutItem(component)
 
         Catch ex As Exception
@@ -107,7 +107,7 @@ Public Class XmlDataGridView
     Public Function DuplicateSelectedItem() As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim component As XmlComponent = Me.SelectedItem
+            Dim component As XmlComponent = CType(Me.SelectedItem, XmlComponent)
 
             If component IsNot Nothing Then
                 If m_xmlBinding.DuplicateItem(component) Then
@@ -161,7 +161,7 @@ Public Class XmlDataGridView
         End If
     End Sub
 
-    Private Sub XmlDataGridView_CellContentClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles Me.CellContentClick
+    Private Sub XmlDataGridView_CellContentClick(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles Me.CellContentClick
         Try
             If m_xmlBinding.CellContentClick(sender, e, False) Then
                 OnItemChanged()
@@ -171,7 +171,7 @@ Public Class XmlDataGridView
         End Try
     End Sub
 
-    Private Sub XmlDataGridView_CellContentDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles Me.CellContentDoubleClick
+    Private Sub XmlDataGridView_CellContentDoubleClick(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles Me.CellContentDoubleClick
         Try
             If m_xmlBinding.CellContentClick(sender, e, True) Then
                 OnItemChanged()
@@ -239,7 +239,7 @@ Public Class XmlDataGridView
         End If
     End Sub
 
-    Private Sub XmlDataGridView_RowHeaderMouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles Me.RowHeaderMouseClick
+    Private Sub XmlDataGridView_RowHeaderMouseClick(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles Me.RowHeaderMouseClick
         Try
             UpdateCells()
             If m_xmlBinding.RowHeaderClick(sender, e, False) Then
@@ -250,7 +250,7 @@ Public Class XmlDataGridView
         End Try
     End Sub
 
-    Private Sub XmlDataGridView_RowHeaderMouseDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles Me.RowHeaderMouseDoubleClick
+    Private Sub XmlDataGridView_RowHeaderMouseDoubleClick(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles Me.RowHeaderMouseDoubleClick
         Try
             UpdateCells()
             If m_xmlBinding.RowHeaderClick(sender, e, True) Then

@@ -50,7 +50,7 @@ Public Class DataListView
     ''' </summary>
     Public Property DataSource() As IEnumerable
         Get
-            Return m_oDataSource
+            Return CType(m_oDataSource, IEnumerable)
         End Get
         Set(ByVal value As IEnumerable)
             m_oDataSource = value

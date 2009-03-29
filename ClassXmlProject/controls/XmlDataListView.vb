@@ -267,7 +267,7 @@ Public Class XmlDataListView
         End If
     End Sub
 
-    Private Sub lvwProjectMembers_DragDrop(ByVal sender As Object, ByVal e As System.Windows.Forms.DragEventArgs) Handles Me.DragDrop
+    Private Sub lvwProjectMembers_DragDrop(ByVal sender As ListView, ByVal e As System.Windows.Forms.DragEventArgs) Handles Me.DragDrop
         Dim destItem As ListViewItem = GetDestinationItem(sender, e)
         If e.Data.GetDataPresent("System.Windows.Forms.ListViewItem", False) Then
             'dragging a listview item
@@ -285,7 +285,7 @@ Public Class XmlDataListView
         e.Effect = DragDropEffects.Move
     End Sub
 
-    Private Sub lvwProjectMembers_DragOver(ByVal sender As Object, ByVal e As System.Windows.Forms.DragEventArgs) Handles Me.DragOver
+    Private Sub lvwProjectMembers_DragOver(ByVal sender As ListView, ByVal e As System.Windows.Forms.DragEventArgs) Handles Me.DragOver
         Dim destItem As ListViewItem = GetDestinationItem(sender, e)
 
         If e.Data.GetDataPresent("System.Windows.Forms.ListViewItem", False) Then
