@@ -6,7 +6,10 @@ Public Class XmlReferenceView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
+
+    Public Sub New()
+        m_xmlBindingsList = New XmlBindingsList
+    End Sub
 
     Public Sub LoadValues()
         m_xmlBindingsList.Init()
@@ -73,9 +76,5 @@ Public Class XmlReferenceView
         Catch ex As Exception
             Throw ex
         End Try
-    End Sub
-
-    Public Sub New()
-        m_xmlBindingsList = New XmlBindingsList
     End Sub
 End Class
