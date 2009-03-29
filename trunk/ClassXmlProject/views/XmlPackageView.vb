@@ -49,7 +49,7 @@ Public Class XmlPackageView
         End Try
     End Sub
 
-    Public Sub InitBindingCheckFolder(ByVal dataControl As Control)
+    Public Sub InitBindingCheckFolder(ByVal dataControl As CheckBox)
         Try
             m_chkFolder = dataControl
             m_xmlBindingsList.AddBinding(dataControl, Me, "IsFolder", "Checked")
@@ -59,7 +59,7 @@ Public Class XmlPackageView
         End Try
     End Sub
 
-    Public Sub InitBindingTextFolder(ByVal dataControl As Control)
+    Public Sub InitBindingTextFolder(ByVal dataControl As TextBox)
         Try
             m_txtFolder = dataControl
             m_xmlBindingsList.AddBinding(dataControl, Me, "Folder")

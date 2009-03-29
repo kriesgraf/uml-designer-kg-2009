@@ -92,7 +92,7 @@ Public Class XmlRelationParentView
     End Sub
 
     Public Sub InitBindingIndexLevel(ByVal dataControl As ComboBox, ByVal label As Label)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If CType(Me.Tag, ELanguage) <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
             label.Visible = False
@@ -104,7 +104,7 @@ Public Class XmlRelationParentView
     End Sub
 
     Public Sub InitBindingIterator(ByVal dataControl As CheckBox)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If CType(Me.Tag, ELanguage) <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
         Else
@@ -132,7 +132,7 @@ Public Class XmlRelationParentView
                 AddNodeList(myList, "//typedef[type[@desc and not(list)] or type/enumvalue]")
                 AddNodeList(myList, "//reference[@container='" + CStr(iContainer) + "']")
 
-                AddSimpleTypesList(myList, Me.Tag)
+                AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
 
             ElseIf iContainer = 1 _
             Then
@@ -151,7 +151,7 @@ Public Class XmlRelationParentView
                 AddNodeList(myList, "//typedef")
                 AddNodeList(myList, "//reference[@container='0' or not(@container)]")
 
-                AddSimpleTypesList(myList, Me.Tag)
+                AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
             End If
 
             myList.Sort(New XmlNodeListView("_comparer"))
@@ -173,7 +173,7 @@ Public Class XmlRelationParentView
 
         While iterator.MoveNext
             Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(CType(iterator.Current, XmlNode))
-            xmlcpnt.Tag = Me.Tag
+            xmlcpnt.Tag = CType(Me.Tag, ELanguage)
             myList.Add(xmlcpnt)
         End While
     End Sub

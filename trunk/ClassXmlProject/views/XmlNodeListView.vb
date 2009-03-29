@@ -34,7 +34,7 @@ Public Class XmlNodeListView
     Public ReadOnly Property FullpathClassName() As String
         Get
             If m_strName = "" Then
-                Return GetFullpathDescription(Me.Node, Me.Tag)
+                Return GetFullpathDescription(Me.Node, CType(Me.Tag, ELanguage))
             End If
             Return m_strName
         End Get
