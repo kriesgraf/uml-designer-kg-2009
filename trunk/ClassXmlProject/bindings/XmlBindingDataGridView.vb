@@ -231,15 +231,23 @@ Public Class XmlBindingDataGridView
                 Throw New Exception("m_xmlParentNode property is null")
             Else
                 If strNodeName Is Nothing Then
-                    strNodeName = m_dataControl.Tag
+                    strNodeName = CType(m_dataControl.Tag, String)
                 End If
                 ' Create an adapter that build xml nodes and attributes
                 xmlComponent = XmlNodeManager.GetInstance().CreateDocument(strNodeName, m_xmlParentNode.Node.OwnerDocument, False)
                 xmlComponent.Tag = m_xmlParentNode.Tag
                 xmlComponent.SetIdReference(m_xmlReferenceNodeCounter)
 
-                xmlView = XmlNodeManager.GetInstance().CreateView(m_xmlParentNode.AppendComponent(xmlComponent), _
-                                                                  m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+                Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
+                xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+
+                If m_refObject IsNot Nothing  Then
+                    With CType(xmlView, InterfObject)
+                        .InterfObject = m_refObject
+                        .Update()
+                    End With
+                End If
+
                 Refresh()
 
                 If m_dataControl.AllowUserToAddRows = False Then
@@ -254,7 +262,7 @@ Public Class XmlBindingDataGridView
         Return xmlView
     End Function
 
-    Public Function CanDragItem(ByVal component As XmlComponent) As Boolean
+    Public Function CanDragItem(ByVal component As Object) As Boolean
         Dim interf As InterfGridViewNotifier = TryCast(component, InterfGridViewNotifier)
         If interf IsNot Nothing Then
             Return interf.CanDragItem()
@@ -262,10 +270,10 @@ Public Class XmlBindingDataGridView
         Return False
     End Function
 
-    Public Function CanDropItem(ByVal before As XmlComponent, ByVal component As XmlComponent) As Boolean
+    Public Function CanDropItem(ByVal before As Object, ByVal component As Object) As Boolean
         Dim interf As InterfGridViewNotifier = TryCast(before, InterfGridViewNotifier)
         If interf IsNot Nothing Then
-            If interf.CanDropItem(component) Then
+            If interf.CanDropItem(CType(component, XmlComponent)) Then
                 ResetBindings(True)
                 Return True
             End If
