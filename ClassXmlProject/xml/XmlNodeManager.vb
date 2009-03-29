@@ -52,7 +52,7 @@ Public Class XmlNodeManager
         Try
             xmlResult = FindView(strViewName)
             If xmlResult Is Nothing Then
-                Throw New Exception("Try to get an undefined view : " + strViewName)
+                Throw New Exception("Try to get an undefined view : '" + strViewName + "'")
             End If
         Catch ex As Exception
             Throw ex
@@ -83,7 +83,7 @@ Public Class XmlNodeManager
                 xmlResult = xmlResult.Clone(Nothing)
                 xmlResult.Document = docXml
             Else
-                Throw New Exception("Try to create an undefined view : " + strViewName)
+                Throw New Exception("Try to create an undefined view : '" + strViewName + "'")
             End If
         Catch ex As Exception
             Throw ex
@@ -99,7 +99,7 @@ Public Class XmlNodeManager
                 xmlResult = xmlResult.Clone(xmlNode)
                 xmlResult.Document = docXml
             Else
-                Throw New Exception("Try to create an undefined view : " + strViewName)
+                Throw New Exception("Try to create an undefined view : '" + strViewName + "'")
             End If
         Catch ex As Exception
             Throw ex
@@ -113,7 +113,7 @@ Public Class XmlNodeManager
             xmlResult = FindDocument(strNodeName)
 
             If xmlResult Is Nothing Then
-                Throw New Exception("Try to create an undefined document : " + strNodeName)
+                Throw New Exception("Try to create an undefined document : '" + strNodeName + "'")
             Else
                 xmlResult = xmlResult.Clone(Nothing, bLoadChildren)
                 xmlResult.Document = docXml
@@ -136,7 +136,7 @@ Public Class XmlNodeManager
                 xmlResult = FindDocument(xmlNode.Name)
 
                 If xmlResult Is Nothing Then
-                    Throw New Exception("Try to create an undefined document : " + xmlNode.Name)
+                    Throw New Exception("Try to create an undefined document : " + xmlNode.Name + "'")
                 Else
                     xmlResult = xmlResult.Clone(xmlNode, bLoadChildren)
                 End If
@@ -151,7 +151,7 @@ Public Class XmlNodeManager
         Dim xmlResult As XmlComponent = Nothing
         Try
             If m_xmlListViews.Contains(strName) Then
-                xmlResult = m_xmlListViews.Item(strName)
+                xmlResult = CType(m_xmlListViews.Item(strName), XmlComponent)
             End If
         Catch ex As Exception
             Throw ex
@@ -163,7 +163,7 @@ Public Class XmlNodeManager
         Dim xmlResult As XmlComponent = Nothing
         Try
             If m_xmlListDocuments.Contains(strName) Then
-                xmlResult = m_xmlListDocuments.Item(strName)
+                xmlResult = CType(m_xmlListDocuments.Item(strName), XmlComponent)
             End If
         Catch ex As Exception
             Throw ex
