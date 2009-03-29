@@ -251,7 +251,7 @@ Public Class XmlBindingDataListView
                 Throw New Exception("m_xmlParentNode property is null")
             Else
                 If strNodeName Is Nothing Then
-                    strNodeName = m_dataControl.Tag
+                    strNodeName = CType(m_dataControl.Tag, String)
                 End If
                 ' Create an adapter that build xml nodes and attributes
                 xmlComponent = XmlNodeManager.GetInstance().CreateDocument(strNodeName, m_xmlParentNode.Node.OwnerDocument, False)
@@ -260,6 +260,11 @@ Public Class XmlBindingDataListView
 
                 Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
                 xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+
+                With CType(xmlView, InterfObject)
+                    .InterfObject = m_xmlParentNode
+                    .Update()
+                End With
 
                 Refresh()
             End If
