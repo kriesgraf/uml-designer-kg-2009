@@ -5,6 +5,10 @@ Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlCodeGenerator
 Imports Microsoft.VisualBasic
 
+Public Interface InterfFormClass
+    Property ClassImpl() As EImplementation
+End Interface
+
 Public Class XmlClassSpec
     Inherits XmlComposite
     Implements InterfNodeCounter
@@ -233,13 +237,14 @@ Public Class XmlClassSpec
         Return strDocName
     End Function
 
-    Public Function OverrideProperties() As Boolean
-        MsgBox("Not yet implemented !", MsgBoxStyle.Exclamation)
-        Return False
+    Public Function OverrideProperties(ByVal eCurrent As EImplementation) As Boolean
+        Dim fen As New dlgOverrideProperties(Me, eCurrent)
+        fen.ShowDialog()
+        Return CType(fen.Tag, Boolean)
     End Function
 
-    Public Function OverrideMethods() As Boolean
-        Dim fen As New dlgOverrideMethods(Me)
+    Public Function OverrideMethods(ByVal eCurrent As EImplementation) As Boolean
+        Dim fen As New dlgOverrideMethods(Me, eCurrent)
         fen.ShowDialog()
         Return CType(fen.Tag, Boolean)
     End Function
@@ -271,7 +276,7 @@ Public Class XmlClassSpec
                 Dim strId As String = xmlRefNodeCounter.GetNewClassId()
                 SetID(child, strId)
 
-                For Each enumvalue In XmlProjectTools.SelectNodes(child, "descendant::enumvalue")
+                For Each enumvalue As XmlNode In XmlProjectTools.SelectNodes(child, "descendant::enumvalue")
                     Dim strId2 As String = GetID(enumvalue)
                     SetID(enumvalue, "enum" + XmlNodeCounter.AfterStr(strId, "class") + "_" + XmlNodeCounter.AfterStr(strId2, "_"))
                 Next

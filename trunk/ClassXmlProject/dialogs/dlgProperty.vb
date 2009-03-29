@@ -6,9 +6,20 @@ Imports Microsoft.VisualBasic
 
 Public Class dlgProperty
     Implements InterfFormDocument
+    Implements InterfFormClass
 
     Private m_xmlView As XmlPropertyView
+    Private m_eCurrentClassImplementation As EImplementation = EImplementation.Unknown
     Private m_bChangeCombo As Boolean = False
+
+    Public Property ClassImpl() As EImplementation Implements InterfFormClass.ClassImpl
+        Get
+            Return m_eCurrentClassImplementation
+        End Get
+        Set(ByVal value As EImplementation)
+            m_eCurrentClassImplementation = value
+        End Set
+    End Property
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
@@ -19,47 +30,64 @@ Public Class dlgProperty
     End Property
 
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
-
+        If m_xmlView.OverridesProperty <> "" Then
+            cmdType.Enabled = False
+        End If
     End Sub
 
     Private Sub dlgMember_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         With m_xmlView
             .LoadValues()
-            .InitBindingName(txtName)
+            .ClassImpl = m_eCurrentClassImplementation
+            .InitBindingName(txtName, lblName)
+            '  Order is required, because some initialization are used by following methods
+            .InitBindingRange(cmbRange)
+            .InitBindingOverridable(chkOverridable)
             .InitBindingOption(optTypeArray)
             .InitBindingBriefComment(txtBrief)
-            .InitBindingRange(cmbRange)
-            .InitBindingMember(cmbMember)
-            .InitBindingGetAccess(cmbGetAccess)
+            .InitBindingMember(chkMember)
+            .InitBindingAttribute(chkAttribute)
+            .InitBindingGetAccess(cmbGetAccess, lblGetAccess)
             .InitBindingGetBy(cmbGetBy, lblGetBy)
             .InitBindingGetModifier(chkModifier)
-            .InitBindingSetAccess(cmbSetAccess)
+            .InitBindingSetAccess(cmbSetAccess, lblSetAccess)
             .InitBindingSetby(cmbSetby, lblSetBy)
             .InitBindingBehaviour(cmbBehaviour, lblBehaviour)
 
             .UpdateOption(optTypeArray)
+            .InitComplete()
 
+            DisableMemberAttributes()
             cmdType.Text = .FullpathTypeDescription
-            Me.Text = .Name
+
+            If .OverridesProperty <> "" Then
+                Me.Text = .Name + " (Overrides)"
+            Else
+                Me.Text = .Name
+            End If
         End With
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         Try
-            m_xmlView.UpdateValues()
-            Me.Tag = True
+            If m_xmlView.UpdateValues(cmbGetAccess, cmbSetAccess, chkAttribute) _
+            Then
+                Me.Tag = True
+                Me.DialogResult = DialogResult.OK
+            Else
+                Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+            End If
 
         Catch ex As Exception
             MsgExceptionBox(ex)
         Finally
-            Me.DialogResult = DialogResult.OK
             Me.Close()
         End Try
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 
