@@ -36,6 +36,7 @@ Public Class MDIParent
 
     Public Sub UpdateItemControls(ByVal xmLProject As XmlProjectView)
         SaveToolStripButton.Enabled = xmLProject.Updated
+        strpStatusLabel.Text = "Language: " + xmLProject.Properties.Language
     End Sub
 
     Public Sub OpenFile(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileOpen.Click, OpenToolStripButton.Click
@@ -301,8 +302,8 @@ Public Class MDIParent
         Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey(cstPrintSetupKey)
         Try
             If key IsNot Nothing Then
-                m_strSetupFooter = key.GetValue("footer")
-                m_strSetupHeader = key.GetValue("header")
+                m_strSetupFooter = key.GetValue("footer").ToString
+                m_strSetupHeader = key.GetValue("header").ToString
             Else
                 m_strSetupFooter = "&u&bPage &p sur &P"
                 m_strSetupHeader = "&w&b&d"

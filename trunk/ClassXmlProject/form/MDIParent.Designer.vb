@@ -31,6 +31,7 @@ Partial Class MDIParent
         Me.mnuFileOpen = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuFileNewDoxygenFile = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPatchApply = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditDatabase = New System.Windows.Forms.ToolStripMenuItem
@@ -68,7 +69,8 @@ Partial Class MDIParent
         Me.StatusStrip = New System.Windows.Forms.StatusStrip
         Me.ToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
+        Me.strpStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
+        Me.strpProgressBar = New System.Windows.Forms.ToolStripProgressBar
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
         Me.StatusStrip.SuspendLayout()
@@ -108,25 +110,31 @@ Partial Class MDIParent
         Me.mnuFileOpen.ImageTransparentColor = System.Drawing.Color.Black
         Me.mnuFileOpen.Name = "mnuFileOpen"
         Me.mnuFileOpen.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
-        Me.mnuFileOpen.Size = New System.Drawing.Size(228, 22)
+        Me.mnuFileOpen.Size = New System.Drawing.Size(252, 22)
         Me.mnuFileOpen.Text = "&Open..."
         '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(225, 6)
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(249, 6)
         '
         'mnuFileNewDoxygenFile
         '
         Me.mnuFileNewDoxygenFile.Name = "mnuFileNewDoxygenFile"
-        Me.mnuFileNewDoxygenFile.Size = New System.Drawing.Size(228, 22)
+        Me.mnuFileNewDoxygenFile.Size = New System.Drawing.Size(252, 22)
         Me.mnuFileNewDoxygenFile.Text = "Import from Doxygen XML file..."
+        '
+        'mnuFileNewOmgUmlFile
+        '
+        Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
+        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(252, 22)
+        Me.mnuFileNewOmgUmlFile.Text = "Import from OMG UML  2.1 XMI file..."
         '
         'ToolStripMenuItem1
         '
         Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPatchApply, Me.mnuEditDatabase})
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(228, 22)
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(252, 22)
         Me.ToolStripMenuItem1.Text = "Patchs"
         '
         'mnuPatchApply
@@ -144,12 +152,12 @@ Partial Class MDIParent
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(225, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(249, 6)
         '
         'mnuFileExit
         '
         Me.mnuFileExit.Name = "mnuFileExit"
-        Me.mnuFileExit.Size = New System.Drawing.Size(228, 22)
+        Me.mnuFileExit.Size = New System.Drawing.Size(252, 22)
         Me.mnuFileExit.Text = "&Quit"
         '
         'ViewMenu
@@ -372,7 +380,7 @@ Partial Class MDIParent
         '
         'StatusStrip
         '
-        Me.StatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel})
+        Me.StatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel, Me.strpStatusLabel, Me.strpProgressBar})
         Me.StatusStrip.Location = New System.Drawing.Point(0, 431)
         Me.StatusStrip.Name = "StatusStrip"
         Me.StatusStrip.Size = New System.Drawing.Size(632, 22)
@@ -384,11 +392,17 @@ Partial Class MDIParent
         Me.ToolStripStatusLabel.Name = "ToolStripStatusLabel"
         Me.ToolStripStatusLabel.Size = New System.Drawing.Size(0, 17)
         '
-        'mnuFileNewOmgUmlFile
+        'strpStatusLabel
         '
-        Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
-        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(252, 22)
-        Me.mnuFileNewOmgUmlFile.Text = "Import from OMG UML  2.1 XMI file..."
+        Me.strpStatusLabel.Name = "strpStatusLabel"
+        Me.strpStatusLabel.Size = New System.Drawing.Size(38, 17)
+        Me.strpStatusLabel.Text = "Ready"
+        '
+        'strpProgressBar
+        '
+        Me.strpProgressBar.Name = "strpProgressBar"
+        Me.strpProgressBar.Size = New System.Drawing.Size(100, 16)
+        Me.strpProgressBar.Visible = False
         '
         'MDIParent
         '
@@ -458,5 +472,7 @@ Partial Class MDIParent
     Friend WithEvents VbMergeToolStripOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuFileNewOmgUmlFile As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents strpStatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents strpProgressBar As System.Windows.Forms.ToolStripProgressBar
 
 End Class
