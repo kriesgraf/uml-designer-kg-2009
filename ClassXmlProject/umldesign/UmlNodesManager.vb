@@ -304,7 +304,7 @@ Public Class UmlNodesManager
             Dim iContainer = node.SelectNodes("model").Count
             strXML += " container='" + CStr(iContainer) + "' id='" + GetID(node) + "'/>"
 
-            For Each typedef In SelectNodes(node, "typedef[variable/@range='public']")
+            For Each typedef As XmlNode In SelectNodes(node, "typedef[variable/@range='public']")
                 strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
             Next typedef
 
