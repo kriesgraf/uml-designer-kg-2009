@@ -49,7 +49,7 @@ Public Class XmlExceptionSpec
                 nodeClass = MyBase.Node
             End If
 
-            Return GetFullpathDescription(nodeClass, Me.Tag)
+            Return GetFullpathDescription(nodeClass, CType(Me.Tag, ELanguage))
         End Get
     End Property
 

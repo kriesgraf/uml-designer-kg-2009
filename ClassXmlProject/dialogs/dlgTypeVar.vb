@@ -40,7 +40,7 @@ Public Class dlgTypeVar
                 Me.Tag = True
                 Me.DialogResult = DialogResult.OK
             Else
-                Me.DialogResult = DialogResult.Cancel
+                Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
                 Me.Tag = m_xmlView.Updated
             End If
             Me.Close()
