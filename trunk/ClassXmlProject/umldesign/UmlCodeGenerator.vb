@@ -310,7 +310,7 @@ Public Class UmlCodeGenerator
             Dim proc As New Process()
             If My.Computer.FileSystem.FileExists(My.Settings.DiffTool) = False Then
                 Dim fen As Form = New dlgDiffTool
-                If fen.ShowDialog() = DialogResult.Cancel Then
+                If fen.ShowDialog() = System.Windows.Forms.DialogResult.Cancel Then
                     MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical)
                     Exit Sub
                 End If
