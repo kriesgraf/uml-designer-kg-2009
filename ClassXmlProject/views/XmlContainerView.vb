@@ -147,7 +147,7 @@ Public Class XmlContainerView
                 AddNodeList(myList, "//class[@implementation!='container']")
                 AddNodeList(myList, "//typedef[@id!='" + Me.Id + "' and (type[@desc and not(list)] or type/enumvalue)]")
 
-                AddSimpleTypesList(myList, Me.Tag)
+                AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
 
             ElseIf iContainer > 0 And iContainer < 3 _
             Then
@@ -160,7 +160,7 @@ Public Class XmlContainerView
                 AddNodeList(myList, "//typedef[@id!='" + Me.Id + "']")
                 AddNodeList(myList, "//reference[@container='0' or not(@container)]")
 
-                AddSimpleTypesList(myList, Me.Tag)
+                AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
             End If
 
             myList.Sort(New XmlNodeListView("_comparer"))

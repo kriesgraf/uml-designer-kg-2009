@@ -2,6 +2,7 @@
 Imports System.Windows.Forms
 Imports System.Collections.Generic
 Imports Microsoft.VisualBasic.Compatibility.VB6
+Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlProjectPropertiesView
     Inherits XmlProjectProperties
@@ -54,7 +55,10 @@ Public Class XmlProjectPropertiesView
 
     Public Sub InitBindingLanguage(ByVal cmbLanguage As ComboBox)
         Dim list As New Dictionary(Of String, Integer)
-        cmbLanguage.Items.AddRange(New String() {"C++", "Java", "VB.NET"})
+        cmbLanguage.Items.AddRange(New String() _
+                                   {GetLanguage(CType(0, ELanguage)), _
+                                    GetLanguage(CType(1, ELanguage)), _
+                                    GetLanguage(CType(2, ELanguage))})
         m_xmlBindingsList.AddBinding(cmbLanguage, Me, "GenerationLanguage", "SelectedIndex")
     End Sub
 

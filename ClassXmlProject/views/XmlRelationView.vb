@@ -59,7 +59,7 @@ Public Class XmlRelationView
             If cmbClass.SelectedValue IsNot Nothing Then
                 Dim strTempo = TryCast(cmbClass.SelectedValue, String)
                 If strTempo IsNot Nothing Then
-                    strId = cmbClass.SelectedValue
+                    strId = CType(cmbClass.SelectedValue, String)
                 End If
             End If
         End If
@@ -359,7 +359,7 @@ Public Class XmlRelationView
     Private Function InitBindingParentClassList(ByVal xmlParent As XmlRelationParentSpec, ByVal control As ComboBox) As Binding
         Dim bindingResult As Binding = Nothing
         Try
-            XmlClassListView.AddListComboBoxControl(control, MyBase.Document, Me.Tag)
+            XmlClassListView.AddListComboBoxControl(control, MyBase.Document, CType(Me.Tag, ELanguage))
 
             bindingResult = m_xmlBindingsList.AddBinding(control, xmlParent, "Idref", "SelectedValue")
 
@@ -424,7 +424,7 @@ Public Class XmlRelationView
 
     Private Sub ConfirmCardinal(ByVal xmlParent As XmlRelationParentSpec, ByVal cmbCardinal As ComboBox)
 
-        xmlParent.Cardinal = cmbCardinal.SelectedIndex
+        xmlParent.Cardinal = CType(cmbCardinal.SelectedIndex, ECardinal)
 
         Select Case xmlParent.Cardinal
             Case ECardinal.EVariable
