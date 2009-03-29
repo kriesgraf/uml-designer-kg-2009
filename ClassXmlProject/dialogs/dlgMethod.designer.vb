@@ -21,18 +21,18 @@ Partial Class dlgMethod
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
         Me.Label2 = New System.Windows.Forms.Label
-        Me.Label1 = New System.Windows.Forms.Label
+        Me.lblName = New System.Windows.Forms.Label
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel
         Me.txtBrief = New System.Windows.Forms.TextBox
-        Me.Label3 = New System.Windows.Forms.Label
+        Me.lblRange = New System.Windows.Forms.Label
         Me.btnType = New System.Windows.Forms.Button
-        Me.Label5 = New System.Windows.Forms.Label
+        Me.lblMember = New System.Windows.Forms.Label
         Me.Label6 = New System.Windows.Forms.Label
         Me.lblReturnComment = New System.Windows.Forms.Label
         Me.txtReturnComments = New System.Windows.Forms.TextBox
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel
         Me.cmbRange = New System.Windows.Forms.ComboBox
-        Me.Label4 = New System.Windows.Forms.Label
+        Me.lblImplementation = New System.Windows.Forms.Label
         Me.cmbImplementation = New System.Windows.Forms.ComboBox
         Me.FlowLayoutPanel2 = New System.Windows.Forms.FlowLayoutPanel
         Me.cmbMember = New System.Windows.Forms.ComboBox
@@ -85,17 +85,17 @@ Partial Class dlgMethod
         Me.Label2.Text = "Brief comment:"
         Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'Label1
+        'lblName
         '
-        Me.Label1.AutoSize = True
-        Me.Label1.Dock = System.Windows.Forms.DockStyle.Right
-        Me.Label1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.Label1.Location = New System.Drawing.Point(58, 33)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(38, 33)
-        Me.Label1.TabIndex = 1
-        Me.Label1.Text = "Name:"
-        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.lblName.AutoSize = True
+        Me.lblName.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblName.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.lblName.Location = New System.Drawing.Point(58, 33)
+        Me.lblName.Name = "lblName"
+        Me.lblName.Size = New System.Drawing.Size(38, 33)
+        Me.lblName.TabIndex = 1
+        Me.lblName.Text = "Name:"
+        Me.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'TableLayoutPanel3
         '
@@ -103,11 +103,11 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 99.0!))
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel3.Controls.Add(Me.Label2, 0, 2)
-        Me.TableLayoutPanel3.Controls.Add(Me.Label1, 0, 1)
+        Me.TableLayoutPanel3.Controls.Add(Me.lblName, 0, 1)
         Me.TableLayoutPanel3.Controls.Add(Me.txtBrief, 1, 2)
-        Me.TableLayoutPanel3.Controls.Add(Me.Label3, 0, 4)
+        Me.TableLayoutPanel3.Controls.Add(Me.lblRange, 0, 4)
         Me.TableLayoutPanel3.Controls.Add(Me.btnType, 1, 0)
-        Me.TableLayoutPanel3.Controls.Add(Me.Label5, 0, 5)
+        Me.TableLayoutPanel3.Controls.Add(Me.lblMember, 0, 5)
         Me.TableLayoutPanel3.Controls.Add(Me.Label6, 0, 6)
         Me.TableLayoutPanel3.Controls.Add(Me.lblReturnComment, 0, 3)
         Me.TableLayoutPanel3.Controls.Add(Me.txtReturnComments, 1, 3)
@@ -131,7 +131,7 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 31.59609!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 68.40391!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40.0!))
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(582, 529)
+        Me.TableLayoutPanel3.Size = New System.Drawing.Size(606, 529)
         Me.TableLayoutPanel3.TabIndex = 2
         '
         'txtBrief
@@ -139,19 +139,19 @@ Partial Class dlgMethod
         Me.txtBrief.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtBrief.Location = New System.Drawing.Point(102, 69)
         Me.txtBrief.Name = "txtBrief"
-        Me.txtBrief.Size = New System.Drawing.Size(477, 20)
+        Me.txtBrief.Size = New System.Drawing.Size(501, 20)
         Me.txtBrief.TabIndex = 4
         '
-        'Label3
+        'lblRange
         '
-        Me.Label3.AutoSize = True
-        Me.Label3.Dock = System.Windows.Forms.DockStyle.Right
-        Me.Label3.Location = New System.Drawing.Point(54, 116)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(42, 33)
-        Me.Label3.TabIndex = 4
-        Me.Label3.Text = "Range:"
-        Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.lblRange.AutoSize = True
+        Me.lblRange.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblRange.Location = New System.Drawing.Point(54, 116)
+        Me.lblRange.Name = "lblRange"
+        Me.lblRange.Size = New System.Drawing.Size(42, 33)
+        Me.lblRange.TabIndex = 4
+        Me.lblRange.Text = "Range:"
+        Me.lblRange.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'btnType
         '
@@ -159,21 +159,21 @@ Partial Class dlgMethod
         Me.btnType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnType.Location = New System.Drawing.Point(102, 3)
         Me.btnType.Name = "btnType"
-        Me.btnType.Size = New System.Drawing.Size(477, 27)
+        Me.btnType.Size = New System.Drawing.Size(501, 27)
         Me.btnType.TabIndex = 5
         Me.btnType.Text = "<Type>"
         Me.btnType.UseVisualStyleBackColor = True
         '
-        'Label5
+        'lblMember
         '
-        Me.Label5.AutoSize = True
-        Me.Label5.Dock = System.Windows.Forms.DockStyle.Right
-        Me.Label5.Location = New System.Drawing.Point(48, 149)
-        Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(48, 32)
-        Me.Label5.TabIndex = 8
-        Me.Label5.Text = "Member:"
-        Me.Label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.lblMember.AutoSize = True
+        Me.lblMember.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblMember.Location = New System.Drawing.Point(48, 149)
+        Me.lblMember.Name = "lblMember"
+        Me.lblMember.Size = New System.Drawing.Size(48, 32)
+        Me.lblMember.TabIndex = 8
+        Me.lblMember.Text = "Member:"
+        Me.lblMember.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Label6
         '
@@ -202,18 +202,18 @@ Partial Class dlgMethod
         Me.txtReturnComments.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtReturnComments.Location = New System.Drawing.Point(102, 94)
         Me.txtReturnComments.Name = "txtReturnComments"
-        Me.txtReturnComments.Size = New System.Drawing.Size(477, 20)
+        Me.txtReturnComments.Size = New System.Drawing.Size(501, 20)
         Me.txtReturnComments.TabIndex = 1
         '
         'FlowLayoutPanel1
         '
         Me.FlowLayoutPanel1.Controls.Add(Me.cmbRange)
-        Me.FlowLayoutPanel1.Controls.Add(Me.Label4)
+        Me.FlowLayoutPanel1.Controls.Add(Me.lblImplementation)
         Me.FlowLayoutPanel1.Controls.Add(Me.cmbImplementation)
         Me.FlowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FlowLayoutPanel1.Location = New System.Drawing.Point(102, 119)
         Me.FlowLayoutPanel1.Name = "FlowLayoutPanel1"
-        Me.FlowLayoutPanel1.Size = New System.Drawing.Size(477, 27)
+        Me.FlowLayoutPanel1.Size = New System.Drawing.Size(501, 27)
         Me.FlowLayoutPanel1.TabIndex = 13
         '
         'cmbRange
@@ -224,16 +224,16 @@ Partial Class dlgMethod
         Me.cmbRange.Size = New System.Drawing.Size(102, 21)
         Me.cmbRange.TabIndex = 6
         '
-        'Label4
+        'lblImplementation
         '
-        Me.Label4.AutoSize = True
-        Me.Label4.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Label4.Location = New System.Drawing.Point(111, 0)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(81, 27)
-        Me.Label4.TabIndex = 7
-        Me.Label4.Text = "Implementation:"
-        Me.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.lblImplementation.AutoSize = True
+        Me.lblImplementation.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lblImplementation.Location = New System.Drawing.Point(111, 0)
+        Me.lblImplementation.Name = "lblImplementation"
+        Me.lblImplementation.Size = New System.Drawing.Size(81, 27)
+        Me.lblImplementation.TabIndex = 7
+        Me.lblImplementation.Text = "Implementation:"
+        Me.lblImplementation.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'cmbImplementation
         '
@@ -254,7 +254,7 @@ Partial Class dlgMethod
         Me.FlowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FlowLayoutPanel2.Location = New System.Drawing.Point(102, 152)
         Me.FlowLayoutPanel2.Name = "FlowLayoutPanel2"
-        Me.FlowLayoutPanel2.Size = New System.Drawing.Size(477, 26)
+        Me.FlowLayoutPanel2.Size = New System.Drawing.Size(501, 26)
         Me.FlowLayoutPanel2.TabIndex = 14
         '
         'cmbMember
@@ -312,7 +312,7 @@ Partial Class dlgMethod
         'cmbBehaviour
         '
         Me.cmbBehaviour.FormattingEnabled = True
-        Me.cmbBehaviour.Location = New System.Drawing.Point(3, 30)
+        Me.cmbBehaviour.Location = New System.Drawing.Point(392, 3)
         Me.cmbBehaviour.Name = "cmbBehaviour"
         Me.cmbBehaviour.Size = New System.Drawing.Size(97, 21)
         Me.cmbBehaviour.TabIndex = 15
@@ -327,7 +327,7 @@ Partial Class dlgMethod
         Me.grdParams.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdParams.Location = New System.Drawing.Point(3, 281)
         Me.grdParams.Name = "grdParams"
-        Me.grdParams.Size = New System.Drawing.Size(576, 204)
+        Me.grdParams.Size = New System.Drawing.Size(600, 204)
         Me.grdParams.TabIndex = 15
         Me.grdParams.Tag = "param"
         Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
@@ -431,7 +431,7 @@ Partial Class dlgMethod
         Me.FlowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FlowLayoutPanel3.Location = New System.Drawing.Point(102, 36)
         Me.FlowLayoutPanel3.Name = "FlowLayoutPanel3"
-        Me.FlowLayoutPanel3.Size = New System.Drawing.Size(477, 27)
+        Me.FlowLayoutPanel3.Size = New System.Drawing.Size(501, 27)
         Me.FlowLayoutPanel3.TabIndex = 17
         '
         'txtName
@@ -467,7 +467,7 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.55682!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.44318!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 91.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -476,13 +476,13 @@ Partial Class dlgMethod
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(576, 35)
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(600, 35)
         Me.TableLayoutPanel1.TabIndex = 0
         '
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.Location = New System.Drawing.Point(498, 6)
+        Me.Cancel_Button.Location = New System.Drawing.Point(520, 6)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -491,7 +491,7 @@ Partial Class dlgMethod
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(399, 6)
+        Me.OK_Button.Location = New System.Drawing.Point(417, 6)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 0
@@ -513,14 +513,14 @@ Partial Class dlgMethod
         Me.txtComment.Location = New System.Drawing.Point(102, 184)
         Me.txtComment.Multiline = True
         Me.txtComment.Name = "txtComment"
-        Me.txtComment.Size = New System.Drawing.Size(477, 91)
+        Me.txtComment.Size = New System.Drawing.Size(501, 91)
         Me.txtComment.TabIndex = 18
         '
         'dlgMethod
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(582, 529)
+        Me.ClientSize = New System.Drawing.Size(606, 529)
         Me.Controls.Add(Me.TableLayoutPanel3)
         Me.MinimizeBox = False
         Me.Name = "dlgMethod"
@@ -542,15 +542,15 @@ Partial Class dlgMethod
 
     End Sub
     Friend WithEvents Label2 As System.Windows.Forms.Label
-    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents lblName As System.Windows.Forms.Label
     Friend WithEvents TableLayoutPanel3 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents txtBrief As System.Windows.Forms.TextBox
     Friend WithEvents txtName As System.Windows.Forms.TextBox
     Friend WithEvents btnType As System.Windows.Forms.Button
     Friend WithEvents cmbRange As System.Windows.Forms.ComboBox
-    Friend WithEvents Label3 As System.Windows.Forms.Label
-    Friend WithEvents Label4 As System.Windows.Forms.Label
-    Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents lblRange As System.Windows.Forms.Label
+    Friend WithEvents lblImplementation As System.Windows.Forms.Label
+    Friend WithEvents lblMember As System.Windows.Forms.Label
     Friend WithEvents cmbImplementation As System.Windows.Forms.ComboBox
     Friend WithEvents cmbMember As System.Windows.Forms.ComboBox
     Friend WithEvents Label6 As System.Windows.Forms.Label
