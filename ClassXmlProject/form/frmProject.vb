@@ -165,7 +165,7 @@ Public Class frmProject
                     End If
                 End If
 
-                .UpdateMenuClass(AddClassTypedef)
+                .UpdateMenuClass(AddClassTypedef, AddClassConstructor)
             End With
 
             UpdateButtons()
@@ -376,7 +376,7 @@ Public Class frmProject
     Private Sub mnuProjectProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuProjectProperties.Click
         Try
             If m_xmlProject.EditProperties() Then
-                m_xmlProject.UpdateMenuClass(AddClassTypedef)
+                m_xmlProject.UpdateMenuClass(AddClassTypedef, AddClassConstructor)
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
                 RefreshProjectDisplay(True)
             End If
@@ -389,6 +389,7 @@ Public Class frmProject
     Private Sub mnuProjectParameters_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuProjectParameters.Click
         Try
             If m_xmlProject.EditParameters() Then
+                m_xmlProject.UpdateMenuClass(AddClassTypedef, AddClassConstructor)
                 RefreshProjectDisplay()
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
             End If
@@ -401,7 +402,7 @@ Public Class frmProject
         Try
             With lvwProjectMembers
                 If .SelectedItem IsNot Nothing And .Binding.Parent IsNot Nothing Then
-                    If m_xmlProject.MoveUpNode(.Binding.Parent, .SelectedItem) Then
+                    If m_xmlProject.MoveUpNode(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
                         .Binding.ResetBindings(True)
                         docvwProjectDisplay.DataSource = .Binding.Parent.Node
                         RefreshProjectDisplay(True)
@@ -422,10 +423,10 @@ Public Class frmProject
         AddClassProperty.Click, mnuAddRelationship.Click, _
         mnuAddPackage.Click, mnuPackageAddPackage.Click, _
         mnuAddImport.Click, mnuPackageAddImport.Click, _
-        NewReference.Click, AddClassImport.Click
+        NewReference.Click, NewInterface.Click, AddClassImport.Click
 
         Try
-            lvwProjectMembers.AddItem(sender.Tag)
+            lvwProjectMembers.AddItem(CType(sender.Tag, String))
             ' Set flag Updated to prevent to close project without saving
             RefreshProjectDisplay(True)
 
@@ -438,7 +439,7 @@ Public Class frmProject
         Handles mnuReplaceExport.Click, mnuMergeExport.Click, mnuConfirmExport.Click
         Try
             If lvwProjectMembers.Binding.Parent IsNot Nothing Then
-                If m_xmlProject.AddReferences(lvwProjectMembers.Binding.Parent, sender.Tag) Then
+                If m_xmlProject.AddReferences(lvwProjectMembers.Binding.Parent, CType(sender.Tag, XmlImportSpec.EImportMode)) Then
                     RefreshProjectDisplay(True)
                 End If
             End If
@@ -451,7 +452,7 @@ Public Class frmProject
         Try
             With lvwProjectMembers
                 If .SelectedItem IsNot Nothing And .Binding.Parent IsNot Nothing Then
-                    If m_xmlProject.RemoveRedundantReference(.Binding.Parent, .SelectedItem) Then
+                    If m_xmlProject.RemoveRedundantReference(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
                         .Binding.ResetBindings(True)
                         docvwProjectDisplay.DataSource = .Binding.Parent.Node
                         RefreshProjectDisplay(True)
@@ -479,7 +480,7 @@ Public Class frmProject
     Private Sub mnuGenerateCode_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
                 Handles mnuProjectGenerate.Click, mnuPackageGenerate.Click
         Try
-            Dim myobject As Object = lvwProjectMembers.SelectedItem
+            Dim myobject As XmlComponent = CType(lvwProjectMembers.SelectedItem, XmlComponent)
 
             If myobject Is Nothing Then
                 myobject = lvwProjectMembers.Binding.Parent
@@ -509,7 +510,9 @@ Public Class frmProject
 
     Private Sub mnuOverrideProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuOverrideProperties.Click
         Try
-            m_xmlProject.OverrideProperties(lvwProjectMembers.Binding.Parent)
+            If m_xmlProject.OverrideProperties(lvwProjectMembers.Binding.Parent) Then
+                RefreshProjectDisplay(True)
+            End If
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -518,7 +521,9 @@ Public Class frmProject
 
     Private Sub mnuOverrideMethods_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuOverrideMethods.Click
         Try
-            m_xmlProject.OverrideMethods(lvwProjectMembers.Binding.Parent)
+            If m_xmlProject.OverrideMethods(lvwProjectMembers.Binding.Parent) Then
+                RefreshProjectDisplay(True)
+            End If
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -530,7 +535,7 @@ Public Class frmProject
 
         Try
             If lvwProjectMembers.SelectedItem IsNot Nothing Then
-                m_xmlProject.ExportReferences(lvwProjectMembers.SelectedItem)
+                m_xmlProject.ExportReferences(CType(lvwProjectMembers.SelectedItem, XmlComponent))
             Else
                 m_xmlProject.ExportReferences(lvwProjectMembers.Binding.Parent)
             End If
@@ -553,7 +558,7 @@ Public Class frmProject
     Private Sub mnuUpdateNodes_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
                 Handles mnuProjectUpdateNodes.Click, mnuPackageUpdateNodes.Click
 
-        Dim myobject As Object = lvwProjectMembers.SelectedItem
+        Dim myobject As XmlComponent = CType(lvwProjectMembers.SelectedItem, XmlComponent)
 
         If myobject Is Nothing Then
             myobject = lvwProjectMembers.Binding.Parent
@@ -571,7 +576,7 @@ Public Class frmProject
         If lvwProjectMembers.SelectedItem IsNot Nothing Then
             'Debug.Print(CType(sender, ToolStripMenuItem).Name)
             Dim fen As New dlgDependencies
-            fen.Document = lvwProjectMembers.SelectedItem
+            fen.Document = CType(lvwProjectMembers.SelectedItem, XmlComponent)
             fen.ShowDialog()
             If CType(fen.Tag, Boolean) = True Then
                 RefreshProjectDisplay(True)
@@ -583,7 +588,7 @@ Public Class frmProject
                 Handles ProjectExportNodesSimpleCopy.Click, PackageExportNodesSimpleCopy.Click
         Try
             If lvwProjectMembers.SelectedItem IsNot Nothing Then
-                m_xmlProject.ExportNodes(lvwProjectMembers.SelectedItem)
+                m_xmlProject.ExportNodes(CType(lvwProjectMembers.SelectedItem, XmlComponent))
             Else
                 m_xmlProject.ExportNodes(lvwProjectMembers.Binding.Parent)
             End If
@@ -597,7 +602,7 @@ Public Class frmProject
         Try
             Dim bRefresh As Boolean = False
             If lvwProjectMembers.SelectedItem IsNot Nothing Then
-                bRefresh = m_xmlProject.ExportNodesExtract(lvwProjectMembers.SelectedItem)
+                bRefresh = m_xmlProject.ExportNodesExtract(CType(lvwProjectMembers.SelectedItem, XmlComponent))
             Else
                 bRefresh = m_xmlProject.ExportNodesExtract(lvwProjectMembers.Binding.Parent)
             End If
@@ -617,7 +622,7 @@ Public Class frmProject
         Dim oldCursor As Cursor = Me.Cursor
         Me.Cursor = Cursors.WaitCursor
         Try
-            docvwProjectDisplay.View = sender.Tag
+            docvwProjectDisplay.View = CType(sender.Tag, XmlDocumentViewMode)
             btnDocView.Text = sender.Text
 
         Catch ex As Exception
@@ -633,7 +638,7 @@ Public Class frmProject
                 TileToolStripMenuItem.Click
 
         Try
-            lvwProjectMembers.View = sender.Tag
+            lvwProjectMembers.View = CType(sender.Tag, View)
             UpdateButtonProjectView()
 
         Catch ex As Exception
