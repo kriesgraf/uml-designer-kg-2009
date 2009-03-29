@@ -48,10 +48,11 @@ Public Class XmlExportSpec
     End Sub
 
     Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode) As XmlNode
-        If nodeXml.Name = "reference" Then
-            Return MyBase.AppendNode(nodeXml)
-        End If
-        For Each child As XmlNode In nodeXml.SelectNodes("descendant::reference")
+        Select nodeXml.Name
+            Case "reference", "interface"
+                Return MyBase.AppendNode(nodeXml)
+        End Select
+        For Each child As XmlNode In nodeXml.SelectNodes("descendant::reference | descendant::interface")
             MyBase.AppendNode(child)
         Next
         Return Nothing
@@ -60,7 +61,7 @@ Public Class XmlExportSpec
 #End Region
 
     Protected Friend Function RemoveReferences() As Boolean
-        Dim bResult As String = True
+        Dim bResult As Boolean = True
         Try
             Dim child As XmlNode
             Dim count As Integer
@@ -69,7 +70,7 @@ Public Class XmlExportSpec
             If Node Is Nothing Then Exit Function
 
             For Each child In Node.ChildNodes
-                count = GetNodeRefCount(child, strList, Me.Tag)
+                count = GetNodeRefCount(child, strList, CType(Me.Tag, ELanguage))
                 If count > 0 Then
                     MsgBox("Reference " + GetName(child) + " is used by " + CStr(count) + " element(s):" + vbCrLf + strList, vbExclamation)
                     bResult = False
@@ -89,7 +90,7 @@ Public Class XmlExportSpec
     End Function
 
     Protected Friend Function LoadStringImport(ByVal strXML As String) As Boolean
-        Dim bResult As String = False
+        Dim bResult As Boolean = False
         Try
             ' the following call to Validate succeeds.
             Dim document As New XmlDocument
@@ -106,7 +107,7 @@ Public Class XmlExportSpec
     End Function
 
     Protected Friend Function LoadImport(ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
-        Dim bResult As String = False
+        Dim bResult As Boolean = False
         Try
             ' the following call to Validate succeeds.
             Dim document As New XmlDocument
