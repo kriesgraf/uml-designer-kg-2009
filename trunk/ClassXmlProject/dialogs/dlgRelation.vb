@@ -37,7 +37,7 @@ Public Class dlgRelation
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -157,7 +157,7 @@ Public Class dlgRelation
     End Sub
 
     Private Sub cmbFatherRange_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbFatherRange.SelectedIndexChanged
-        If cmbFatherRange.SelectedItem = "no" Then
+        If CType(cmbFatherRange.SelectedItem, String) = "no" Then
             cmbFatherClass.Enabled = False
             lblFatherLevel.Enabled = False
             cmbFatherLevel.Enabled = False

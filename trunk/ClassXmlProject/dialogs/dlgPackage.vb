@@ -46,7 +46,7 @@ Public Class dlgPackage
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -79,9 +79,9 @@ Public Class dlgPackage
         End Try
     End Sub
 
-    Private Sub mnuAdd_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
+    Private Sub mnuAdd_Click(ByVal sender As ToolStripItem, ByVal e As System.EventArgs) _
         Handles mnuAddPackage.Click, mnuAddClass.Click, mnuAddImport.Click
-        gridClasses.AddItem(CType(sender, ToolStripItem).Tag)
+        gridClasses.AddItem(CType(sender.Tag, String))
         m_xmlView.Updated = True
     End Sub
 
@@ -159,9 +159,9 @@ Public Class dlgPackage
     End Sub
 
     Private Sub mnuDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuDependencies.Click
-        If gridClasses.SelectedItem() IsNot Nothing Then
+        If gridClasses.SelectedItem IsNot Nothing Then
             Dim fen As New dlgDependencies
-            fen.Document = gridClasses.SelectedItem()
+            fen.Document = CType(gridClasses.SelectedItem, XmlComponent)
             fen.ShowDialog()
             If CType(fen.Tag, Boolean) = True Then
                 m_xmlView.Updated = True
