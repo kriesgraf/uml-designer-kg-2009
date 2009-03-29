@@ -9,6 +9,8 @@ Public Class dlgInlineCode
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
+            ' get a useful tag that transmit generation language ID
+            m_xmlView.Tag = value.Tag
         End Set
     End Property
 
@@ -31,7 +33,7 @@ Public Class dlgInlineCode
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 
