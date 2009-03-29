@@ -8,7 +8,7 @@ Public Class XmlStructureSpec
     DescriptionAttribute("Union structure")> _
     Public Property Union() As Boolean
         Get
-            Return (m_xmlType.GetAttribute("struct") = "union")
+            Return (m_xmlType.CheckAttribute("struct", "union", "struct"))
         End Get
         Set(ByVal value As Boolean)
             If value Then

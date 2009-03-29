@@ -37,7 +37,7 @@ Public Class XmlElementSpec
    DescriptionAttribute("Const element")> _
     Public Property Modifier() As Boolean
         Get
-            Return (GetAttribute("modifier") = "const")
+            Return (CheckAttribute("modifier", "const", "var"))
         End Get
         Set(ByVal value As Boolean)
             If value Then

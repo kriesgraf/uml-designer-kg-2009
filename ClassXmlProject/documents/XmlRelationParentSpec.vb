@@ -54,9 +54,7 @@ Public Class XmlRelationParentSpec
     Public Property Indexed() As Boolean
         Get
             If TestNode("list") Then
-                If GetAttribute("type", "list") = "indexed" Then
-                    Return True
-                End If
+                Return (CheckAttribute("type", "indexed", "simple", "list"))
             End If
             Return False
         End Get
@@ -109,7 +107,7 @@ Public Class XmlRelationParentSpec
 
     Public Property Iterator() As Boolean
         Get
-            Return (GetAttribute("iterator", "list") = "yes")
+            Return (CheckAttribute("iterator", "yes", "no", "list"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
@@ -122,8 +120,7 @@ Public Class XmlRelationParentSpec
 
     Public Property AccessorGet() As Boolean
         Get
-            Dim strValue As String = GetAttribute("range", "get")
-            Return (strValue <> "no" And strValue <> "")
+            Return (CheckAttribute("range", "no", "other", "get"))  ' other: in fact 'public' or 'protected'
         End Get
         Set(ByVal value As Boolean)
             If value Then
@@ -136,8 +133,7 @@ Public Class XmlRelationParentSpec
 
     Public Property AccessorSet() As Boolean
         Get
-            Dim strValue As String = GetAttribute("range", "set")
-            Return (strValue <> "no" And strValue <> "")
+            Return (CheckAttribute("range", "no", "other", "set"))  ' other: in fact 'public' or 'protected'
         End Get
         Set(ByVal value As Boolean)
             If value Then
@@ -195,7 +191,7 @@ Public Class XmlRelationParentSpec
 
     Public Property Member() As Boolean
         Get
-            Return (GetAttribute("member") = "class")
+            Return (CheckAttribute("member", "class", "object"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
