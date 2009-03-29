@@ -122,13 +122,58 @@ Public Class XmlPropertySpec
    DescriptionAttribute("Get accessor const value")> _
     Public Property AccessGetModifier() As Boolean
         Get
-            Return (GetAttribute("modifier", "get") = "const")
+            Return (CheckAttribute("modifier", "const", "var", "get"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
                 SetAttribute("modifier", "const", "get")
             Else
                 SetAttribute("modifier", "var", "get")
+            End If
+        End Set
+    End Property
+
+    <CategoryAttribute("UML design"), _
+   DescriptionAttribute("Overrides property")> _
+    Public Property OverridesProperty() As String
+        Get
+            Return GetAttribute("overrides")
+        End Get
+        Set(ByVal value As String)
+            If value = "" Then
+                RemoveAttribute("overrides")
+            Else
+                AddAttribute("overrides", CStr(value))
+            End If
+        End Set
+    End Property
+
+    <CategoryAttribute("UML design"), _
+   DescriptionAttribute("Member attribute")> _
+    Public Property MemberAttribute() As Boolean
+        Get
+            Return (CheckAttribute("attribute", "yes", "yes"))
+        End Get
+        Set(ByVal value As Boolean)
+            If value Then
+                SetAttribute("attribute", "yes")
+            Else
+                SetAttribute("attribute", "no")
+            End If
+        End Set
+    End Property
+
+    <CategoryAttribute("UML design"), _
+   DescriptionAttribute("Overridable property")> _
+    Public Property OverridableProperty() As Boolean
+        Get
+            Return (CheckAttribute("overridable", "yes", "no"))
+        End Get
+        Set(ByVal value As Boolean)
+            If value Then
+                SetAttribute("overridable", "yes")
+            Else
+                SetAttribute("overridable", "no")
             End If
         End Set
     End Property
@@ -160,12 +205,16 @@ Public Class XmlPropertySpec
     <TypeConverter(GetType(UmlMemberClass)), _
     CategoryAttribute("UML design"), _
    DescriptionAttribute("Class member")> _
-    Public Property Member() As String
+    Public Property Member() As Boolean
         Get
-            Return GetAttribute("member")
+            Return (CheckAttribute("member", "class", "object"))
         End Get
-        Set(ByVal value As String)
-            SetAttribute("member", value)
+        Set(ByVal value As Boolean)
+            If value Then
+                SetAttribute("member", "class")
+            Else
+                SetAttribute("member", "object")
+            End If
         End Set
     End Property
 #End Region
@@ -197,9 +246,11 @@ Public Class XmlPropertySpec
             m_xmlType.Range = "private"
 
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
-            Member = "object"
+            Member = False
             NumId = 0
             Comment = "Insert here a comment"
+            OverridableProperty = False
+            MemberAttribute = True
 
             AccessGetBy = "val"
             AccessGetModifier = False
