@@ -88,6 +88,26 @@ Public Class XmlClassMemberView
         End Get
     End Property
 
+    Public Sub UpdateObject() Implements InterfObject.Update
+        Select Case Me.NodeName
+            Case "property"
+                If m_xmlClassView.CurrentClassImpl = XmlProjectTools.EImplementation.Interf _
+                Then
+                    Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
+                    xmlProperty.OverridableProperty = True
+                End If
+            Case "method"
+                If m_xmlClassView.CurrentClassImpl = XmlProjectTools.EImplementation.Interf _
+                Then
+                    Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
+                    xmlMethod.Implementation = XmlProjectTools.EImplementation.Interf
+                End If
+
+            Case Else
+                ' Ignore
+        End Select
+    End Sub
+
     Public Function EventClick(ByVal dataMember As String) As Boolean Implements InterfGridViewNotifier.EventClick
         Try
             ' For checkbox column "Member" must return false to execute control updates
@@ -126,9 +146,12 @@ Public Class XmlClassMemberView
     Public Function EventDoubleClick(ByVal dataMember As String) As Boolean Implements InterfGridViewNotifier.EventDoubleClick
         Try
             Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me)
-            If TypeOf (fen) Is dlgMethod Then
-                CType(fen, dlgMethod).ClassImpl = m_xmlClassView.CurrentClassImpl
-            End If
+            Select Case Me.NodeName
+                Case "property", "method"
+                    CType(fen, InterfFormClass).ClassImpl = m_xmlClassView.CurrentClassImpl
+                Case Else
+                    ' Ignore
+            End Select
             fen.ShowDialog()
             Return CType(fen.Tag, Boolean)
 
