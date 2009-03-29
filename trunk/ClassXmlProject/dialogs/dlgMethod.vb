@@ -5,9 +5,12 @@ Imports Microsoft.VisualBasic
 
 Public Class dlgMethod
     Implements InterfFormDocument
+    Implements InterfFormClass
+
 
     Private m_xmlView As XmlMethodView
     Private m_eCurrentClassImplementation As EImplementation = EImplementation.Unknown
+
     'Private m_bInitProceed As Boolean = False
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
@@ -18,39 +21,53 @@ Public Class dlgMethod
         End Set
     End Property
 
-    Public WriteOnly Property ClassImpl() As EImplementation
+    Public Property ClassImpl() As EImplementation Implements InterfFormClass.ClassImpl
+        Get
+            Return m_eCurrentClassImplementation
+        End Get
         Set(ByVal value As EImplementation)
             m_eCurrentClassImplementation = value
         End Set
     End Property
 
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
-
+        If m_xmlView.OverridesMethod <> "" Then
+            btnType.Enabled = False
+            grdParams.Enabled = False
+        End If
     End Sub
 
     Private Sub dlgMethod_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         With m_xmlView
             .LoadValues()
-            'm_bInitProceed = True
-            .InitBindingName(txtName)
+
+            .ClassImpl = m_eCurrentClassImplementation
+            .InitBindingName(txtName, lblName)
             .InitBindingOperator(txtOperator)
             .InitBindingCheckOperator(chkOperator)
             .InitBindingBrief(txtBrief)
             .InitBindingComment(txtComment)
             .InitBindingReturnComment(txtReturnComments)
-            .InitBindingRange(cmbRange)
-            .InitBindingImplementation(m_eCurrentClassImplementation, cmbImplementation)
-            .InitBindingMember(cmbMember)
+            .InitBindingRange(cmbRange, lblRange)
+            .InitBindingMember(cmbMember, lblMember)
             .InitBindingModifier(chkConst)
             .InitBindingCheckInline(chkInline, btnInline)
             .InitBindingBehaviour(cmbBehaviour, lblBehaviour)
+            ' Must be initialized at the end because updates others controls
+            .InitBindingImplementation(cmbImplementation, lblImplementation)
             .LoadParamMembers(grdParams)
 
             chkOperator_CheckedChanged(sender, e)
             btnType.Text = .ReturnValue.FullpathTypeDescription()
-            Text = .Name
+
+            If .OverridesMethod <> "" Then
+                Text = .Name + " (Overrides)"
+            Else
+                Text = .Name
+            End If
             .UpdateMenu(mnuAddException)
-            'm_bInitProceed = False
+            DisableMemberAttributes()
+
         End With
         mnuPaste.Enabled = XmlComponent.Clipboard.CanPaste
         chkInline_Click(sender, e)
@@ -71,7 +88,7 @@ Public Class dlgMethod
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 

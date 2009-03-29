@@ -70,13 +70,14 @@ Public Class dlgClass
                 .InitBindingName(txtName)
                 .InitBindingBriefComment(txtBrief)
                 .InitBindingComment(txtDetails)
+                ' Combo Implementation is used by several methods, reference must be set previously
+                .InitBindingImplementation(lblImplementation, cmbImplementation)
+                .UpdateMenuConstructor(AddConstructor)
                 .InitBindingConstructor(lblConstructor, cmbConstructor, btnConstructor)
                 .InitBindingDestructor(lblDestructor, cmbDestructor, btnDestructor)
-                .InitBindingImplementation(cmbImplementation)
                 .InitBindingVisibility(cmbVisibility)
                 .InitBindingInline(lblInline, cmbModelInline)
                 .InitBindingPartial(btnConstructor, btnDestructor, chkPartial)
-
                 ' Load document values into controls
                 .LoadDependencies(gridDependencies)
                 .LoadInheritedMembers(gridInherited)
@@ -107,7 +108,7 @@ Public Class dlgClass
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -211,7 +212,7 @@ Public Class dlgClass
                 Handles AddTypedef.Click, AddProperty.Click, AddMethod.Click, AddConstructor.Click, _
                         AddStructure.Click, AddContainer.Click
 
-        gridMembers.AddItem(sender.Tag)
+        gridMembers.AddItem(CType(sender.Tag, String))
         m_xmlView.Updated = True
     End Sub
 
@@ -238,7 +239,7 @@ Public Class dlgClass
     End Sub
 
     Private Sub mnuMemberProperties_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles MemberProperties.Click
-        dlgXmlNodeProperties.DisplayProperties(gridMembers.SelectedItem)
+        dlgXmlNodeProperties.DisplayProperties(CType(gridMembers.SelectedItem, XmlComponent))
         m_xmlView.Updated = True
     End Sub
 
@@ -248,9 +249,9 @@ Public Class dlgClass
     End Sub
 
     Private Sub mnuMemberDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMemberDependencies.Click
-        If gridMembers.SelectedItem() IsNot Nothing Then
+        If gridMembers.SelectedItem IsNot Nothing Then
             Dim fen As New dlgDependencies
-            fen.Document = gridMembers.SelectedItem()
+            fen.Document = CType(gridMembers.SelectedItem, XmlComponent)
             fen.ShowDialog()
             If CType(fen.Tag, Boolean) = True Then
                 m_xmlView.Updated = True
@@ -258,7 +259,7 @@ Public Class dlgClass
         End If
     End Sub
 
-    Private Sub gridDependencies_RowValuesChanged(ByVal sender As Object) _
+    Private Sub GridRowValuesChanged(ByVal sender As Object) _
                 Handles gridDependencies.RowValuesChanged, _
                 gridInherited.RowValuesChanged, _
                 gridMembers.RowValuesChanged, _
@@ -268,14 +269,14 @@ Public Class dlgClass
     End Sub
 
     Private Sub mnuOverrideProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuOverrideProperties.Click
-        If m_xmlView.OverrideProperties() Then
+        If m_xmlView.OverrideProperties(m_xmlView.CurrentClassImpl) Then
             gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
         End If
     End Sub
 
     Private Sub mnuOverrideMethods_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuOverrideMethods.Click
-        If m_xmlView.OverrideMethods() Then
+        If m_xmlView.OverrideMethods(m_xmlView.CurrentClassImpl) Then
             gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
         End If
