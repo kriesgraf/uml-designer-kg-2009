@@ -122,7 +122,7 @@ Public Class XmlTypeVarSpec
 
     Public Property Indexed() As Boolean
         Get
-            Return (GetAttribute("type", "list") = "indexed")
+            Return (CheckAttribute("type", "indexed", "simple", "list"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
@@ -171,7 +171,7 @@ Public Class XmlTypeVarSpec
 
     Public Property Iterator() As Boolean
         Get
-            Return (GetAttribute("iterator", "list") = "yes")
+            Return (CheckAttribute("iterator", "yes", "no", "list"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
@@ -253,7 +253,7 @@ Public Class XmlTypeVarSpec
 
     Public Property Modifier() As Boolean
         Get
-            Return (GetAttribute("modifier") = "const")
+            Return (CheckAttribute("modifier", "const", "var"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
@@ -266,7 +266,7 @@ Public Class XmlTypeVarSpec
 
     Public Property By() As Boolean
         Get
-            Return (GetAttribute("by") = "ref")
+            Return (CheckAttribute("by", "ref", "val"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
