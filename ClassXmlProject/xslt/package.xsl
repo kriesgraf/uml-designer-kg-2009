@@ -258,12 +258,12 @@ border-left: 1px solid gray;
 		<xsl:value-of select="@name"/> (<span class="class-package"><xsl:value-of select="@param"/></span>)<br/>
 		<xsl:if test="export">
 			<li>
-				Reference list: <span class="comment"><xsl:apply-templates select="export/reference" mode="Import"/></span></li>
+				Reference list: <span class="comment"><xsl:apply-templates select="export/*" mode="Import"/></span></li>
 		</xsl:if>
 		<br/>
 	</xsl:template>
 	<!-- ======================================================================= -->
-	<xsl:template match="reference" mode="Import">
+	<xsl:template match="reference | interface" mode="Import">
 		<xsl:value-of select="@name"/>
 		<xsl:if test="position()!=last()">,</xsl:if>
 	</xsl:template>
@@ -1006,6 +1006,7 @@ border-left: 1px solid gray;
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
