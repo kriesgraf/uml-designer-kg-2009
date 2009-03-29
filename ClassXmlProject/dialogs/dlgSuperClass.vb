@@ -21,7 +21,7 @@ Public Class dlgSuperClass
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -33,6 +33,8 @@ Public Class dlgSuperClass
         Set(ByVal value As XmlComponent)
             ' This line get reference of object in argument, neither view creation nor XML node copy !
             m_xmlView = CType(value, XmlSuperClassView)
+            ' get a useful tag that transmit generation language ID
+            m_xmlView.Tag = value.Tag
         End Set
     End Property
 

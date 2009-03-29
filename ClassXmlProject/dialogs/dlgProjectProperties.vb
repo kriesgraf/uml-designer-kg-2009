@@ -17,7 +17,7 @@ Public Class dlgProjectProperties
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -62,7 +62,7 @@ Public Class dlgProjectProperties
 
     Private Sub btnPath_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnPath.Click
         FolderBrowserDialog1.SelectedPath = fileListBox.Path
-        If FolderBrowserDialog1.ShowDialog() Then
+        If FolderBrowserDialog1.ShowDialog() = Windows.Forms.DialogResult.OK Then
             txtPath.Text = FolderBrowserDialog1.SelectedPath
         End If
     End Sub
