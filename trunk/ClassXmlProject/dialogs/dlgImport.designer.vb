@@ -55,6 +55,8 @@ Partial Class dlgImport
         Me.RemoveAll = New System.Windows.Forms.ToolStripMenuItem
         Me.txtInterface = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
+        Me.NewInterface = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
@@ -90,7 +92,7 @@ Partial Class dlgImport
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.DialogResult = DialogResult.Cancel
+        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
@@ -163,7 +165,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel4, 2)
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65.38461!))
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.61538!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 181.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 182.0!))
         Me.TableLayoutPanel4.Controls.Add(Me.lblVisibility, 1, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.cmbVisibility, 2, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.chkInterface, 0, 0)
@@ -179,7 +181,7 @@ Partial Class dlgImport
         '
         Me.lblVisibility.AutoSize = True
         Me.lblVisibility.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblVisibility.Location = New System.Drawing.Point(118, 0)
+        Me.lblVisibility.Location = New System.Drawing.Point(117, 0)
         Me.lblVisibility.Name = "lblVisibility"
         Me.lblVisibility.Size = New System.Drawing.Size(54, 24)
         Me.lblVisibility.TabIndex = 2
@@ -190,9 +192,9 @@ Partial Class dlgImport
         '
         Me.cmbVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbVisibility.FormattingEnabled = True
-        Me.cmbVisibility.Location = New System.Drawing.Point(178, 3)
+        Me.cmbVisibility.Location = New System.Drawing.Point(177, 3)
         Me.cmbVisibility.Name = "cmbVisibility"
-        Me.cmbVisibility.Size = New System.Drawing.Size(176, 21)
+        Me.cmbVisibility.Size = New System.Drawing.Size(177, 21)
         Me.cmbVisibility.TabIndex = 5
         '
         'chkInterface
@@ -201,7 +203,7 @@ Partial Class dlgImport
         Me.chkInterface.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chkInterface.Location = New System.Drawing.Point(3, 3)
         Me.chkInterface.Name = "chkInterface"
-        Me.chkInterface.Size = New System.Drawing.Size(109, 18)
+        Me.chkInterface.Size = New System.Drawing.Size(108, 18)
         Me.chkInterface.TabIndex = 6
         Me.chkInterface.Text = "Interface declaration"
         Me.chkInterface.UseVisualStyleBackColor = True
@@ -251,9 +253,9 @@ Partial Class dlgImport
         '
         'mnuEditReference
         '
-        Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.EditReference, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
+        Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator5, Me.EditReference, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
         Me.mnuEditReference.Name = "ContextMenuStrip1"
-        Me.mnuEditReference.Size = New System.Drawing.Size(189, 270)
+        Me.mnuEditReference.Size = New System.Drawing.Size(189, 298)
         '
         'NewReference
         '
@@ -261,7 +263,8 @@ Partial Class dlgImport
         Me.NewReference.Name = "NewReference"
         Me.NewReference.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.R), System.Windows.Forms.Keys)
         Me.NewReference.Size = New System.Drawing.Size(188, 22)
-        Me.NewReference.Text = "New"
+        Me.NewReference.Tag = "reference"
+        Me.NewReference.Text = "New reference"
         '
         'EditReference
         '
@@ -379,6 +382,19 @@ Partial Class dlgImport
         Me.txtInterface.Size = New System.Drawing.Size(181, 174)
         Me.txtInterface.TabIndex = 2
         '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(185, 6)
+        '
+        'NewInterface
+        '
+        Me.NewInterface.Name = "NewInterface"
+        Me.NewInterface.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.I), System.Windows.Forms.Keys)
+        Me.NewInterface.Size = New System.Drawing.Size(188, 22)
+        Me.NewInterface.Tag = "interface"
+        Me.NewInterface.Text = "New interface"
+        '
         'dlgImport
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -440,5 +456,7 @@ Partial Class dlgImport
     Friend WithEvents mnuCopy As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuPaste As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents NewInterface As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
 
 End Class

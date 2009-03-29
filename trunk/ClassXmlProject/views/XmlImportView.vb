@@ -16,7 +16,6 @@ Public Class XmlImportView
     Private m_chkInterface As CheckBox
     Private m_bClassInterface As Boolean
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
 
 #End Region
 
@@ -56,7 +55,7 @@ Public Class XmlImportView
     Public Sub UpdateValues()
         If m_chkInterface.Checked Then
             If Me.InlineBody Is Nothing Then
-                Me.InlineBody = m_xmlNodeManager.CreateDocument("body", MyBase.Document)
+                Me.InlineBody = CreateDocument("body", MyBase.Document)
                 MyBase.AppendNode(Me.InlineBody.Node)
             End If
             Me.InlineBody.CodeSource = m_txtInterface.Text
@@ -103,7 +102,7 @@ Public Class XmlImportView
         m_chkInterface = dataControl
     End Sub
 
-    Public Sub InitBindingBodyInterface(ByVal dataControl As Control)
+    Public Sub InitBindingBodyInterface(ByVal dataControl As TextBox)
         If Me.InlineBody IsNot Nothing Then dataControl.Text = Me.InlineBody.CodeSource()
         m_txtInterface = dataControl
     End Sub
@@ -111,7 +110,7 @@ Public Class XmlImportView
     Public Sub InitBindingReferences(ByVal listbox As ListBox)
         Try
             Dim listNode As New ArrayList
-            Dim iterator As IEnumerator = MyBase.SelectNodes("descendant::reference").GetEnumerator
+            Dim iterator As IEnumerator = MyBase.SelectNodes("descendant::reference | descendant::interface").GetEnumerator
             iterator.Reset()
             While iterator.MoveNext
                 Dim xmlNode As XmlNode = TryCast(iterator.Current, XmlNode)
@@ -124,13 +123,13 @@ Public Class XmlImportView
         End Try
     End Sub
 
-    Public Sub AddNew(ByVal list As ListBox)
+    Public Sub AddNew(ByVal list As ListBox, ByVal name As String)
         Try
             If m_xmlExport Is Nothing Then
-                m_xmlExport = m_xmlNodeManager.CreateDocument("export", MyBase.Document)
+                m_xmlExport = CreateDocument("export", MyBase.Document)
                 MyBase.AppendNode(m_xmlExport.Node)
             End If
-            Dim xmlcpnt As XmlComponent = m_xmlNodeManager.CreateDocument("reference", MyBase.Document)
+            Dim xmlcpnt As XmlComponent = CreateDocument(name, MyBase.Document)
 
             m_xmlExport.AppendNode(xmlcpnt.Node)
             xmlcpnt.SetIdReference(m_xmlReferenceNodeCounter)
@@ -199,7 +198,7 @@ Public Class XmlImportView
             If RemoveRedundant(TryCast(list.SelectedItem, XmlComponent)) Then
                 InitBindingReferences(list)
                 Me.Updated = True
-                If Me.GetNode("descendant::reference") Is Nothing Then
+                If Me.GetNode("descendant::reference | descendant::interface") Is Nothing Then
                     If MsgBox("Do you want to remove the import " + Me.Name + " too ?", _
                               cstMsgYesNoQuestion) _
                               = MsgBoxResult.Yes Then
