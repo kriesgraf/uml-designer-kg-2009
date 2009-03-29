@@ -10,6 +10,7 @@ Imports Microsoft.VisualBasic
 
 Public Interface InterfObject
     Property InterfObject() As Object
+    Sub Update()
 End Interface
 
 Public Interface InterfViewControl
@@ -56,9 +57,9 @@ Public Class XmlComponent
             End Get
         End Property
 
-        Public Sub SetData(ByVal component As XmlComponent, Optional ByVal bCopy As Boolean = True)
+        Public Sub SetData(ByVal component As Object, Optional ByVal bCopy As Boolean = True)
             m_bCopy = bCopy
-            m_xmlComponent = component
+            m_xmlComponent = TryCast(component, XmlComponent)
         End Sub
 
         Public Function GetData(ByRef bCopy As Boolean) As XmlComponent
@@ -353,17 +354,34 @@ Public Class XmlComponent
         Return bResult
     End Function
 
+    Protected Friend Function CheckAttribute(ByVal name As String, ByVal to_check As String, _
+                                             ByVal default_value As String, Optional ByVal xpath As String = "") As Boolean
+
+        Dim strResult As String = Nothing
+        Try
+            strResult = GetAttribute(name, xpath)
+
+            If strResult = Nothing Then
+                Return (to_check = default_value)
+            End If
+            Return (to_check = strResult)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Protected Friend Function GetAttribute(ByVal name As String, Optional ByVal xpath As String = "") As String
         Dim strResult As String = Nothing
         Dim nodeXml As XmlNode
         Try
             If m_xmlNode IsNot Nothing Then
                 If xpath = "" Then
-                    nodeXml = m_xmlNode.Attributes.GetNamedItem(name)
+                    nodeXml = m_xmlNode.Attributes.ItemOf(name)
                 Else
                     nodeXml = GetNode(xpath)
                     If nodeXml IsNot Nothing Then
-                        nodeXml = nodeXml.Attributes.GetNamedItem(name)
+                        nodeXml = nodeXml.Attributes.ItemOf(name)
                     End If
                 End If
                 If nodeXml IsNot Nothing Then
@@ -416,7 +434,7 @@ Public Class XmlComponent
                 Return False
             End If
 
-            Dim attrib As XmlAttribute = nodeXml.Attributes.GetNamedItem(name)
+            Dim attrib As XmlAttribute = nodeXml.Attributes.ItemOf(name)
 
             If attrib Is Nothing And m_bCreateNodeNow Then
                 attrib = nodeXml.Attributes.Append(CreateAttribute(name))
@@ -565,12 +583,12 @@ Public Class XmlComponent
         Dim bResult As Boolean = False
         Try
             If xpath = "" Then
-                If m_xmlNode.Attributes.GetNamedItem(name) IsNot Nothing Then
+                If m_xmlNode.Attributes.ItemOf(name) IsNot Nothing Then
                     m_xmlNode.Attributes.RemoveNamedItem(name)
                 End If
             Else
                 If TestNode(xpath) Then
-                    If GetNode(xpath).Attributes.GetNamedItem(name) IsNot Nothing Then
+                    If GetNode(xpath).Attributes.ItemOf(name) IsNot Nothing Then
                         GetNode(xpath).Attributes.RemoveNamedItem(name)
                     End If
                 End If
@@ -604,7 +622,7 @@ Public Class XmlComponent
                 Return Nothing
             End If
 
-            attrib = nodeXml.Attributes.GetNamedItem(name)
+            attrib = nodeXml.Attributes.ItemOf(name)
 
             If attrib Is Nothing Then
                 attrib = CreateAttribute(name)
