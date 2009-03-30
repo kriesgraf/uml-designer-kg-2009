@@ -32,6 +32,10 @@ Public Class XmlClassInheritedView
         End Set
     End Property
 
+    Public Sub UpdateObject() Implements InterfObject.Update
+
+    End Sub
+
     Public Function EventClick(ByVal dataMember As String) As Boolean Implements InterfGridViewNotifier.EventClick
         Return False
     End Function
