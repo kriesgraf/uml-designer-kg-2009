@@ -7,6 +7,17 @@ Imports ClassXmlProject.XmlProjectTools
 Public Class XmlClassOverrideMethodsView
     Inherits XmlClassSpec
 
+    Private m_eImplementation As EImplementation
+
+    Public Property CurrentClassImpl() As EImplementation
+        Get
+            Return m_eImplementation
+        End Get
+        Set(ByVal value As EImplementation)
+            m_eImplementation = value
+        End Set
+    End Property
+
     Public Sub InitListMethods(ByVal listbox As ListBox)
         Try
             Dim list As New ArrayList
@@ -85,7 +96,8 @@ Public Class XmlClassOverrideMethodsView
                     ReplaceVirtualMethod(oldClassMember, newClassMember)
                 End If
 
-                AddAttributeValue(newClassMember, "implementation", ConvertEnumImplToDtd(Me.Implementation))
+                AddAttributeValue(newClassMember, "implementation", ConvertEnumImplToDtd(m_eImplementation))
+
             End If
         Catch ex As Exception
             Throw ex
@@ -95,11 +107,15 @@ Public Class XmlClassOverrideMethodsView
     Private Sub AddUnknownParams(ByVal dstMethod As XmlNode, ByVal srcMethod As XmlNode)
         Try
             Dim child As XmlNode
+            Dim xmlcpnt As XmlMethodSpec = CreateDocument(dstMethod)
+            Dim list As XmlNodeList = SelectNodes(dstMethod, "param")
+
+            For Each child In list
+                dstMethod.RemoveChild(child)
+            Next child
 
             For Each child In SelectNodes(srcMethod, "param")
-                If GetNode(dstMethod, "param[@name='" + GetName(child) + "']") Is Nothing Then
-                    dstMethod.AppendChild(child.CloneNode(True))
-                End If
+                xmlcpnt.AppendNode(child.CloneNode(True))
             Next child
 
             ReorderParams(dstMethod)
@@ -111,13 +127,15 @@ Public Class XmlClassOverrideMethodsView
 
     Private Sub ReplaceVirtualMethod(ByVal dstMethod As XmlNode, ByVal srcMethod As XmlNode)
         Dim child As XmlNode
+        Dim xmlcpnt As XmlMethodSpec = CreateDocument(dstMethod)
+        Dim list As XmlNodeList = SelectNodes(dstMethod, "param")
 
-        For Each child In SelectNodes(dstMethod, "param")
+        For Each child In list
             dstMethod.RemoveChild(child)
         Next child
 
         For Each child In SelectNodes(srcMethod, "param")
-            dstMethod.AppendChild(child.CloneNode(True))
+            xmlcpnt.AppendNode(child.CloneNode(True))
         Next child
 
         ReorderParams(dstMethod)
