@@ -52,9 +52,10 @@
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>ClassXmlProject.xml</DocumentationFile>
-    <NoWarn>41999,42016,42017,42018,42019,42032,42036</NoWarn>
+    <NoWarn>41999,42016</NoWarn>
     <DefineConstants>_APP_UML = "1", _DBG_DEPENDENCY = "0"</DefineConstants>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <WarningsAsErrors>41998,42004,42020,42021,42022,42026,42029,42030,42031,42104,42105,42106,42107,42108,42109</WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -63,9 +64,10 @@
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>ClassXmlProject.xml</DocumentationFile>
-    <NoWarn>41999,42016,42017,42018,42019,42032,42036</NoWarn>
+    <NoWarn>41999,42016</NoWarn>
     <DefineConstants>_APP_UML = "1", _DBG_DEPENDENCY = "0"</DefineConstants>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <WarningsAsErrors>41998,42004,42020,42021,42022,42026,42029,42030,42031,42104,42105,42106,42107,42108,42109</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic.Compatibility" />
@@ -79,6 +81,7 @@
   <ItemGroup>
     <Compile Include="bindings\XmlBindingDataListView.vb">
     </Compile>
+    <Compile Include="controls\ComboCommand.vb" />
     <Compile Include="controls\DataListView.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -160,6 +163,12 @@
     <Compile Include="dialogs\dlgInlineCode.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="dialogs\dlgInterface.designer.vb">
+      <DependentUpon>dlgInterface.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgInterface.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="dialogs\dlgMethod.designer.vb">
       <DependentUpon>dlgMethod.vb</DependentUpon>
     </Compile>
@@ -170,6 +179,12 @@
       <DependentUpon>dlgOverrideMethods.vb</DependentUpon>
     </Compile>
     <Compile Include="dialogs\dlgOverrideMethods.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\dlgOverrideProperties.designer.vb">
+      <DependentUpon>dlgOverrideProperties.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgOverrideProperties.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\dlgPackage.designer.vb">
@@ -260,11 +275,15 @@
     <Compile Include="documents\XmlContainerSpec.vb" />
     <Compile Include="documents\XmlExceptionSpec.vb" />
     <Compile Include="documents\XmlExportSpec.vb" />
+    <Compile Include="documents\XmlInterfaceSpec.vb" />
     <Compile Include="documents\XmlStructureSpec.vb" />
     <Compile Include="umldesign\UmlNodesManager.vb" />
     <Compile Include="umldesign\VbCodeAnalyser.vb" />
     <Compile Include="umldesign\VbCodeMerger.vb" />
     <Compile Include="views\XmlClassOverrideMethodsView.vb" />
+    <Compile Include="views\XmlClassOverridePropertiesView.vb" />
+    <Compile Include="views\XmlInterfaceMemberView.vb" />
+    <Compile Include="views\XmlInterfaceView.vb" />
     <Compile Include="views\XmlOverrideMemberView.vb" />
     <Compile Include="views\XmlRefRedundancyView.vb" />
     <Compile Include="xml\XmlProjectTools.vb" />
@@ -432,12 +451,20 @@
       <DependentUpon>dlgInlineCode.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgInterface.resx">
+      <DependentUpon>dlgInterface.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="dialogs\dlgMethod.resx">
       <DependentUpon>dlgMethod.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\dlgOverrideMethods.resx">
       <DependentUpon>dlgOverrideMethods.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgOverrideProperties.resx">
+      <DependentUpon>dlgOverrideProperties.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\dlgPackage.resx">
