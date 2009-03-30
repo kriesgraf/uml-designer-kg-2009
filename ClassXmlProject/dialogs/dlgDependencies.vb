@@ -13,6 +13,8 @@ Public Class dlgDependencies
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
             m_xmlDataSource = value
+            ' get a useful tag that transmit generation language ID
+            m_xmlDataSource.Tag = value.Tag
         End Set
     End Property
 
