@@ -8,8 +8,8 @@ Public Class XmlSuperClassView
     Inherits XmlClassSpec
     Implements InterfViewForm
 
-    Private m_eImplementation As EImplementation
     Private m_ListBox As ListBox
+    Private m_eImplementation As EImplementation
 
     Public Property CurrentImplementation() As EImplementation
         Get
@@ -56,7 +56,7 @@ Public Class XmlSuperClassView
             Next xmlview
             ' Overrides some methods
             Dim xmlOverrides As XmlClassOverrideMethodsView = XmlNodeManager.GetInstance().CreateView(Me.Node, "class_override_methods")
-            xmlOverrides.OverrideMethods()
+            xmlOverrides.OverrideMethods(m_eImplementation)
 
         Catch ex As Exception
             Throw ex
