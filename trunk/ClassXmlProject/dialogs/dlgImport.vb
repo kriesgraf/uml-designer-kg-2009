@@ -10,6 +10,8 @@ Public Class dlgImport
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
+            ' get a useful tag that transmit generation language ID
+            m_xmlView.Tag = value.Tag
         End Set
     End Property
 
@@ -92,7 +94,7 @@ Public Class dlgImport
 
     Private Sub Cancel_Button_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.Tag = m_xmlView.Updated
-        Me.DialogResult = DialogResult.Cancel
+        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
     End Sub
 
@@ -114,8 +116,10 @@ Public Class dlgImport
         End Set
     End Property
 
-    Private Sub NewReference_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles NewReference.Click
-        m_xmlView.AddNew(lsbReferences)
+    Private Sub AddNode_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
+    Handles NewReference.Click, NewInterface.Click
+
+        m_xmlView.AddNew(lsbReferences, CType(sender.Tag, String))
     End Sub
 
     Private Sub DeleteReference_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles DeleteReference.Click
@@ -133,7 +137,7 @@ Public Class dlgImport
     Private Sub AddReferences_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
                 Handles mnuReplace.Click, mnuMerge.Click, mnuConfirm.Click
 
-        m_xmlView.AddReferences(lsbReferences, sender.Tag)
+        m_xmlView.AddReferences(lsbReferences, CType(sender.Tag, XmlImportSpec.EImportMode))
     End Sub
 
     Private Sub RemoveRedundant_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RemoveRedundant.Click
@@ -145,9 +149,9 @@ Public Class dlgImport
     End Sub
 
     Private Sub mnuRefDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuRefDependencies.Click
-        If lsbReferences.SelectedItem() IsNot Nothing Then
+        If lsbReferences.SelectedItem IsNot Nothing Then
             Dim fen As New dlgDependencies
-            fen.Document = lsbReferences.SelectedItem()
+            fen.Document = CType(lsbReferences.SelectedItem, XmlComponent)
             fen.ShowDialog()
             If CType(fen.Tag, Boolean) = True Then
                 m_xmlView.Updated = True
@@ -160,8 +164,8 @@ Public Class dlgImport
     End Sub
 
     Private Sub mnuCopy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuCopy.Click
-        If lsbReferences.SelectedItem() IsNot Nothing Then
-            XmlComponent.Clipboard.SetData(lsbReferences.SelectedItem())
+        If lsbReferences.SelectedItem IsNot Nothing Then
+            XmlComponent.Clipboard.SetData(CType(lsbReferences.SelectedItem, XmlComponent))
         End If
     End Sub
 
