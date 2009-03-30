@@ -14,7 +14,7 @@ Public Class VbCodeMerger
         Dim strDestination As String = Nothing
         Dim strTempPath As String = My.Computer.FileSystem.CombinePath(strFolder, strTempFolder)
         Dim bMergeOk As Boolean = False
-
+        Dim strFinalPath As String = My.Computer.FileSystem.CombinePath(strFolder, strFilename)
         Dim strTempFilename As String = My.Computer.FileSystem.CombinePath(strTempPath, strFilename + ".new")
 
         Try
@@ -44,7 +44,6 @@ Public Class VbCodeMerger
 #Else
             ' Move, rename files outside 'Using' blocks
             If bMergeOk Then
-                Dim strFinalPath As String = My.Computer.FileSystem.CombinePath(strFolder, strFilename)
                 MoveFile(strFinalPath, strFinalPath + ".bak")
                 MoveFile(strTempFilename, strFinalPath)
             else
@@ -57,7 +56,12 @@ Public Class VbCodeMerger
 #End If
 
         Catch ex As Exception
-            Throw ex
+
+#If TARGET = "exe" Then
+            Console.WriteLine("Fails to merge file '" + strTempFilename + "' with '" + strFinalPath + "'" + vbCrLf + ex.ToString)
+#Else
+            Throw New Exception("Fails to merge file '" + strTempFilename + "' with '" + strFinalPath + "'", ex)
+#End If
         End Try
     End Sub
 
@@ -171,7 +175,7 @@ Public Class VbCodeMerger
         Dim previous As XmlNode = Nothing
         Dim body, clone, second As XmlNode
 
-        For Each child In firstParent.ChildNodes()
+        For Each child As XmlNode In firstParent.ChildNodes()
             Dim strNodeName As String = GetNodeName(child)
             If IsNotCheck(child) = False _
             Then
@@ -182,9 +186,9 @@ Public Class VbCodeMerger
                         previous = child
 
                     Case "vb-doc"
-						' Ignore 
+                        ' Ignore 
 
-					Case Else
+                    Case Else
                         previous = child
                 End Select
             Else
@@ -769,11 +773,15 @@ Public Class VbCodeMerger
                         list = parent.SelectNodes(strQuery)
                         If list.Count > 0 Then
                             result = list.Item(0)
-                            Dim i As Integer
+                            Dim i As Integer = 1
 
-                            While i < list.Count And IsNotCheck(result) = False
-                                i += 1
-                                result = list.Item(i)
+                            While i < list.Count
+                                If IsNotCheck(result) = False Then
+                                    i += 1
+                                    result = list.Item(i)
+                                Else
+                                    Exit While
+                                End If
                             End While
 
                             If IsNotCheck(result) = False Then
@@ -804,9 +812,9 @@ Public Class VbCodeMerger
     Private Shared Function GetName(ByVal node As XmlNode) As String
         Select Case node.Name
             Case "get", "set"
-                Return node.ParentNode.Attributes.GetNamedItem("name").Value
+                Return node.ParentNode.Attributes.ItemOf("name").Value
             Case Else
-                Return node.Attributes.GetNamedItem("name").Value
+                Return node.Attributes.ItemOf("name").Value
         End Select
     End Function
 
@@ -831,7 +839,7 @@ Public Class VbCodeMerger
     End Sub
 
     Private Shared Sub SetAttributevalue(ByVal node As XmlNode, ByVal name As String, ByVal value As Object)
-        Dim attrib As XmlAttribute = node.Attributes.GetNamedItem(name)
+        Dim attrib As XmlAttribute = node.Attributes.ItemOf(name)
         If attrib Is Nothing Then
             attrib = node.Attributes.Append(node.OwnerDocument.CreateAttribute(name))
         End If
@@ -843,33 +851,33 @@ Public Class VbCodeMerger
     End Function
 
     Private Shared Function GetStartLine(ByVal node As XmlNode) As Integer
-        Return Val(node.Attributes.GetNamedItem("start").Value)
+        Return CInt(node.Attributes.ItemOf("start").Value)
     End Function
 
     Private Shared Function GetChecked(ByVal node As XmlNode) As Boolean
-        If node.Attributes.GetNamedItem("checked") IsNot Nothing Then
-            Return (node.Attributes.GetNamedItem("checked").Value = "True")
+        If node.Attributes.ItemOf("checked") IsNot Nothing Then
+            Return (node.Attributes.ItemOf("checked").Value = "True")
         End If
         Return True
     End Function
 
     Private Shared Function GetStopLine(ByVal node As XmlNode) As Integer
-        If node.Attributes.GetNamedItem("end") IsNot Nothing Then
-            Return Val(node.Attributes.GetNamedItem("end").Value)
+        If node.Attributes.ItemOf("end") IsNot Nothing Then
+            Return CInt(node.Attributes.ItemOf("end").Value)
         End If
         Return 0
     End Function
 
     Private Shared Function GetParamTypes(ByVal node As XmlNode) As String
-        If node.Attributes.GetNamedItem("types") IsNot Nothing Then
-            Return node.Attributes.GetNamedItem("types").Value
+        If node.Attributes.ItemOf("types") IsNot Nothing Then
+            Return node.Attributes.ItemOf("types").Value
         End If
         Return "False"
     End Function
 
     Private Shared Function GetParams(ByVal node As XmlNode) As String
-        If node.Attributes.GetNamedItem("params") IsNot Nothing Then
-            Return node.Attributes.GetNamedItem("params").Value
+        If node.Attributes.ItemOf("params") IsNot Nothing Then
+            Return node.Attributes.ItemOf("params").Value
         End If
         Return "False"
     End Function
@@ -893,7 +901,7 @@ Public Class VbCodeMerger
     Private Shared Function GetLastEndLine(ByVal node As XmlNode) As Integer
         Dim last As XmlNode = node.SelectSingleNode("end-" + node.Name)
         If last IsNot Nothing Then
-            Return Val(last.InnerText)
+            Return CInt(last.InnerText)
         End If
         Return 0
     End Function
@@ -903,8 +911,8 @@ Public Class VbCodeMerger
     End Sub
 
     Private Shared Function GetPosition(ByVal node As XmlNode) As Integer
-        If node.Attributes.GetNamedItem("pos") IsNot Nothing Then
-            Return Val(node.Attributes.GetNamedItem("pos").Value)
+        If node.Attributes.ItemOf("pos") IsNot Nothing Then
+            Return CInt(node.Attributes.ItemOf("pos").Value)
         End If
         Return 1
     End Function
