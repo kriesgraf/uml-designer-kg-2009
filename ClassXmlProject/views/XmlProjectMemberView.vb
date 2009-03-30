@@ -14,6 +14,7 @@ Public Class XmlProjectMemberView
     Implements InterfNodeCounter
     Implements IEnumerable  ' Use by BindingSource to load information
     Implements IComparer
+    Implements InterfObject
 
 #Region "Class declarations"
 
@@ -30,6 +31,8 @@ Public Class XmlProjectMemberView
     End Enum
 
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
+    Private m_xmlParentView As XmlProjectMemberView
+
 #End Region
 
 #Region "Properties"
@@ -47,6 +50,17 @@ Public Class XmlProjectMemberView
             End If
             MyBase.Tag = value
         End Set
+    End Property
+
+    Public ReadOnly Property ClassImpl() As EImplementation
+        Get
+            If Me.NodeName = "class" _
+            Then
+                Return ConvertDtdToEnumImpl(GetAttribute("implementation"))
+            Else
+                Return EImplementation.Unknown
+            End If
+        End Get
     End Property
 
     Public ReadOnly Property CurrentContext() As String Implements InterfListViewNotifier.CurrentContext
@@ -74,7 +88,7 @@ Public Class XmlProjectMemberView
                     xmlcpnt.Tag = Me.Tag
                     Return New String() {xmlcpnt.Name, xmlcpnt.Comment, xmlcpnt.NodeName}
 
-                Case "reference"
+                Case "reference", "interface"
                     Dim xmlcpnt As XmlReferenceSpec = New XmlReferenceSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
                     xmlcpnt.Tag = Me.Tag
@@ -107,7 +121,7 @@ Public Class XmlProjectMemberView
                     xmlcpnt.Tag = Me.Tag
                     Return xmlcpnt.Comment
 
-                Case "reference"
+                Case "reference", "interface"
                     Dim xmlcpnt As XmlReferenceSpec = New XmlReferenceSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
                     xmlcpnt.Tag = Me.Tag
@@ -138,7 +152,7 @@ Public Class XmlProjectMemberView
                     Return EIcon.Package
                 Case "class"
                     Return EIcon.ClassElement
-                Case "reference"
+                Case "reference", "interface"
                     Return EIcon.ClassElement
                 Case "relationship"
                     Return EIcon.RelationShip
@@ -165,12 +179,41 @@ Public Class XmlProjectMemberView
         End Set
     End Property
 
+    Public Property InterfObject() As Object Implements InterfObject.InterfObject
+        Get
+            Return m_xmlParentView
+        End Get
+        Set(ByVal value As Object)
+            m_xmlParentView = CType(value, XmlProjectMemberView)
+        End Set
+    End Property
+
 #End Region
 
 #Region "Public methods"
 
     Public Sub New(Optional ByVal node As XmlNode = Nothing)
         MyBase.New(node)
+    End Sub
+
+    Public Sub UpdateObject() Implements InterfObject.Update
+        Select Case Me.NodeName
+            Case "property"
+                If m_xmlParentView.ClassImpl = EImplementation.Interf _
+                Then
+                    Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
+                    xmlProperty.OverridableProperty = True
+                End If
+            Case "method"
+                If m_xmlParentView.ClassImpl = EImplementation.Interf _
+                Then
+                    Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
+                    xmlMethod.Implementation = EImplementation.Interf
+                End If
+
+            Case Else
+                ' Ignore
+        End Select
     End Sub
 
     Public Function CanDrag() As Boolean Implements InterfListViewNotifier.CanDrag
@@ -205,7 +248,7 @@ Public Class XmlProjectMemberView
 
             Case "import"
                 Select Case child.NodeName
-                    Case "reference"
+                    Case "reference", "interface"
                         bResult = True
                 End Select
 
@@ -237,7 +280,7 @@ Public Class XmlProjectMemberView
                 Case "class"
                     bDisplayChildren = Me.TestNode("import | typedef | property | method")
                 Case "import"
-                    bDisplayChildren = Me.TestNode("export/reference")
+                    bDisplayChildren = Me.TestNode("export/*")
             End Select
         End If
 
@@ -257,7 +300,7 @@ Public Class XmlProjectMemberView
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
         Try
             'Debug.Print("(LoadChildrenList)" + Me.ToString + ":=" + Str(Me.Tag))
-            AddChildren(SelectNodes("import | class | export/reference | package | relationship | typedef | property | method"), strViewName)
+            AddChildren(SelectNodes("import | class | export/reference | export/interface | package | relationship | typedef | property | method"), strViewName)
             MyBase.ChildrenList.Sort(Me)
 
         Catch ex As Exception
@@ -324,7 +367,7 @@ Public Class XmlProjectMemberView
     End Sub
 
     Public Sub ChangeView(ByVal dataControl As DataListView) Implements InterfListViewControl.ChangeView
-        Select dataControl.View
+        Select Case dataControl.View
             Case View.Tile
                 dataControl.TileSize = New Size(200, 90)
                 dataControl.ArrangeIcons(ListViewAlignment.SnapToGrid)
@@ -378,7 +421,7 @@ Public Class XmlProjectMemberView
         Try
             Dim xmlcpnt As XmlProjectMemberView = CType(removeNode, XmlProjectMemberView)
             Select Case xmlcpnt.NodeName
-                Case "typedef", "class", "reference"
+                Case "typedef", "class", "reference", "interface"
                     ' Search link from parent node
                     If SelectNodes("//*[@*[.='" + GetID(xmlcpnt.Node) + "' and name()!='id']]").Count > 0 Then
 
