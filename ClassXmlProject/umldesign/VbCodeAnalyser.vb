@@ -765,6 +765,9 @@ Public Class VbCodeAnalyser
                 m_textWriter.WriteAttributeString("end", iStopLine.ToString)
                 m_textWriter.WriteAttributeString("pos", iPos.ToString)
                 m_textWriter.WriteAttributeString("name", split(3).Trim())
+
+                CheckParamsInstruction(split(4))
+
                 m_textWriter.WriteEndElement()
 
                 Return ClassMember.AbstractMethod
@@ -800,7 +803,6 @@ Public Class VbCodeAnalyser
                 Return ClassMember.AbstractMethod
             End If
             CheckParamsInstruction(split(9))
-            'm_textWriter.WriteAttributeString("params", )
             Return ClassMember.ImplementedMethod
 
         ElseIf regOperatorDeclaration.IsMatch(strInstruction) Then
