@@ -5,6 +5,7 @@ Imports ClassXmlProject.XmlProjectTools
 Imports System.ComponentModel
 Imports System.Xml
 
+
 Public Class XmlMethodSpec
     Inherits XmlComposite
 
@@ -142,7 +143,7 @@ Public Class XmlMethodSpec
    DescriptionAttribute("Const method")> _
     Public Property Modifier() As Boolean
         Get
-            Return (GetAttribute("modifier") = "const")
+            Return (CheckAttribute("modifier", "const", "var"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
@@ -157,13 +158,28 @@ Public Class XmlMethodSpec
     DescriptionAttribute("Inline code")> _
     Public Property Inline() As Boolean
         Get
-            Return (GetAttribute("inline") = "yes")
+            Return (CheckAttribute("inline", "yes", "no"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
                 SetAttribute("inline", "yes")
             Else
                 SetAttribute("inline", "no")
+            End If
+        End Set
+    End Property
+
+    <CategoryAttribute("UML design"), _
+   DescriptionAttribute("Overrides method")> _
+    Public Property OverridesMethod() As String
+        Get
+            Return GetAttribute("overrides")
+        End Get
+        Set(ByVal value As String)
+            If value = "" Then
+                RemoveAttribute("overrides")
+            Else
+                AddAttribute("overrides", CStr(value))
             End If
         End Set
     End Property
@@ -247,22 +263,6 @@ Public Class XmlMethodSpec
             SetAttribute("num-id", value)
         End Set
     End Property
-
-    <CategoryAttribute("XmlComponent"), _
-    DescriptionAttribute("Overrides member of class id")> _
-    Public Property OverridesClassId() As String
-        Get
-            Return GetAttribute("overrides")
-        End Get
-        Set(ByVal value As String)
-            If value = "" Then
-                RemoveAttribute("overrides")
-            Else
-                SetAttribute("overrides", value)
-            End If
-        End Set
-    End Property
-
 #End Region
 
 #Region "Public methods"
