@@ -13,15 +13,19 @@ Public Class XmlClassGlobalView
 
     Private m_bInitProcessing As Boolean = False
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
+    Private m_mnuConstructor As ToolStripMenuItem
 
     Private WithEvents m_cmbImplementation As ComboBox
-    Private m_lblInline As Label
     Private WithEvents m_cmbParamInline As ComboBox
+
+    Private m_cmdImplementation As New ComboCommand
+    Private m_cmdParamInline As New ComboCommand
+    Private m_cmdConstructor As New ComboCommand
+    Private m_cmdDestructor As New ComboCommand
 
     Public ReadOnly Property CurrentClassImpl() As EImplementation
         Get
-            Return ConvertViewToEnumImpl(m_cmbImplementation.SelectedItem)
+            Return ConvertViewToEnumImpl(CType(m_cmbImplementation.SelectedItem, String))
         End Get
     End Property
 
@@ -47,6 +51,10 @@ Public Class XmlClassGlobalView
         m_xmlBindingsList.Init()
     End Sub
 
+    Public Sub UpdateObject() Implements InterfObject.Update
+
+    End Sub
+
     Public Function UpdateValues() As Boolean
         Dim bResult As Boolean = False
         Try
@@ -64,10 +72,7 @@ Public Class XmlClassGlobalView
                 End If
             ElseIf CheckTemplate(True) = True _
             Then
-                If MyBase.GenerationLanguage = ELanguage.Language_CplusPlus _
-                Then
-                    Me.Inline = m_cmbParamInline.SelectedItem
-                End If
+                Me.Inline = CType(m_cmbParamInline.SelectedItem, String)
                 bResult = True
             End If
 
@@ -123,6 +128,9 @@ Public Class XmlClassGlobalView
 
     Public Sub InitBindingConstructor(ByVal titleControl As Label, ByVal dataControl As ComboBox, ByVal btnControl As Button)
         Try
+            m_cmdConstructor.Combo = dataControl
+            m_cmdConstructor.Title = titleControl
+
             Select Case MyBase.GenerationLanguage
                 Case ELanguage.Language_CplusPlus
                     titleControl.Text = "Default constructor:"
@@ -136,9 +144,13 @@ Public Class XmlClassGlobalView
                     btnControl.Visible = False
             End Select
 
-            dataControl.DropDownStyle = ComboBoxStyle.DropDownList
-            dataControl.Items.AddRange(New Object() {"no", "private", "protected", "public"})
+            With dataControl
+                .DropDownStyle = ComboBoxStyle.DropDownList
+                .Items.AddRange(New Object() {"no", "private", "protected", "public"})
+            End With
             m_xmlBindingsList.AddBinding(dataControl, Me, "Constructor", "SelectedItem")
+
+            UpdateConstructorControl()
 
         Catch ex As Exception
             Throw ex
@@ -147,25 +159,33 @@ Public Class XmlClassGlobalView
 
     Public Sub InitBindingDestructor(ByVal titleControl As Label, ByVal dataControl As ComboBox, ByVal btnControl As Button)
         Try
-            If MyBase.GenerationLanguage = ELanguage.Language_CplusPlus _
+            m_cmdDestructor.Combo = dataControl
+            m_cmdDestructor.Title = titleControl
+
+            With dataControl
+                .DropDownStyle = ComboBoxStyle.DropDownList
+                .Items.AddRange(New Object() {"no", "private", "protected", "public"})
+            End With
+            m_xmlBindingsList.AddBinding(dataControl, Me, "Destructor", "SelectedItem")
+
+            If MyBase.GenerationLanguage <> ELanguage.Language_CplusPlus _
             Then
-                dataControl.DropDownStyle = ComboBoxStyle.DropDownList
-                dataControl.Items.AddRange(New Object() {"private", "protected", "public"})
-                m_xmlBindingsList.AddBinding(dataControl, Me, "Destructor", "SelectedItem")
-            Else
-                titleControl.Visible = False
-                dataControl.Visible = False
-                dataControl.Enabled = False
                 btnControl.Visible = False
             End If
+
+            UpdateDestructorControl()
+
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
     End Sub
 
-    Public Sub InitBindingImplementation(ByVal dataControl As ComboBox)
+    Public Sub InitBindingImplementation(ByVal titleControl As Label, ByVal dataControl As ComboBox)
         Try
             m_bInitProcessing = True
+            m_cmbImplementation = dataControl
+            m_cmdDestructor.Combo = dataControl
+            m_cmdDestructor.Title = titleControl
 
             With dataControl
                 .DropDownStyle = ComboBoxStyle.DropDownList
@@ -206,9 +226,13 @@ Public Class XmlClassGlobalView
 
     Public Sub InitBindingInline(ByVal titleControl As Label, ByVal dataControl As ComboBox)
         Try
-            m_lblInline = titleControl
+
+            m_cmdParamInline.Combo = dataControl
+            m_cmdParamInline.Title = titleControl
+
             m_cmbParamInline = dataControl
-            m_cmbParamInline.DropDownStyle = ComboBoxStyle.DropDownList
+            dataControl.DropDownStyle = ComboBoxStyle.DropDownList
+
             UpdateInlineControl()
 
         Catch ex As Exception
@@ -228,6 +252,18 @@ Public Class XmlClassGlobalView
             btn2.Visible = True
             chkPartial.Visible = False
             chkPartial.Enabled = False
+        End If
+    End Sub
+
+    Public Sub UpdateMenuConstructor(ByVal menu As ToolStripMenuItem)
+
+        m_mnuConstructor = menu
+
+        If CurrentClassImpl = EImplementation.Interf _
+        Then
+            m_mnuConstructor.Visible = False
+        Else
+            m_mnuConstructor.Visible = False
         End If
     End Sub
 
@@ -395,43 +431,91 @@ Public Class XmlClassGlobalView
         Try
             m_cmbParamInline.Items.Clear()
             UpdateInlineControl()
+            UpdateConstructorControl()
+            UpdateDestructorControl()
 
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
 
-    Private Sub UpdateInlineControl()
-        If MustCheckTemplate() _
-        Then
-            m_cmbParamInline.Enabled = True
-            m_lblInline.Text = "Model parameter:"
-            m_cmbParamInline.Items.AddRange(New Object() {"A", "A, B"})
-            Dim iCount As Integer = Me.ModelCount
-            If iCount < 0 Then
-                m_cmbParamInline.SelectedIndex = 0
+    Private Sub UpdateConstructorControl()
+        With m_cmdConstructor
+            If Me.CurrentClassImpl = EImplementation.Interf Then
+                m_mnuConstructor.Visible = False
+                .Combo.SelectedIndex = 0
+                .Enabled = False
             Else
-                m_cmbParamInline.SelectedIndex = iCount
+                m_mnuConstructor.Visible = True
+                .Enabled = True
             End If
+        End With
+    End Sub
 
-            m_cmbParamInline.Visible = True
-            m_lblInline.Visible = True
+    Private Sub UpdateDestructorControl()
+        With m_cmdDestructor
+            If Me.CurrentClassImpl = EImplementation.Interf Then
+                If MyBase.GenerationLanguage = ELanguage.Language_CplusPlus _
+                Then
+                    .Combo.SelectedIndex = 0
+                    .Enabled = False
+                    .Visible = True
+                Else
+                    .Combo.SelectedIndex = 0
+                    .Enabled = False
+                    .Visible = False
+                End If
+            ElseIf MyBase.GenerationLanguage = ELanguage.Language_CplusPlus _
+            Then
+                .Enabled = True
+                .Visible = True
+            End If
+        End With
+    End Sub
 
-        ElseIf MyBase.GenerationLanguage = ELanguage.Language_CplusPlus _
-        Then
-            m_cmbParamInline.Enabled = True
-            m_lblInline.Text = "Inline:"
-            m_cmbParamInline.DropDownStyle = ComboBoxStyle.DropDownList
-            m_cmbParamInline.Items.AddRange(New Object() {"none", "constructor", "destructor", "both"})
-            m_cmbParamInline.SelectedItem = Me.Inline
+    Private Sub UpdateInlineControl()
+        With m_cmdParamInline
+            If MustCheckTemplate() _
+            Then
+                .Title.Text = "Model parameter:"
+                .Combo.Items.AddRange(New Object() {"A", "A, B"})
+                Dim iCount As Integer = Me.ModelCount
+                If iCount < 0 Then
+                    .Combo.SelectedIndex = 0
+                Else
+                    .Combo.SelectedIndex = iCount
+                End If
 
-            m_cmbParamInline.Visible = True
-            m_lblInline.Visible = True
-        Else
-            m_cmbParamInline.Enabled = False
-            m_cmbParamInline.Visible = False
-            m_lblInline.Visible = False
-        End If
+                .Visible = True
+                .Enabled = True
+
+            ElseIf MyBase.GenerationLanguage = ELanguage.Language_CplusPlus _
+            Then
+                If Me.CurrentClassImpl = EImplementation.Interf _
+                Then
+                    .Enabled = False
+                    .Visible = True
+                    With .Combo
+                        .Items.AddRange(New Object() {"none"})
+                        .SelectedIndex = 0
+                    End With
+                Else
+                    .Enabled = True
+                    .Visible = True
+                    .Title.Text = "Inline:"
+                    With .Combo
+                        .DropDownStyle = ComboBoxStyle.DropDownList
+                        .Items.AddRange(New Object() {"none", "constructor", "destructor", "both"})
+                        .SelectedItem = Me.Inline
+                    End With
+                End If
+            Else
+                .Enabled = False
+                .Visible = False
+                .Combo.Items.AddRange(New Object() {"none"})
+                .Combo.SelectedIndex = 0
+            End If
+        End With
     End Sub
 
     Private Sub RemoveOverridedProperty(ByVal removeNode As XmlComponent)
