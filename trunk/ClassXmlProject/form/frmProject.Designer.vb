@@ -157,6 +157,7 @@ Partial Class frmProject
         Me.mnuClassDeleteMember = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditReference = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.NewReference = New System.Windows.Forms.ToolStripMenuItem
+        Me.NewInterface = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator14 = New System.Windows.Forms.ToolStripSeparator
         Me.EditReference = New System.Windows.Forms.ToolStripMenuItem
         Me.ReferenceProperties = New System.Windows.Forms.ToolStripMenuItem
@@ -201,7 +202,7 @@ Partial Class frmProject
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.docvwProjectDisplay)
-        Me.SplitContainer1.Size = New System.Drawing.Size(897, 586)
+        Me.SplitContainer1.Size = New System.Drawing.Size(897, 610)
         Me.SplitContainer1.SplitterDistance = 267
         Me.SplitContainer1.TabIndex = 0
         '
@@ -219,7 +220,7 @@ Partial Class frmProject
         Me.lvwProjectMembers.Name = "lvwProjectMembers"
         Me.lvwProjectMembers.ShowGroups = False
         Me.lvwProjectMembers.ShowItemToolTips = True
-        Me.lvwProjectMembers.Size = New System.Drawing.Size(267, 586)
+        Me.lvwProjectMembers.Size = New System.Drawing.Size(267, 610)
         Me.lvwProjectMembers.SmallImageList = Me.SmallIconList
         Me.lvwProjectMembers.TabIndex = 1
         Me.lvwProjectMembers.TileSize = New System.Drawing.Size(160, 90)
@@ -411,14 +412,14 @@ Partial Class frmProject
         Me.docvwProjectDisplay.Location = New System.Drawing.Point(0, 0)
         Me.docvwProjectDisplay.MinimumSize = New System.Drawing.Size(20, 20)
         Me.docvwProjectDisplay.Name = "docvwProjectDisplay"
-        Me.docvwProjectDisplay.Size = New System.Drawing.Size(626, 586)
+        Me.docvwProjectDisplay.Size = New System.Drawing.Size(626, 610)
         Me.docvwProjectDisplay.TabIndex = 0
         Me.docvwProjectDisplay.View = ClassXmlProject.XmlDocumentViewMode.Unknown
         '
         'tlstrpNavigation
         '
         Me.tlstrpNavigation.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btnHome, Me.btnUp, Me.ToolStripSeparator30, Me.btnProjectView, Me.ToolStripSeparator31, Me.btnCopy, Me.btnCut, Me.btnPaste, Me.ToolStripSeparator32, Me.btnDocView, Me.btnZoomIn, Me.btnZoomOut})
-        Me.tlstrpNavigation.Location = New System.Drawing.Point(0, 24)
+        Me.tlstrpNavigation.Location = New System.Drawing.Point(0, 0)
         Me.tlstrpNavigation.Name = "tlstrpNavigation"
         Me.tlstrpNavigation.Size = New System.Drawing.Size(897, 25)
         Me.tlstrpNavigation.TabIndex = 1
@@ -582,13 +583,13 @@ Partial Class frmProject
         'ToolStripContainer1.ContentPanel
         '
         Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.SplitContainer1)
-        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(897, 586)
+        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(897, 610)
         Me.ToolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ToolStripContainer1.LeftToolStripPanelVisible = False
-        Me.ToolStripContainer1.Location = New System.Drawing.Point(0, 49)
+        Me.ToolStripContainer1.Location = New System.Drawing.Point(0, 25)
         Me.ToolStripContainer1.Name = "ToolStripContainer1"
         Me.ToolStripContainer1.RightToolStripPanelVisible = False
-        Me.ToolStripContainer1.Size = New System.Drawing.Size(897, 586)
+        Me.ToolStripContainer1.Size = New System.Drawing.Size(897, 610)
         Me.ToolStripContainer1.TabIndex = 2
         Me.ToolStripContainer1.Text = "ToolStripContainer1"
         Me.ToolStripContainer1.TopToolStripPanelVisible = False
@@ -1170,77 +1171,86 @@ Partial Class frmProject
         '
         'mnuEditReference
         '
-        Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.ToolStripSeparator14, Me.EditReference, Me.ReferenceProperties, Me.ToolStripSeparator34, Me.mnuCopy, Me.mnuPaste, Me.ToolStripSeparator28, Me.mnuRefDependencies, Me.ToolStripSeparator13, Me.AddReferences, Me.ToolStripSeparator15, Me.FindRedundant, Me.DeleteReference, Me.RemoveAll})
+        Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator14, Me.EditReference, Me.ReferenceProperties, Me.ToolStripSeparator34, Me.mnuCopy, Me.mnuPaste, Me.ToolStripSeparator28, Me.mnuRefDependencies, Me.ToolStripSeparator13, Me.AddReferences, Me.ToolStripSeparator15, Me.FindRedundant, Me.DeleteReference, Me.RemoveAll})
         Me.mnuEditReference.Name = "ContextMenuStrip1"
-        Me.mnuEditReference.Size = New System.Drawing.Size(189, 254)
+        Me.mnuEditReference.Size = New System.Drawing.Size(202, 298)
         '
         'NewReference
         '
         Me.NewReference.Image = Global.ClassXmlProject.My.Resources.Resources.Address_Book
         Me.NewReference.Name = "NewReference"
-        Me.NewReference.Size = New System.Drawing.Size(188, 22)
+        Me.NewReference.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.R), System.Windows.Forms.Keys)
+        Me.NewReference.Size = New System.Drawing.Size(201, 22)
         Me.NewReference.Tag = "reference"
         Me.NewReference.Text = "Add new reference"
+        '
+        'NewInterface
+        '
+        Me.NewInterface.Name = "NewInterface"
+        Me.NewInterface.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.I), System.Windows.Forms.Keys)
+        Me.NewInterface.Size = New System.Drawing.Size(201, 22)
+        Me.NewInterface.Tag = "interface"
+        Me.NewInterface.Text = "Add new interface"
         '
         'ToolStripSeparator14
         '
         Me.ToolStripSeparator14.Name = "ToolStripSeparator14"
-        Me.ToolStripSeparator14.Size = New System.Drawing.Size(185, 6)
+        Me.ToolStripSeparator14.Size = New System.Drawing.Size(198, 6)
         '
         'EditReference
         '
         Me.EditReference.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
         Me.EditReference.Name = "EditReference"
-        Me.EditReference.Size = New System.Drawing.Size(188, 22)
+        Me.EditReference.Size = New System.Drawing.Size(201, 22)
         Me.EditReference.Text = "Edit..."
         '
         'ReferenceProperties
         '
         Me.ReferenceProperties.Name = "ReferenceProperties"
-        Me.ReferenceProperties.Size = New System.Drawing.Size(188, 22)
+        Me.ReferenceProperties.Size = New System.Drawing.Size(201, 22)
         Me.ReferenceProperties.Text = "Properties..."
         '
         'ToolStripSeparator34
         '
         Me.ToolStripSeparator34.Name = "ToolStripSeparator34"
-        Me.ToolStripSeparator34.Size = New System.Drawing.Size(185, 6)
+        Me.ToolStripSeparator34.Size = New System.Drawing.Size(198, 6)
         '
         'mnuCopy
         '
         Me.mnuCopy.Image = Global.ClassXmlProject.My.Resources.Resources.Copy
         Me.mnuCopy.Name = "mnuCopy"
-        Me.mnuCopy.Size = New System.Drawing.Size(188, 22)
+        Me.mnuCopy.Size = New System.Drawing.Size(201, 22)
         Me.mnuCopy.Text = "Copy"
         '
         'mnuPaste
         '
         Me.mnuPaste.Image = Global.ClassXmlProject.My.Resources.Resources.Paste
         Me.mnuPaste.Name = "mnuPaste"
-        Me.mnuPaste.Size = New System.Drawing.Size(188, 22)
+        Me.mnuPaste.Size = New System.Drawing.Size(201, 22)
         Me.mnuPaste.Text = "Paste"
         '
         'ToolStripSeparator28
         '
         Me.ToolStripSeparator28.Name = "ToolStripSeparator28"
-        Me.ToolStripSeparator28.Size = New System.Drawing.Size(185, 6)
+        Me.ToolStripSeparator28.Size = New System.Drawing.Size(198, 6)
         '
         'mnuRefDependencies
         '
         Me.mnuRefDependencies.Image = Global.ClassXmlProject.My.Resources.Resources.Search
         Me.mnuRefDependencies.Name = "mnuRefDependencies"
-        Me.mnuRefDependencies.Size = New System.Drawing.Size(188, 22)
+        Me.mnuRefDependencies.Size = New System.Drawing.Size(201, 22)
         Me.mnuRefDependencies.Text = "Search dependencies..."
         '
         'ToolStripSeparator13
         '
         Me.ToolStripSeparator13.Name = "ToolStripSeparator13"
-        Me.ToolStripSeparator13.Size = New System.Drawing.Size(185, 6)
+        Me.ToolStripSeparator13.Size = New System.Drawing.Size(198, 6)
         '
         'AddReferences
         '
         Me.AddReferences.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuReplaceExport, Me.mnuMergeExport, Me.mnuConfirmExport})
         Me.AddReferences.Name = "AddReferences"
-        Me.AddReferences.Size = New System.Drawing.Size(188, 22)
+        Me.AddReferences.Size = New System.Drawing.Size(201, 22)
         Me.AddReferences.Text = "Import references"
         '
         'mnuReplaceExport
@@ -1267,27 +1277,27 @@ Partial Class frmProject
         'ToolStripSeparator15
         '
         Me.ToolStripSeparator15.Name = "ToolStripSeparator15"
-        Me.ToolStripSeparator15.Size = New System.Drawing.Size(185, 6)
+        Me.ToolStripSeparator15.Size = New System.Drawing.Size(198, 6)
         '
         'FindRedundant
         '
         Me.FindRedundant.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
         Me.FindRedundant.Name = "FindRedundant"
-        Me.FindRedundant.Size = New System.Drawing.Size(188, 22)
+        Me.FindRedundant.Size = New System.Drawing.Size(201, 22)
         Me.FindRedundant.Text = "Remove redundancy..."
         '
         'DeleteReference
         '
         Me.DeleteReference.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.DeleteReference.Name = "DeleteReference"
-        Me.DeleteReference.Size = New System.Drawing.Size(188, 22)
+        Me.DeleteReference.Size = New System.Drawing.Size(201, 22)
         Me.DeleteReference.Text = "Delete"
         '
         'RemoveAll
         '
         Me.RemoveAll.Image = Global.ClassXmlProject.My.Resources.Resources.Delete
         Me.RemoveAll.Name = "RemoveAll"
-        Me.RemoveAll.Size = New System.Drawing.Size(188, 22)
+        Me.RemoveAll.Size = New System.Drawing.Size(201, 22)
         Me.RemoveAll.Text = "Remove all"
         '
         'frmProject
@@ -1471,4 +1481,5 @@ Partial Class frmProject
     Friend WithEvents mnuFileNewOmgUmlFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents btnZoomIn As System.Windows.Forms.ToolStripButton
     Friend WithEvents btnZoomOut As System.Windows.Forms.ToolStripButton
+    Friend WithEvents NewInterface As System.Windows.Forms.ToolStripMenuItem
 End Class
