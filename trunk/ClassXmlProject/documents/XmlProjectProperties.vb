@@ -37,6 +37,14 @@ Public Class XmlProjectProperties
         End Set
     End Property
 
+
+    Public ReadOnly Property Language() As String
+        Get
+            Return GetLanguage(GenerationLanguage)
+        End Get
+    End Property
+
+
     <CategoryAttribute("XmlComponent"), _
     Browsable(False), _
     DescriptionAttribute("Simple type list")> _
