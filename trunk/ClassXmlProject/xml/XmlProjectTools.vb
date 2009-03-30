@@ -162,7 +162,7 @@ Public Class XmlProjectTools
                     "Maybe oldest version projects remain in this folder, overwrite this file would corrupt these projects." + vbCrLf + _
                     "If you confirm this operation, you would have to apply a patch to each project in this folder." + vbCrLf + _
                     "Also, we recommend you to move manually this project file in an other folder and press Cancel now. !") _
-                    = DialogResult.Cancel _
+                    = System.Windows.Forms.DialogResult.Cancel _
                 Then
                     Return False
                 End If
@@ -293,7 +293,7 @@ Public Class XmlProjectTools
         strQuery = "collaboration"
         list = SelectNodes(node, strQuery)
 
-        For Each child In list
+        For Each child As XmlNode In list
             node.RemoveChild(child)
         Next child
 
@@ -341,7 +341,7 @@ Public Class XmlProjectTools
             document.Save(strTempFile)
 
             stage = "Apply UML Designer element indexation"
-            RenumberProject(document, True)
+            RenumberProject(document.DocumentElement, True)
 
             stage = "Remove prefix in properties"
             CleanPrefixProperties(document)
@@ -416,7 +416,7 @@ Public Class XmlProjectTools
             document.InsertBefore(docType, document.FirstChild.NextSibling)
 
             stage = "Apply UML Designer element indexation"
-            RenumberProject(document)
+            RenumberProject(document.DocumentElement)
 
             ' Temporary saving to check result before renumber
             document.Save(strTempFile)
@@ -550,7 +550,7 @@ Public Class XmlProjectTools
 
     Public Shared Sub AddAttributeValue(ByRef node As XmlNode, ByVal strAttribute As String, Optional ByVal strValue As String = "")
         Try
-            Dim attrib As XmlAttribute = node.Attributes.GetNamedItem(strAttribute)
+            Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
 
             If attrib Is Nothing Then
                 attrib = node.OwnerDocument.CreateAttribute(strAttribute)
@@ -566,7 +566,7 @@ Public Class XmlProjectTools
 
     Public Shared Sub RemoveAttribute(ByRef node As XmlNode, ByVal strAttribute As String)
         Try
-            Dim attrib As XmlAttribute = node.Attributes.GetNamedItem(strAttribute)
+            Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
 
             If attrib IsNot Nothing Then
                 attrib = node.OwnerDocument.CreateAttribute(strAttribute)
@@ -807,7 +807,7 @@ Public Class XmlProjectTools
         Dim strResult As String = Nothing
         Try
             If nodeXml IsNot Nothing Then
-                nodeXml = nodeXml.Attributes.GetNamedItem(name)
+                nodeXml = nodeXml.Attributes.ItemOf(name)
                 If nodeXml IsNot Nothing Then
                     strResult = nodeXml.Value
                 End If
@@ -936,6 +936,19 @@ Public Class XmlProjectTools
                 Return "container"
             Case Else
                 Return "simple"
+        End Select
+    End Function
+
+    Public Shared Function GetLanguage(ByVal eTag As ELanguage) As String
+        Select Case eTag
+            Case ELanguage.Language_CplusPlus
+                Return "C++"
+            Case ELanguage.Language_Java
+                Return "Java"
+            Case ELanguage.Language_Vbasic
+                Return "Vb.NET"
+            Case Else
+                Return "Unknown"
         End Select
     End Function
 
@@ -1307,7 +1320,7 @@ Public Class XmlProjectTools
 
     Private Shared Sub FindTemplateClasses(ByVal document As XmlDocument)
         Try
-            Dim i As Int16
+            Dim i As Integer
             For Each classNode As XmlNode In document.SelectNodes("//class[@implementation='container']")
                 i = 1
                 For Each model As XmlNode In classNode.SelectNodes("model")
@@ -1321,7 +1334,7 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Private Shared Sub ReplaceTemplateType(ByVal index As Int16, ByVal strLabel As String, ByVal classNode As XmlNode)
+    Private Shared Sub ReplaceTemplateType(ByVal index As Integer, ByVal strLabel As String, ByVal classNode As XmlNode)
         For Each typeNode As XmlNode In classNode.SelectNodes("descendant::type[@desc='" + strLabel + "']")
             RemoveAttribute(typeNode, "desc")
             AddAttributeValue(typeNode, "idref", "templ" + CStr(index))
@@ -1447,7 +1460,7 @@ Public Class XmlProjectTools
     Private Shared Sub FindCollaborations(ByVal document As XmlDocument)
         Try
             Dim list As XmlNodeList = document.SelectNodes("//property[id(type/@idref)[name()='class']]")
-            Dim index As Int16 = 1
+            Dim index As Integer = 1
             Dim propNode As XmlNode
 
             For Each propNode In list
@@ -1472,7 +1485,7 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Private Shared Function CreateRelationShip(ByVal index As Int16, ByVal propNode As XmlNode, ByVal document As XmlDocument) As Boolean
+    Private Shared Function CreateRelationShip(ByVal index As Integer, ByVal propNode As XmlNode, ByVal document As XmlDocument) As Boolean
         Try
             Dim strComment As String = GetNodeString(propNode, "comment")
             Dim classFather As XmlNode = propNode.ParentNode
@@ -1503,7 +1516,7 @@ Public Class XmlProjectTools
         Return False
     End Function
 
-    Private Shared Function CreateRelationShipFromType(ByVal index As Int16, ByVal propNode As XmlNode, ByVal typeNode As XmlNode, ByVal document As XmlDocument, Optional ByVal prefixList As String = "List") As Boolean
+    Private Shared Function CreateRelationShipFromType(ByVal index As Integer, ByVal propNode As XmlNode, ByVal typeNode As XmlNode, ByVal document As XmlDocument, Optional ByVal prefixList As String = "List") As Boolean
         Try
             Dim strComment As String = GetNodeString(propNode, "comment")
             Dim classFather As XmlNode = propNode.ParentNode
@@ -1558,7 +1571,7 @@ Public Class XmlProjectTools
             'Debug.Print("inherited=" + GetName(parent))
             list.Add(GetID(parent))
 
-            For Each child In SelectNodes(parent, "inherited")
+            For Each child As XmlNode In SelectNodes(parent, "inherited")
                 Dim inherited As XmlNode = SelectNodeId(child, parent)
                 SelectInherited(inherited, list)
             Next child
