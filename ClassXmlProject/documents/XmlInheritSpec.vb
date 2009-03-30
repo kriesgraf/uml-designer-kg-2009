@@ -12,7 +12,7 @@ Public Class XmlInheritSpec
     DescriptionAttribute("Inherited class name")> _
     Public Overrides Property Name() As String
         Get
-            Dim attrib As XmlAttribute = GetElementById(Me.Idref).Attributes.GetNamedItem("name")
+            Dim attrib As XmlAttribute = GetElementById(Me.Idref).Attributes.ItemOf("name")
             If attrib IsNot Nothing Then Return attrib.Value
             Return Nothing
         End Get
