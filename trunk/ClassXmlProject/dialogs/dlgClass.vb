@@ -287,7 +287,6 @@ Public Class dlgClass
             m_xmlView.Updated = True
         End If
     End Sub
-#End Region
 
     Private Sub CopyMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CopyMember.Click
         PasteMember.Enabled = gridMembers.CopySelectedItem()
@@ -299,4 +298,5 @@ Public Class dlgClass
         End If
         PasteMember.Enabled = False
     End Sub
+#End Region
 End Class
