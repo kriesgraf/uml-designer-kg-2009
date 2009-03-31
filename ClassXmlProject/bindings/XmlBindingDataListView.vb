@@ -259,14 +259,16 @@ Public Class XmlBindingDataListView
                 xmlComponent.SetIdReference(m_xmlReferenceNodeCounter)
 
                 Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
-                xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+                If child IsNot Nothing Then
+                    xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
 
-                With CType(xmlView, InterfObject)
-                    .InterfObject = m_xmlParentNode
-                    .Update()
-                End With
+                    With CType(xmlView, InterfObject)
+                        .InterfObject = m_xmlParentNode
+                        .Update()
+                    End With
 
-                Refresh()
+                    Refresh()
+                End If
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -316,12 +318,16 @@ Public Class XmlBindingDataListView
 
 
                     If component IsNot Nothing Then
-                        m_xmlParentNode.AppendComponent(component)
-                        Refresh()
-                        Return True
+                        Dim child As XmlNode = m_xmlParentNode.AppendComponent(component)
+                        If child IsNot Nothing Then
+                            Refresh()
+                            Return True
+                        Else
+                            MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
+                        End If
+                    Else
+                        MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
                     End If
-                Else
-                    MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
                 End If
             End If
 
@@ -342,10 +348,14 @@ Public Class XmlBindingDataListView
                     xmlComponent.Name = component.Name + "_copy"
                     xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
 
-                    Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
-                    Dim xmlView As XmlComponent = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
-                    Refresh()
-                    Return True
+                    Dim child As XmlNode = m_xmlParentNode.AppendComponent(component)
+                    If child IsNot Nothing Then
+                        Dim xmlView As XmlComponent = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+                        Refresh()
+                        Return True
+                    Else
+                        MsgBox("Sorry can't dupplicate node '" + component.NodeName + "'!", MsgBoxStyle.Exclamation)
+                    End If
                 End If
             End If
 

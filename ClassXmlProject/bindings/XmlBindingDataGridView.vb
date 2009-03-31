@@ -239,20 +239,22 @@ Public Class XmlBindingDataGridView
                 xmlComponent.SetIdReference(m_xmlReferenceNodeCounter)
 
                 Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
-                xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+                If child IsNot Nothing Then
+                    xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
 
-                If m_refObject IsNot Nothing  Then
-                    With CType(xmlView, InterfObject)
-                        .InterfObject = m_refObject
-                        .Update()
-                    End With
-                End If
+                    If m_refObject IsNot Nothing Then
+                        With CType(xmlView, InterfObject)
+                            .InterfObject = m_refObject
+                            .Update()
+                        End With
+                    End If
 
-                Refresh()
+                    Refresh()
 
-                If m_dataControl.AllowUserToAddRows = False Then
-                    m_BindingSource.ResetBindings(True)
-                    m_dataControl.AllowUserToAddRows = m_bAllowUserToAddRows
+                    If m_dataControl.AllowUserToAddRows = False Then
+                        m_BindingSource.ResetBindings(True)
+                        m_dataControl.AllowUserToAddRows = m_bAllowUserToAddRows
+                    End If
                 End If
             End If
         Catch ex As Exception
@@ -293,10 +295,14 @@ Public Class XmlBindingDataGridView
                     xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
 
                     Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
-                    Dim xmlView As XmlComponent = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+                    If child IsNot Nothing Then
+                        Dim xmlView As XmlComponent = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
 
-                    Refresh()
-                    Return True
+                        Refresh()
+                        Return True
+                    Else
+                        MsgBox("Sorry can't dupplicate node '" + component.NodeName + "'!", MsgBoxStyle.Exclamation)
+                    End If
                 End If
             End If
 
@@ -357,9 +363,14 @@ Public Class XmlBindingDataGridView
 
 
                     If component IsNot Nothing Then
-                        m_xmlParentNode.AppendComponent(component)
-                        Refresh()
-                        Return True
+                        Dim child As XmlNode = m_xmlParentNode.AppendComponent(component)
+                        If child IsNot Nothing _
+                        Then
+                            Refresh()
+                            Return True
+                        Else
+                            MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
+                        End If
                     End If
                 Else
                     MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
