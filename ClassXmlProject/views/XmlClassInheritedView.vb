@@ -51,7 +51,7 @@ Public Class XmlClassInheritedView
 
     Public Sub InitControl(ByVal control As System.Windows.Forms.Control) Implements InterfViewControl.InitControl
         Dim data As XmlDataGridView = CType(control, XmlDataGridView)
-
+        Dim size As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.Fill
         With data
             .Columns.Clear()
             .AllowDrop = True
@@ -65,7 +65,7 @@ Public Class XmlClassInheritedView
 
         Dim col1 As DataGridViewColumn = New DataGridViewTextBoxColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size
             .ReadOnly = True
             .DataPropertyName = cstFullpathClassName
             .HeaderText = "Name"
@@ -75,7 +75,7 @@ Public Class XmlClassInheritedView
 
         col1 = New DataGridViewTextBoxColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size
             .ReadOnly = True
             .DataPropertyName = "ImplementationView"
             .HeaderText = "Implementation"
@@ -86,7 +86,7 @@ Public Class XmlClassInheritedView
         Dim col2 As DataGridViewComboBoxColumn = New DataGridViewComboBoxColumn
         With col2
             .DisplayStyleForCurrentCellOnly = True
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size
             .DataPropertyName = "Range"
             .HeaderText = "Visibility"
             .Name = "ControlName_Range"
