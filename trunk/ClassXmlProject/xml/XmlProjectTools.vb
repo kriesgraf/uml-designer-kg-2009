@@ -278,7 +278,7 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Sub UpdatesCollaborations(ByVal document As XmlDocument)
-        For Each node As XmlNode In document.SelectNodes("//class | //reference")
+        For Each node As XmlNode In document.SelectNodes("//class | //interface | //reference")
             UpdateOneCollaboration(document, GetID(node))
         Next
     End Sub
@@ -288,7 +288,7 @@ Public Class XmlProjectTools
         Dim list As XmlNodeList
         Dim collaboration As XmlNode
 
-        Dim node As XmlNode = document.SelectSingleNode("(//class | //reference)[@id='" + strID + "']")
+        Dim node As XmlNode = document.SelectSingleNode("(//class | //interface | //reference)[@id='" + strID + "']")
 
         strQuery = "collaboration"
         list = SelectNodes(node, strQuery)
@@ -593,6 +593,25 @@ Public Class XmlProjectTools
         Return xmlResult
     End Function
 
+    Public Shared Function GetFirstClassId(ByVal component As XmlComponent, Optional ByVal strExcludeId As String = "") As String
+        If component.Document Is Nothing Then
+            Throw New Exception("Property m_xmlDocument is null in component " + component.ToString())
+        End If
+
+        Dim current As XmlNode
+        Dim strResult As String = ""
+        Dim strQuery As String = "//class | //interface | //reference[@type='class'][(not(@container) or @container='0')]"
+        If strExcludeId <> "" Then
+            strQuery = "//class[@id!='" + strExcludeId + "'] | //interface[@id!='" + strExcludeId + "']" + _
+                        " | //reference[@id!='" + strExcludeId + "'][@type='class'][(not(@container) or @container='0')]"
+        End If
+        current = component.Document.SelectSingleNode(strQuery)
+        If current IsNot Nothing Then
+            strResult = GetID(current)
+        End If
+        Return strResult
+    End Function
+
     Public Shared Function GetNodeRefCount(ByVal node As XmlNode, ByRef strList As String, ByVal eTag As ELanguage) As Integer
         Dim iResult As Integer = -1
         Try
@@ -771,7 +790,7 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function GetPackage(ByVal node As XmlNode) As String
-        If node.Name = "reference" Then
+        If node.Name = "reference" Or node.Name = "interface" Then
             Return GetAttributeValue(node, "package")
         End If
         Return GetName(node.ParentNode)
@@ -1026,23 +1045,6 @@ Public Class XmlProjectTools
         Return strResult
     End Function
 
-    Public Shared Function GetFullUmlPath(ByVal current As XmlNode) As String
-        Try
-            Select Case current.Name
-                Case "package", "class", "import"
-                    Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
-
-                Case "export"
-                    Return GetFullUmlPath(current.ParentNode.ParentNode) + "/" + GetName(current)
-
-                Case Else
-                    Return "/" + GetName(current)
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
     Public Shared Function GetFullpathDescription(ByVal current As XmlNode, ByVal eTag As ELanguage) As String
         Dim strResult As String = ""
         Try
@@ -1105,7 +1107,7 @@ Public Class XmlProjectTools
                         current = current.ParentNode
                         strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
 
-                    Case "reference"
+                    Case "reference", "interface"
                         If GetAttributeValue(current, "type") = "typedef" Then
                             If GetAttributeValue(current, "class") IsNot Nothing Then
                                 strResult = GetAttributeValue(current, "class") + strSeparator + strResult
