@@ -14,6 +14,25 @@ Public Class XmlOverrideMemberView
         End Get
     End Property
 
+    Public ReadOnly Property OverridableMember() As Boolean
+        Get
+            Select Case Me.NodeName
+                Case "property"
+                    Return CheckAttribute("overridable", "yes", "no")
+
+                Case "method"
+                    Select Case ConvertDtdToEnumImpl(GetAttribute("implementation"))
+                        Case EImplementation.Interf, EImplementation.Node, EImplementation.Root
+                            Return True
+
+                        Case EImplementation.Simple
+                            Return Not (CheckAttribute("constructor", "no", "no"))
+                    End Select
+            End Select
+            Return False
+        End Get
+    End Property
+
     Public ReadOnly Property ParenClassName() As String
         Get
             Return GetAttribute("name", "parent::class")
