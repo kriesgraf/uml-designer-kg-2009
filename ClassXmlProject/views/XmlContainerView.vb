@@ -2,16 +2,13 @@
 Imports System.Windows.Forms
 Imports System.Xml
 Imports System.Collections
-Imports ClassXmlProject.XmlProjectTools
-Imports ClassXmlProject.UmlCodeGenerator
-Imports ClassXmlProject.UmlNodesManager
+Imports ClassXmlProject.XmlNodeListView
 
 Public Class XmlContainerView
     Inherits XmlContainerSpec
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
     Private m_xmlComboTypedef As XmlBindingCombo
     Private m_xmlComboContainer As XmlBindingCombo
     Private m_xmlComboIndex As XmlBindingCombo
@@ -64,25 +61,21 @@ Public Class XmlContainerView
     End Sub
 
     Public Sub InitBindingType(ByVal dataControl As ComboBox)
-        InitTypedefCombo(dataControl)
+        InitTypedefCombo(Me, dataControl)
         m_xmlComboTypedef = New XmlBindingCombo(dataControl, Me.TypeVarDefinition, "Descriptor", "Reference")
     End Sub
 
     Public Sub InitBindingContainer(ByVal dataControl As ComboBox)
-        Dim iContainer As Integer = 1
-        If Me.TypeVarDefinition.Indexed Then iContainer = 2
-        InitTypedefCombo(dataControl, iContainer)
+        InitContainerCombo(Me, dataControl, Me.TypeVarDefinition.Indexed)
         m_xmlComboContainer = New XmlBindingCombo(dataControl, Me.TypeVarDefinition, "ContainerDesc", "ContainerRef")
     End Sub
 
     Public Sub RefreshComboContainer(ByVal bIndexed As Boolean)
-        Dim iContainer As Integer = 1
-        If bIndexed Then iContainer = 2
-        InitTypedefCombo(m_xmlComboContainer.Control, iContainer, True)
+        InitContainerCombo(Me, m_xmlComboContainer.Control, bIndexed)
     End Sub
 
     Public Sub InitBindingComboIndex(ByVal dataControl As ComboBox)
-        InitTypedefCombo(dataControl, -1)
+        InitTypedefCombo(Me, dataControl, EComboList.Type_index)
         m_xmlComboIndex = New XmlBindingCombo(dataControl, Me.TypeVarDefinition, "IndexDesc", "IndexRef")
     End Sub
 
@@ -130,64 +123,6 @@ Public Class XmlContainerView
         Else
             m_xmlBindingsList.AddBinding(dataControl, Me.TypeVarDefinition, "Modifier", "Checked")
         End If
-    End Sub
-
-    Private Sub InitTypedefCombo(ByVal dataControl As ComboBox, Optional ByVal iContainer As Integer = 0, Optional ByVal bClear As Boolean = False)
-        Try
-            Dim myList As New ArrayList
-
-            If bClear Then
-                dataControl.DataSource = Nothing
-                dataControl.Items().Clear()
-            End If
-
-            If iContainer < 0 _
-            Then
-                ' Specific index type
-                AddNodeList(myList, "//class[@implementation!='container']")
-                AddNodeList(myList, "//typedef[@id!='" + Me.Id + "' and (type[@desc and not(list)] or type/enumvalue)]")
-
-                AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
-
-            ElseIf iContainer > 0 And iContainer < 3 _
-            Then
-                ' Specific container type
-                AddNodeList(myList, "//class[@implementation='container' and model[last()=" + CStr(iContainer) + "]]")
-                AddNodeList(myList, "//reference[@container='" + CStr(iContainer) + "']")
-            Else
-                ' Simple value type
-                AddNodeList(myList, "//class[@implementation!='container']")
-                AddNodeList(myList, "//typedef[@id!='" + Me.Id + "']")
-                AddNodeList(myList, "//reference[@container='0' or not(@container)]")
-
-                AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
-            End If
-
-            myList.Sort(New XmlNodeListView("_comparer"))
-
-            With dataControl
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
-    Private Sub AddNodeList(ByRef myList As ArrayList, ByVal xpath As String)
-        Dim iterator As IEnumerator = MyBase.SelectNodes(xpath).GetEnumerator
-        iterator.Reset()
-
-        'Debug.Print("xPath=" + xpath)
-
-        While iterator.MoveNext
-            Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(CType(iterator.Current, XmlNode))
-            xmlcpnt.Tag = Me.Tag
-            'Debug.Print(xmlcpnt.FullpathClassName)
-            myList.Add(xmlcpnt)
-        End While
     End Sub
 
     Public Sub New()

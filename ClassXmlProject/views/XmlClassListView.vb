@@ -1,9 +1,8 @@
 Imports System
-Imports System.Windows.Forms
 Imports System.Xml
+Imports System.Windows.Forms
 Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
-Imports ClassXmlProject.UmlCodeGenerator
 
 Public Class XmlClassListView
     Inherits XmlComponent
@@ -32,15 +31,19 @@ Public Class XmlClassListView
         MyBase.New(nodeXml)
     End Sub
 
-    Public Shared Sub AddListComboBoxColumn(ByVal DataPropertyName As String, _
-                                          ByVal HeaderText As String, _
-                                          ByVal column As DataGridViewColumn, _
-                                          ByVal xmlDocument As XmlDocument, _
-                                          ByVal eTag As ELanguage)
+    Public Shared Sub AddListComboBoxColumn(ByVal document As XmlComponent, _
+                                            ByVal DataPropertyName As String, _
+                                            ByVal HeaderText As String, _
+                                            ByVal column As DataGridViewColumn)
         Try
-            Dim list As ArrayList = GetListComponents(xmlDocument, eTag)
-            If list.Count = 0 Then
-                list = Nothing
+            Dim myList As New ArrayList
+            ' Only kind of classes
+            AddNodeList(document, myList, "//class[@implementation!='container']")
+            AddNodeList(document, myList, "//interface")
+            AddNodeList(document, myList, "//reference[@type!='typedef'][@container='0' or not(@container)]")
+
+            If myList.Count = 0 Then
+                myList = Nothing
             End If
             With CType(column, DataGridViewComboBoxColumn)
                 'Debug.Print("DataPropertyName=" + DataPropertyName + ";ValueMember=" + XmlClassListView.cstValueMember)
@@ -53,9 +56,9 @@ Public Class XmlClassListView
                 .MaxDropDownItems = 10
                 .FlatStyle = FlatStyle.Flat
 
-                .DataSource = list
-                .ValueMember = XmlClassListView.cstValueMember
-                .DisplayMember = XmlClassListView.cstDisplayMember
+                .DataSource = myList
+                .ValueMember = cstValueMember
+                .DisplayMember = cstDisplayMember
             End With
 
         Catch ex As Exception
@@ -63,44 +66,18 @@ Public Class XmlClassListView
         End Try
     End Sub
 
-    Private Shared Function GetListComponents(ByVal xmlDocument As XmlDocument, ByVal eTag As ELanguage) As ArrayList
-        Dim listComponents As ArrayList = Nothing
+    Public Shared Sub InitTypedefCombo(ByVal document As XmlComponent, ByVal control As ComboBox)
         Try
-            Dim list As XmlNodeList = xmlDocument.SelectNodes("//class | //reference[@type!='typedef']")
+            Dim myList As New ArrayList
 
-            If list Is Nothing Then
-                Throw New Exception("Class list is empty in method AddClassList")
-            End If
+            AddNodeList(document, myList, "//class[@implementation!='container']")
+            AddNodeList(document, myList, "//interface")
+            AddNodeList(document, myList, "//reference[@type!='typedef'][@container='0' or not(@container)]")
 
-            Dim iterator As IEnumerator = list.GetEnumerator
-            Dim nodeXml As XmlNode
-            Dim xmlcpnt As XmlClassListView
-            iterator.Reset()
-
-            listComponents = New ArrayList
-
-            While iterator.MoveNext
-                nodeXml = CType(iterator.Current, XmlNode)
-                xmlcpnt = New XmlClassListView(nodeXml)
-                xmlcpnt.Tag = eTag
-                'Debug.Print("GetListComponents:=" + xmlcpnt.Name + "(" + xmlcpnt.Id)
-                listComponents.Add(xmlcpnt)
-            End While
-
-            listComponents.Sort(New XmlClassListView(Nothing))
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return listComponents
-    End Function
-
-    Public Shared Sub AddListComboBoxControl(ByVal control As ComboBox, ByVal xmlDocument As XmlDocument, ByVal eTag As ELanguage)
-        Try
             With control
                 .DropDownStyle = ComboBoxStyle.DropDownList
 
-                .DataSource = GetListComponents(xmlDocument, eTag)
+                .DataSource = myList
                 .ValueMember = cstValueMember
                 .DisplayMember = cstDisplayMember
             End With
@@ -114,4 +91,19 @@ Public Class XmlClassListView
         Dim str2 As String = CType(y, XmlClassListView).FullpathClassName
         Return Comparer.DefaultInvariant.Compare(str1, str2)
     End Function
+
+    Private Shared Sub AddNodeList(ByVal document As XmlComponent, ByRef myList As ArrayList, ByVal xpath As String)
+        Dim iterator As IEnumerator = document.Document.SelectNodes(xpath).GetEnumerator
+        iterator.Reset()
+
+        'Debug.Print("xPath=" + xpath)
+
+        While iterator.MoveNext
+            Dim node As XmlNode = CType(iterator.Current, XmlNode)
+            Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(node)
+            xmlcpnt.Tag = document.Tag
+            'Debug.Print("(" + node.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
+            myList.Add(xmlcpnt)
+        End While
+    End Sub
 End Class

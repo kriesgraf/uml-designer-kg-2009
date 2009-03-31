@@ -2,10 +2,9 @@
 Imports System.Xml
 Imports System.Windows.Forms
 Imports System.Collections
-Imports ClassXmlProject.UmlCodeGenerator
+Imports ClassXmlProject.XmlNodeListView
 Imports ClassXmlProject.XmlProjectTools
 Imports Microsoft.VisualBasic.Compatibility.VB6
-Imports ClassXmlProject.UmlNodesManager
 Imports Microsoft.VisualBasic
 
 Public Class XmlTypeView
@@ -180,44 +179,9 @@ Public Class XmlTypeView
         End If
     End Sub
 
-    Private Sub AddNodeList(ByRef myList As ArrayList, ByVal xpath As String)
-        Dim iterator As IEnumerator = MyBase.SelectNodes(xpath).GetEnumerator
-        iterator.Reset()
-        'Debug.Print("xpath=" + xpath)
-        While iterator.MoveNext
-            Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(CType(iterator.Current, XmlNode))
-            xmlcpnt.Tag = Me.Tag
-            'Debug.Print(xmlcpnt.FullpathClassName)
-            myList.Add(xmlcpnt)
-        End While
-    End Sub
-
     Public Sub InitBindingTypedefs(ByVal control As ComboBox)
         Try
-            Dim bIsNotTypedef = (GetNode("parent::typedef") Is Nothing)
-            Dim myList As New ArrayList
-
-            AddModelList(myList)
-            AddNodeList(myList, "//class[@implementation!='container']")
-
-            If Me.Tag <> ELanguage.Language_CplusPlus Then
-                If bIsNotTypedef Then AddNodeList(myList, "//typedef")
-            Else
-                AddNodeList(myList, "//typedef")
-            End If
-
-            AddNodeList(myList, "//reference[@container='0' or not(@container)]")
-
-            AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
-
-            myList.Sort(New XmlNodeListView("_comparer"))
-
-            With control
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
+            InitTypedefCombo(Me, control)
             m_xmlComboTypedef = New XmlBindingCombo(control, Me, "Descriptor", "Reference")
 
         Catch ex As Exception
@@ -244,15 +208,8 @@ Public Class XmlTypeView
 
     Public Sub InitBindingSize(ByVal control As ComboBox)
         Try
-            Dim myList As New ArrayList
+            InitValueCombo(Me, control)
 
-            AddNodeList(myList, "//enumvalue")
-            With control
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
             m_xmlComboSize = New XmlBindingCombo(control, Me, "VarSize", "SizeRef")
 
         Catch ex As Exception
@@ -265,17 +222,8 @@ Public Class XmlTypeView
             If MyBase.ParentNodeName = "typedef" Then
                 control.Enabled = False
             Else
+                InitValueCombo(Me, control)
 
-                Dim myList As New ArrayList
-
-                AddNodeList(myList, "//enumvalue")
-
-                With control
-                    .DropDownStyle = ComboBoxStyle.DropDown
-                    .DisplayMember = "FullpathClassName"
-                    .ValueMember = "Id"
-                    .DataSource = myList
-                End With
                 m_xmlComboValue = New XmlBindingCombo(control, Me, "Value", "ValRef")
             End If
         Catch ex As Exception
