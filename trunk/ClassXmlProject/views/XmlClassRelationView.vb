@@ -9,13 +9,18 @@ Public Class XmlClassRelationView
     Implements InterfNodeCounter
     Implements InterfViewControl
 
-    Private Const cstFullpathTypeDescription As String = "ClassName"
+    Private Const cstFullpathTypeDescription As String = "Type"
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
-
 
     Public ReadOnly Property ClassName() As String
         Get
-            Return MyBase.RelationParent.Name
+            Return MyBase.RelationParent.FullpathClassName
+        End Get
+    End Property
+
+    Public ReadOnly Property Type() As String
+        Get
+            Return MyBase.RelationSpec.Kind.ToString
         End Get
     End Property
 
@@ -23,6 +28,8 @@ Public Class XmlClassRelationView
     Public Sub InitControl(ByVal control As System.Windows.Forms.Control) Implements InterfViewControl.InitControl
         Try
             Dim data As XmlDataGridView = CType(control, XmlDataGridView)
+            Dim size As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.AllCells
+            Dim size2 As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.Fill
 
             With data
                 .Columns.Clear()
@@ -38,7 +45,7 @@ Public Class XmlClassRelationView
 
             Dim col1 As DataGridViewColumn = New DataGridViewTextBoxColumn
             With col1
-                .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                .AutoSizeMode = size
                 .DataPropertyName = "Name"
                 .HeaderText = "Name"
                 .Name = "ControlName_Name"
@@ -47,7 +54,7 @@ Public Class XmlClassRelationView
 
             col1 = New DataGridViewButtonColumn
             With col1
-                .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                .AutoSizeMode = size2
                 .DataPropertyName = cstFullpathTypeDescription
                 .HeaderText = "Type"
                 .Name = "ControlName_Type"
@@ -55,10 +62,19 @@ Public Class XmlClassRelationView
             End With
             data.Columns.Add(col1)
 
+            col1 = New DataGridViewTextBoxColumn
+            With col1
+                .AutoSizeMode = size
+                .DataPropertyName = "ClassName"
+                .HeaderText = "Class"
+                .Name = "ControlName_Class"
+            End With
+            data.Columns.Add(col1)
+
             Dim col2 As DataGridViewComboBoxColumn = New DataGridViewComboBoxColumn
             With col2
                 .DisplayStyleForCurrentCellOnly = True
-                .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                .AutoSizeMode = size2
                 .DataPropertyName = "Range"
                 .HeaderText = "Visibility"
                 .Name = "ControlName_Range"
@@ -68,7 +84,7 @@ Public Class XmlClassRelationView
 
             Dim col3 As DataGridViewCheckBoxColumn = New DataGridViewCheckBoxColumn
             With col3
-                .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                .AutoSizeMode = size2
                 .DataPropertyName = "Member"
                 .HeaderText = "Class member"
                 .Name = "ControlName_Member"
