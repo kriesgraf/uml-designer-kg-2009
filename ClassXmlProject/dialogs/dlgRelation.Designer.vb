@@ -38,7 +38,7 @@ Partial Class dlgRelation
         Me.lblFatherType = New System.Windows.Forms.Label
         Me.lblFatherCardinal = New System.Windows.Forms.Label
         Me.Label3 = New System.Windows.Forms.Label
-        Me.Label4 = New System.Windows.Forms.Label
+        Me.lblFatherClass = New System.Windows.Forms.Label
         Me.Label5 = New System.Windows.Forms.Label
         Me.txtFatherName = New System.Windows.Forms.TextBox
         Me.cmbFatherClass = New System.Windows.Forms.ComboBox
@@ -59,9 +59,9 @@ Partial Class dlgRelation
         Me.lblChildType = New System.Windows.Forms.Label
         Me.cmbChildClass = New System.Windows.Forms.ComboBox
         Me.txtChildName = New System.Windows.Forms.TextBox
-        Me.Label11 = New System.Windows.Forms.Label
+        Me.lblChildCardinal = New System.Windows.Forms.Label
         Me.Label8 = New System.Windows.Forms.Label
-        Me.Label9 = New System.Windows.Forms.Label
+        Me.lblChildClass = New System.Windows.Forms.Label
         Me.Label10 = New System.Windows.Forms.Label
         Me.FlowLayoutPanel3 = New System.Windows.Forms.FlowLayoutPanel
         Me.cmbChildRange = New System.Windows.Forms.ComboBox
@@ -96,7 +96,7 @@ Partial Class dlgRelation
         Me.tabButtons.ColumnCount = 3
         Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 87.0!))
         Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.0!))
-        Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 91.0!))
+        Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 95.0!))
         Me.tabButtons.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.tabButtons.Controls.Add(Me.OK_Button, 1, 0)
         Me.tabButtons.Controls.Add(Me.btnDelete, 0, 0)
@@ -112,7 +112,7 @@ Partial Class dlgRelation
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(588, 5)
+        Me.Cancel_Button.Location = New System.Drawing.Point(586, 5)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -121,7 +121,7 @@ Partial Class dlgRelation
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(505, 5)
+        Me.OK_Button.Location = New System.Drawing.Point(502, 5)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(66, 23)
         Me.OK_Button.TabIndex = 0
@@ -225,7 +225,7 @@ Partial Class dlgRelation
         Me.tabGroupFather.Controls.Add(Me.lblFatherType, 0, 5)
         Me.tabGroupFather.Controls.Add(Me.lblFatherCardinal, 0, 3)
         Me.tabGroupFather.Controls.Add(Me.Label3, 0, 0)
-        Me.tabGroupFather.Controls.Add(Me.Label4, 0, 1)
+        Me.tabGroupFather.Controls.Add(Me.lblFatherClass, 0, 1)
         Me.tabGroupFather.Controls.Add(Me.Label5, 0, 2)
         Me.tabGroupFather.Controls.Add(Me.txtFatherName, 1, 0)
         Me.tabGroupFather.Controls.Add(Me.cmbFatherClass, 1, 1)
@@ -294,17 +294,17 @@ Partial Class dlgRelation
         Me.Label3.Text = "Name:"
         Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'Label4
+        'lblFatherClass
         '
-        Me.Label4.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.lblFatherClass.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(22, 25)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(35, 25)
-        Me.Label4.TabIndex = 1
-        Me.Label4.Text = "Class:"
-        Me.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.lblFatherClass.AutoSize = True
+        Me.lblFatherClass.Location = New System.Drawing.Point(22, 25)
+        Me.lblFatherClass.Name = "lblFatherClass"
+        Me.lblFatherClass.Size = New System.Drawing.Size(35, 25)
+        Me.lblFatherClass.TabIndex = 1
+        Me.lblFatherClass.Text = "Class:"
+        Me.lblFatherClass.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Label5
         '
@@ -471,9 +471,9 @@ Partial Class dlgRelation
         Me.tabGroupChild.Controls.Add(Me.lblChildType, 0, 5)
         Me.tabGroupChild.Controls.Add(Me.cmbChildClass, 1, 1)
         Me.tabGroupChild.Controls.Add(Me.txtChildName, 1, 0)
-        Me.tabGroupChild.Controls.Add(Me.Label11, 0, 3)
+        Me.tabGroupChild.Controls.Add(Me.lblChildCardinal, 0, 3)
         Me.tabGroupChild.Controls.Add(Me.Label8, 0, 0)
-        Me.tabGroupChild.Controls.Add(Me.Label9, 0, 1)
+        Me.tabGroupChild.Controls.Add(Me.lblChildClass, 0, 1)
         Me.tabGroupChild.Controls.Add(Me.Label10, 0, 2)
         Me.tabGroupChild.Controls.Add(Me.FlowLayoutPanel3, 1, 2)
         Me.tabGroupChild.Controls.Add(Me.FlowLayoutPanel4, 1, 3)
@@ -536,17 +536,17 @@ Partial Class dlgRelation
         Me.txtChildName.Size = New System.Drawing.Size(256, 20)
         Me.txtChildName.TabIndex = 13
         '
-        'Label11
+        'lblChildCardinal
         '
-        Me.Label11.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.lblChildCardinal.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Label11.AutoSize = True
-        Me.Label11.Location = New System.Drawing.Point(9, 83)
-        Me.Label11.Name = "Label11"
-        Me.Label11.Size = New System.Drawing.Size(48, 33)
-        Me.Label11.TabIndex = 11
-        Me.Label11.Text = "Cardinal:"
-        Me.Label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.lblChildCardinal.AutoSize = True
+        Me.lblChildCardinal.Location = New System.Drawing.Point(9, 83)
+        Me.lblChildCardinal.Name = "lblChildCardinal"
+        Me.lblChildCardinal.Size = New System.Drawing.Size(48, 33)
+        Me.lblChildCardinal.TabIndex = 11
+        Me.lblChildCardinal.Text = "Cardinal:"
+        Me.lblChildCardinal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Label8
         '
@@ -560,17 +560,17 @@ Partial Class dlgRelation
         Me.Label8.Text = "Name:"
         Me.Label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'Label9
+        'lblChildClass
         '
-        Me.Label9.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.lblChildClass.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(22, 25)
-        Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(35, 25)
-        Me.Label9.TabIndex = 2
-        Me.Label9.Text = "Class:"
-        Me.Label9.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.lblChildClass.AutoSize = True
+        Me.lblChildClass.Location = New System.Drawing.Point(22, 25)
+        Me.lblChildClass.Name = "lblChildClass"
+        Me.lblChildClass.Size = New System.Drawing.Size(35, 25)
+        Me.lblChildClass.TabIndex = 2
+        Me.lblChildClass.Text = "Class:"
+        Me.lblChildClass.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Label10
         '
@@ -766,7 +766,7 @@ Partial Class dlgRelation
     Friend WithEvents tabGroupFather As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents lblFatherCardinal As System.Windows.Forms.Label
     Friend WithEvents Label3 As System.Windows.Forms.Label
-    Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents lblFatherClass As System.Windows.Forms.Label
     Friend WithEvents Label5 As System.Windows.Forms.Label
     Friend WithEvents txtFatherName As System.Windows.Forms.TextBox
     Friend WithEvents cmbFatherClass As System.Windows.Forms.ComboBox
@@ -781,9 +781,9 @@ Partial Class dlgRelation
     Friend WithEvents cmbChildRange As System.Windows.Forms.ComboBox
     Friend WithEvents cmbChildClass As System.Windows.Forms.ComboBox
     Friend WithEvents txtChildName As System.Windows.Forms.TextBox
-    Friend WithEvents Label11 As System.Windows.Forms.Label
+    Friend WithEvents lblChildCardinal As System.Windows.Forms.Label
     Friend WithEvents Label8 As System.Windows.Forms.Label
-    Friend WithEvents Label9 As System.Windows.Forms.Label
+    Friend WithEvents lblChildClass As System.Windows.Forms.Label
     Friend WithEvents Label10 As System.Windows.Forms.Label
     Friend WithEvents lblChildLevel As System.Windows.Forms.Label
     Friend WithEvents chkChildMember As System.Windows.Forms.CheckBox
