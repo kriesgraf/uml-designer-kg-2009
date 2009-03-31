@@ -260,6 +260,16 @@ Public Class XmlClassSpec
         Return MyBase.CanPasteItem(child)
     End Function
 
+    Public Overrides Function CanAddComponent(ByVal nodeXml As XmlComponent) As Boolean
+        If nodeXml.NodeName = "dependency" Then
+            If GetFirstClassId(Me, Me.Id).Length = 0 Then
+                MsgBox("Sorry but only one class declared yet!", MsgBoxStyle.Exclamation)
+                Return False
+            End If
+        End If
+        Return True
+    End Function
+
 #End Region
 
 #Region "Protected methods"
