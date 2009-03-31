@@ -48,7 +48,7 @@ Public Class XmlCodeInline
             Dim child As XmlNode
 
             If Me.Node IsNot Nothing Then
-                For Each child In SelectNodes("*")
+                For Each child In SelectNodes()
                     strCode = strCode + GetAttributeValue(child, "value") + vbCrLf
                 Next child
             End If
