@@ -24,6 +24,22 @@ Public Class XmlClassOverrideMethodsView
             For Each child As XmlNode In SelectNodes("inherited")
                 SelectInheritedMethods(SelectNodeId(child), list)
             Next
+
+            Dim i As Integer = 0
+            While i < list.Count
+                Dim xmlcpnt As XmlOverrideMemberView = CType(list.Item(i), XmlOverrideMemberView)
+                If xmlcpnt.OverridableMember = False Then
+                    If i = list.Count - 1 Then
+                        list.Remove(xmlcpnt)
+                        Exit While
+                    Else
+                        list.Remove(xmlcpnt)
+                    End If
+                Else
+                    i += 1
+                End If
+            End While
+
             listbox.DisplayMember = "FullDescription"
             listbox.DataSource = list
             listbox.SelectedIndex = -1
@@ -47,7 +63,8 @@ Public Class XmlClassOverrideMethodsView
 
     Private Sub SelectInheritedMethods(ByRef node As XmlNode, ByVal list As ArrayList)
         Try
-            For Each child In SelectNodes(node, "method[@constructor!='no' or @implementation='virtual' or @implementation='root' or @implementation='abstract']")
+            ' We add "final" methods to be sure to avoid adding method from "root" node
+            For Each child In SelectNodes(node, "method[@constructor!='no' or @implementation='final' or @implementation='virtual' or @implementation='root' or @implementation='abstract']")
                 'Debug.Print("virtual=" + GetName(child))
                 Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
 
