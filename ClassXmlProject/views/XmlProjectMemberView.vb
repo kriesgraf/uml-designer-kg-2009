@@ -88,8 +88,14 @@ Public Class XmlProjectMemberView
                     xmlcpnt.Tag = Me.Tag
                     Return New String() {xmlcpnt.Name, xmlcpnt.Comment, xmlcpnt.NodeName}
 
-                Case "reference", "interface"
+                Case "reference"
                     Dim xmlcpnt As XmlReferenceSpec = New XmlReferenceSpec(Me.Node)
+                    xmlcpnt.ChangeReferences()
+                    xmlcpnt.Tag = Me.Tag
+                    Return New String() {xmlcpnt.Name, xmlcpnt.Comment, MyBase.NodeName}
+
+                Case "interface"
+                    Dim xmlcpnt As XmlInterfaceSpec = New XmlInterfaceSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
                     xmlcpnt.Tag = Me.Tag
                     Return New String() {xmlcpnt.Name, xmlcpnt.Comment, MyBase.NodeName}
@@ -121,8 +127,14 @@ Public Class XmlProjectMemberView
                     xmlcpnt.Tag = Me.Tag
                     Return xmlcpnt.Comment
 
-                Case "reference", "interface"
+                Case "reference"
                     Dim xmlcpnt As XmlReferenceSpec = New XmlReferenceSpec(Me.Node)
+                    xmlcpnt.ChangeReferences()
+                    xmlcpnt.Tag = Me.Tag
+                    Return xmlcpnt.Comment
+
+                Case "interface"
+                    Dim xmlcpnt As XmlInterfaceSpec = New XmlInterfaceSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
                     xmlcpnt.Tag = Me.Tag
                     Return xmlcpnt.Comment
@@ -411,9 +423,12 @@ Public Class XmlProjectMemberView
     End Function
 
     Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent) As XmlNode
-        ' We choose the wright component to go the good insertion
-        Dim xmlcpnt As XmlComponent = CreateDocument(Me.Node)
-        Return xmlcpnt.AppendComponent(nodeXml)
+        If CanAddComponent(nodeXml) _
+        Then
+            Dim xmlcpnt As XmlComponent = CreateDocument(Me.Node)
+            Return xmlcpnt.AppendComponent(nodeXml)
+        End If
+        Return Nothing
     End Function
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
@@ -446,7 +461,7 @@ Public Class XmlProjectMemberView
 
                 Case "package", "import"
                     ' Search children from removed node
-                    If removeNode.SelectNodes("descendant::import | class | package | descendant::reference").Count > 0 Then
+                    If removeNode.SelectNodes("descendant::import | class | package | descendant::reference | descendant::interface").Count > 0 Then
                         MsgBox("This element is not empty", MsgBoxStyle.Exclamation, xmlcpnt.Label(0))
                         Return False
                     End If
