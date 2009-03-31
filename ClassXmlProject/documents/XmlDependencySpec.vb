@@ -124,6 +124,6 @@ Public Class XmlDependencySpec
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
-        Idref = Me.GetFirstClassId(Me.ParentClassId)
+        Idref = GetFirstClassId(Me, Me.ParentClassId)
     End Sub
 End Class

@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.ComponentModel
 Imports System.Xml
+Imports ClassXmlProject.XmlProjectTools
 
 Public Interface InterfFormCollaboration
     WriteOnly Property ClassID() As String
@@ -150,9 +151,9 @@ Public Class XmlCollaborationSpec
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
 
         m_xmlRelation.Father.Idref = ClassId
-        Dim strChildID As String = MyBase.GetFirstClassId(ClassId)
+        Dim strChildID As String = GetFirstClassId(Me, ClassId)
         If strChildID.Length = 0 Then
-            m_xmlRelation.Child.Idref = MyBase.GetFirstClassId()
+            m_xmlRelation.Child.Idref = GetFirstClassId(Me)
         Else
             m_xmlRelation.Child.Idref = strChildID
             XmlProjectTools.UpdateOneCollaboration(Me.Document, strChildID)
