@@ -173,7 +173,11 @@ Public Class XmlImportSpec
     End Sub
 
     Public Overrides Function AppendComponent(ByVal document As XmlComponent) As XmlNode
-        If document.NodeName = "export" Then
+        If CanAddComponent(document) = False _
+        Then
+            Return Nothing
+
+        ElseIf document.NodeName = "export" Then
             Me.Parameter = CType(document, XmlExportSpec).Source
             Me.Name = CType(document, XmlExportSpec).Name
             Return MyBase.AppendComponent(document)
@@ -395,7 +399,7 @@ Public Class XmlImportSpec
     Protected Friend Function CheckReferences() As Boolean
         Dim bResult As Boolean = False
         Try
-            If m_xmlExport.SelectNodes("reference").Count = 0 Then
+            If m_xmlExport.SelectNodes().Count = 0 Then
                 m_xmlExport.RemoveMe()
                 m_xmlExport = Nothing
                 bResult = True
