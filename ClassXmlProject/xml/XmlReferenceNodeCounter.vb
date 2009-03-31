@@ -112,7 +112,7 @@ Public Class XmlReferenceNodeCounter
     Public Sub Recycle(ByVal node As XmlNode)
         Try
             Select Case node.Name
-                Case "reference"
+                Case "reference", "interface"
                     m_ClassCounter.Recycle(node)
                 Case "class"
                     m_ClassCounter.Recycle(node)

@@ -28,7 +28,7 @@ Public Class XmlRefRedundancyView
                 For Each child In list
                     XmlProjectTools.AddAttributeValue(child, "idref", strNewID)
                 Next child
-                If Me.NodeName = "reference" Then
+                If Me.NodeName = "reference" Or Me.NodeName = "interface" Then
                     Dim xlmcpnt As XmlImportSpec = CreateDocument(Me.Node.ParentNode.ParentNode)
                     xlmcpnt.RemoveReference(Me)
                 Else

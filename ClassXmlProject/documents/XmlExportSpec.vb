@@ -36,7 +36,7 @@ Public Class XmlExportSpec
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
         Try
-            AddChildren(SelectNodes("reference"), strViewName)
+            AddChildren(SelectNodes(), strViewName)
 
         Catch ex As Exception
             Throw ex
@@ -133,7 +133,7 @@ Public Class XmlExportSpec
     End Function
 
     Protected Friend Function CheckMerge(ByVal component As XmlComponent, ByVal bAskReplace As Boolean) As Boolean
-        Dim child As XmlNode = MyBase.GetNode("reference[@name='" + component.Name + "']")
+        Dim child As XmlNode = MyBase.GetNode(component.NodeName + "[@name='" + component.Name + "']")
         If child IsNot Nothing Then
             If bAskReplace Then
                 Return False
@@ -149,7 +149,7 @@ Public Class XmlExportSpec
 
         If Node Is Nothing Then Exit Sub
 
-        For Each child In MyBase.SelectNodes("descendant::reference")
+        For Each child In MyBase.SelectNodes("descendant::reference || descendant::interface")
             SetID(child, m_xmlReferenceNodeCounter.GetNewClassId())
         Next child
     End Sub

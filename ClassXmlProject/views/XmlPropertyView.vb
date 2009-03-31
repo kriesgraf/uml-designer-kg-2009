@@ -189,6 +189,11 @@ Public Class XmlPropertyView
             m_chkAttribute = dataControl
             m_xmlBindingsList.AddBinding(dataControl, Me, "MemberAttribute", "Checked")
 
+            If m_eClassImplementation = EImplementation.Interf Then
+                m_chkAttribute.Checked = False
+                m_chkAttribute.Enabled = False
+            End If
+
         Catch ex As Exception
             Throw ex
         Finally
@@ -209,9 +214,7 @@ Public Class XmlPropertyView
 
             ElseIf Me.OverridesProperty <> "" _
             Then
-                dataControl.Checked = False
                 dataControl.Enabled = False
-                dataControl.Visible = False
             End If
         Catch ex As Exception
             Throw ex
