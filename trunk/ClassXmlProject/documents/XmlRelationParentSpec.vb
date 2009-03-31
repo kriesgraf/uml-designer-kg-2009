@@ -120,7 +120,7 @@ Public Class XmlRelationParentSpec
 
     Public Property AccessorGet() As Boolean
         Get
-            Return (CheckAttribute("range", "no", "other", "get"))  ' other: in fact 'public' or 'protected'
+            Return Not (CheckAttribute("range", "no", "no", "get"))  ' Not: in fact we test 'public' or 'protected'
         End Get
         Set(ByVal value As Boolean)
             If value Then
@@ -133,7 +133,7 @@ Public Class XmlRelationParentSpec
 
     Public Property AccessorSet() As Boolean
         Get
-            Return (CheckAttribute("range", "no", "other", "set"))  ' other: in fact 'public' or 'protected'
+            Return Not (CheckAttribute("range", "no", "no", "set"))  ' Not: in fact we test 'public' or 'protected'
         End Get
         Set(ByVal value As Boolean)
             If value Then
