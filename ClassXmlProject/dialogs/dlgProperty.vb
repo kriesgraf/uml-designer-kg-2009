@@ -29,6 +29,15 @@ Public Class dlgProperty
         End Set
     End Property
 
+    Public Sub New()
+
+        ' Cet appel est requis par le Concepteur Windows Form.
+        InitializeComponent()
+
+        ' Ajoutez une initialisation quelconque après l'appel InitializeComponent().
+        m_xmlView = XmlNodeManager.GetInstance().CreateView(Nothing, "property")
+    End Sub
+
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
         If m_xmlView.OverridesProperty <> "" Then
             cmdType.Enabled = False
@@ -99,32 +108,45 @@ Public Class dlgProperty
             m_bChangeCombo = True
 
             If bGetChange Then
-                If cmbGetAccess.Text <> "no" Then
-                    If cmbSetAccess.Text <> "no" And cmbSetAccess.Text <> cmbGetAccess.Text Then
-                        cmbSetAccess.Text = cmbGetAccess.Text
+                If CType(cmbGetAccess.SelectedItem, String) <> "no" Then
+                    If CType(cmbSetAccess.SelectedItem, String) <> "no" And CType(cmbSetAccess.SelectedItem, String) <> CType(cmbGetAccess.SelectedItem, String) Then
+                        cmbSetAccess.SelectedItem = CType(cmbGetAccess.SelectedItem, String)
                     End If
                 End If
             Else
-                If cmbSetAccess.Text <> "no" Then
-                    If cmbGetAccess.Text <> "no" And cmbSetAccess.Text <> cmbGetAccess.Text Then
-                        cmbGetAccess.Text = cmbSetAccess.Text
+                If CType(cmbSetAccess.SelectedItem, String) <> "no" Then
+                    If CType(cmbGetAccess.SelectedItem, String) <> "no" And CType(cmbSetAccess.SelectedItem, String) <> CType(cmbGetAccess.SelectedItem, String) Then
+                        cmbGetAccess.SelectedItem = CType(cmbSetAccess.SelectedItem, String)
                     End If
                 End If
             End If
 
             m_bChangeCombo = False
         Else
-            If cmbGetAccess.Text = "no" Then
+            If CType(cmbGetAccess.SelectedItem, String) = "no" _
+            Then
                 lblGetBy.Enabled = False
                 cmbGetBy.Enabled = False
                 chkModifier.Enabled = False
+
+            ElseIf m_xmlView.OverridesProperty <> "" _
+            Then
+                cmbGetBy.Enabled = False
+                chkModifier.Enabled = False
+                lblGetBy.Enabled = False
             Else
                 cmbGetBy.Enabled = True
                 chkModifier.Enabled = True
                 lblGetBy.Enabled = True
             End If
 
-            If cmbSetAccess.Text = "no" Then
+            If CType(cmbSetAccess.SelectedItem, String) = "no" _
+            Then
+                lblSetBy.Enabled = False
+                cmbSetby.Enabled = False
+
+            ElseIf m_xmlView.OverridesProperty <> "" _
+            Then
                 lblSetBy.Enabled = False
                 cmbSetby.Enabled = False
             Else
@@ -134,21 +156,12 @@ Public Class dlgProperty
         End If
     End Sub
 
-    Private Sub cmbGetAccess_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbGetAccess.TextChanged
+    Private Sub cmbGetAccess_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbGetAccess.SelectedIndexChanged
         ChangeCombo(True)
     End Sub
 
-    Private Sub cmbSetAccess_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSetAccess.TextChanged
+    Private Sub cmbSetAccess_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSetAccess.SelectedIndexChanged
         ChangeCombo(False)
-    End Sub
-
-    Public Sub New()
-
-        ' Cet appel est requis par le Concepteur Windows Form.
-        InitializeComponent()
-
-        ' Ajoutez une initialisation quelconque après l'appel InitializeComponent().
-        m_xmlView = XmlNodeManager.GetInstance().CreateView(Nothing, "property")
     End Sub
 
     Private Sub cmdType_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdType.Click
@@ -170,6 +183,14 @@ Public Class dlgProperty
                 m_xmlView.CancelOption()
             Else
                 m_xmlView.ConfirmOption()
+                ' Hide this current window
+                Me.Hide()
+                ' To confirm update
+                Me.Tag = True
+                ' And open new one
+                Dim fen As Form = m_xmlView.CreateForm(m_xmlView)
+                ' Change dialog result close automatically previous window
+                Me.DialogResult = fen.ShowDialog(Me)
             End If
         End If
     End Sub
