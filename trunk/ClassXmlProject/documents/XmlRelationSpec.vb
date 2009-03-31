@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.ComponentModel
 Imports System.Xml
+Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlRelationSpec
     Inherits XmlComponent
@@ -127,13 +128,13 @@ Public Class XmlRelationSpec
 
             m_xmlFather.SetDefaultValues(bCreateNodeNow)
             ' Set an existing class element
-            Dim strFatherID As String = MyBase.GetFirstClassId()
+            Dim strFatherID As String = GetFirstClassId(Me)
             m_xmlFather.Idref = strFatherID
             m_xmlChild.SetDefaultValues(bCreateNodeNow)
             ' Set an existing class element that could be father
-            Dim strChildID As String = MyBase.GetFirstClassId(strFatherID)
+            Dim strChildID As String = GetFirstClassId(Me, strFatherID)
             If strChildID.Length = 0 Then
-                m_xmlChild.Idref = MyBase.GetFirstClassId()
+                m_xmlChild.Idref = GetFirstClassId(Me)
             Else
                 m_xmlChild.Idref = strChildID
             End If
