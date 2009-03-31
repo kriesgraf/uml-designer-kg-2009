@@ -621,15 +621,22 @@ border-left: 1px solid gray;
 	</xsl:template>
 	<!-- ======================================================================= -->
 	<xsl:template match="property" mode="Class">
+        <xsl:variable name="ClassImpl" select="parent::class/@implementation"/>
 		<xsl:call-template name="Formater">
 			<xsl:with-param name="Text">
-				<xsl:apply-templates select="variable/@range"/>
+				<xsl:choose>
+                  <xsl:when test="$ClassImpl='abstract'">+&lt;abstract&gt;</xsl:when>
+                  <xsl:when test="@overridable='yes'">
+                    <xsl:apply-templates select="variable/@range"/>&lt;overridable&gt;</xsl:when>
+                    <xsl:otherwise><xsl:apply-templates select="variable/@range"/></xsl:otherwise>
+                </xsl:choose>
 				<xsl:value-of select="@name"/>
 				<xsl:if test="variable/@valref">=<xsl:value-of select="id(variable/@valref)/@name"/></xsl:if>
 				<xsl:if test="variable/@value">=<xsl:value-of select="variable/@value"/></xsl:if>
 			</xsl:with-param>
 			<xsl:with-param name="Police">
 				<xsl:choose>
+					<xsl:when test="$ClassImpl='abstract'">i</xsl:when>
 					<xsl:when test="@member='class'">u</xsl:when>
 					<xsl:otherwise>br</xsl:otherwise>
 				</xsl:choose>
@@ -750,9 +757,20 @@ border-left: 1px solid gray;
 					<td/>
 					<td>
 						<xsl:apply-templates select="@range"/>
-						<xsl:value-of select="$NodeName"/>accessor</td>
+						<xsl:value-of select="$NodeName"/> accessor</td>
 				</xsl:if>
-				<xsl:if test="$NodeName!='param'">
+				<xsl:if test="$NodeName='property'">
+					<td>
+        				<xsl:choose>
+                          <xsl:when test="parent::class/@implementation='abstract'">+&lt;abstract&gt;</xsl:when>
+                          <xsl:when test="@overridable='yes'">
+                            <xsl:apply-templates select="variable/@range"/>&lt;overridable&gt;</xsl:when>
+                            <xsl:otherwise><xsl:apply-templates select="variable/@range"/></xsl:otherwise>
+                        </xsl:choose>
+            <p/>Attribute: <xsl:value-of select="@attribute"/>
+					</td>
+                </xsl:if>
+				<xsl:if test="$NodeName!='param' and $NodeName!='property'">
 					<td>
 						<xsl:apply-templates select="variable/@range[$NodeName!='return']"/>
 					</td>
@@ -775,7 +793,7 @@ border-left: 1px solid gray;
 					<xsl:apply-templates select="parent::method[$NodeName='return']" mode="Class"/>
 				</td>
 				<xsl:apply-templates select="variable/@size | variable/@sizeref"/>
-				<td>:</td>
+				<td><xsl:if test="not(self::get) and not(self::set)">:</xsl:if></td>
 				<xsl:if test="not(type/@struct)">
 					<td>
 						<xsl:apply-templates select="type/@modifier"/>
@@ -1006,6 +1024,8 @@ border-left: 1px solid gray;
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
 
 
 

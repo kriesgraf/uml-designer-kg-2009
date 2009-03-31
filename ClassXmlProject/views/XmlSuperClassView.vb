@@ -54,9 +54,14 @@ Public Class XmlSuperClassView
 
                 MyBase.AppendNode(xmlcpnt.Node)
             Next xmlview
+
+            ' Overrides some properties
+            Dim xmlProperty As XmlClassOverridePropertiesView = XmlNodeManager.GetInstance().CreateView(Me.Node, "class_override_properties")
+            xmlProperty.OverrideProperties(m_eImplementation)
+
             ' Overrides some methods
-            Dim xmlOverrides As XmlClassOverrideMethodsView = XmlNodeManager.GetInstance().CreateView(Me.Node, "class_override_methods")
-            xmlOverrides.OverrideMethods(m_eImplementation)
+            Dim xmlMethod As XmlClassOverrideMethodsView = XmlNodeManager.GetInstance().CreateView(Me.Node, "class_override_methods")
+            xmlMethod.OverrideMethods(m_eImplementation)
 
         Catch ex As Exception
             Throw ex
@@ -127,6 +132,10 @@ Public Class XmlSuperClassView
         End If
 
         strTempo = "//reference[@type!='typedef'][" + strIgnoredClasses + "]"
+        xmlList = MyBase.SelectNodes(strTempo)
+        AppendArrayList(xmlList, collList)
+
+        strTempo = "//interface[" + strIgnoredClasses + "]"
         xmlList = MyBase.SelectNodes(strTempo)
         AppendArrayList(xmlList, collList)
 
