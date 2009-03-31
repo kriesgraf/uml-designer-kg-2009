@@ -439,13 +439,23 @@ Public Class XmlProjectView
         m_Control.AddContext("import", menuStrip, Windows.Forms.View.LargeIcon)
     End Sub
 
-    Public Sub UpdateMenuClass(ByVal mnuTypedef As ToolStripItem, ByVal mnuConstructor As ToolStripItem)
-        If CType(Me.Properties.GenerationLanguage, ELanguage) <> ELanguage.Language_Vbasic Then
+    Public Sub UpdateMenuClass(ByVal parent As XmlComposite, ByVal mnuTypedef As ToolStripItem, ByVal mnuConstructor As ToolStripItem)
+
+        If CType(Me.Properties.GenerationLanguage, ELanguage) <> ELanguage.Language_Vbasic _
+        Then
             mnuTypedef.Text = "Typedef"
-            mnuConstructor.Visible = True
         Else
             mnuTypedef.Text = "Enumeration"
-            mnuConstructor.Visible = False
+        End If
+
+        If parent.NodeName = "class" _
+        Then
+            If ConvertDtdToEnumImpl(parent.GetAttribute("implementation")) = EImplementation.Interf _
+            Then
+                mnuConstructor.Visible = False
+            Else
+                mnuConstructor.Visible = True
+            End If
         End If
     End Sub
 
