@@ -316,24 +316,6 @@ Public Class XmlComponent
         Return Me.Document.GetElementById(strId)
     End Function
 
-    Protected Friend Function GetFirstClassId(Optional ByVal strExcludeId As String = "") As String
-        If Me.Document Is Nothing Then
-            Throw New Exception("Property m_xmlDocument is null in component " + Me.ToString())
-        End If
-
-        Dim current As XmlNode
-        Dim strResult As String = ""
-        If strExcludeId = "" Then
-            current = Me.Document.SelectSingleNode("//class | //reference")
-        Else
-            current = Me.Document.SelectSingleNode("//class[@id!='" + strExcludeId + "'] | //reference[@id!='" + strExcludeId + "' and @type='class']")
-        End If
-        If current IsNot Nothing Then
-            strResult = GetID(current)
-        End If
-        Return strResult
-    End Function
-
     Protected Friend Function ValidateIdReference(ByVal IdRef As String, Optional ByVal bDoNotRaiseException As Boolean = False) As Boolean
         Dim bResult As Boolean = True
         If IdRef = "" _
@@ -637,11 +619,18 @@ Public Class XmlComponent
         Return attrib
     End Function
 
+    Public Overridable Function CanAddComponent(ByVal nodeXml As XmlComponent) As Boolean
+        Return True
+    End Function
+
     Public Overridable Function AppendComponent(ByVal nodeXml As XmlComponent) As XmlNode
         ' This method is called when order is not defined, also AppendNode must do it
-        AppendNode(nodeXml.Node)
-        nodeXml.NotifyInsert()
-        Return nodeXml.Node
+        If CanAddComponent(nodeXml) Then
+            AppendNode(nodeXml.Node)
+            nodeXml.NotifyInsert()
+            Return nodeXml.Node
+        End If
+        Return Nothing
     End Function
 
     Public Overridable Function DropInsertComponent(ByVal component As XmlComponent) As XmlNode
