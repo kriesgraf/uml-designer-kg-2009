@@ -2,6 +2,7 @@
 Imports System.Xml
 Imports System.Windows.Forms
 Imports System.Collections
+Imports ClassXmlProject.XmlNodeListView
 
 Public Class dlgDependencies
     Implements InterfFormDocument
@@ -73,7 +74,7 @@ Public Class dlgDependencies
                 lsbDependencies.Items.Add("Sorry this node can't be referenced")
                 lsbDependencies.Enabled = False
             Else
-                AddNodeList(MyList, "//*[@*[.='" + strID + "' and name()!='id'] and ancestor::*/@id!='" + strID + "']")
+                AddNodeList(m_xmlDataSource, MyList, "//*[@*[.='" + strID + "' and name()!='id'] and ancestor::*/@id!='" + strID + "']")
 
                 If MyList.Count = 0 _
                 Then
@@ -97,20 +98,5 @@ Public Class dlgDependencies
         Catch ex As Exception
             Throw ex
         End Try
-    End Sub
-
-    Private Sub AddNodeList(ByRef myList As ArrayList, ByVal xpath As String)
-        Dim iterator As IEnumerator = m_xmlDataSource.SelectNodes(xpath).GetEnumerator
-        iterator.Reset()
-
-        'Debug.Print("xPath=" + xpath)
-
-        While iterator.MoveNext
-            Dim node As XmlNode = CType(iterator.Current, XmlNode)
-            Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(node)
-            xmlcpnt.Tag = m_xmlDataSource.Tag
-            'Debug.Print("(" + node.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
-            myList.Add(xmlcpnt)
-        End While
     End Sub
 End Class

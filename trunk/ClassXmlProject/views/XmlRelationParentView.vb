@@ -1,8 +1,7 @@
 ﻿Imports System
 Imports System.Windows.Forms
-Imports ClassXmlProject.UmlCodeGenerator
+Imports ClassXmlProject.XmlNodeListView
 Imports ClassXmlProject.XmlProjectTools
-Imports ClassXmlProject.UmlNodesManager
 Imports System.Xml
 Imports System.Collections
 Imports Microsoft.VisualBasic.Compatibility.VB6
@@ -12,7 +11,6 @@ Public Class XmlRelationParentView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
     Private m_xmlComboContainer As XmlBindingCombo
     Private m_xmlComboIndex As XmlBindingCombo
     Private m_ArrayRadioButtons As RadioButtonArray
@@ -56,29 +54,17 @@ Public Class XmlRelationParentView
     End Sub
 
     Public Sub InitBindingContainer(ByVal dataControl As ComboBox)
-        Dim iContainer As Integer = 1
-        If Me.Indexed Then iContainer = 2
-        InitTypedefCombo(dataControl, iContainer)
+        InitContainerCombo(Me, dataControl, Me.Indexed)
         m_xmlComboContainer = New XmlBindingCombo(dataControl, Me, "ContainerDesc", "ContainerRef")
     End Sub
 
     Public Sub RefreshComboContainer(ByVal bIndexed As Boolean)
-        Dim iContainer As Integer = 1
-        If bIndexed Then iContainer = 2
-        InitTypedefCombo(m_xmlComboContainer.Control, iContainer, True)
+        InitContainerCombo(Me, m_xmlComboContainer.Control, bIndexed)
     End Sub
 
     Public Sub InitBindingArraySize(ByVal control As ComboBox)
         Try
-            Dim myList As New ArrayList
-
-            AddNodeList(myList, "//enumvalue")
-            With control
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
+            InitValueCombo(Me, control)
             m_xmlComboSize = New XmlBindingCombo(control, Me, "VarSize", "SizeRef")
 
         Catch ex As Exception
@@ -87,7 +73,7 @@ Public Class XmlRelationParentView
     End Sub
 
     Public Sub InitBindingComboIndex(ByVal dataControl As ComboBox)
-        InitTypedefCombo(dataControl, -1)
+        InitTypedefCombo(Me, dataControl, EComboList.Type_index)
         m_xmlComboIndex = New XmlBindingCombo(dataControl, Me, "IndexDesc", "IndexRef")
     End Sub
 
@@ -114,68 +100,6 @@ Public Class XmlRelationParentView
 
     Public Sub InitBindingCheckIndex(ByVal dataControl As CheckBox)
         m_xmlBindingsList.AddBinding(dataControl, Me, "Indexed", "Checked")
-    End Sub
-
-    Private Sub InitTypedefCombo(ByVal dataControl As ComboBox, Optional ByVal iContainer As Integer = 0, Optional ByVal bClear As Boolean = False)
-        Try
-            Dim myList As New ArrayList
-
-            If bClear Then
-                dataControl.DataSource = Nothing
-                dataControl.Items().Clear()
-            End If
-
-            If iContainer < 0 _
-            Then
-                ' Specific index type
-                AddNodeList(myList, "//class[@implementation='container' and model[last()=" + CStr(iContainer) + "]]")
-                AddNodeList(myList, "//typedef[type[@desc and not(list)] or type/enumvalue]")
-                AddNodeList(myList, "//reference[@container='" + CStr(iContainer) + "']")
-
-                AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
-
-            ElseIf iContainer = 1 _
-            Then
-                ' Specific container type
-                AddNodeList(myList, "//class[@implementation='container' and model[last()=" + CStr(iContainer) + "]]")
-                AddNodeList(myList, "//reference[@container='3' or @container='" + CStr(iContainer) + "']")
-
-            ElseIf iContainer = 2 _
-            Then
-                ' Specific container type
-                AddNodeList(myList, "//class[@implementation='container' and model[last()=" + CStr(iContainer) + "]]")
-                AddNodeList(myList, "//reference[@container='" + CStr(iContainer) + "']")
-            Else
-                ' Simple value type
-                AddNodeList(myList, "//class[@implementation!='container']")
-                AddNodeList(myList, "//typedef")
-                AddNodeList(myList, "//reference[@container='0' or not(@container)]")
-
-                AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
-            End If
-
-            myList.Sort(New XmlNodeListView("_comparer"))
-
-            With dataControl
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
-    Private Sub AddNodeList(ByRef myList As ArrayList, ByVal xpath As String)
-        Dim iterator As IEnumerator = MyBase.SelectNodes(xpath).GetEnumerator
-        iterator.Reset()
-
-        While iterator.MoveNext
-            Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(CType(iterator.Current, XmlNode))
-            xmlcpnt.Tag = CType(Me.Tag, ELanguage)
-            myList.Add(xmlcpnt)
-        End While
     End Sub
 
     Public Function CheckOption() As Boolean

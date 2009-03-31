@@ -21,22 +21,6 @@ Public Class UmlNodesManager
 
 #If _APP_UML = "1" Then
 
-    Public Shared Sub AddSimpleTypesList(ByRef myList As ArrayList, ByVal eTag As ELanguage)
-        Try
-            Dim doc As New XmlDocument
-            LoadDocument(doc, GetSimpleTypesFilename(eTag))
-
-            Dim iterator As IEnumerator = doc.SelectNodes("//type").GetEnumerator()
-            iterator.Reset()
-
-            While iterator.MoveNext()
-                myList.Add(New XmlNodeListView(GetCurrentName(iterator)))
-            End While
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
     Public Shared Function ImportNodes(ByVal component As XmlComposite, _
                                        ByVal strFilename As String, _
                                        ByVal NodeCounter As XmlReferenceNodeCounter, _
@@ -60,14 +44,14 @@ Public Class UmlNodesManager
             Dim list As XmlNodeList
 
             ' Remove redundant imported references
-            list = import.SelectNodes("//import/export/reference")
+            list = import.SelectNodes("//import/export/*")
 
             For Each child In list
                 VerifyRedundancy(component, "project/package " + component.Name, child, "file:" + vbCrLf + strFilename)
             Next child
 
             ' Remove redundant references in current project with imported classes
-            list = component.SelectNodes("//import/export/reference")
+            list = component.SelectNodes("//import/export/*")
 
             For Each child In list
                 VerifyRedundancy(import, "file:" + vbCrLf + strFilename + vbCrLf, child, "project/package " + component.Name)
