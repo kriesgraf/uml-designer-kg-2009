@@ -1,8 +1,7 @@
 ﻿Imports System
 Imports System.Windows.Forms
-Imports ClassXmlProject.UmlCodeGenerator
+Imports ClassXmlProject.XmlNodeListView
 Imports ClassXmlProject.XmlProjectTools
-Imports ClassXmlProject.UmlNodesManager
 Imports System.Xml
 Imports System.Collections
 Imports Microsoft.VisualBasic
@@ -14,7 +13,6 @@ Public Class XmlElementView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
     Private m_xmlComboTypedef As XmlBindingCombo
     Private m_xmlComboSize As XmlBindingCombo
 
@@ -45,23 +43,7 @@ Public Class XmlElementView
 
     Public Sub InitBindingType(ByVal dataControl As ComboBox)
         Try
-            Dim myList As New ArrayList
-
-            AddNodeList(myList, "//class[@implementation!='container']")
-            AddNodeList(myList, "//typedef")
-            AddNodeList(myList, "//reference[@container='0' or not(@container)]")
-
-            AddSimpleTypesList(myList, CType(Me.Tag, ELanguage))
-
-            myList.Sort(New XmlNodeListView("_comparer"))
-
-            With dataControl
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
-
+            InitTypedefCombo(Me, dataControl)
             m_xmlComboTypedef = New XmlBindingCombo(dataControl, Me, "Descriptor", "Reference")
 
         Catch ex As Exception
@@ -71,15 +53,7 @@ Public Class XmlElementView
 
     Public Sub InitBindingSize(ByVal dataControl As ComboBox)
         Try
-            Dim myList As New ArrayList
-
-            AddNodeList(myList, "//enumvalue")
-            With dataControl
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
+            InitValueCombo(Me, dataControl)
 
             m_xmlComboSize = New XmlBindingCombo(dataControl, Me, "VarSize", "SizeRef")
 
@@ -208,15 +182,6 @@ Public Class XmlElementView
         Return 0
     End Function
 
-    Private Sub AddNodeList(ByRef myList As ArrayList, ByVal xpath As String)
-        Dim iterator As IEnumerator = MyBase.SelectNodes(xpath).GetEnumerator
-        iterator.Reset()
-
-        While iterator.MoveNext
-            myList.Add(New XmlNodeListView(CType(iterator.Current, XmlNode)))
-        End While
-    End Sub
-
     Private Function DisplayLevel(ByVal level As Integer) As String
         Dim strResult As String = ""
         Try
@@ -252,7 +217,7 @@ Public Class XmlElementView
 
             If bShorter Then
                 ' nothing to do 
-            ElseIf child.Name = "reference" Then
+            ElseIf child.Name = "reference" Or child.Name = "interface" Then
                 strResult = GetPackage(child) + strSeparator + strResult
             Else
                 If child.Name = "typedef" Then

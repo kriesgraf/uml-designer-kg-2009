@@ -1,7 +1,7 @@
 ﻿Imports System
 Imports System.Xml
 Imports System.Windows.Forms
-Imports ClassXmlProject.UmlCodeGenerator
+Imports ClassXmlProject.XmlClassListView
 
 Public Class XmlClassDependencyView
     Inherits XmlDependencySpec
@@ -39,7 +39,7 @@ Public Class XmlClassDependencyView
             data.Columns.Add(col2)
 #Else
             col1 = New DataGridViewComboBoxColumn
-            XmlClassListView.AddListComboBoxColumn(cstIdref, "Name", col1, MyBase.Document, Me.Tag)
+            AddListComboBoxColumn(Me, cstIdref, "Name", col1)
             col1.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
             data.Columns.Add(col1)
 #End If
@@ -47,7 +47,7 @@ Public Class XmlClassDependencyView
             Then
                 col1 = New DataGridViewComboBoxColumn
                 With col1
-                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                     .HeaderText = "Kind"
                     .DataPropertyName = "StringKind"
                     .DisplayStyleForCurrentCellOnly = True
