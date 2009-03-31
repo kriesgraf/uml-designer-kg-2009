@@ -147,8 +147,14 @@ Public Class XmlClassMemberView
         Try
             Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me)
             Select Case Me.NodeName
-                Case "property", "method"
+                Case "property"
                     CType(fen, InterfFormClass).ClassImpl = m_xmlClassView.CurrentClassImpl
+
+                Case "method"
+                    If Me.CheckAttribute("constructor", "no", "no") = True _
+                    Then
+                        CType(fen, InterfFormClass).ClassImpl = m_xmlClassView.CurrentClassImpl
+                    End If
                 Case Else
                     ' Ignore
             End Select
@@ -162,6 +168,8 @@ Public Class XmlClassMemberView
 
     Public Sub InitControl(ByVal control As Control) Implements InterfViewControl.InitControl
         Dim data As XmlDataGridView = CType(control, XmlDataGridView)
+        Dim size As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.Fill
+        Dim size2 As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.AllCells
         With data
             .Columns.Clear()
             .AllowDrop = True
@@ -176,7 +184,7 @@ Public Class XmlClassMemberView
 
         Dim col1 As DataGridViewColumn = New DataGridViewTextBoxColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size2
             .DataPropertyName = "Name"
             .HeaderText = "Name"
             .Name = "ControlName_Name"
@@ -185,7 +193,7 @@ Public Class XmlClassMemberView
 
         col1 = New DataGridViewTextBoxColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size
             .DataPropertyName = "NodeName"
             .ReadOnly = False
             .HeaderText = "Node"
@@ -195,7 +203,7 @@ Public Class XmlClassMemberView
 
         col1 = New DataGridViewButtonColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size2
             .DataPropertyName = XmlTypeVarSpec.cstFullpathTypeDescription
             .HeaderText = "Type"
             .Name = "ControlName_Type"
@@ -213,7 +221,7 @@ Public Class XmlClassMemberView
 
         With CType(col1, DataGridViewComboBoxColumn)
             .DisplayStyleForCurrentCellOnly = True
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size
             .Items.AddRange(New Object() {"private", "protected", "public"})
             .DisplayStyleForCurrentCellOnly = True
             .DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
@@ -223,7 +231,7 @@ Public Class XmlClassMemberView
 
         col1 = New DataGridViewCheckBoxColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size
             .DataPropertyName = "Member"
             .HeaderText = "Class member"
             .Name = "ControlName_Member"
