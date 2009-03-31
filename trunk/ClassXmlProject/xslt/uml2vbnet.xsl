@@ -245,11 +245,11 @@ End Namespace
 
 #Region "Member variables"
 
-    <xsl:apply-templates mode="Code" select="property[variable/@range='public'][type/@modifier!='const']">
+    <xsl:apply-templates mode="Code" select="property[@attribute='yes'][variable/@range='public'][type/@modifier!='const']">
       <xsl:sort select="@name"/></xsl:apply-templates>
-    <xsl:apply-templates mode="Code" select="property[variable/@range='protected'][type/@modifier!='const']">
+    <xsl:apply-templates mode="Code" select="property[@attribute='yes'][variable/@range='protected'][type/@modifier!='const']">
       <xsl:sort select="@name"/></xsl:apply-templates>
-    <xsl:apply-templates mode="Code" select="property[variable/@range='private'][type/@modifier!='const']">
+    <xsl:apply-templates mode="Code" select="property[@attribute='yes'][variable/@range='private'][type/@modifier!='const']">
       <xsl:sort select="@name"/></xsl:apply-templates>
 #End Region
     </xsl:if>
@@ -376,6 +376,9 @@ End Namespace
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="property" mode="Access">
+  <xsl:variable name="ClassImpl" select="parent::class/@implementation"/>
+  <xsl:variable name="InheritedClassImpl" select="id(@overrides)/@implementation"/>
+  <xsl:variable name="InheritedClassName" select="id(@overrides)/@name"/>
 	<xsl:variable name="VarName">
 	    <xsl:value-of select="$PrefixMember"/>
 	      <xsl:apply-templates select="type" mode="TypePrefix"/>
@@ -413,20 +416,27 @@ End Namespace
 	<xsl:text>
     </xsl:text>
 	<xsl:if test="@behaviour='Default'">Default </xsl:if>
-	<xsl:value-of select="$Range"/>
+	<xsl:if test="$ClassImpl!='abstract'"><xsl:value-of select="$Range"/></xsl:if>
 	<xsl:if test="@member='class'">Shared </xsl:if>
+	<xsl:if test="@overrides!='' and $InheritedClassImpl!='abstract'">Overrides </xsl:if>
+	<xsl:if test="@overridable='yes' and @overrides=''">Overridable </xsl:if>
 	<xsl:value-of select="$Modifier"/>
     <xsl:text>Property </xsl:text>
 	<xsl:value-of select="concat(@name,'() As ',$Type)"/>
-    <xsl:if test="get[@range!='no']">
-    Get
-        Return <xsl:value-of select="$VarName"/>
+	<xsl:if test="$InheritedClassImpl='abstract'"> Implements <xsl:value-of select="concat($InheritedClassName,'.',@name)"/></xsl:if>
+    <xsl:if test="get[@range!='no'] and $ClassImpl!='abstract'">
+    Get<xsl:if test="@attribute='yes'">
+        Return <xsl:value-of select="$VarName"/></xsl:if>
     End Get</xsl:if>
-    <xsl:if test="set[@range!='no']">
+    <xsl:if test="set[@range!='no'] and $ClassImpl!='abstract'">
     Set<xsl:value-of select="concat('(ByVal ',$SetParam,' As ',$Type)"/>)
-        <xsl:value-of select="concat($VarName,' = ',$SetParam)"/>
+        <xsl:if test="@attribute='yes'"><xsl:value-of select="concat($VarName,' = ',$SetParam)"/></xsl:if>
     End Set</xsl:if>
+    <xsl:if test="$ClassImpl!='abstract'">
     End Property
+    </xsl:if>
+	<xsl:text>
+    </xsl:text>
   </xsl:template>
   <!-- ======================================================================= -->
 	<xsl:template match="child | father" mode="Access">
@@ -597,6 +607,7 @@ End Namespace
   </xsl:template>
 <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
