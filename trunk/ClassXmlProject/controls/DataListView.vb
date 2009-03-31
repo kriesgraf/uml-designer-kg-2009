@@ -262,15 +262,6 @@ Public Class DataListView
             RaiseEvent ItemClick(Me, New DataListViewEventArgs(Me.SelectedIndex))
         End If
     End Sub
-#End Region
-
-    Public Sub New()
-
-        ' Cet appel est requis par le Concepteur Windows Form.
-        InitializeComponent()
-
-        ' Ajoutez une initialisation quelconque après l'appel InitializeComponent().
-    End Sub
 
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
@@ -294,8 +285,21 @@ Public Class DataListView
         Me.TimerEmptyZone.Stop()
 
         If Me.SelectedItem Is Nothing Then
-            RaiseEvent EmptyZoneClick(Me, e)
+            OnEmptyZoneClick()
         End If
+    End Sub
+#End Region
+
+    Public Sub New()
+
+        ' Cet appel est requis par le Concepteur Windows Form.
+        InitializeComponent()
+
+        ' Ajoutez une initialisation quelconque après l'appel InitializeComponent().
+    End Sub
+
+    Protected Sub OnEmptyZoneClick()
+        RaiseEvent EmptyZoneClick(Me, Nothing)
     End Sub
 End Class
 

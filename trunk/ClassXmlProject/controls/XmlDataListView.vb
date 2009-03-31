@@ -169,6 +169,9 @@ Public Class XmlDataListView
                     End If
                 Next
                 If bChanged Then m_xmlBinding.ResetBindings(bAskRefresh)
+                If MyBase.Items.Count = 0 Then
+                    MyBase.OnEmptyZoneClick()
+                End If
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
