@@ -70,6 +70,13 @@ Public Class frmProject
             m_xmlProject.Updated = True
         End If
 
+        If lvwProjectMembers.SelectedItem IsNot Nothing _
+        Then
+            docvwProjectDisplay.DataSource = CType(lvwProjectMembers.SelectedItem, XmlComponent).Node
+        Else
+            docvwProjectDisplay.DataSource = CType(lvwProjectMembers.Binding.Parent, XmlComponent).Node
+        End If
+
         Me.Mainframe.UpdateItemControls(m_xmlProject)
 
         If m_xmlProject.Updated Then
@@ -165,7 +172,7 @@ Public Class frmProject
                     End If
                 End If
 
-                .UpdateMenuClass(AddClassTypedef, AddClassConstructor)
+                .UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
             End With
 
             UpdateButtons()
@@ -258,6 +265,7 @@ Public Class frmProject
                         lvwProjectMembers.GoChildLevel
         Try
             docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
+            m_xmlProject.UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
             UpdateButtons()
 
         Catch ex As Exception
@@ -376,7 +384,7 @@ Public Class frmProject
     Private Sub mnuProjectProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuProjectProperties.Click
         Try
             If m_xmlProject.EditProperties() Then
-                m_xmlProject.UpdateMenuClass(AddClassTypedef, AddClassConstructor)
+                m_xmlProject.UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
                 RefreshProjectDisplay(True)
             End If
@@ -389,7 +397,7 @@ Public Class frmProject
     Private Sub mnuProjectParameters_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuProjectParameters.Click
         Try
             If m_xmlProject.EditParameters() Then
-                m_xmlProject.UpdateMenuClass(AddClassTypedef, AddClassConstructor)
+                m_xmlProject.UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
                 RefreshProjectDisplay()
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
             End If
