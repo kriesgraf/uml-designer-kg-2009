@@ -85,6 +85,7 @@
     <Compile Include="controls\DataListView.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="controls\InlineCommand.vb" />
     <Compile Include="controls\XmlDataListView.vb">
       <SubType>Component</SubType>
     </Compile>

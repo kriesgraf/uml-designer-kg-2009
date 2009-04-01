@@ -7,7 +7,7 @@ Public Class XmlConstructorView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
+    Private m_cmdInline As New InlineCommand
 
     Public Overrides Property Name() As String
         Get
@@ -81,11 +81,11 @@ Public Class XmlConstructorView
     End Sub
 
     Public Sub InitBindingCheckInline(ByVal dataControl As CheckBox, ByVal btnControl As Button)
+        m_cmdInline.Inline = dataControl
+        m_cmdInline.Body = btnControl
+
         If Me.Tag <> ELanguage.Language_CplusPlus Then
-            dataControl.Enabled = False
-            dataControl.Visible = False
-            btnControl.Enabled = False
-            btnControl.Visible = False
+            m_cmdInline.Visible = False
         Else
             m_xmlBindingsList.AddBinding(dataControl, Me, "Inline", "Checked")
         End If
