@@ -27,6 +27,28 @@ Public Class XmlInterfaceSpec
         End Set
     End Property
 
+    Public ReadOnly Property Implementation() As EImplementation
+        Get
+            If Root Then
+                Return EImplementation.Root
+            End If
+            Return EImplementation.Interf
+        End Get
+    End Property
+
+    Public Property Root() As Boolean
+        Get
+            Return CheckAttribute("root", "yes", "no")
+        End Get
+        Set(ByVal value As Boolean)
+            If value Then
+                SetAttribute("root", "yes")
+            Else
+                SetAttribute("root", "no")
+            End If
+        End Set
+    End Property
+
     Public Property Package() As String
         Get
             Return GetAttribute("package")
@@ -47,14 +69,14 @@ Public Class XmlInterfaceSpec
     Protected Friend Overrides Function AppendNode(ByVal child As System.Xml.XmlNode) As System.Xml.XmlNode
         Dim before As XmlNode = Nothing
         Select Case child.Name
-            Case "property"
-                ' TODO: to move to the right place
-                child.Attributes.ItemOf("overridable").Value = "yes"
-                before = GetNode("method")
+            Case "collaboration"
+                before = GetNode("property")
+                If before Is Nothing Then
+                    before = GetNode("method")
+                End If
 
-            Case "method"
-                ' TODO: to move to the right place
-                child.Attributes.ItemOf("implementation").Value = "abstract"
+            Case "property"
+                before = GetNode("method")
         End Select
 
         If before Is Nothing Then
@@ -70,6 +92,7 @@ Public Class XmlInterfaceSpec
             m_bCreateNodeNow = bCreateNodeNow
             Id = "class0"
             Package = ""
+            Root = False
 
         Catch ex As Exception
             Throw ex

@@ -237,7 +237,14 @@ Public Class XmlPropertyView
                     control.Checked = True
                     control.Enabled = False
 
-                Case EImplementation.Node, EImplementation.Root
+                Case EImplementation.Root
+                    If Me.Node.ParentNode.Name = "interface" Then
+                        control.Checked = True
+                        control.Enabled = False
+                    End If
+                    ' Ignore
+
+                Case EImplementation.Node
                     ' Ignore
 
                 Case EImplementation.Unknown

@@ -18,6 +18,7 @@ Public Class XmlMethodView
 
     Private m_cmdMember As New ComboCommand
     Private m_cmdBehaviour As New ComboCommand
+    Private m_cmdInline As New InlineCommand
 
     Private WithEvents m_cmbImplementation As ComboBox
     Private WithEvents m_chkOperator As CheckBox
@@ -259,13 +260,14 @@ Public Class XmlMethodView
     End Sub
 
     Public Sub InitBindingCheckInline(ByVal dataControl As CheckBox, ByVal btnControl As Button)
+        m_cmdInline.Inline = dataControl
+        m_cmdInline.Body = btnControl
+
         If Me.Tag <> ELanguage.Language_CplusPlus _
             Or m_eClassImplementation = EImplementation.Interf _
+            Or Me.Node.ParentNode.Name = "interface" _
         Then
-            dataControl.Enabled = False
-            dataControl.Visible = False
-            btnControl.Enabled = False
-            btnControl.Visible = False
+            m_cmdInline.Visible = False
         Else
             m_xmlBindingsList.AddBinding(dataControl, Me, "Inline", "Checked")
         End If
@@ -396,11 +398,14 @@ Public Class XmlMethodView
                 End If
 
                 combo.Items.Add(ConvertEnumImplToView(EImplementation.Root, True))
+
                 If OverridesMethod <> "" _
                 Then
                     combo.Items.Add(ConvertEnumImplToView(EImplementation.Node, True))
                     combo.Items.Add(ConvertEnumImplToView(EImplementation.Leaf, True))
-                Else
+
+                ElseIf Me.Node.ParentNode.Name <> "interface" _
+                Then
                     combo.Items.Add(ConvertEnumImplToView(EImplementation.Simple, True))
                 End If
 

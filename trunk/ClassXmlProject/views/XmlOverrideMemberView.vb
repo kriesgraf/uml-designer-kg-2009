@@ -35,19 +35,19 @@ Public Class XmlOverrideMemberView
 
     Public ReadOnly Property ParenClassName() As String
         Get
-            Return GetAttribute("name", "parent::class")
+            Return GetAttribute("name", "parent::class | parent::interface")
         End Get
     End Property
 
     Public ReadOnly Property ClassId() As String
         Get
-            Return GetAttribute("id", "parent::class")
+            Return GetAttribute("id", "parent::class | parent::interface")
         End Get
     End Property
 
     Public ReadOnly Property ClassImpl() As EImplementation
         Get
-            Return ConvertDtdToEnumImpl(GetAttribute("implementation", "parent::class"))
+            Return ConvertDtdToEnumImpl(GetAttribute("implementation", "parent::class | parent::interface"))
         End Get
     End Property
 

@@ -112,7 +112,10 @@ border-left: 1px solid gray;
 							<xsl:apply-templates select="id(@idref)" mode="Relationship"/>
 						</table>
 					</xsl:when>
-					<xsl:when test="name()='class'">
+          <xsl:when test="self::interface or self::reference">
+            <xsl:apply-templates select="." mode="Class"/>
+          </xsl:when>
+          <xsl:when test="name()='class'">
 						<xsl:apply-templates select="." mode="Class"/>
 						<p/>
 							<xsl:if test="typedef"><span class="class-package">
@@ -492,7 +495,83 @@ border-left: 1px solid gray;
 			<xsl:otherwise>val\ref</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	<!-- ======================================================================= -->
+  <!-- ======================================================================= -->
+  <xsl:template match="reference | interface" mode="Class">
+    <table class="code">
+      <tr>
+        <td class="member" align="center">
+          <xsl:call-template name="Formater">
+            <xsl:with-param name="Text">
+              <xsl:if test="@implementation!='simple'">
+                &lt;<xsl:value-of select="@implementation"/>&gt;
+              </xsl:if>
+              <xsl:value-of select="@name"/>
+            </xsl:with-param>
+            <xsl:with-param name="Police">
+              <xsl:choose>
+                <xsl:when test="@implementation='abstract'">i</xsl:when>
+                <xsl:otherwise>b</xsl:otherwise>
+              </xsl:choose>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:if test="@implementation='container'">
+            <span class="template">
+              <xsl:apply-templates select="model">
+                <xsl:sort select="@name"/>
+              </xsl:apply-templates>
+            </span>
+          </xsl:if>
+          <br/>
+        </td>
+      </tr>
+      <tr>
+        <td class="member">
+          <xsl:apply-templates select="property" mode="Class"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="member">
+          <xsl:if test="@constructor='public'">
+            <xsl:apply-templates select="@constructor"/>
+            <b>Default constructor</b>
+            <br/>
+          </xsl:if>
+          <xsl:if test="@destructor='public'">
+            <xsl:apply-templates select="@destructor"/>
+            <b>Destructor</b>
+            <br/>
+          </xsl:if>
+          <xsl:apply-templates select="method[@constructor='public']" mode="Class"/>
+          <xsl:apply-templates select="method[return/variable/@range='public']" mode="Class"/>
+          <xsl:if test="@constructor='protected'">
+            <xsl:apply-templates select="@constructor"/>
+            <b>Default constructor</b>
+            <br/>
+          </xsl:if>
+          <xsl:if test="@destructor='protected'">
+            <xsl:apply-templates select="@destructor"/>
+            <b>Destructor</b>
+            <br/>
+          </xsl:if>
+          <xsl:apply-templates select="method[@constructor='protected']" mode="Class"/>
+          <xsl:apply-templates select="method[return/variable/@range='protected']" mode="Class"/>
+          <xsl:if test="@constructor='private'">
+            <xsl:apply-templates select="@constructor"/>
+            <b>Default constructor</b>
+            <br/>
+          </xsl:if>
+          <xsl:if test="@destructor='private'">
+            <xsl:apply-templates select="@destructor"/>
+            <b>Destructor</b>
+            <br/>
+          </xsl:if>
+          <xsl:apply-templates select="method[@constructor='private']" mode="Class"/>
+          <xsl:apply-templates select="method[return/variable/@range='private']" mode="Class"/>
+        </td>
+      </tr>
+    </table>
+  </xsl:template>
+    <!-- ======================================================================= -->
 	<xsl:template match="class" mode="Class">
 		<xsl:variable name="CurrentID" select="@id"/>
 		<p class="comment">

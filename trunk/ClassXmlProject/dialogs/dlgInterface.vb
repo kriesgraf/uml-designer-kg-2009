@@ -53,6 +53,7 @@ Public Class dlgInterface
 
             .InitBindingName(txtName)
             .InitBindingPackage(txtPackage)
+            .InitBindingRoot(chkRoot)
 
             .LoadMembers(gridMembers)
 
