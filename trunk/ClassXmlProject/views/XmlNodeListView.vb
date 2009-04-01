@@ -159,6 +159,101 @@ Public Class XmlNodeListView
         End While
     End Sub
 
+    Public Shared Function InitInheritedListBox(ByVal component As XmlComponent, _
+                                                 ByVal lsbControl As ListBox, _
+                                                 ByVal eImplementation As EImplementation, _
+                                                 ByVal bRestrictedVisibility As Boolean) As Boolean
+        Dim strClassQuery As String = ""
+        Dim strReferenceQuery As String = ""
+        Dim strInterfaceQuery As String = ""
+
+        ' Implementation can change in dlgClass, also we can't get property 'component.Implementation' that contains initial value !
+        Select Case eImplementation
+            Case eImplementation.Simple, _
+                 eImplementation.Exception, _
+                 eImplementation.Container
+                strClassQuery = "@implementation='simple' or @implementation='container' or @implementation='final' or @implementation='exception' or @implementation='abstract'"
+                strReferenceQuery = "reference[@type!='typedef']"
+                strInterfaceQuery = "interface[property or method]"
+
+            Case eImplementation.Node, _
+                 eImplementation.Leaf
+                strClassQuery = "@implementation='virtual' or @implementation='root' or @implementation='abstract'"
+                strInterfaceQuery = "interface[property or method]"
+
+            Case eImplementation.Root, _
+                 eImplementation.Interf
+                strClassQuery = "@implementation='abstract'"
+                strInterfaceQuery = "interface[property or method]"
+
+            Case Else
+                Throw New Exception("'CurrentImplementation' property not yet assigned")
+        End Select
+
+        If strClassQuery = "" Then
+            lsbControl.Items.Clear()
+            lsbControl.Items.Add("Sorry no inheritance available")
+            lsbControl.Enabled = False
+            Exit Function
+        End If
+
+        Dim xmlList As XmlNodeList
+        Dim strIgnoredClasses As String
+
+        xmlList = component.SelectNodes("inherited")
+
+        ' We ignore current class ID !
+        strIgnoredClasses = component.GetAttribute("id") + ";"
+
+        Dim iterator As IEnumerator = xmlList.GetEnumerator()
+
+        ' We ignore class ID that are already in heritance
+        While iterator.MoveNext
+            strIgnoredClasses = strIgnoredClasses + GetCurrentIDREF(iterator) + ";"
+        End While
+
+        strIgnoredClasses = "not(contains('" + strIgnoredClasses + "',concat(@id,';')))"
+
+        ' Query removes ignored ID
+        strClassQuery = "class[" + strIgnoredClasses + "][" + strClassQuery + "]"
+
+        Dim collList As New ArrayList
+
+        Dim strTempo As String
+
+        ' We ignore classes that are not in current package, if it's required
+        If bRestrictedVisibility = False Then
+            strTempo = "//" + strClassQuery + "[@visibility='package']"
+            AddNodeList(component, collList, strTempo)
+        Else
+            strTempo = "parent::*/" + strClassQuery
+            AddNodeList(component, collList, strTempo)
+        End If
+
+        If strReferenceQuery.Length > 0 Then
+            strTempo = "//" + strReferenceQuery + "[" + strIgnoredClasses + "]"
+            AddNodeList(component, collList, strTempo)
+        End If
+
+        If strInterfaceQuery.Length > 0 Then
+            strTempo = "//" + strInterfaceQuery + "[" + strIgnoredClasses + "]"
+            AddNodeList(component, collList, strTempo)
+        End If
+
+        If collList.Count = 0 Then
+            lsbControl.Items.Clear()
+            lsbControl.Items.Add("Sorry no inheritance available")
+            lsbControl.Enabled = False
+            Exit Function
+        End If
+
+        collList.Sort(New XmlNodeListView("_comparer"))
+
+        lsbControl.Enabled = True
+        lsbControl.DataSource = collList
+        lsbControl.DisplayMember = "FullpathClassName"
+    End Function
+
     Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements System.Collections.IComparer.Compare
         Dim str1 As String = CType(x, XmlNodeListView).FullpathClassName
         Dim str2 As String = CType(y, XmlNodeListView).FullpathClassName
