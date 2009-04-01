@@ -70,7 +70,6 @@ Public Class dlgMethod
 
         End With
         mnuPaste.Enabled = XmlComponent.Clipboard.CanPaste
-        chkInline_Click(sender, e)
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles OK_Button.Click
@@ -138,10 +137,6 @@ Public Class dlgMethod
 
     Private Sub btnInline_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnInline.Click
         m_xmlView.ShowDialogCodeInline()
-    End Sub
-
-    Private Sub chkInline_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkInline.Click
-        btnInline.Enabled = chkInline.Checked
     End Sub
 
     Private Sub mnuEditParam_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuEditParam.Click
