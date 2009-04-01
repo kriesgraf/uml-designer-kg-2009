@@ -46,6 +46,7 @@ Partial Class dlgInterface
         Me.mnuMemberDependencies = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.DeleteMember = New System.Windows.Forms.ToolStripMenuItem
+        Me.chkRoot = New System.Windows.Forms.CheckBox
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -68,22 +69,22 @@ Partial Class dlgInterface
         Me.txtName.Dock = System.Windows.Forms.DockStyle.Top
         Me.txtName.Location = New System.Drawing.Point(54, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(195, 20)
+        Me.txtName.Size = New System.Drawing.Size(196, 20)
         Me.txtName.TabIndex = 4
         '
         'txtPackage
         '
         Me.txtPackage.Dock = System.Windows.Forms.DockStyle.Top
-        Me.txtPackage.Location = New System.Drawing.Point(315, 3)
+        Me.txtPackage.Location = New System.Drawing.Point(316, 3)
         Me.txtPackage.Name = "txtPackage"
-        Me.txtPackage.Size = New System.Drawing.Size(195, 20)
+        Me.txtPackage.Size = New System.Drawing.Size(196, 20)
         Me.txtPackage.TabIndex = 9
         '
         'Label1
         '
         Me.Label1.AutoSize = True
         Me.Label1.Dock = System.Windows.Forms.DockStyle.Right
-        Me.Label1.Location = New System.Drawing.Point(256, 0)
+        Me.Label1.Location = New System.Drawing.Point(257, 0)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(53, 26)
         Me.Label1.TabIndex = 7
@@ -117,7 +118,7 @@ Partial Class dlgInterface
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(364, 213)
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(366, 157)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -135,16 +136,18 @@ Partial Class dlgInterface
         Me.TableLayoutPanel2.Controls.Add(Me.Label1, 2, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.lblName, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.txtName, 1, 0)
-        Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 3, 2)
-        Me.TableLayoutPanel2.Controls.Add(Me.gridMembers, 1, 1)
+        Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 3, 3)
+        Me.TableLayoutPanel2.Controls.Add(Me.gridMembers, 1, 2)
+        Me.TableLayoutPanel2.Controls.Add(Me.chkRoot, 1, 1)
         Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
-        Me.TableLayoutPanel2.RowCount = 3
+        Me.TableLayoutPanel2.RowCount = 4
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26.0!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(513, 245)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(515, 189)
         Me.TableLayoutPanel2.TabIndex = 2
         '
         'gridMembers
@@ -154,9 +157,9 @@ Partial Class dlgInterface
         Me.TableLayoutPanel2.SetColumnSpan(Me.gridMembers, 3)
         Me.gridMembers.ContextMenuStrip = Me.mnuMembers
         Me.gridMembers.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridMembers.Location = New System.Drawing.Point(54, 29)
+        Me.gridMembers.Location = New System.Drawing.Point(54, 57)
         Me.gridMembers.Name = "gridMembers"
-        Me.gridMembers.Size = New System.Drawing.Size(456, 173)
+        Me.gridMembers.Size = New System.Drawing.Size(458, 89)
         Me.gridMembers.TabIndex = 10
         '
         'mnuMembers
@@ -254,13 +257,24 @@ Partial Class dlgInterface
         Me.DeleteMember.Size = New System.Drawing.Size(226, 22)
         Me.DeleteMember.Text = "Delete"
         '
+        'chkRoot
+        '
+        Me.chkRoot.AutoSize = True
+        Me.chkRoot.Dock = System.Windows.Forms.DockStyle.Left
+        Me.chkRoot.Location = New System.Drawing.Point(54, 29)
+        Me.chkRoot.Name = "chkRoot"
+        Me.chkRoot.Size = New System.Drawing.Size(76, 22)
+        Me.chkRoot.TabIndex = 11
+        Me.chkRoot.Text = "Root class"
+        Me.chkRoot.UseVisualStyleBackColor = True
+        '
         'dlgInterface
         '
         Me.AcceptButton = Me.OK_Button
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel_Button
-        Me.ClientSize = New System.Drawing.Size(513, 245)
+        Me.ClientSize = New System.Drawing.Size(515, 189)
         Me.Controls.Add(Me.TableLayoutPanel2)
         Me.Name = "dlgInterface"
         Me.ShowInTaskbar = False
@@ -297,5 +311,6 @@ Partial Class dlgInterface
     Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents DeleteMember As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents gridMembers As ClassXmlProject.XmlDataGridView
+    Friend WithEvents chkRoot As System.Windows.Forms.CheckBox
 
 End Class

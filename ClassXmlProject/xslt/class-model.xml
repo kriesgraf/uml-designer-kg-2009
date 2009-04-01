@@ -160,9 +160,8 @@
 <!ELEMENT interface (collaboration*,property*,method*) >
 <!ATTLIST interface
           %id;
-          type CDATA #FIXED "class"
+          root (no|yes) "no"
           package NMTOKEN #IMPLIED
-          container CDATA #FIXED "0"
           name %name; #REQUIRED>
 
 <!ELEMENT inherited (#PCDATA) >

@@ -10,9 +10,37 @@ Public Class XmlInterfaceMemberView
     Inherits XmlComponent
     Implements InterfGridViewNotifier
     Implements InterfViewControl
+    Implements InterfObject
 
     Private m_xmlAdapter As XmlTypeVarSpec
+    Private m_xmlClassView As XmlInterfaceView
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
+
+    Public Property InterfObject() As Object Implements InterfObject.InterfObject
+        Get
+            Return m_xmlClassView
+        End Get
+        Set(ByVal value As Object)
+            m_xmlClassView = TryCast(value, XmlInterfaceView)
+        End Set
+    End Property
+
+    Public ReadOnly Property ImplementationView() As String
+        Get
+            Select Case Me.NodeName
+                Case "property"
+                    If CheckAttribute("overridable", "yes", "no") Then
+                        Return "overridable"
+                    End If
+                    Return "not overridable"
+
+                Case "method"
+                    Dim eImplementation As EImplementation = ConvertDtdToEnumImpl(GetAttribute("implementation"))
+                    Return ConvertEnumImplToView(eImplementation, True)
+            End Select
+            Return ""
+        End Get
+    End Property
 
     Public Overrides Property Name() As String
         Get
@@ -71,6 +99,24 @@ Public Class XmlInterfaceMemberView
         End Get
     End Property
 
+    Public Sub UpdateObject() Implements InterfObject.Update
+        Select Case Me.NodeName
+            Case "property"
+                Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
+                xmlProperty.OverridableProperty = True
+
+            Case "method"
+                If m_xmlClassView.CurrentClassImpl = XmlProjectTools.EImplementation.Interf _
+                Then
+                    Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
+                    xmlMethod.Implementation = XmlProjectTools.EImplementation.Interf
+                End If
+
+            Case Else
+                ' Ignore
+        End Select
+    End Sub
+
     Public Function EventClick(ByVal dataMember As String) As Boolean Implements InterfGridViewNotifier.EventClick
         Try
             ' For checkbox column "Member" must return false to execute control updates
@@ -108,10 +154,10 @@ Public Class XmlInterfaceMemberView
             Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me)
             Select Case Me.NodeName
                 Case "property"
-                    CType(fen, InterfFormClass).ClassImpl = EImplementation.Interf
+                    CType(fen, InterfFormClass).ClassImpl = m_xmlClassView.CurrentClassImpl
 
                 Case "method"
-                    CType(fen, InterfFormClass).ClassImpl = EImplementation.Interf
+                    CType(fen, InterfFormClass).ClassImpl = m_xmlClassView.CurrentClassImpl
             End Select
 
             fen.ShowDialog()
@@ -152,6 +198,16 @@ Public Class XmlInterfaceMemberView
             .ReadOnly = False
             .HeaderText = "Node"
             .Name = "ControlName_Node"
+        End With
+        data.Columns.Add(col1)
+
+        col1 = New DataGridViewTextBoxColumn
+        With col1
+            .ReadOnly = True
+            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .DataPropertyName = "ImplementationView"
+            .HeaderText = "Implementation"
+            .Name = "ControlName_Implementation"
         End With
         data.Columns.Add(col1)
 

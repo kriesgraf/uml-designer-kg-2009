@@ -65,7 +65,6 @@ Public Class dlgConstructor
 
             Text = .Name + " constructor"
         End With
-        ChangeInline()
         mnuPaste.Enabled = XmlComponent.Clipboard.CanPaste
     End Sub
 
@@ -75,14 +74,6 @@ Public Class dlgConstructor
 
     Private Sub mnuDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDelete.Click
         grdParams.DeleteSelectedItems()
-    End Sub
-
-    Private Sub ChangeInline()
-        btnInline.Enabled = chkInline.Checked
-    End Sub
-
-    Private Sub chkInline_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkInline.Click
-        ChangeInline()
     End Sub
 
     Private Sub mnuEditParam_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuEditParam.Click
