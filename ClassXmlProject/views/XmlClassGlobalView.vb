@@ -1,7 +1,6 @@
 ﻿Imports System
 Imports System.Windows.Forms
 Imports System.Xml
-Imports System.Collections.Generic
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
 Imports Microsoft.VisualBasic
@@ -16,8 +15,10 @@ Public Class XmlClassGlobalView
     Private m_mnuConstructor As ToolStripMenuItem
 
     Private WithEvents m_cmbImplementation As ComboBox
-    Private WithEvents m_cmbParamInline As ComboBox
+    Private m_cmbParamInline As ComboBox
 
+    Private m_gridMembers As XmlDataGridView
+    Private m_gridInherited As XmlDataGridView
     Private m_cmdImplementation As New ComboCommand
     Private m_cmdParamInline As New ComboCommand
     Private m_cmdConstructor As New ComboCommand
@@ -77,6 +78,7 @@ Public Class XmlClassGlobalView
             End If
 
             If bResult Then
+                m_gridMembers.Binding.UpdateRows()   ' We must change implementation of members if necessary
                 m_xmlBindingsList.UpdateValues()
             End If
 
@@ -269,6 +271,7 @@ Public Class XmlClassGlobalView
 
     Public Sub LoadMembers(ByVal dataControl As XmlDataGridView)
         Try
+            m_gridMembers = dataControl
             dataControl.Binding.LoadXmlNodes(Me, "typedef | property | method", "class_member_view", CType(Me, InterfObject))
             dataControl.Binding.NodeCounter = m_xmlReferenceNodeCounter
 
@@ -279,6 +282,7 @@ Public Class XmlClassGlobalView
 
     Public Sub LoadInheritedMembers(ByVal dataControl As XmlDataGridView)
         Try
+            m_gridInherited = dataControl
             dataControl.Binding.LoadXmlNodes(Me, "inherited", "class_inherited_view", CType(Me, InterfObject))
 
         Catch ex As Exception
@@ -332,23 +336,15 @@ Public Class XmlClassGlobalView
                     End If
                 End If
             End If
-            If MsgBox("Confirm to delete " + xmlcpnt.Name, _
+            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + xmlcpnt.Name, _
                        cstMsgYesNoQuestion, _
                        xmlcpnt.Name) = MsgBoxResult.Yes _
             Then
-                Select Case removeNode.NodeName
-                    Case "property"
-                        RemoveOverridedProperty(removeNode)
-
-                    Case "method"
-                        RemoveOverridedMethod(removeNode)
-
-                    Case "inherited"
-                        RemoveInheritedProperties(removeNode)
-                        RemoveInheritedMethods(removeNode)
-                End Select
-
+                Dim strNodeName As String = removeNode.NodeName
                 If MyBase.RemoveComponent(removeNode) Then
+                    If strNodeName = "inherited" Then
+                        m_gridMembers.Binding.ResetBindings(True)
+                    End If
                     bResult = True
                 End If
             End If
@@ -433,6 +429,7 @@ Public Class XmlClassGlobalView
             UpdateInlineControl()
             UpdateConstructorControl()
             UpdateDestructorControl()
+            m_gridInherited.Binding.UpdateRows()   ' We must checked inherited class with new implementation
 
         Catch ex As Exception
             Throw ex
@@ -517,35 +514,4 @@ Public Class XmlClassGlobalView
             End If
         End With
     End Sub
-
-    Private Sub RemoveOverridedProperty(ByVal removeNode As XmlComponent)
-        ''Throw New Exception("RemoveOverridedProperty not yet implemented")
-    End Sub
-
-    Private Sub RemoveOverridedMethod(ByVal removeNode As XmlComponent)
-        ' Throw New Exception("RemoveOverridedMethod not yet implemented")
-    End Sub
-
-    Private Sub RemoveInheritedProperties(ByVal removeNode As XmlComponent)
-        'Throw New Exception("RemoveInheritedProperties not yet implemented")
-    End Sub
-
-    Private Function RemoveInheritedMethods(ByVal removeNode As XmlComponent) As Boolean
-        Dim bResult As Boolean = False
-        Try
-            Dim listID As New List(Of String)
-            LoadTreeInherited(removeNode.Node, listID)
-            For Each strId As String In listID
-                Dim listMethod As XmlNodeList = SelectNodes("method[@overrides='" + strId + "']")
-                For Each method As XmlNode In listMethod
-                    MyBase.Node.RemoveChild(method)
-                    bResult = True
-                Next
-            Next
-        Catch ex As Exception
-            Throw ex
-        End Try
-
-        Return bResult
-    End Function
 End Class

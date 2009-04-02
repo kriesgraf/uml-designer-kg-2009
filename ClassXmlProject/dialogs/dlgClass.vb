@@ -161,7 +161,6 @@ Public Class dlgClass
 
     Private Sub mnuDeleteSuperClass_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteSuperClass.Click
         If gridInherited.DeleteSelectedItems() Then
-            gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
         End If
     End Sub

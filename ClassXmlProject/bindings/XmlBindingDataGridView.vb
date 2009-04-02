@@ -405,6 +405,15 @@ Public Class XmlBindingDataGridView
         End Try
     End Sub
 
+    Public Sub UpdateRows()
+        For Each element As Object In m_BindingSource.List
+            Dim interf As InterfObject = TryCast(element, InterfObject)
+            If interf IsNot Nothing Then
+                interf.Update()
+            End If
+        Next
+    End Sub
+
     Private Sub InitControl()
         Try
             If m_strViewName.Length = 0 Then
