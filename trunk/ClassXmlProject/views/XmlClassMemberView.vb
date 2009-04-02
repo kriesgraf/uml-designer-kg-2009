@@ -2,7 +2,7 @@
 Imports System.Xml
 Imports System.Windows.Forms
 Imports ClassXmlProject.XmlMethodSpec
-Imports ClassXmlProject.UmlCodeGenerator
+Imports ClassXmlProject.XmlProjectTools
 Imports Microsoft.VisualBasic
 
 Public Class XmlClassMemberView
@@ -18,8 +18,19 @@ Public Class XmlClassMemberView
 
     Public Overrides Property Name() As String
         Get
-            If MyBase.NodeName = "method" And MyBase.Name = cstOperator Then
-                Return GetAttribute("operator")
+            If MyBase.NodeName = "method" Then
+                If MyBase.Name = cstOperator _
+                Then
+                    Return GetAttribute("operator")
+
+                ElseIf MyBase.Name = "#method" _
+                Then ' No name
+                    If Me.Tag <> ELanguage.Language_Vbasic Then
+                        Return m_xmlClassView.Name
+                    Else
+                        Return "New"
+                    End If
+                End If
             End If
             Return MyBase.Name
         End Get
@@ -91,17 +102,38 @@ Public Class XmlClassMemberView
     Public Sub UpdateObject() Implements InterfObject.Update
         Select Case Me.NodeName
             Case "property"
-                If m_xmlClassView.CurrentClassImpl = XmlProjectTools.EImplementation.Interf _
-                Then
-                    Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
-                    xmlProperty.OverridableProperty = True
-                End If
+                Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
+
+                Select Case m_xmlClassView.CurrentClassImpl
+                    Case XmlProjectTools.EImplementation.Interf
+
+                        xmlProperty.OverridableProperty = True
+
+                    Case XmlProjectTools.EImplementation.Leaf, _
+                         XmlProjectTools.EImplementation.Node, _
+                         XmlProjectTools.EImplementation.Root
+                        ' Ignore
+
+                    Case Else
+                        xmlProperty.OverridableProperty = False
+                End Select
+
             Case "method"
-                If m_xmlClassView.CurrentClassImpl = XmlProjectTools.EImplementation.Interf _
-                Then
-                    Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
-                    xmlMethod.Implementation = XmlProjectTools.EImplementation.Interf
-                End If
+                Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
+
+                Select Case m_xmlClassView.CurrentClassImpl
+                    Case XmlProjectTools.EImplementation.Interf
+
+                        xmlMethod.Implementation = XmlProjectTools.EImplementation.Interf
+
+                    Case XmlProjectTools.EImplementation.Leaf, _
+                         XmlProjectTools.EImplementation.Node, _
+                         XmlProjectTools.EImplementation.Root
+                        ' Ignore
+
+                    Case Else
+                        xmlMethod.Implementation = XmlProjectTools.EImplementation.Simple
+                End Select
 
             Case Else
                 ' Ignore

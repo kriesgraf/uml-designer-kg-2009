@@ -1,5 +1,6 @@
 ﻿Imports System.Xml
 Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlClassInheritedView
@@ -33,7 +34,41 @@ Public Class XmlClassInheritedView
     End Property
 
     Public Sub UpdateObject() Implements InterfObject.Update
+        Dim bResult As Boolean = True
 
+        Select Case m_xmlClassView.CurrentClassImpl
+            Case EImplementation.Interf, _
+                 EImplementation.Root
+                If MyBase.Implementation <> EImplementation.Interf Then
+                    bResult = False
+                End If
+
+            Case EImplementation.Leaf, _
+                 EImplementation.Node
+                Select Case MyBase.Implementation
+                    Case EImplementation.Root, _
+                    EImplementation.Node, _
+                    EImplementation.Interf
+                        bResult = True
+
+                    Case Else
+                        bResult = False
+                End Select
+
+            Case Else
+                Select Case MyBase.Implementation
+                    Case EImplementation.Root, _
+                         EImplementation.Node
+                        bResult = False
+
+                    Case Else
+                        bResult = True
+                End Select
+        End Select
+        If bResult = False Then
+            MsgBox("Inherited class '" + Me.Name + "' is not compatible with current class implementation '" _
+                   + ConvertEnumImplToView(m_xmlClassView.CurrentClassImpl) + "'", MsgBoxStyle.Critical)
+        End If
     End Sub
 
     Public Function EventClick(ByVal dataMember As String) As Boolean Implements InterfGridViewNotifier.EventClick
