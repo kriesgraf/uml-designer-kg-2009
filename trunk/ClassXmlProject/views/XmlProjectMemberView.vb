@@ -467,12 +467,12 @@ Public Class XmlProjectMemberView
                     End If
             End Select
 
-            If MsgBox("Confirm to delete " + xmlcpnt.Label(0) + vbCrLf + xmlcpnt.Label(1), _
+            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + xmlcpnt.Label(0) + vbCrLf + "Comment: " + xmlcpnt.Label(1), _
                        cstMsgYesNoQuestion, _
                        xmlcpnt.Label(0)) = MsgBoxResult.Yes _
             Then
-                Dim component As XmlComponent = CreateDocument(xmlcpnt.Node)
-                If MyBase.RemoveComponent(component) Then
+                Dim parent As XmlComposite = CreateDocument(MyBase.Node)
+                If parent.RemoveComponent(xmlcpnt) Then
                     bResult = True
                 End If
             End If

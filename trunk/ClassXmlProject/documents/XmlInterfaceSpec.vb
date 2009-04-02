@@ -66,6 +66,29 @@ Public Class XmlInterfaceSpec
         MyBase.New(xmlNode)
     End Sub
 
+    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Select Case removeNode.NodeName
+                Case "property"
+                    If RemoveOverridedProperty(Me, removeNode) = False Then
+                        Return False
+                    End If
+
+                Case "method"
+                    If RemoveOverridedMethod(Me, removeNode) = False Then
+                        Return False
+                    End If
+            End Select
+
+            bResult = MyBase.RemoveComponent(removeNode)
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+        Return bResult
+    End Function
+
     Protected Friend Overrides Function AppendNode(ByVal child As System.Xml.XmlNode) As System.Xml.XmlNode
         Dim before As XmlNode = Nothing
         Select Case child.Name
