@@ -2,11 +2,13 @@
 Imports System.Xml
 Imports System.Collections
 Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlClassOverrideMethodsView
     Inherits XmlClassSpec
 
+    Private cstMaxCirculalReferences As Integer = 20
     Private m_eImplementation As EImplementation
 
     Public Property CurrentClassImpl() As EImplementation
@@ -21,8 +23,9 @@ Public Class XmlClassOverrideMethodsView
     Public Sub InitListMethods(ByVal listbox As ListBox)
         Try
             Dim list As New ArrayList
+            Dim iteration As Integer = 0
             For Each child As XmlNode In SelectNodes("inherited")
-                SelectInheritedMethods(SelectNodeId(child), list)
+                SelectInheritedMethods(iteration, SelectNodeId(child), list)
             Next
 
             Dim i As Integer = 0
@@ -61,8 +64,13 @@ Public Class XmlClassOverrideMethodsView
         End Try
     End Function
 
-    Private Sub SelectInheritedMethods(ByRef node As XmlNode, ByVal list As ArrayList)
+    Private Sub SelectInheritedMethods(ByRef iteration As Integer, ByRef node As XmlNode, ByVal list As ArrayList)
         Try
+            iteration += 1
+            If iteration > cstMaxCirculalReferences Then
+                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical)
+                Return
+            End If
             ' We add "final" methods to be sure to avoid adding method from "root" node
             For Each child In SelectNodes(node, "method[@constructor!='no' or @implementation='final' or @implementation='virtual' or @implementation='root' or @implementation='abstract']")
                 'Debug.Print("virtual=" + GetName(child))
@@ -76,7 +84,7 @@ Public Class XmlClassOverrideMethodsView
             For Each child In SelectNodes(node, "inherited")
                 Dim inherited As XmlNode = SelectNodeId(child, node)
                 'Debug.Print("inherited=" + GetName(inherited))
-                SelectInheritedMethods(inherited, list)
+                SelectInheritedMethods(iteration, inherited, list)
             Next child
         Catch ex As Exception
             Throw ex

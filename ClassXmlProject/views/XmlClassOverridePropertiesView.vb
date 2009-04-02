@@ -2,12 +2,14 @@
 Imports System.Xml
 Imports System.Collections
 Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlClassOverridePropertiesView
     Inherits XmlClassSpec
 
     Private m_eImplementation As EImplementation
+    Private cstMaxCirculalReferences As Integer = 20
 
     Public Property CurrentClassImpl() As EImplementation
         Get
@@ -25,8 +27,9 @@ Public Class XmlClassOverridePropertiesView
     Public Sub InitListProperties(ByVal listbox As ListBox)
         Try
             Dim list As New ArrayList
+            Dim iteration As Integer = 0
             For Each child As XmlNode In SelectNodes("inherited")
-                SelectInheritedProperties(SelectNodeId(child), list)
+                SelectInheritedProperties(iteration, SelectNodeId(child), list)
             Next
 
             Dim i As Integer = 0
@@ -65,8 +68,13 @@ Public Class XmlClassOverridePropertiesView
         End Try
     End Function
 
-    Private Sub SelectInheritedProperties(ByRef node As XmlNode, ByVal list As ArrayList)
+    Private Sub SelectInheritedProperties(ByRef iteration As Integer, ByRef node As XmlNode, ByVal list As ArrayList)
         Try
+            iteration += 1
+            If iteration > cstMaxCirculalReferences Then
+                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical)
+                Return
+            End If
             For Each child As XmlNode In SelectNodes(node, "property[@overridable='yes' or @overrides!='']")
                 'Debug.Print("virtual=" + GetName(child))
                 Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
@@ -79,7 +87,7 @@ Public Class XmlClassOverridePropertiesView
             For Each child As XmlNode In SelectNodes(node, "inherited")
                 Dim inherited As XmlNode = SelectNodeId(child, node)
                 'Debug.Print("inherited=" + GetName(inherited))
-                SelectInheritedProperties(inherited, list)
+                SelectInheritedProperties(iteration, inherited, list)
             Next child
         Catch ex As Exception
             Throw ex
