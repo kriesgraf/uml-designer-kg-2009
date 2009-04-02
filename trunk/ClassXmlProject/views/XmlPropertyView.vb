@@ -78,7 +78,7 @@ Public Class XmlPropertyView
                     control.Item(0).Checked = True
             End Select
 
-            If OverridesProperty <> "" Then
+            If OverridesProperty <> "" Or Me.Node.ParentNode.Name = "interface" Then
                 For i As Short = 0 To CType(control.Count - 1, Short)
                     control.Item(i).Enabled = False
                 Next i
