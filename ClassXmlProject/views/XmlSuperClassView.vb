@@ -40,14 +40,10 @@ Public Class XmlSuperClassView
                 MyBase.AppendNode(xmlcpnt.Node)
             Next xmlview
 
-            ' Overrides some properties
-            Dim xmlProperty As XmlClassOverridePropertiesView = XmlNodeManager.GetInstance().CreateView(Me.Node, "class_override_properties")
-            xmlProperty.OverrideProperties(m_eImplementation)
-
-            ' Overrides some methods
-            Dim xmlMethod As XmlClassOverrideMethodsView = XmlNodeManager.GetInstance().CreateView(Me.Node, "class_override_methods")
-            xmlMethod.OverrideMethods(m_eImplementation)
-
+            ' We ask to ignore "no members" and return false only on error
+            If OverrideProperties(m_eImplementation, True) Then
+                OverrideMethods(m_eImplementation)
+            End If
         Catch ex As Exception
             Throw ex
         End Try
