@@ -265,16 +265,38 @@ Public Class XmlClassSpec
         Return bResult
     End Function
 
-    Public Function OverrideProperties(ByVal eCurrent As EImplementation) As Boolean
+    Public Function OverrideProperties(ByVal eCurrent As EImplementation, Optional ByVal bIgnoreNoMembers As Boolean = False) As Boolean
         Dim fen As New dlgOverrideProperties(Me, eCurrent)
-        fen.ShowDialog()
-        Return CType(fen.Tag, Boolean)
+        Select Case fen.OverrideProperties()
+            Case dlgOverrideProperties.EAnswer.SomeError
+                Return False
+
+            Case dlgOverrideProperties.EAnswer.NoMembers
+                If bIgnoreNoMembers Then
+                    Return True
+                End If
+                Return False
+
+            Case Else
+                Return True
+        End Select
     End Function
 
-    Public Function OverrideMethods(ByVal eCurrent As EImplementation) As Boolean
+    Public Function OverrideMethods(ByVal eCurrent As EImplementation, Optional ByVal bIgnoreNoMembers As Boolean = False) As Boolean
         Dim fen As New dlgOverrideMethods(Me, eCurrent)
-        fen.ShowDialog()
-        Return CType(fen.Tag, Boolean)
+        Select Case fen.OverrideMethods()
+            Case dlgOverrideProperties.EAnswer.SomeError
+                Return False
+
+            Case dlgOverrideProperties.EAnswer.NoMembers
+                If bIgnoreNoMembers Then
+                    Return True
+                End If
+                Return False
+
+            Case Else
+                Return True
+        End Select
     End Function
 
     Public Overrides Function CanPasteItem(ByVal child As XmlComponent) As Boolean

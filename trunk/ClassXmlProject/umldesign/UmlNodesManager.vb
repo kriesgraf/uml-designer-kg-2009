@@ -203,9 +203,8 @@ Public Class UmlNodesManager
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>"
 
             For Each ref As XmlNode In node.ChildNodes
-                Dim xmlcpnt As XmlReferenceSpec = XmlNodeManager.GetInstance().CreateDocument(ref)
-                strXML += vbCrLf + xmlcpnt.OuterXml
-            Next
+                strXML += vbCrLf + ref.OuterXml
+            Next ref
             strXML += vbCrLf + "</export>"
             'Debug.Print(strXML)
             source.LoadXml(strXML)

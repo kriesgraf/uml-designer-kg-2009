@@ -1,7 +1,15 @@
-﻿Imports System.Windows.Forms
+﻿Imports System
+Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class dlgOverrideProperties
+
+    Public Enum EAnswer
+        MembersToOverride
+        NoMembers
+        SomeError
+        MembersUpdated
+    End Enum
 
     Private m_xmlView As XmlClassOverridePropertiesView
 
@@ -29,8 +37,27 @@ Public Class dlgOverrideProperties
         m_xmlView.CurrentClassImpl = eImplementation
     End Sub
 
+    Public Function OverrideProperties() As EAnswer
+        Dim eResult As EAnswer = EAnswer.NoMembers
+        Try
+            eResult = m_xmlView.InitListProperties()
+            If eResult = EAnswer.MembersToOverride Then
+                Me.ShowDialog()
+                If CType(Me.Tag, Boolean) Then
+                    Return EAnswer.MembersUpdated
+                End If
+            End If
+            Return EAnswer.NoMembers
+
+        Catch ex As Exception
+            eResult = EAnswer.SomeError
+            MsgExceptionBox(ex)
+        End Try
+        Return eResult
+    End Function
+
     Private Sub dlgOverrideProperties_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        m_xmlView.InitListProperties(lstOverrideProperties)
+        m_xmlView.LoadProperties(lstOverrideProperties)
         Me.Text = "Add overrided Properties to class " + m_xmlView.Name
     End Sub
 End Class

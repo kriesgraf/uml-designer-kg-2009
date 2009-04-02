@@ -20,6 +20,8 @@ Public Class XmlProjectTools
     Public Const cstMsgYesNoQuestion As MsgBoxStyle = CType(MsgBoxStyle.Question + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgOkCancelCritical As MsgBoxStyle = CType(MsgBoxStyle.Critical + MsgBoxStyle.OkCancel + MsgBoxStyle.DefaultButton1, MsgBoxStyle)
 
+    Public Const cstMaxCircularReferences As Integer = 20
+
     Private Const cstSchemaName As String = "class-model"
     Private Const cstTempDoxygenFile As String = "__doxygenTempFile"
     Private Const cstTempUmlFile As String = "__umlTempFile"
@@ -1373,7 +1375,8 @@ Public Class XmlProjectTools
 
     Public Shared Sub LoadTreeInherited(ByVal parent As XmlNode, ByVal list As List(Of String))
         Try
-            SelectInherited(SelectNodeId(parent), list)
+            Dim iteration As Integer = 0
+            SelectInherited(iteration, SelectNodeId(parent), list)
 
         Catch ex As Exception
             Throw ex
@@ -1632,14 +1635,19 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Private Shared Sub SelectInherited(ByRef parent As XmlNode, ByVal list As List(Of String))
+    Private Shared Sub SelectInherited(ByRef iteration As Integer, ByRef parent As XmlNode, ByVal list As List(Of String))
         Try
+            iteration += 1
+            If iteration > cstMaxCircularReferences Then
+                ' Inherited tree deepth is too big, or has circular references
+                Return
+            End If
             'Debug.Print("inherited=" + GetName(parent))
             list.Add(GetID(parent))
 
             For Each child As XmlNode In SelectNodes(parent, "inherited")
                 Dim inherited As XmlNode = SelectNodeId(child, parent)
-                SelectInherited(inherited, list)
+                SelectInherited(iteration, inherited, list)
             Next child
         Catch ex As Exception
             Throw ex
