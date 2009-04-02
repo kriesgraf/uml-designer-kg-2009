@@ -65,6 +65,8 @@ http://uml-designer-kg-2009.googlecode.com/svn/trunk/User%20manual/ClassXmlProje
 
 This image describes the most common exception, or the only one that could have occurred. You overwrote the DTD file in you project workspace, but the project that you attempt to open is to old and has not been upgraded.
 
+Another case, even more rare that the DTD has not been changed, you saved your project without problems but when re-open it, you had this error message. And then, nothing to do well by taking the old DTD. The DTD is not involved, the application has made an error of inserting a node in the XML tree. Soon you will have a patch to recover your project. Waiting for this patch, you could use a XML Validator to locate the error and correct it yourself.
+
 Apart from this characteristic error, the other should be more episodic and caused by a particular configuration of your computer or a particular structure of your project. 
 
 Also we do not detail but we will show you how to proceed:
