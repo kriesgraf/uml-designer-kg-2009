@@ -573,6 +573,74 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
+    Public Shared Function RemoveOverridedProperty(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = True
+        Try
+            Dim strQuery As String = "//property[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
+            If parentNode.SelectNodes(strQuery).Count > 0 Then
+                MsgBox("Sorry but this property is overrided", MsgBoxStyle.Critical)
+                bResult = False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Shared Function RemoveOverridedMethod(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = True
+        Try
+            Dim strQuery As String = "//method[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
+            If parentNode.SelectNodes(strQuery).Count > 0 Then
+                MsgBox("Sorry but this method is overrided", MsgBoxStyle.Critical)
+                bResult = False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Shared Function RemoveInheritedProperties(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim listID As New List(Of String)
+            LoadTreeInherited(removeNode.Node, listID)
+
+            For Each strId As String In listID
+                Dim listProperty As XmlNodeList = parentNode.SelectNodes("property[@overrides='" + strId + "']")
+                For Each method As XmlNode In listProperty
+                    parentNode.Node.RemoveChild(method)
+                    bResult = True
+                Next
+            Next
+        Catch ex As Exception
+            Throw ex
+        End Try
+
+        Return bResult
+    End Function
+
+    Public Shared Function RemoveInheritedMethods(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim listID As New List(Of String)
+            LoadTreeInherited(removeNode.Node, listID)
+
+            For Each strId As String In listID
+                Dim listMethod As XmlNodeList = parentNode.SelectNodes("method[@overrides='" + strId + "']")
+                For Each method As XmlNode In listMethod
+                    parentNode.Node.RemoveChild(method)
+                    bResult = True
+                Next
+            Next
+        Catch ex As Exception
+            Throw ex
+        End Try
+
+        Return bResult
+    End Function
+
     Public Shared Sub RemoveNode(ByRef node As XmlNode)
         node.ParentNode.RemoveChild(node)
     End Sub

@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.Xml
 Imports System.ComponentModel
+Imports System.Collections.Generic
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlCodeGenerator
 Imports Microsoft.VisualBasic
@@ -235,6 +236,33 @@ Public Class XmlClassSpec
             Throw ex
         End Try
         Return strDocName
+    End Function
+
+    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Select Case removeNode.NodeName
+                Case "property"
+                    If RemoveOverridedProperty(Me, removeNode) = False Then
+                        Return False
+                    End If
+
+                Case "method"
+                    If RemoveOverridedMethod(Me, removeNode) = False Then
+                        Return False
+                    End If
+
+                Case "inherited"
+                    RemoveInheritedProperties(Me, removeNode)
+                    RemoveInheritedMethods(Me, removeNode)
+            End Select
+
+            bResult = MyBase.RemoveComponent(removeNode)
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+        Return bResult
     End Function
 
     Public Function OverrideProperties(ByVal eCurrent As EImplementation) As Boolean
@@ -504,5 +532,4 @@ Public Class XmlClassSpec
     End Sub
 
 #End Region
-
 End Class
