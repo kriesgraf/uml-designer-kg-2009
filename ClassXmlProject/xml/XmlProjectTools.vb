@@ -856,9 +856,13 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function GetPackage(ByVal node As XmlNode) As String
-        If node.Name = "reference" Or node.Name = "interface" Then
-            Return GetAttributeValue(node, "package")
-        End If
+        Select Case node.Name
+            Case "reference", "interface"
+                Return GetAttributeValue(node, "package")
+
+            Case "typedef"
+                Return GetName(node.ParentNode.ParentNode)
+        End Select
         Return GetName(node.ParentNode)
     End Function
 
@@ -1386,6 +1390,59 @@ Public Class XmlProjectTools
     Public Shared Function CreateNode(ByVal treeNode As XmlNode, ByVal strElement As String) As XmlNode
         Return treeNode.OwnerDocument.CreateElement(strElement)
     End Function
+
+    Public Shared Sub SelectInheritedMethods(ByRef iteration As Integer, ByRef node As XmlNode, ByVal list As ArrayList)
+        Try
+            iteration += 1
+            If iteration > cstMaxCircularReferences Then
+                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical)
+                Return
+            End If
+            ' We add "final" methods to be sure to avoid adding method from "root" node
+            For Each child In SelectNodes(node, "method[@constructor!='no' or @implementation='final' or @implementation='virtual' or @implementation='root' or @implementation='abstract']")
+                'Debug.Print("virtual=" + GetName(child))
+                Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
+
+                If list.Contains(xmlcpnt) = False Then
+                    list.Add(xmlcpnt)
+                End If
+            Next child
+
+            For Each child In SelectNodes(node, "inherited")
+                Dim inherited As XmlNode = SelectNodeId(child, node)
+                'Debug.Print("inherited=" + GetName(inherited))
+                SelectInheritedMethods(iteration, inherited, list)
+            Next child
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
+    Public Shared Sub SelectInheritedProperties(ByRef iteration As Integer, ByRef node As XmlNode, ByVal list As ArrayList)
+        Try
+            iteration += 1
+            If iteration > cstMaxCircularReferences Then
+                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical)
+                Return
+            End If
+            For Each child As XmlNode In SelectNodes(node, "property[@overridable='yes' or @overrides!='']")
+                'Debug.Print("virtual=" + GetName(child))
+                Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
+
+                If list.Contains(xmlcpnt) = False Then
+                    list.Add(xmlcpnt)
+                End If
+            Next child
+
+            For Each child As XmlNode In SelectNodes(node, "inherited")
+                Dim inherited As XmlNode = SelectNodeId(child, node)
+                'Debug.Print("inherited=" + GetName(inherited))
+                SelectInheritedProperties(iteration, inherited, list)
+            Next child
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
 
     Private Shared Sub FindTemplateClasses(ByVal document As XmlDocument)
         Try

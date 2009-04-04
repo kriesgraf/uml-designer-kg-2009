@@ -40,17 +40,16 @@ Public Class XmlClassOverrideMethodsView
             Next
 
             Dim i As Integer = 0
-            While i < m_listArray.Count
-                Dim xmlcpnt As XmlOverrideMemberView = CType(m_listArray.Item(i), XmlOverrideMemberView)
-                If xmlcpnt.OverridableMember = False Then
-                    If i = m_listArray.Count - 1 Then
+            Dim jSecure As Integer = m_listArray.Count     ' Use to exit loop in case of errors
+            While jSecure > 0
+                jSecure -= 1
+                If i < m_listArray.Count Then
+                    Dim xmlcpnt As XmlOverrideMemberView = CType(m_listArray.Item(i), XmlOverrideMemberView)
+                    If xmlcpnt.OverridableMember = False Then
                         m_listArray.Remove(xmlcpnt)
-                        Exit While
                     Else
-                        m_listArray.Remove(xmlcpnt)
+                        i += 1
                     End If
-                Else
-                    i += 1
                 End If
             End While
         Catch ex As Exception
@@ -69,33 +68,6 @@ Public Class XmlClassOverrideMethodsView
             Throw ex
         End Try
     End Function
-
-    Private Sub SelectInheritedMethods(ByRef iteration As Integer, ByRef node As XmlNode, ByVal list As ArrayList)
-        Try
-            iteration += 1
-            If iteration > cstMaxCircularReferences Then
-                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical)
-                Return
-            End If
-            ' We add "final" methods to be sure to avoid adding method from "root" node
-            For Each child In SelectNodes(node, "method[@constructor!='no' or @implementation='final' or @implementation='virtual' or @implementation='root' or @implementation='abstract']")
-                'Debug.Print("virtual=" + GetName(child))
-                Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
-
-                If list.Contains(xmlcpnt) = False Then
-                    list.Add(xmlcpnt)
-                End If
-            Next child
-
-            For Each child In SelectNodes(node, "inherited")
-                Dim inherited As XmlNode = SelectNodeId(child, node)
-                'Debug.Print("inherited=" + GetName(inherited))
-                SelectInheritedMethods(iteration, inherited, list)
-            Next child
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
 
     Private Sub AppendVirtualMethod(ByVal virtualClassMember As XmlOverrideMemberView)
         Try
