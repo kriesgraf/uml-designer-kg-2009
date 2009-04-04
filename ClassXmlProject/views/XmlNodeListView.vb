@@ -217,7 +217,7 @@ Public Class XmlNodeListView
                  eImplementation.Container
                 strClassQuery = "@implementation='simple' or @implementation='container' or @implementation='final' or @implementation='exception' or @implementation='abstract'"
                 strReferenceQuery = "reference[@type!='typedef']"
-                strInterfaceQuery = "interface[property or method]"
+                strInterfaceQuery = "interface[property or method][@root='no']"
 
             Case eImplementation.Node, _
                  eImplementation.Leaf
@@ -227,7 +227,7 @@ Public Class XmlNodeListView
             Case eImplementation.Root, _
                  eImplementation.Interf
                 strClassQuery = "@implementation='abstract'"
-                strInterfaceQuery = "interface[property or method]"
+                strInterfaceQuery = "interface[property or method][@root='no']"
 
             Case Else
                 Throw New Exception("'CurrentImplementation' property not yet assigned")

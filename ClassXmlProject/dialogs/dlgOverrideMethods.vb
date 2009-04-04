@@ -40,8 +40,7 @@ Public Class dlgOverrideMethods
     Public Function OverrideMethods() As Boolean
         Dim eResult As EAnswer = EAnswer.NoMembers
         Try
-            eResult =  m_xmlView.InitListMethods()
-            If eResult = EAnswer.MembersToOverride Then
+            If m_xmlView.InitListMethods() Then
                 Me.ShowDialog()
                 If CType(Me.Tag, Boolean) Then
                     Return EAnswer.MembersUpdated

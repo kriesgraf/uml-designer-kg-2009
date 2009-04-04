@@ -55,6 +55,7 @@ Public Class XmlClassOverrideMethodsView
         Catch ex As Exception
             Throw ex
         End Try
+        Return (m_listArray.Count > 0)
     End Function
 
     Public Function AddMethods(ByVal listbox As ListBox) As Boolean
