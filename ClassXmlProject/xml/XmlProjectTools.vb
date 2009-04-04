@@ -1346,7 +1346,8 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Public Shared Sub ChangeID(ByVal nodeReference As XmlNode, ByVal source As XmlNode, ByVal szNewID As String)
+    Public Shared Function ChangeID(ByVal nodeReference As XmlNode, ByVal source As XmlNode, ByVal szNewID As String) As Boolean
+        Dim bResult As Boolean = False
         Dim list As XmlNodeList
         Dim attrib As XmlNode
 
@@ -1358,6 +1359,7 @@ Public Class XmlProjectTools
             For Each attrib In list
                 'Debug.Print(attrib.OuterXml)
                 attrib.Value = szNewID
+                bResult = True
             Next attrib
         Else
             strQuery = "//@valref[.='" + strOldID + "']"
@@ -1365,6 +1367,7 @@ Public Class XmlProjectTools
             For Each attrib In list
                 'Debug.Print(attrib.OuterXml)
                 attrib.Value = szNewID
+                bResult = True
             Next attrib
 
             strQuery = "//@sizeref[.='" + strOldID + "']"
@@ -1372,10 +1375,12 @@ Public Class XmlProjectTools
             For Each attrib In list
                 'Debug.Print(attrib.OuterXml)
                 attrib.Value = szNewID
+                bResult = True
             Next attrib
         End If
         SetID(nodeReference, szNewID)
-    End Sub
+        Return bResult
+    End Function
 
     Public Shared Sub LoadTreeInherited(ByVal parent As XmlNode, ByVal list As List(Of String))
         Try
