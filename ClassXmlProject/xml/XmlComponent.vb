@@ -43,6 +43,7 @@ End Interface
 
 Public Class XmlComponent
     Inherits Object
+    Implements IComparer
 
 #Region "Predefined types"
 
@@ -207,6 +208,12 @@ Public Class XmlComponent
     Public Overrides Function ToString() As String
         Return MyBase.ToString + " {#" + Me.NodeName + ", '" + Me.Name + "'}"
     End Function
+
+    Public Overridable Function CompareComponent(ByVal x As Object, ByVal y As Object) As Integer Implements IComparer.Compare
+        Dim str1 As String = CType(x, XmlComponent).Name
+        Dim str2 As String = CType(y, XmlComponent).Name
+        Return Comparer.DefaultInvariant.Compare(str1, str2)
+    End Function
 #End Region
 
 #Region "XML queries"
@@ -335,6 +342,19 @@ Public Class XmlComponent
         End If
         Return bResult
     End Function
+
+    Protected Friend Sub SetBooleanAttribute(ByVal name As String, ByVal value_bool As Boolean, _
+                                             Optional ByVal value_true As String = "yes", Optional ByVal value_false As String = "no")
+        Try
+            If value_bool Then
+                SetAttribute(name, value_true)
+            Else
+                SetAttribute(name, value_false)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
 
     Protected Friend Function CheckAttribute(ByVal name As String, ByVal to_check As String, _
                                              ByVal default_value As String, Optional ByVal xpath As String = "") As Boolean
@@ -581,6 +601,10 @@ Public Class XmlComponent
             Throw ex
         End Try
         Return bResult
+    End Function
+
+    Protected Friend Overridable Function FindNode(ByVal child As XmlComponent) As XmlNode
+        Return GetNode("*[@name='" + child.Name + "']")
     End Function
 
     Protected Friend Overridable Function AppendNode(ByVal nodeXml As XmlNode) As XmlNode
