@@ -260,15 +260,17 @@ border-left: 1px solid gray;
 	<xsl:template match="import" mode="Import">
 		<xsl:value-of select="@name"/> (<span class="class-package"><xsl:value-of select="@param"/></span>)<br/>
 		<xsl:if test="export">
-			<li>
-				Reference list: <span class="comment"><xsl:apply-templates select="export/*" mode="Import"/></span></li>
+			<li>Reference list:<table width="100%" border="0"><tr><td>
+                <span class="comment"><xsl:apply-templates select="export/*" mode="Import"/></span>
+                </td></tr></table>
+                </li>
 		</xsl:if>
 		<br/>
 	</xsl:template>
 	<!-- ======================================================================= -->
 	<xsl:template match="reference | interface" mode="Import">
 		<xsl:value-of select="@name"/>
-		<xsl:if test="position()!=last()">,</xsl:if>
+		<xsl:if test="position()!=last()">, </xsl:if>
 	</xsl:template>
 	<!-- ======================================================================= -->
 	<xsl:template match="inherited">
@@ -502,15 +504,18 @@ border-left: 1px solid gray;
         <td class="member" align="center">
           <xsl:call-template name="Formater">
             <xsl:with-param name="Text">
-              <xsl:if test="@implementation!='simple'">
-                &lt;<xsl:value-of select="@implementation"/>&gt;
-              </xsl:if>
+              <xsl:choose>
+                <xsl:when test="self::reference"/>
+                <xsl:when test="@root='yes'">&lt;root&gt;</xsl:when>
+                <xsl:otherwise>&lt;abstract&gt;</xsl:otherwise>
+              </xsl:choose>
               <xsl:value-of select="@name"/>
             </xsl:with-param>
             <xsl:with-param name="Police">
               <xsl:choose>
-                <xsl:when test="@implementation='abstract'">i</xsl:when>
-                <xsl:otherwise>b</xsl:otherwise>
+                <xsl:when test="self::reference">b</xsl:when>
+                <xsl:when test="@root='yes'">b</xsl:when>
+                <xsl:otherwise>i</xsl:otherwise>
               </xsl:choose>
             </xsl:with-param>
           </xsl:call-template>
@@ -1103,6 +1108,7 @@ border-left: 1px solid gray;
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
