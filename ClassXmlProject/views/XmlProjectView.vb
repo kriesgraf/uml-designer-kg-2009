@@ -459,6 +459,7 @@ Public Class XmlProjectView
 
     Public Function AddReferences(ByVal composite As XmlComposite, ByVal eMode As XmlImportSpec.EImportMode) As Boolean
         Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
+        xmlcpnt.Tag = composite.Tag
         xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
         If xmlcpnt.AddReferences(eMode) Then
             Me.Updated = True
@@ -471,6 +472,7 @@ Public Class XmlProjectView
 
     Public Function RemoveRedundantReference(ByVal import As XmlComposite, ByVal reference As XmlComponent) As Boolean
         Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(import.Node, "import")
+        xmlcpnt.Tag = import.Tag
         If xmlcpnt.RemoveRedundant(reference) Then
             Me.Updated = True
             Return True
@@ -491,6 +493,7 @@ Public Class XmlProjectView
 
     Public Function RemoveAllReferences(ByVal composite As XmlComposite) As Boolean
         Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
+        xmlcpnt.Tag = composite.Tag
         xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
         If xmlcpnt.RemoveAllReferences() Then
             m_Control.Binding.ResetBindings(True)
