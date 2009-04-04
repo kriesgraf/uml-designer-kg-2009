@@ -86,7 +86,7 @@ Public Class XmlClassListView
         End Try
     End Sub
 
-    Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements System.Collections.IComparer.Compare
+    Public Overrides Function CompareComponent(ByVal x As Object, ByVal y As Object) As Integer
         Dim str1 As String = CType(x, XmlClassListView).FullpathClassName
         Dim str2 As String = CType(y, XmlClassListView).FullpathClassName
         Return Comparer.DefaultInvariant.Compare(str1, str2)

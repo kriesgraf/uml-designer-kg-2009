@@ -409,7 +409,7 @@ Public Class XmlProjectMemberView
         End Select
     End Sub
 
-    Public Function CompareObject(ByVal x As Object, ByVal y As Object) As Integer Implements System.Collections.IComparer.Compare
+    Public Overrides Function CompareComponent(ByVal x As Object, ByVal y As Object) As Integer
 
         Dim obj1 As XmlProjectMemberView = CType(x, XmlProjectMemberView)
         Dim obj2 As XmlProjectMemberView = CType(y, XmlProjectMemberView)
