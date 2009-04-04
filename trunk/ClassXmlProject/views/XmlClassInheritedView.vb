@@ -78,6 +78,7 @@ Public Class XmlClassInheritedView
     Public Function EventDoubleClick(ByVal dataMember As String) As Boolean Implements InterfGridViewNotifier.EventDoubleClick
         Dim xmlcpnt As XmlSuperClassView = CType(XmlNodeManager.GetInstance().CreateView(m_xmlClassView.Node, "class_superclass_view", m_xmlClassView.Document), XmlSuperClassView)
         xmlcpnt.CurrentImplementation = m_xmlClassView.CurrentClassImpl()
+        xmlcpnt.Tag = m_xmlClassView.Tag
 
         Dim fen As Form = xmlcpnt.CreateForm(xmlcpnt)
         fen.ShowDialog()

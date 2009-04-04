@@ -261,6 +261,7 @@ Public Class XmlBindingDataListView
                 Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
                 If child IsNot Nothing Then
                     xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+                    xmlView.Tag = xmlComponent.Tag
 
                     With CType(xmlView, InterfObject)
                         .InterfObject = m_xmlParentNode
@@ -351,6 +352,7 @@ Public Class XmlBindingDataListView
                     Dim child As XmlNode = m_xmlParentNode.AppendComponent(component)
                     If child IsNot Nothing Then
                         Dim xmlView As XmlComponent = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
+                        xmlView.Tag = xmlComponent.Tag
                         Refresh()
                         Return True
                     Else
