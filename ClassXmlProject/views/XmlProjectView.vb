@@ -242,6 +242,7 @@ Public Class XmlProjectView
                 Dim FileName As String = dlgSaveFile.FileName
                 UpdateCurrentImportFolder(FileName, dlgSaveFile.InitialDirectory)
 
+                Dim eLang As ELanguage = CType(Me.Properties.GenerationLanguage, ELanguage)
                 Dim strFullPackage As String
 
                 Select Case node.Name
@@ -249,22 +250,18 @@ Public Class XmlProjectView
                         MsgBox("Needless to export a whole project", MsgBoxStyle.Exclamation)
 
                     Case "package"
-                        strFullPackage = GetFullpathPackage(node, CType(Me.Properties.GenerationLanguage, ELanguage))
-                        UmlNodesManager.ExportNodes(node, dlgSaveFile.FileName, strFullPackage)
+                        strFullPackage = GetFullpathPackage(node, eLang)
+                        UmlNodesManager.ExportNodes(node, dlgSaveFile.FileName, strFullPackage, eLang)
                         If bExtractReferences Then
-                            strFullPackage = GetFullpathPackage(node, _
-                                                                CType(Me.Properties.GenerationLanguage, ELanguage), _
-                                                                GetName(node))
-                            bResult = UmlNodesManager.ExtractReferences(node, strFullPackage, _
-                                                                        GetSeparator(CType(Me.Properties.GenerationLanguage, ELanguage)))
+                            strFullPackage = GetFullpathPackage(node, eLang, GetName(node))
+                            bResult = UmlNodesManager.ExtractReferences(node, strFullPackage, eLang)
                         End If
 
                     Case "class"
-                        strFullPackage = GetFullpathPackage(node, CType(Me.Properties.GenerationLanguage, ELanguage))
-                        UmlNodesManager.ExportNodes(node, dlgSaveFile.FileName, strFullPackage)
+                        strFullPackage = GetFullpathPackage(node, eLang)
+                        UmlNodesManager.ExportNodes(node, dlgSaveFile.FileName, strFullPackage, eLang)
                         If bExtractReferences Then
-                            bResult = UmlNodesManager.ExtractReferences(node, strFullPackage, _
-                                                                        GetSeparator(CType(Me.Properties.GenerationLanguage, ELanguage)))
+                            bResult = UmlNodesManager.ExtractReferences(node, strFullPackage, eLang)
                         End If
 
                     Case Else
@@ -332,37 +329,38 @@ Public Class XmlProjectView
                 If FileName.EndsWith(".ximp") = False Then
                     FileName += ".ximp"
                 End If
+
                 UpdateCurrentImportFolder(FileName, dlgSaveFile.InitialDirectory)
+
+                Dim eLang As ELanguage = CType(Me.Properties.GenerationLanguage, ELanguage)
 
                 Select Case node.Name
                     Case "root"
                         strFullPackage = GetName(node)
-                        ExportPackageReferences(node, FileName, strFullPackage, _
-                                                         GetSeparator(CType(Me.Properties.GenerationLanguage, ELanguage)))
+                        ExportPackageReferences(node, FileName, strFullPackage, eLang)
 
                     Case "package"
-                        strFullPackage = GetFullpathPackage(node, CType(Me.Properties.GenerationLanguage, ELanguage))
+                        strFullPackage = GetFullpathPackage(node, eLang)
 
                         If SelectNodes(node, "descendant::import").Count > 0 Then
                             MsgBox("Import members will not be exported", vbExclamation)
                         End If
                         If SelectNodes(node, "descendant::class[@visibility='package']").Count > 0 Then
-                            ExportPackageReferences(node, FileName, strFullPackage, _
-                                                         GetSeparator(CType(Me.Properties.GenerationLanguage, ELanguage)))
+                            ExportPackageReferences(node, FileName, strFullPackage, eLang)
                         Else
                             MsgBox("Class " + GetName(node) + " has no class members with package visibility", vbExclamation)
                         End If
 
                     Case "class"
-                        strFullPackage = GetFullpathPackage(node, CType(Me.Properties.GenerationLanguage, ELanguage))
+                        strFullPackage = GetFullpathPackage(node, eLang)
 
                         If GetNodeString(node, "@visibility") = "package" Then
-                            ExportClassReferences(node, FileName, strFullPackage)
+                            ExportClassReferences(node, FileName, strFullPackage, eLang)
                         Else
                             MsgBox("Class " + GetName(node) + " has not a package visibility", vbExclamation)
                         End If
                     Case "typedef"
-                        strFullPackage = GetFullpathPackage(node.ParentNode, CType(Me.Properties.GenerationLanguage, ELanguage))
+                        strFullPackage = GetFullpathPackage(node.ParentNode, eLang)
 
                         If GetNodeString(node.ParentNode, "@visibility") = "package" Then
                             If GetNodeString(node, "variable/@range") = "public" Then
