@@ -1,5 +1,6 @@
 ﻿Imports System
-Imports ClassXmlProject.UmlCodeGenerator
+Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.XmlNodeListView
 Imports System.ComponentModel
 Imports System.Collections
 Imports System.Xml
@@ -133,7 +134,7 @@ Public Class XmlImportSpec
         ElseIf document.NodeName = "export" Then
             Me.Parameter = CType(document, XmlExportSpec).Source
             Me.Name = CType(document, XmlExportSpec).Name
-            Return MyBase.AppendComponent(document)
+            Return AppendComponent(document)
         Else
             Return GetExportNode().AppendComponent(document)
         End If
@@ -189,7 +190,7 @@ Public Class XmlImportSpec
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
         Select Case removeNode.NodeName
-            Case "reference"
+            Case "reference", "interface"
                 ' Don't use return value that returns "true" only when export is empty
                 RemoveReference(removeNode)
                 Return True
@@ -262,9 +263,9 @@ Public Class XmlImportSpec
                 m_xmlExport = TryCast(CreateDocument(GetNode("export")), XmlExportSpec)
                 m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
             Else
-                m_xmlExport = MyBase.CreateDocument("export", MyBase.Document)
+                m_xmlExport = CreateDocument("export", Me.Document)
                 m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
-                MyBase.AppendComponent(m_xmlExport)
+                AppendComponent(m_xmlExport)
             End If
         End If
         Return m_xmlExport
@@ -279,9 +280,9 @@ Public Class XmlImportSpec
                 Case EImportMode.ReplaceReferences
                     bResult = ReplaceFileReferences(Filename.FullName, bDoxygenTagFile)
                 Case EImportMode.MergeReferences
-                    bResult = MergeFileReferences(Filename.FullName, bDoxygenTagFile)
+                    bResult = MergeFileReferences(Filename.FullName, False, bDoxygenTagFile)
                 Case Else
-                    MsgBox("Not yet implemented !", MsgBoxStyle.Exclamation)
+                    bResult = MergeFileReferences(Filename.FullName, True, bDoxygenTagFile)
             End Select
         Catch ex As Exception
             Throw ex
@@ -354,7 +355,7 @@ Public Class XmlImportSpec
 
             If m_xmlExport Is Nothing Then
                 m_xmlExport = New XmlExportSpec()
-                m_xmlExport.Document = MyBase.Document
+                m_xmlExport.Document = Me.Document
             Else
                 bImportOk = m_xmlExport.RemoveReferences()
             End If
@@ -385,15 +386,54 @@ Public Class XmlImportSpec
                 Dim export As XmlExportSpec = New XmlExportSpec()
                 export.Document = Me.Document
                 export.NodeCounter = m_xmlReferenceNodeCounter
+                export.Tag = Me.Tag
+
+                Dim myList As New ArrayList
 
                 If export.LoadImport(strFilename, bDoxygenTagFile) Then
                     export.LoadChildrenList()
                     For Each xmlcpnt As XmlComponent In export.ChildrenList
-                        If m_xmlExport.CheckMerge(xmlcpnt, bAskReplace) Then
-                            m_xmlExport.AppendComponent(xmlcpnt)
-                            bResult = True
+                        xmlcpnt.Tag = export.Tag
+                        Dim added As XmlNodeListView = AddComponentList(xmlcpnt, myList)
+                        Dim found As XmlNode = m_xmlExport.FindNode(xmlcpnt)
+                        Dim strID As String = Nothing
+
+
+                        If found IsNot Nothing Then
+                            Debug.Print("Name:=" + added.Name + "-Found:=" + found.OuterXml)
+                            strID = GetID(found)
+                            added.Info = True
+                        Else
+                            Debug.Print("Name:=" + added.Name + "-Content:=" + added.OuterXml)
+                            strID = m_xmlReferenceNodeCounter.GetNewClassId()
+                            added.CheckedView = True
+                        End If
+
+                        If ChangeID(added.Node, export.Node, strID) Then
+                            added.CheckedView = True
+                            added.CheckLocked = True
                         End If
                     Next
+
+                    If myList.Count > 0 Then
+                        SortNodeList(myList)
+                        If bAskReplace = False _
+                        Then
+                            For Each element As XmlNodeListView In myList
+                                Debug.Print("Name:=" + element.Name + "-" + element.Id)
+                                m_xmlExport.ReplaceReference(element)
+                            Next
+                        ElseIf ShowNodeList(myList, "Select references/interfaces to merge", "Locked, because reference is used by an interface property or method") _
+                        Then
+                            bResult = True
+                            For Each element As XmlNodeListView In myList
+                                Debug.Print("Name:=" + element.Name + "-" + element.Id + "-" + element.CheckedView.ToString)
+                                If element.CheckedView Then
+                                    m_xmlExport.ReplaceReference(element)
+                                End If
+                            Next
+                        End If
+                    End If
                 End If
             End If
         Catch ex As Exception
@@ -409,7 +449,7 @@ Public Class XmlImportSpec
 
             If m_xmlExport Is Nothing Then
                 m_xmlExport = New XmlExportSpec()   ' Don't create at this step an Xml node!
-                m_xmlExport.Document = MyBase.Document
+                m_xmlExport.Document = Me.Document
             Else
                 bImportOk = m_xmlExport.RemoveReferences()
             End If

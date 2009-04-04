@@ -6,7 +6,10 @@ Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlNodeListView
     Inherits XmlComponent
-    Implements IComparer
+
+    Private m_bInfo As Boolean = False
+    Private m_bLocked As Boolean = False
+    Private m_bChecked As Boolean = False
 
     Public Const cstNullElement As String = "0"
 
@@ -19,10 +22,22 @@ Public Class XmlNodeListView
 
     Private m_strName As String
 
+    Public Property Info() As Boolean
+        Get
+            Return m_bInfo
+        End Get
+        Set(ByVal value As Boolean)
+            m_bInfo = value
+        End Set
+    End Property
+
     Public ReadOnly Property Id() As String
         Get
             If m_strName = "" Then
-                Return GetAttribute("id")
+                Dim tempo As String = GetAttribute("id")
+                If tempo IsNot Nothing Then
+                    Return tempo
+                End If
             End If
             Return cstNullElement
         End Get
@@ -47,6 +62,26 @@ Public Class XmlNodeListView
             End If
             Return m_strName
         End Get
+    End Property
+
+    Public Property CheckLocked() As Boolean
+        Get
+            Return m_bLocked
+        End Get
+        Set(ByVal value As Boolean)
+            m_bLocked = value
+        End Set
+    End Property
+
+    Public Property CheckedView() As Boolean
+        Get
+            Return m_bChecked
+        End Get
+        Set(ByVal value As Boolean)
+            If m_bLocked = False Then
+                m_bChecked = value
+            End If
+        End Set
     End Property
 
     Public Sub New(ByVal _strName As String)
@@ -143,6 +178,14 @@ Public Class XmlNodeListView
             Throw ex
         End Try
     End Sub
+
+    Public Shared Function AddComponentList(ByVal component As XmlComponent, ByRef myList As ArrayList) As XmlNodeListView
+        Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(component.Node)
+        xmlcpnt.Tag = component.Tag
+        'Debug.Print("(" + component.Node.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
+        myList.Add(xmlcpnt)
+        Return xmlcpnt
+    End Function
 
     Public Shared Sub AddNodeList(ByVal document As XmlComponent, ByRef myList As ArrayList, ByVal xpath As String)
         Dim iterator As IEnumerator = document.SelectNodes(xpath).GetEnumerator
@@ -254,17 +297,31 @@ Public Class XmlNodeListView
         lsbControl.DisplayMember = "FullpathClassName"
     End Function
 
-    Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements System.Collections.IComparer.Compare
+    Public Overrides Function CompareComponent(ByVal x As Object, ByVal y As Object) As Integer
         Dim str1 As String = CType(x, XmlNodeListView).FullpathClassName
         Dim str2 As String = CType(y, XmlNodeListView).FullpathClassName
         Return Comparer.DefaultInvariant.Compare(str1, str2)
     End Function
 
-    Private Shared Sub SortNodeList(ByRef myList As ArrayList)
+    Public Shared Sub SortNodeList(ByVal myList As ArrayList)
         myList.Sort(New XmlNodeListView("_comparer"))
     End Sub
 
-    Private Shared Sub AddSimpleTypesList(ByRef myList As ArrayList, ByVal eTag As ELanguage)
+    Public Shared Function ShowNodeList(ByVal myList As ArrayList, ByVal title As String, ByVal lockedMessage As String) As Boolean
+        Dim form As New dlgNodeListView
+        With form
+            .Text = title
+            .LockedMessage = lockedMessage
+            .NodeList = myList
+            .DisplayMember = "FullpathClassName"
+            If .ShowDialog = DialogResult.OK Then
+                Return True
+            End If
+        End With
+        Return False
+    End Function
+
+    Private Shared Sub AddSimpleTypesList(ByVal myList As ArrayList, ByVal eTag As ELanguage)
         Try
             Dim doc As New XmlDocument
             LoadDocument(doc, GetSimpleTypesFilename(eTag))

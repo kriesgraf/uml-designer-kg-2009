@@ -36,7 +36,7 @@ Public Class XmlExportSpec
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
         Try
-            AddChildren(SelectNodes(), strViewName)
+            AddChildren(SelectNodes("reference | interface"), strViewName)
 
         Catch ex As Exception
             Throw ex
@@ -47,18 +47,27 @@ Public Class XmlExportSpec
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 
+#End Region
+
+#Region "Protected friend methods"
+
     Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode) As XmlNode
-        Select nodeXml.Name
+        Select Case nodeXml.Name
             Case "reference", "interface"
-                Return MyBase.AppendNode(nodeXml)
+                Return AppendNode(nodeXml)
+            Case Else
+                For Each child As XmlNode In nodeXml.SelectNodes("descendant::reference | descendant::interface")
+                    AppendNode(child)
+                Next
         End Select
-        For Each child As XmlNode In nodeXml.SelectNodes("descendant::reference | descendant::interface")
-            MyBase.AppendNode(child)
-        Next
         Return Nothing
     End Function
 
-#End Region
+    Protected Friend Sub ReplaceReference(ByVal destination As XmlComponent)
+        Dim origin As XmlNode = FindNode(destination)
+        Me.Node.InsertBefore(Me.Document.ImportNode(destination.Node, True), origin)
+        RemoveNode(origin)
+    End Sub
 
     Protected Friend Function RemoveReferences() As Boolean
         Dim bResult As Boolean = True
@@ -132,17 +141,13 @@ Public Class XmlExportSpec
         Return bResult
     End Function
 
-    Protected Friend Function CheckMerge(ByVal component As XmlComponent, ByVal bAskReplace As Boolean) As Boolean
-        Dim child As XmlNode = GetNode(component.NodeName + "[@name='" + component.Name + "']")
-        If child IsNot Nothing Then
-            If bAskReplace Then
-                Return False
-            Else
-                Return False
-            End If
-        End If
-        Return True
+    Protected Friend Function GetMerge(ByVal component As XmlComponent) As XmlNode
+        Return GetNode(component.NodeName + "[@name='" + component.Name + "']")
     End Function
+
+#End Region
+
+#Region "private methods"
 
     Private Sub UpdateExportReferences()
         Dim child As XmlNode
@@ -156,4 +161,7 @@ Public Class XmlExportSpec
             SetID(child, strID)
         Next child
     End Sub
+
+#End Region
+
 End Class
