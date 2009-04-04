@@ -122,7 +122,7 @@ Public Class XmlExportSpec
                 XmlProjectTools.LoadDocument(document, strFilename)
             End If
             ' Convert "document" context to "MyBase.Document" context
-            MyBase.Node = MyBase.Document.ImportNode(document.DocumentElement, True)
+            MyBase.Node = Me.Document.ImportNode(document.DocumentElement, True)
             UpdateExportReferences()
             bResult = True
 
@@ -133,7 +133,7 @@ Public Class XmlExportSpec
     End Function
 
     Protected Friend Function CheckMerge(ByVal component As XmlComponent, ByVal bAskReplace As Boolean) As Boolean
-        Dim child As XmlNode = MyBase.GetNode(component.NodeName + "[@name='" + component.Name + "']")
+        Dim child As XmlNode = GetNode(component.NodeName + "[@name='" + component.Name + "']")
         If child IsNot Nothing Then
             If bAskReplace Then
                 Return False
@@ -146,11 +146,14 @@ Public Class XmlExportSpec
 
     Private Sub UpdateExportReferences()
         Dim child As XmlNode
+        Dim strID As String
 
         If Node Is Nothing Then Exit Sub
 
-        For Each child In MyBase.SelectNodes("descendant::reference || descendant::interface")
-            SetID(child, m_xmlReferenceNodeCounter.GetNewClassId())
+        For Each child In SelectNodes("descendant::reference | descendant::interface")
+            strID = m_xmlReferenceNodeCounter.GetNewClassId()
+            ChangeID(child, Me.Node, strID)
+            SetID(child, strID)
         Next child
     End Sub
 End Class
