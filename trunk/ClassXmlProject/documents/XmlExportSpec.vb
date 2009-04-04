@@ -54,10 +54,10 @@ Public Class XmlExportSpec
     Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode) As XmlNode
         Select Case nodeXml.Name
             Case "reference", "interface"
-                Return AppendNode(nodeXml)
+                Return Me.Node.AppendChild(nodeXml)
             Case Else
                 For Each child As XmlNode In nodeXml.SelectNodes("descendant::reference | descendant::interface")
-                    AppendNode(child)
+                    Me.Node.AppendChild(child)
                 Next
         End Select
         Return Nothing
