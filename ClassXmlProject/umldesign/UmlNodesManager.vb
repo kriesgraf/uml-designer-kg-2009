@@ -593,7 +593,7 @@ Public Class UmlNodesManager
 
             For Each child In listID
                 Select Case child.Name
-                    Case "class", "typedef", "reference", "model"
+                    Case "class", "typedef", "reference", "interface", "model"
                         RenumberElement(child, iClassIndex, "class")
                         iClassIndex += 1
                 End Select
