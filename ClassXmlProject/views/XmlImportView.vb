@@ -215,7 +215,7 @@ Public Class XmlImportView
     Public Overloads Function RemoveAllReferences() As Boolean
         Dim bResult As Boolean = False
         Try
-            If MyBase.RemoveImport() Then
+            If RemoveComponent(m_xmlExport) Then
                 bResult = True
                 Me.Updated = True
             End If
@@ -228,7 +228,7 @@ Public Class XmlImportView
     Public Overloads Function RemoveAllReferences(ByVal list As ListBox) As Boolean
         Dim bResult As Boolean = False
         Try
-            If MyBase.RemoveImport() Then
+            If RemoveComponent(m_xmlExport) Then
                 list.Items.Clear()
                 Me.Updated = True
                 bResult = True
@@ -242,7 +242,7 @@ Public Class XmlImportView
     Public Sub Delete(ByVal list As ListBox)
         Try
             If list.SelectedItem IsNot Nothing Then
-                If MyBase.RemoveReference(CType(list.SelectedItem, XmlComponent)) Then
+                If RemoveComponent(CType(list.SelectedItem, XmlComponent)) Then
                     InitBindingReferences(list)
                     Me.Updated = True
                 End If
