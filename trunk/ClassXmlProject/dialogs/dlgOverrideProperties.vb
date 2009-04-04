@@ -40,8 +40,7 @@ Public Class dlgOverrideProperties
     Public Function OverrideProperties() As EAnswer
         Dim eResult As EAnswer = EAnswer.NoMembers
         Try
-            eResult = m_xmlView.InitListProperties()
-            If eResult = EAnswer.MembersToOverride Then
+            If m_xmlView.InitListProperties() Then
                 Me.ShowDialog()
                 If CType(Me.Tag, Boolean) Then
                     Return EAnswer.MembersUpdated
