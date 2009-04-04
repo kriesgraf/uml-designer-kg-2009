@@ -79,7 +79,7 @@ Public Class UmlNodesManager
     End Function
 
     Public Shared Sub ExportNodes(ByVal node As XmlNode, ByVal strFilename As String, _
-                                    ByVal strFullpathPackage As String)
+                                  ByVal strFullpathPackage As String, ByVal eLang As ELanguage)
         Dim source As New XmlDocument
         Dim strXML As String
         Dim strComment As String
@@ -110,7 +110,8 @@ Public Class UmlNodesManager
         GetListDescendant(child, listID, "collaboration/@idref")
         ExportRelationships(source, node, listID)
 
-        AddNodesAndLinkUnreferencedNodes(source, node, child)
+        AddNodesAndLinkUnreferencedNodes(source, node, child, eLang)
+
         child = GetNode(source, "/root/import/export")
         If child.HasChildNodes = False Then
             RemoveNode(child.ParentNode)
@@ -119,7 +120,7 @@ Public Class UmlNodesManager
     End Sub
 
     Public Shared Sub ExportClassReferences(ByVal node As XmlNode, ByVal strFilename As String, _
-                                            ByVal strFullpathPackage As String)
+                                            ByVal strFullpathPackage As String, ByVal eLang As ELanguage)
         Try
             Dim source As New XmlDocument
             Dim strXML As String
@@ -134,6 +135,9 @@ Public Class UmlNodesManager
             strXML += vbCrLf + "</export>"
 
             source.LoadXml(strXML)
+
+            LinkUnreferencedNodes(source, node, eLang)
+
             source.Save(strFilename)
 
         Catch ex As Exception
@@ -142,7 +146,7 @@ Public Class UmlNodesManager
     End Sub
 
     Public Shared Sub ExportPackageReferences(ByVal node As XmlNode, ByVal strFilename As String, _
-                                              ByVal strFullpathPackage As String, ByVal strSeparator As String)
+                                              ByVal strFullpathPackage As String, ByVal eLang As ELanguage)
         Try
             Dim source As New XmlDocument
             Dim strXML As String
@@ -155,11 +159,14 @@ Public Class UmlNodesManager
 
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>" + vbCrLf
 
-            strXML += vbCrLf + ExportElementPackage(node, "", strSeparator)
+            strXML += vbCrLf + ExportElementPackage(node, "", eLang)
 
             strXML += vbCrLf + "</export>"
 
             source.LoadXml(strXML)
+
+            LinkUnreferencedNodes(source, node, eLang)
+
             source.Save(strFilename)
 
         Catch ex As Exception
@@ -221,7 +228,7 @@ Public Class UmlNodesManager
     End Sub
 
     Public Shared Function ExtractReferences(ByVal node As XmlNode, ByVal strFullpathPackage As String, _
-                                             ByVal strSeparator As String) As Boolean
+                                             ByVal eLang As ELanguage) As Boolean
         Dim bResult As Boolean = False
         Try
             Dim parent As XmlNode = node.ParentNode
@@ -232,7 +239,7 @@ Public Class UmlNodesManager
                 Case "class"
                     strXML += vbCrLf + ExportElementClass(node, "")
                 Case "package"
-                    strXML += vbCrLf + ExportElementPackage(node, "", strSeparator)
+                    strXML += vbCrLf + ExportElementPackage(node, "", eLang)
             End Select
             strXML += vbCrLf + "</export>"
 
@@ -256,19 +263,19 @@ Public Class UmlNodesManager
     End Function
 
     Private Shared Function ExportElementPackage(ByVal node As XmlNode, ByVal strCurrentPackage As String, _
-                                              ByVal strSeparator As String) As String
+                                              ByVal eLang As ELanguage) As String
         Dim strXML As String = ""
         Try
             If strCurrentPackage = "" Then
                 strCurrentPackage = GetName(node)
             Else
-                strCurrentPackage += strSeparator + GetName(node)
+                strCurrentPackage += GetSeparator(eLang) + GetName(node)
             End If
             For Each current As XmlNode In node.SelectNodes("class | package")
                 If current.Name = "class" Then
                     strXML += vbCrLf + ExportElementClass(current, strCurrentPackage)
                 Else
-                    strXML += vbCrLf + ExportElementPackage(current, strCurrentPackage, strSeparator)
+                    strXML += vbCrLf + ExportElementPackage(current, strCurrentPackage, eLang)
                 End If
             Next current
         Catch ex As Exception
@@ -280,17 +287,48 @@ Public Class UmlNodesManager
     Private Shared Function ExportElementClass(ByVal node As XmlNode, ByVal strCurrentPackage As String) As String
         Dim strXML As String = ""
         Try
-            strXML += "<reference name='" + GetName(node) + "' type='class'"
+            Dim strImplementation As String = GetAttributeValue(node, "implementation")
+            Dim strName As String = GetName(node)
 
-            If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
+            Debug.Print("Name:=" + strName + " - " + strImplementation)
 
-            Dim iContainer = node.SelectNodes("model").Count
-            strXML += " container='" + CStr(iContainer) + "' id='" + GetID(node) + "'/>"
+            Select Case strImplementation
+                Case "simple", "final", "exception", "container"
+                    strXML += "<reference name='" + GetName(node) + "' type='class'"
 
-            For Each typedef As XmlNode In SelectNodes(node, "typedef[variable/@range='public']")
-                strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
-            Next typedef
+                    If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
 
+                    Dim iContainer = node.SelectNodes("model").Count
+                    strXML += " container='" + CStr(iContainer) + "' id='" + GetID(node) + "'/>"
+
+                    For Each typedef As XmlNode In SelectNodes(node, "typedef[variable/@range='public']")
+                        strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
+                    Next typedef
+
+                Case Else
+                    strXML += "<interface name='" + GetName(node) + "'"
+                    If strImplementation <> "abstract" Then
+                        strXML += " root='yes'"
+                    Else
+                        strXML += " root='no'"
+                    End If
+                    If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
+                    strXML += " id='" + GetID(node) + "'>"
+
+                    Dim list As New ArrayList
+
+                    Dim iteration As Integer = 0
+                    SelectInheritedProperties(iteration, node, list)
+
+                    iteration = 0
+                    SelectInheritedMethods(iteration, node, list)
+
+                    For Each member As XmlOverrideMemberView In list
+                        ExportElementClassMember(strXML, member)
+                    Next
+
+                    strXML += vbCrLf + "</interface>"
+            End Select
         Catch ex As Exception
             Throw ex
         End Try
@@ -311,6 +349,23 @@ Public Class UmlNodesManager
         End Try
         Return strXML
     End Function
+
+    Private Shared Sub ExportElementClassMember(ByRef strXML As String, ByVal member As XmlOverrideMemberView)
+        If member.InterfaceMember Then
+            ' We clone node to remove unused attributes or nodes
+            member.Node = member.Node.CloneNode(True)
+            Dim attrib As XmlAttribute = member.Node.Attributes("overrides")
+            If attrib IsNot Nothing Then
+                member.Node.Attributes.Remove(attrib)
+            End If
+            Dim node As XmlNode = member.Node.SelectSingleNode("inline")
+            If node IsNot Nothing Then
+                member.Node.RemoveChild(node)
+            End If
+            member.InterfaceMember = True
+            strXML += vbCrLf + member.OuterXml
+        End If
+    End Sub
 
     Private Shared Sub GetListDescendant(ByRef node As XmlNode, ByRef list As SortedList, ByVal strQuery As String, Optional ByVal strName As String = ".")
         Dim listNodes As XmlNodeList
@@ -353,15 +408,10 @@ Public Class UmlNodesManager
         Next
     End Sub
 
-    Private Shared Sub AddNodesAndLinkUnreferencedNodes(ByVal source As XmlDocument, ByVal treeNode As XmlNode, ByVal exportNodes As XmlNode)
+    Private Shared Sub AddNodesAndLinkUnreferencedNodes(ByVal source As XmlDocument, ByVal treeNode As XmlNode, _
+                                                        ByVal exportNodes As XmlNode, ByVal eLang As ELanguage)
         Dim listID As New SortedList
         Dim child As XmlNode
-        Dim unref As XmlNode
-        Dim export As XmlNode
-        Dim reference As XmlNode
-        Dim strType As String
-        Dim strID As String
-        Dim strPackage As String
 
         child = source.ImportNode(exportNodes, True)
         Dim before As XmlNode = GetNode(source, "//relationship")
@@ -371,6 +421,19 @@ Public Class UmlNodesManager
         Else
             source.DocumentElement.AppendChild(child)
         End If
+
+        LinkUnreferencedNodes(source, treeNode, eLang)
+    End Sub
+
+    Private Shared Sub LinkUnreferencedNodes(ByVal source As XmlDocument, ByVal treeNode As XmlNode, ByVal eLang As ELanguage)
+        Dim listID As New SortedList
+        Dim child As XmlNode
+        Dim unref As XmlNode
+        Dim export As XmlNode
+        Dim reference As XmlNode
+        Dim strType As String
+        Dim strID As String
+        Dim strPackage As String
 
         export = GetNode(source, "descendant::export")
 
@@ -419,10 +482,27 @@ Public Class UmlNodesManager
 
             If Not unref Is Nothing Then
                 AddAttributeValue(reference, "name", GetName(unref))
-                strPackage = GetPackage(unref)
+                Select Case unref.Name
+                    Case "typedef", "class"
+                        strPackage = GetPackage(unref)
+                    Case "reference", "interface"
+                        strPackage = GetPackage(unref)
+                        Dim tempo As String = GetNodeString(unref, "ancestor::import/@param")
+                        If tempo.Length > 0 Then
+                            If strPackage <> "" Then ' check nothing and empty in same time
+                                strPackage = tempo + GetSeparator(eLang) + strPackage
+                            Else
+                                strPackage = tempo
+                            End If
+                        End If
+
+                    Case Else
+                        strPackage = GetPackage(unref)
+                End Select
                 If strPackage <> "" Then AddAttributeValue(reference, "package", strPackage)
                 AddAttributeValue(reference, "id", GetID(unref))
                 AddAttributeValue(reference, "type", strType)
+                If strType = "typedef" Then AddAttributeValue(reference, "class", GetName(unref.ParentNode))
             End If
         Next
     End Sub
