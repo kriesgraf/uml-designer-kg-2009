@@ -55,8 +55,8 @@ Public Class XmlImportView
     Public Sub UpdateValues()
         If m_chkInterface.Checked Then
             If Me.InlineBody Is Nothing Then
-                Me.InlineBody = CreateDocument("body", MyBase.Document)
-                MyBase.AppendNode(Me.InlineBody.Node)
+                Me.InlineBody = CreateDocument("body", Me.Document)
+                AppendNode(Me.InlineBody.Node)
             End If
             Me.InlineBody.CodeSource = m_txtInterface.Text
         Else
@@ -110,11 +110,13 @@ Public Class XmlImportView
     Public Sub InitBindingReferences(ByVal listbox As ListBox)
         Try
             Dim listNode As New ArrayList
-            Dim iterator As IEnumerator = MyBase.SelectNodes("descendant::reference | descendant::interface").GetEnumerator
+            Dim iterator As IEnumerator = SelectNodes("descendant::reference | descendant::interface").GetEnumerator
             iterator.Reset()
             While iterator.MoveNext
                 Dim xmlNode As XmlNode = TryCast(iterator.Current, XmlNode)
-                listNode.Add(m_xmlNodeManager.CreateView(xmlNode, xmlNode.Name, MyBase.Document))
+                Dim xmlcpnt As XmlComponent = m_xmlNodeManager.CreateView(xmlNode, xmlNode.Name, Me.Document)
+                xmlcpnt.Tag = Me.Tag
+                listNode.Add(xmlcpnt)
             End While
             listbox.DataSource = listNode
             listbox.DisplayMember = "Name"
@@ -126,10 +128,10 @@ Public Class XmlImportView
     Public Sub AddNew(ByVal list As ListBox, ByVal name As String)
         Try
             If m_xmlExport Is Nothing Then
-                m_xmlExport = CreateDocument("export", MyBase.Document)
-                MyBase.AppendNode(m_xmlExport.Node)
+                m_xmlExport = CreateDocument("export", Me.Document)
+                AppendNode(m_xmlExport.Node)
             End If
-            Dim xmlcpnt As XmlComponent = CreateDocument(name, MyBase.Document)
+            Dim xmlcpnt As XmlComponent = CreateDocument(name, Me.Document)
 
             m_xmlExport.AppendNode(xmlcpnt.Node)
             xmlcpnt.SetIdReference(m_xmlReferenceNodeCounter)
@@ -255,7 +257,7 @@ Public Class XmlImportView
     Public Sub Duplicate(ByVal list As ListBox)
         Try
             If list.SelectedItem IsNot Nothing Then
-                If MyBase.DuplicateReference(CType(list.SelectedItem, XmlComponent)) Then
+                If DuplicateReference(CType(list.SelectedItem, XmlComponent)) Then
                     InitBindingReferences(list)
                     Me.Updated = True
                 End If
@@ -302,7 +304,7 @@ Public Class XmlImportView
             If (dlgOpenFile.ShowDialog() = DialogResult.OK) _
             Then
                 Dim FileName As System.IO.FileInfo = My.Computer.FileSystem.GetFileInfo(dlgOpenFile.FileName)
-                MyBase.LoadDocument(FileName, eMode)
+                LoadDocument(FileName, eMode)
                 ' This class is used both in dlgImport and in frmProject
                 If m_xmlBindingsList IsNot Nothing Then m_xmlBindingsList.ResetValues()
                 bResult = True
