@@ -510,6 +510,8 @@ Public Class XmlProjectView
                 Me.Updated = True
                 m_Control.Binding.ResetBindings(True)
                 Return True
+            Else
+                MsgBox("No properties to override!", MsgBoxStyle.Exclamation)
             End If
         End If
         Return False
@@ -522,6 +524,8 @@ Public Class XmlProjectView
                 Me.Updated = True
                 m_Control.Binding.ResetBindings(True)
                 Return True
+            Else
+                MsgBox("No methods to override!", MsgBoxStyle.Exclamation)
             End If
         End If
         Return False

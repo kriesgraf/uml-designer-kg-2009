@@ -4,13 +4,41 @@ Imports ClassXmlProject.XmlProjectTools
 Public Class XmlOverrideMemberView
     Inherits XmlComponent
 
-    Public Sub New(ByVal node As XmlNode)
-        MyBase.New(node)
-    End Sub
+    Private m_bChecked As Boolean = False
+
+    Public Property CheckedView() As Boolean
+        Get
+            Return m_bChecked
+        End Get
+        Set(ByVal value As Boolean)
+            m_bChecked = value
+        End Set
+    End Property
 
     Public ReadOnly Property NumID() As String
         Get
             Return GetAttribute("num-id")
+        End Get
+    End Property
+
+    Public ReadOnly Property Implementation() As EImplementation
+        Get
+            Select Case Me.NodeName
+                Case "property"
+                    If CheckAttribute("overridable", "yes", "no") Then
+                        If CheckAttribute("implementation", "abstract", "simple", "parent::class") Then
+                            Return EImplementation.Interf
+                        Else
+                            Return EImplementation.Leaf
+                        End If
+                    Else
+                        Return EImplementation.Leaf
+                    End If
+
+                Case "method"
+                    Return ConvertDtdToEnumImpl(GetAttribute("implementation"))
+            End Select
+            Return EImplementation.Unknown
         End Get
     End Property
 
@@ -94,6 +122,10 @@ Public Class XmlOverrideMemberView
             Return strResult
         End Get
     End Property
+
+    Public Sub New(ByVal node As XmlNode)
+        MyBase.New(node)
+    End Sub
 
     Public Overrides Function Equals(ByVal obj As Object) As Boolean
         Return (Me.Name = CType(obj, XmlComponent).Name)

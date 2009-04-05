@@ -31,6 +31,29 @@ Public Class XmlNodeListView
         End Set
     End Property
 
+    Public ReadOnly Property Implementation() As EImplementation
+        Get
+            Select Case Me.NodeName
+                Case "property"
+                    ' Not yet used? to be defined
+
+                Case "method", "class"
+                    Return ConvertDtdToEnumImpl(GetAttribute("implementation"))
+
+                Case "reference"
+                    Return EImplementation.Simple
+
+                Case "interface"
+                    If CheckAttribute("root", "yes", "no") Then
+                        Return EImplementation.Root
+                    Else
+                        Return EImplementation.Interf
+                    End If
+            End Select
+            Return EImplementation.Unknown
+        End Get
+    End Property
+
     Public ReadOnly Property Id() As String
         Get
             If m_strName = "" Then
@@ -215,7 +238,7 @@ Public Class XmlNodeListView
             Case eImplementation.Simple, _
                  eImplementation.Exception, _
                  eImplementation.Container
-                strClassQuery = "@implementation='simple' or @implementation='container' or @implementation='final' or @implementation='exception' or @implementation='abstract'"
+                strClassQuery = "@implementation='simple' or @implementation='final' or @implementation='exception' or @implementation='abstract'"
                 strReferenceQuery = "reference[@type!='typedef']"
                 strInterfaceQuery = "interface[property or method][@root='no']"
 
@@ -242,7 +265,19 @@ Public Class XmlNodeListView
 
         Dim xmlList As XmlNodeList
         Dim strIgnoredClasses As String
+        Dim bInherit As Boolean = (component.GetNode("id(inherited/@idref)[@implementation!='abstract']") IsNot Nothing)
+        If component.GetNode("id(inherited/@idref)[self::interface][@root='yes']") IsNot Nothing Then
+            bInherit = True
+        End If
+        If component.GetNode("id(inherited/@idref)[self::reference]") IsNot Nothing Then
+            bInherit = True
+        End If
 
+        If bInherit Then
+            strClassQuery = "@implementation='abstract'"
+            strReferenceQuery = ""
+            strInterfaceQuery = "interface[@root='no']"
+        End If
         xmlList = component.SelectNodes("inherited")
 
         ' We ignore current class ID !

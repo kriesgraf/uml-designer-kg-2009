@@ -265,38 +265,52 @@ Public Class XmlClassSpec
         Return bResult
     End Function
 
-    Public Function OverrideProperties(ByVal eCurrent As EImplementation, Optional ByVal bIgnoreNoMembers As Boolean = False) As Boolean
-        Dim fen As New dlgOverrideProperties(Me, eCurrent)
-        Select Case fen.OverrideProperties()
-            Case dlgOverrideProperties.EAnswer.SomeError
-                Return False
+    Public Function OverrideProperties(ByVal eCurrent As EImplementation, Optional ByVal strIgnoredClasses As String = "", _
+                                       Optional ByVal bIgnoreNoMembers As Boolean = False) As Boolean
+        Try
+            Dim fen As New dlgOverrideProperties(Me, eCurrent)
 
-            Case dlgOverrideProperties.EAnswer.NoMembers
-                If bIgnoreNoMembers Then
+            Select Case fen.OverrideProperties(strIgnoredClasses)
+                Case dlgOverrideProperties.EAnswer.SomeError
+                    Return False
+
+                Case dlgOverrideProperties.EAnswer.NoMembers
+                    If bIgnoreNoMembers Then
+                        Return True
+                    End If
+                    Return False
+
+                Case Else
                     Return True
-                End If
-                Return False
-
-            Case Else
-                Return True
-        End Select
+            End Select
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+        Return False
     End Function
 
-    Public Function OverrideMethods(ByVal eCurrent As EImplementation, Optional ByVal bIgnoreNoMembers As Boolean = False) As Boolean
-        Dim fen As New dlgOverrideMethods(Me, eCurrent)
-        Select Case fen.OverrideMethods()
-            Case dlgOverrideProperties.EAnswer.SomeError
-                Return False
+    Public Function OverrideMethods(ByVal eCurrent As EImplementation, Optional ByVal strIgnoredClasses As String = "", _
+                                    Optional ByVal bIgnoreNoMembers As Boolean = False) As Boolean
+        Try
+            Dim fen As New dlgOverrideMethods(Me, eCurrent)
 
-            Case dlgOverrideProperties.EAnswer.NoMembers
-                If bIgnoreNoMembers Then
+            Select Case fen.OverrideMethods(strIgnoredClasses)
+                Case dlgOverrideProperties.EAnswer.SomeError
+                    Return False
+
+                Case dlgOverrideProperties.EAnswer.NoMembers
+                    If bIgnoreNoMembers Then
+                        Return True
+                    End If
+                    Return False
+
+                Case Else
                     Return True
-                End If
-                Return False
-
-            Case Else
-                Return True
-        End Select
+            End Select
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+        Return False
     End Function
 
     Public Overrides Function CanPasteItem(ByVal child As XmlComponent) As Boolean
