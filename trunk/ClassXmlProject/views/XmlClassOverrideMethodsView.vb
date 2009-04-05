@@ -24,19 +24,32 @@ Public Class XmlClassOverrideMethodsView
         Try
             listbox.DisplayMember = "FullDescription"
             listbox.DataSource = m_listArray
-            listbox.SelectedIndex = -1
+            listbox.SelectionMode = SelectionMode.MultiSimple
+            Dim i As Integer = 0
+            For Each node As XmlOverrideMemberView In m_listArray
+                If node.CheckedView Then
+                    listbox.SetSelected(i, True)
+                End If
+                i += 1
+            Next
 
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
 
-    Public Function InitListMethods() As Boolean
+    Public Function InitListMethods(ByVal strIgnoredClasses As String) As Boolean
         Try
             m_listArray = New ArrayList
             Dim iteration As Integer = 0
-            For Each child As XmlNode In SelectNodes("inherited")
-                SelectInheritedMethods(iteration, SelectNodeId(child), m_listArray)
+            Dim nodeList As XmlNodeList
+            If strIgnoredClasses = "" Then
+                nodeList = SelectNodes("inherited")
+            Else
+                nodeList = SelectNodes("inherited[not(contains('" + strIgnoredClasses + "',concat(@idref,';')))]")
+            End If
+            For Each child As XmlNode In nodeList
+                SelectInheritedMethods(iteration, m_eImplementation, SelectNodeId(child), m_listArray)
             Next
 
             Dim i As Integer = 0

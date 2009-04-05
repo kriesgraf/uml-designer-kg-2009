@@ -1396,7 +1396,8 @@ Public Class XmlProjectTools
         Return treeNode.OwnerDocument.CreateElement(strElement)
     End Function
 
-    Public Shared Sub SelectInheritedMethods(ByRef iteration As Integer, ByRef node As XmlNode, ByVal list As ArrayList)
+    Public Shared Sub SelectInheritedMethods(ByRef iteration As Integer, ByVal eImplementation As EImplementation, _
+                                             ByRef node As XmlNode, ByVal list As ArrayList)
         Try
             iteration += 1
             If iteration > cstMaxCircularReferences Then
@@ -1407,23 +1408,42 @@ Public Class XmlProjectTools
             For Each child In SelectNodes(node, "method[@constructor!='no' or @implementation='final' or @implementation='virtual' or @implementation='root' or @implementation='abstract']")
                 'Debug.Print("virtual=" + GetName(child))
                 Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
+                xmlcpnt.CheckedView = True
 
-                If list.Contains(xmlcpnt) = False Then
+                Dim bAddNode As Boolean = False
+
+                Select Case eImplementation
+                    Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
+                        bAddNode = (xmlcpnt.Implementation = eImplementation.Interf)
+
+                    Case Else
+                        bAddNode = True
+                End Select
+
+                If list.Contains(xmlcpnt) = False And bAddNode Then
                     list.Add(xmlcpnt)
                 End If
             Next child
 
-            For Each child In SelectNodes(node, "inherited")
-                Dim inherited As XmlNode = SelectNodeId(child, node)
-                'Debug.Print("inherited=" + GetName(inherited))
-                SelectInheritedMethods(iteration, inherited, list)
-            Next child
+            Select Case eImplementation
+                Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
+                    ' Ignore inheritance tree
+
+                Case Else
+                    For Each child In SelectNodes(node, "inherited")
+                        Dim inherited As XmlNode = SelectNodeId(child, node)
+                        'Debug.Print("inherited=" + GetName(inherited))
+                        SelectInheritedMethods(iteration, eImplementation, inherited, list)
+                    Next child
+            End Select
+
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
 
-    Public Shared Sub SelectInheritedProperties(ByRef iteration As Integer, ByRef node As XmlNode, ByVal list As ArrayList)
+    Public Shared Sub SelectInheritedProperties(ByRef iteration As Integer, ByVal eImplementation As EImplementation, _
+                                                ByRef node As XmlNode, ByVal list As ArrayList)
         Try
             iteration += 1
             If iteration > cstMaxCircularReferences Then
@@ -1433,17 +1453,34 @@ Public Class XmlProjectTools
             For Each child As XmlNode In SelectNodes(node, "property[@overridable='yes' or @overrides!='']")
                 'Debug.Print("virtual=" + GetName(child))
                 Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
+                xmlcpnt.CheckedView = True
 
-                If list.Contains(xmlcpnt) = False Then
+                Dim bAddNode As Boolean = False
+
+                Select Case eImplementation
+                    Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
+                        bAddNode = (xmlcpnt.Implementation = eImplementation.Interf)
+
+                    Case Else
+                        bAddNode = True
+                End Select
+
+                If list.Contains(xmlcpnt) = False And bAddNode Then
                     list.Add(xmlcpnt)
                 End If
             Next child
 
-            For Each child As XmlNode In SelectNodes(node, "inherited")
-                Dim inherited As XmlNode = SelectNodeId(child, node)
-                'Debug.Print("inherited=" + GetName(inherited))
-                SelectInheritedProperties(iteration, inherited, list)
-            Next child
+            Select Case eImplementation
+                Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
+                    ' Ignore inheritance tree
+
+                Case Else
+                    For Each child As XmlNode In SelectNodes(node, "inherited")
+                        Dim inherited As XmlNode = SelectNodeId(child, node)
+                        'Debug.Print("inherited=" + GetName(inherited))
+                        SelectInheritedProperties(iteration, eImplementation, inherited, list)
+                    Next child
+            End Select
         Catch ex As Exception
             Throw ex
         End Try

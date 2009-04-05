@@ -37,10 +37,10 @@ Public Class dlgOverrideProperties
         m_xmlView.CurrentClassImpl = eImplementation
     End Sub
 
-    Public Function OverrideProperties() As EAnswer
+    Public Function OverrideProperties(Optional ByVal strIgnoredClasses As String = "") As EAnswer
         Dim eResult As EAnswer = EAnswer.NoMembers
         Try
-            If m_xmlView.InitListProperties() Then
+            If m_xmlView.InitListProperties(strIgnoredClasses) Then
                 Me.ShowDialog()
                 If CType(Me.Tag, Boolean) Then
                     Return EAnswer.MembersUpdated

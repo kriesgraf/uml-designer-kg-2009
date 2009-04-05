@@ -2,6 +2,7 @@
 Imports System.Xml
 Imports System.Collections
 Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlSuperClassView
@@ -30,9 +31,29 @@ Public Class XmlSuperClassView
         Return frmResult
     End Function
 
-    Public Sub UpdateValues()
+    Public Function UpdateValues() As Boolean
         Try
+            Dim iInherited As Integer = 0
+            Dim strClassName As String = ""
+
             For Each xmlview As XmlNodeListView In m_ListBox.SelectedItems
+                If xmlview.Implementation <> EImplementation.Interf Then
+                    iInherited += 1
+                    If iInherited > 1 Then
+                        MsgBox("Classes '" + strClassName + "' and '" + xmlview.Name + "' are incompatible, can extend only one class.", MsgBoxStyle.Critical)
+                        Return False
+                    End If
+                    strClassName = xmlview.Name
+                End If
+            Next
+
+            Dim strIgnoreClasses As String = ""
+            ' Get list of current base classes
+            For Each child As XmlNode In SelectNodes("inherited")
+                strIgnoreClasses += GetIDREF(child) + ";"
+            Next
+
+            For Each xmlview In m_ListBox.SelectedItems
 
                 Dim xmlcpnt As XmlInheritSpec = MyBase.CreateDocument("inherited", MyBase.Document)
                 xmlcpnt.Idref = xmlview.Id
@@ -40,14 +61,18 @@ Public Class XmlSuperClassView
                 MyBase.AppendNode(xmlcpnt.Node)
             Next xmlview
 
-            ' We ask to ignore "no members" and return false only on error
-            If OverrideProperties(m_eImplementation, True) Then
-                OverrideMethods(m_eImplementation)
+            ' We ask to ignore "no members" and return true so; then return false only on error
+            ' We ask to displays only overridable methods of new base classes
+            If OverrideProperties(m_eImplementation, strIgnoreClasses, True) Then
+                OverrideMethods(m_eImplementation, strIgnoreClasses, True)
             End If
+            Return True
+
         Catch ex As Exception
             Throw ex
         End Try
-    End Sub
+        Return False
+    End Function
 
     Public Function InitAvailableClassesList(ByVal bRestrictedVisibility As Boolean, ByVal lsbControl As ListBox) As Boolean
         Try

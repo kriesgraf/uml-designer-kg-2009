@@ -8,14 +8,13 @@ Public Class dlgSuperClass
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         Try
-            m_xmlView.UpdateValues()
-            Me.Tag = True
-
+            If m_xmlView.UpdateValues() Then
+                Me.Tag = True
+                Me.DialogResult = DialogResult.OK
+                Me.Close()
+            End If
         Catch ex As Exception
             MsgExceptionBox(ex)
-        Finally
-            Me.DialogResult = DialogResult.OK
-            Me.Close()
         End Try
     End Sub
 

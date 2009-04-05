@@ -37,10 +37,10 @@ Public Class dlgOverrideMethods
         m_xmlView.CurrentClassImpl = eImplementation
     End Sub
 
-    Public Function OverrideMethods() As Boolean
+    Public Function OverrideMethods(ByVal strIgnoredClasses As String) As EAnswer
         Dim eResult As EAnswer = EAnswer.NoMembers
         Try
-            If m_xmlView.InitListMethods() Then
+            If m_xmlView.InitListMethods(strIgnoredClasses) Then
                 Me.ShowDialog()
                 If CType(Me.Tag, Boolean) Then
                     Return EAnswer.MembersUpdated

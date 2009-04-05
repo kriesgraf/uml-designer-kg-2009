@@ -271,6 +271,8 @@ Public Class dlgClass
         If m_xmlView.OverrideProperties(m_xmlView.CurrentClassImpl) Then
             gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
+        Else
+            MsgBox("No properties to override!", MsgBoxStyle.Exclamation)
         End If
     End Sub
 
@@ -278,6 +280,8 @@ Public Class dlgClass
         If m_xmlView.OverrideMethods(m_xmlView.CurrentClassImpl) Then
             gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
+        Else
+            MsgBox("No methods to override!", MsgBoxStyle.Exclamation)
         End If
     End Sub
 

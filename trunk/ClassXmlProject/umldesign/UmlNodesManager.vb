@@ -318,10 +318,11 @@ Public Class UmlNodesManager
                     Dim list As New ArrayList
 
                     Dim iteration As Integer = 0
-                    SelectInheritedProperties(iteration, node, list)
+                    Dim eImplementation As EImplementation = ConvertDtdToEnumImpl(strImplementation)
+                    SelectInheritedProperties(iteration, eImplementation, node, list)
 
                     iteration = 0
-                    SelectInheritedMethods(iteration, node, list)
+                    SelectInheritedMethods(iteration, eImplementation, node, list)
 
                     For Each member As XmlOverrideMemberView In list
                         ExportElementClassMember(strXML, member)
