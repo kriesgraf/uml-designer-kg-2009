@@ -302,7 +302,7 @@ border-left: 1px solid gray;
 		<!--td align="center">^<br/>|<br/>|<br/></td-->
 	</xsl:template>
 	<!-- ======================================================================= -->
-	<xsl:template match="class | reference" mode="Inherited">
+	<xsl:template match="class | reference | interface" mode="Inherited">
 		<td>
 			<xsl:apply-templates select="." mode="SimpleClass"/>
 		</td>
@@ -478,7 +478,7 @@ border-left: 1px solid gray;
 		</table>
 	</xsl:template>
 	<!-- ======================================================================= -->
-	<xsl:template match="class | reference" mode="SimpleClass">
+	<xsl:template match="class | reference | interface" mode="SimpleClass">
 		<table class="border">
 			<tr class="small">
 				<td>
@@ -801,7 +801,7 @@ border-left: 1px solid gray;
 			<xsl:apply-templates select="parent::class" mode="FullPathName"/>
 		</span><xsl:value-of select="@name"/></xsl:template>
 	<!-- ======================================================================= -->
-	<xsl:template match="reference" mode="FullPathName">
+	<xsl:template match="reference | interface" mode="FullPathName">
 		<span class="package">
     		<xsl:apply-templates select="ancestor::import" mode="FullPathName"/>
 			<xsl:if test="@package"><xsl:value-of select="@package"/><xsl:value-of select="$Separator"/></xsl:if>
@@ -1108,6 +1108,7 @@ border-left: 1px solid gray;
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 

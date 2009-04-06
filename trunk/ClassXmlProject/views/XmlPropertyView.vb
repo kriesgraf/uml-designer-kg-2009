@@ -188,12 +188,17 @@ Public Class XmlPropertyView
             m_bInitOk = False
             m_chkAttribute = dataControl
             m_xmlBindingsList.AddBinding(dataControl, Me, "MemberAttribute", "Checked")
+            Select m_eClassImplementation
+                Case EImplementation.Interf
+                    m_chkAttribute.Checked = False
+                    m_chkAttribute.Enabled = False
 
-            If m_eClassImplementation = EImplementation.Interf Then
-                m_chkAttribute.Checked = False
-                m_chkAttribute.Enabled = False
-            End If
-
+                Case EImplementation.Root
+                    If Me.Node.ParentNode.Name = "interface" Then
+                        m_chkAttribute.Checked = False
+                        m_chkAttribute.Enabled = False
+                    End If
+            End Select
         Catch ex As Exception
             Throw ex
         Finally
@@ -357,6 +362,11 @@ Public Class XmlPropertyView
                     .Visible = False
 
                 ElseIf m_eClassImplementation = EImplementation.Interf _
+                Then
+                    .Combo.SelectedIndex = 0
+                    .Enabled = False
+
+                ElseIf m_eClassImplementation = EImplementation.Root And Me.Node.ParentNode.Name = "interface" _
                 Then
                     .Combo.SelectedIndex = 0
                     .Enabled = False

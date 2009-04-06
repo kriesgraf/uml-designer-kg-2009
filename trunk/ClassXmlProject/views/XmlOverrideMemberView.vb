@@ -28,6 +28,10 @@ Public Class XmlOverrideMemberView
                     If CheckAttribute("overridable", "yes", "no") Then
                         If CheckAttribute("implementation", "abstract", "simple", "parent::class") Then
                             Return EImplementation.Interf
+
+                        ElseIf CheckAttribute("root", "no", "no", "parent::interface") Then
+
+                            Return EImplementation.Interf
                         Else
                             Return EImplementation.Leaf
                         End If

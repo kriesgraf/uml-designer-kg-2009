@@ -37,7 +37,7 @@
     </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="class" mode="TypePrefix"/>
+  <xsl:template match="class | interface" mode="TypePrefix"/>
   <!-- ======================================================================= -->
   <xsl:template match="typedef" mode="TypePrefix">
     <xsl:choose>
@@ -239,7 +239,6 @@
   <xsl:template match="@implementation" mode="Code">
     <xsl:param name="Implementation"/>
     <xsl:choose>
-      <xsl:when test=".='final' and $Implementation='final'">Overrides </xsl:when>
       <xsl:when test=".='final'">NotOverridable Overrides </xsl:when>
       <xsl:when test=".='virtual'">Overrides </xsl:when>
       <xsl:when test=".='root'">Overridable </xsl:when>
@@ -426,7 +425,7 @@
     </xsl:apply-templates>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="class | reference" mode="ClassImports">
+  <xsl:template match="class | reference | interface" mode="ClassImports">
     <xsl:param name="CurrentPackage"/>
     <xsl:apply-templates select="." mode="ListImports">
        <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
@@ -503,7 +502,7 @@
   <!-- ======================================================================= -->
   <xsl:template match="root" mode="Package"><xsl:value-of select="@name"/></xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="reference" mode="Package">
+  <xsl:template match="reference | interface" mode="Package">
     <xsl:value-of select="ancestor::import/@param"/>
     <xsl:if test="string-length(ancestor::import/@param)!=0 and string-length(@package)!=0">.</xsl:if>
     <xsl:value-of select="@package"/>
@@ -521,7 +520,7 @@
       </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="reference" mode="ListImports">
+  <xsl:template match="reference | interface" mode="ListImports">
     <xsl:param name="CurrentPackage"/>
     <xsl:variable name="TargetPackage">
       <xsl:choose>
@@ -609,7 +608,7 @@
     <xsl:value-of select="concat(ancestor::typedef/@name,'.',@name)"/>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="reference" mode="FullPackageName">
+  <xsl:template match="reference |interface" mode="FullPackageName">
     <xsl:param name="CurrentClassName"/>
     <xsl:param name="CurrentPackageName"/>
     <xsl:if test="@type='typedef'">
@@ -651,6 +650,8 @@
         ''' &lt;summary&gt;<xsl:value-of select="text()"/>&lt;/summary&gt;</xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
 
 
 

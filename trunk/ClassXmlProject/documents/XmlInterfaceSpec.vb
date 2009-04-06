@@ -66,6 +66,30 @@ Public Class XmlInterfaceSpec
         MyBase.New(xmlNode)
     End Sub
 
+    Public Overrides Function CanAddComponent(ByVal nodeXml As XmlComponent) As Boolean
+        Select Case nodeXml.NodeName
+            Case "property"
+                With CType(nodeXml, XmlPropertySpec)
+                    .OverridableProperty = True
+                    If Me.CheckAttribute("root", "no", "no") _
+                    Then
+                        .MemberAttribute = False
+                    End If
+                End With
+
+            Case "method"
+                With CType(nodeXml, XmlMethodSpec)
+                    If Me.CheckAttribute("root", "yes", "no") _
+                    Then
+                        .Implementation = XmlProjectTools.EImplementation.Root
+                    Else
+                        .Implementation = XmlProjectTools.EImplementation.Interf
+                    End If
+                End With
+        End Select
+        Return True
+    End Function
+
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = False
         Try

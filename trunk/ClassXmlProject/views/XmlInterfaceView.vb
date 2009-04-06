@@ -122,21 +122,6 @@ Public Class XmlInterfaceView
         Return bResult
     End Function
 
-    Public Overrides Function CanAddComponent(ByVal nodeXml As XmlComponent) As Boolean
-        Select Case nodeXml.NodeName
-            Case "property"
-                CType(nodeXml, XmlPropertySpec).OverridableProperty = True
-
-            Case "method"
-                If m_chkRoot.Checked Then
-                    CType(nodeXml, XmlMethodSpec).Implementation = XmlProjectTools.EImplementation.Root
-                Else
-                    CType(nodeXml, XmlMethodSpec).Implementation = XmlProjectTools.EImplementation.Interf
-                End If
-        End Select
-        Return True
-    End Function
-
     Private Sub m_chkRoot_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles m_chkRoot.CheckedChanged
         If m_bInitOk Then Exit Sub
         m_grdMembers.Binding.ResetBindings()
