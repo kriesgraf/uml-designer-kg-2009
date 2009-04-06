@@ -128,7 +128,9 @@ Public Class XmlExportSpec
                 If UseDocTypeDeclarationFileForImport(strSource) = False Then
                     Return False
                 End If
-                XmlProjectTools.LoadDocument(document, strFilename)
+                If XmlProjectTools.LoadDocument(document, strFilename) = False Then
+                    Return False
+                End If
             End If
             ' Convert "document" context to "MyBase.Document" context
             MyBase.Node = Me.Document.ImportNode(document.DocumentElement, True)

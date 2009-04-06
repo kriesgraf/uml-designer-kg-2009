@@ -36,7 +36,8 @@
   <!--  ================================================================== -->
   <xsl:template match="doxygen" mode="Main">
     <xsl:element name="root">
-      <xsl:attribute name="version">1.2</xsl:attribute>
+	  <!-- UMl Disigner DTD vesion -->
+      <xsl:attribute name="version">1.3</xsl:attribute>
       <xsl:attribute name="name">Doxygen_project</xsl:attribute>
       <xsl:element name="generation">
         <xsl:apply-templates select="/doxygen/compounddef[@kind='class'][1]" mode="Location"/>

@@ -8,28 +8,23 @@ Public Class frmProject
 
 #Region "Class declarations"
 
-    Private m_xmlProject As XmlProjectView
+    Private m_xmlProject As New XmlProjectView
     Private OptionVisuMode As Integer = -1
 
 #End Region
 
 #Region "Properties"
 
-    Private ReadOnly Property Mainframe() As MDIParent
+    Public ReadOnly Property Mainframe() As MDIParent
         Get
             Return CType(Me.MdiParent, MDIParent)
         End Get
     End Property
 
-    Public Property ProjectName() As String
+    Public ReadOnly Property ProjectName() As String
         Get
             Return m_xmlProject.Filename
         End Get
-        Set(ByVal value As String)
-            If m_xmlProject Is Nothing Then
-                m_xmlProject = New XmlProjectView(value)
-            End If
-        End Set
     End Property
 
 #End Region
@@ -44,6 +39,10 @@ Public Class frmProject
         ' Ajoutez une initialisation quelconque après l'appel InitializeComponent().
         XmlNodeManager.GetInstance()
     End Sub
+
+    Public Function OpenProject(ByVal filename As String) As Boolean
+        Return m_xmlProject.Open(filename)
+    End Function
 
     Public Sub SaveProject()
         If m_xmlProject.Save() = False Then
@@ -136,6 +135,7 @@ Public Class frmProject
     Private Sub frmProject_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Dim oldCursor As Cursor = Me.Cursor
         Me.Cursor = Cursors.WaitCursor
+        Me.WindowState = FormWindowState.Maximized
         Try
             btnUp.Enabled = False
 

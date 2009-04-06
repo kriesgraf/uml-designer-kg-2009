@@ -14,7 +14,7 @@ Public Class XmlProjectView
 #Region "Class declarations"
 
     Private m_Control As XmlDataListView
-    Private m_xmlDocument As XmlDocument
+    Private m_xmlDocument As New XmlDocument
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
     Private m_xmlProperties As XmlProjectProperties
     Private m_strFilename As String
@@ -81,15 +81,17 @@ Public Class XmlProjectView
 
 #Region "Public methods"
 
-    Public Sub New(Optional ByVal strFilename As String = "")
+    Public Function Open(Optional ByVal strFilename As String = "") As Boolean
         Try
             m_strFilename = strFilename
-            m_xmlDocument = New XmlDocument
-
             If strFilename <> "" _
             Then
                 Dim strTempPath As String = My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData
-                LoadDocument(strFilename)
+
+                If LoadDocument(strFilename) = False Then
+                    Return False
+                End If
+
                 If GetProjectPath(strFilename) = strTempPath Then
                     m_strFilename = ""
                 End If
@@ -104,6 +106,8 @@ Public Class XmlProjectView
                 ' After load, document reference change and old nodes must be updated
                 m_xmlProperties.Node = m_xmlDocument.LastChild
             End If
+            Return True
+
         Catch ex As Exception
             If strFilename.Length = 0 Then
                 Throw New Exception("Fails to created new project object 'XmlProjectView'", ex)
@@ -111,7 +115,8 @@ Public Class XmlProjectView
                 Throw New Exception("Fails to open project '" + strFilename + "'", ex)
             End If
         End Try
-    End Sub
+        Return False
+    End Function
 
     Public Function SaveAs(ByVal strFilename As String) As Boolean
         Try
@@ -619,9 +624,11 @@ Public Class XmlProjectView
         Return True
     End Function
 
-    Private Sub LoadDocument(ByVal strFilename As String)
+    Private Function LoadDocument(ByVal strFilename As String) As Boolean
         Try
-            XmlProjectTools.LoadDocument(m_xmlDocument, strFilename)
+            If XmlProjectTools.LoadDocument(m_xmlDocument, strFilename) = False Then
+                Return False
+            End If
 
             If m_xmlDocument.DocumentElement IsNot Nothing _
             Then
@@ -631,7 +638,8 @@ Public Class XmlProjectView
         Catch ex As Exception
             Throw ex
         End Try
-    End Sub
+        Return True
+    End Function
 
     Private Function GetProjectName(ByVal strFullpathFilename As String) As String
         Dim strProjectName As String = Path.GetFileNameWithoutExtension(strFullpathFilename)
