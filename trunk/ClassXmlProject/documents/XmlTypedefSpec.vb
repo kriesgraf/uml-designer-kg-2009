@@ -104,6 +104,9 @@ Public Class XmlTypedefSpec
         Return xmlResult
     End Function
 
+    Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent) As System.Xml.XmlNode
+        Return Me.m_xmlType.AppendComponent(nodeXml)
+    End Function
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
         Try
@@ -120,6 +123,7 @@ Public Class XmlTypedefSpec
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
             Id = "class0"
             Comment = "Insert here a comment"
+
         Catch ex As Exception
             Throw ex
         Finally
