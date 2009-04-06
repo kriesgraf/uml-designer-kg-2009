@@ -71,7 +71,7 @@ Public Class XmlContainerView
     End Sub
 
     Public Sub RefreshComboContainer(ByVal bIndexed As Boolean)
-        InitContainerCombo(Me, m_xmlComboContainer.Control, bIndexed)
+        InitContainerCombo(Me, m_xmlComboContainer.Control, bIndexed, True)
     End Sub
 
     Public Sub InitBindingComboIndex(ByVal dataControl As ComboBox)
