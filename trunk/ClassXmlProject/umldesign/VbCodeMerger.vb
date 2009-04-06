@@ -238,7 +238,12 @@ Public Class VbCodeMerger
                             secondParent.InsertBefore(clone, before)
                         Else
                             Dim before As XmlNode = secondParent.SelectSingleNode("*[not(self::body)]")
-                            iPos = GetStartLine(before)
+                            Select Case GetNodeName(before)
+                                Case "end-class", "end-region", "end-property"
+                                    iPos = GetLastEndLine(secondParent)
+                                Case Else
+                                    iPos = GetStartLine(before)
+                            End Select
                             before = secondParent.InsertBefore(clone, before)
                         End If
 
@@ -503,6 +508,8 @@ Public Class VbCodeMerger
                 For Each child As XmlNode In docXml.SelectNodes("/root/*")
                     bResult = True
 
+                    'Debug.Print(child.OuterXml)
+
                     iStopLine = GetStartLine(child) - 1
                     WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
 
@@ -628,52 +635,60 @@ Public Class VbCodeMerger
     Private Shared Sub RegionMerging(ByVal node As XmlNode, ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
                              ByVal VbCode As VbCodeAnalyser, ByVal streamWriter As StreamWriter)
 
-        For Each child As XmlNode In node.SelectNodes("*")
+        If IsNotCheck(node) _
+        Then
+            iStartLine = GetStartLine(node)
+            iStopLine = GetLastEndLine(node)
+            WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine, True)
+            iStartLine = iStopLine + 1
+        Else
+            For Each child As XmlNode In node.SelectNodes("*")
 
-            Dim strNodename As String = GetNodeName(child)
+                Dim strNodename As String = GetNodeName(child)
 
-            Select Case strNodename
-                Case "vb-doc", "region", "class", "typedef", "property", "get", "set", "method", "attribute"
-                    iStopLine = GetStartLine(child) - 1
-                    WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
-            End Select
+                Select Case strNodename
+                    Case "vb-doc", "region", "class", "typedef", "property", "get", "set", "method", "attribute"
+                        iStopLine = GetStartLine(child) - 1
+                        WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
+                End Select
 
 
-            Select Case strNodename
-                Case "vb-doc"
-                    WriteStreamVbDoc(streamWriter, child)
-                    iStartLine = GetLastEndLine(child) + 1
+                Select Case strNodename
+                    Case "vb-doc"
+                        WriteStreamVbDoc(streamWriter, child)
+                        iStartLine = GetLastEndLine(child) + 1
 
-                Case "class"
-                    WriteStreamBody(streamWriter, child, VbCode)
-                    iStartLine = GetStopLine(child) + 1
-                    ClassMerging(child, iStartLine, iStopLine, VbCode, streamWriter)
-
-                Case "property"
-                    If IsNotCheck(child) Then
-                        OtherNodeMerge(child, iStartLine, iStopLine, VbCode, streamWriter)
-                    Else
+                    Case "class"
                         WriteStreamBody(streamWriter, child, VbCode)
                         iStartLine = GetStopLine(child) + 1
-                        RegionMerging(child, iStartLine, iStopLine, VbCode, streamWriter)
-                    End If
+                        ClassMerging(child, iStartLine, iStopLine, VbCode, streamWriter)
 
-                Case "body"
-                    ' Ignore
+                    Case "property"
+                        If IsNotCheck(child) Then
+                            OtherNodeMerge(child, iStartLine, iStopLine, VbCode, streamWriter)
+                        Else
+                            WriteStreamBody(streamWriter, child, VbCode)
+                            iStartLine = GetStopLine(child) + 1
+                            RegionMerging(child, iStartLine, iStopLine, VbCode, streamWriter)
+                        End If
 
-                Case "end-region", "end-property"
-                    iStopLine = GetLastEndLine(node)    ' node is used, see GetLastEndLine!
-                    WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
-                    iStartLine = iStopLine + 1
+                    Case "body"
+                        ' Ignore
 
-                Case Else
-                    OtherNodeMerge(child, iStartLine, iStopLine, VbCode, streamWriter)
-            End Select
+                    Case "end-region", "end-property"
+                        iStopLine = GetLastEndLine(node)    ' node is used, see GetLastEndLine!
+                        WriteStreamLines(streamWriter, VbCode, iStartLine, iStopLine)
+                        iStartLine = iStopLine + 1
 
-            If iStartLine = 0 Then
-                iStartLine = iStopLine
-            End If
-        Next
+                    Case Else
+                        OtherNodeMerge(child, iStartLine, iStopLine, VbCode, streamWriter)
+                End Select
+
+                If iStartLine = 0 Then
+                    iStartLine = iStopLine
+                End If
+            Next
+        End If
     End Sub
 
     Private Shared Sub ClassMerging(ByVal node As XmlNode, ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
@@ -682,6 +697,7 @@ Public Class VbCodeMerger
         For Each child As XmlNode In node.SelectNodes("*")
 
             Dim strNodename As String = GetNodeName(child)
+            'Debug.Print(child.OuterXml)
 
             Select Case strNodename
                 Case "vb-doc", "region", "class", "typedef", "method", "attribute"
