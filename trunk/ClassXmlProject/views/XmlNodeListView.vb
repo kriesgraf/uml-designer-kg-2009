@@ -164,6 +164,7 @@ Public Class XmlNodeListView
 
                 Case Else
                     ' Simple value type
+                    AddNodeList(document, myList, "ancestor::class/model")
                     AddNodeList(document, myList, "//class[@implementation!='container']")
                     If bIsNotTypedef Then AddNodeList(document, myList, "//typedef")
                     AddNodeList(document, myList, "//interface")
@@ -359,7 +360,7 @@ Public Class XmlNodeListView
     Private Shared Sub AddSimpleTypesList(ByVal myList As ArrayList, ByVal eTag As ELanguage)
         Try
             Dim doc As New XmlDocument
-            LoadDocument(doc, GetSimpleTypesFilename(eTag))
+            LoadDocument(doc, GetSimpleTypesFilename(eTag), True)
 
             Dim iterator As IEnumerator = doc.SelectNodes("//type").GetEnumerator()
             iterator.Reset()
