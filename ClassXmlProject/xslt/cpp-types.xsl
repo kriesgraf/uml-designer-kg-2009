@@ -36,7 +36,7 @@
     </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="class" mode="TypePrefix"/>
+  <xsl:template match="class | interface" mode="TypePrefix"/>
   <!-- ======================================================================= -->
   <xsl:template match="typedef" mode="TypePrefix">
     <xsl:choose>
@@ -114,7 +114,7 @@
 	,    </xsl:if><xsl:value-of select="concat($Name,'(',$Value,')')"/>
 	</xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="property">
+  <xsl:template match="property" mode="Code">
     <xsl:param name="BodyOk"/>
     <xsl:if test="$BodyOk!='ok'">
       <xsl:apply-templates select="comment" mode="Details"/>
@@ -425,7 +425,7 @@
       <xsl:if test="name()='index-idref'"><xsl:value-of select="."/></xsl:if>
     </xsl:variable>
     <xsl:choose>
-       <xsl:when test="id($RefID)[self::class[@id!=$ClassID] or self::reference[@type='class' and @id!=$ClassID]]">
+       <xsl:when test="id($RefID)[self::class[@id!=$ClassID] or self::reference[@type='class' and @id!=$ClassID] or self::interface[@id!=$ClassID]]">
           <xsl:element name="reference">
             <xsl:attribute name="node"><xsl:value-of select="name()"/></xsl:attribute>
             <xsl:attribute name="name"><xsl:value-of select="id($RefID)/@name"/></xsl:attribute>
@@ -536,7 +536,7 @@
         <xsl:with-param name="ClassID" select="$ClassID"/>
       </xsl:apply-templates>
     </xsl:if>
-    <xsl:if test="id(@idref)[self::class or self::reference[@type='class']]">
+    <xsl:if test="id(@idref)[self::class or self::reference[@type='class'] or self::interface]">
       <xsl:element name="reference">
         <xsl:attribute name="node"><xsl:value-of select="name()"/></xsl:attribute>
         <xsl:attribute name="name">
@@ -558,7 +558,7 @@
   <!-- ======================================================================= -->
   <xsl:template match="list" mode="ListRef">
     <xsl:param name="ClassID"/>
-    <xsl:if test="@type='indexed' and id(@index-idref)[self::class or self::reference[@type='class']] and @level!='0'">
+    <xsl:if test="@type='indexed' and id(@index-idref)[self::class or self::reference[@type='class'] or self::interface] and @level!='0'">
       <xsl:element name="reference">
         <xsl:attribute name="node"><xsl:value-of select="name()"/></xsl:attribute>
         <xsl:attribute name="name">
@@ -578,7 +578,7 @@
   <xsl:template match="typedef" mode="ListRef">
     <xsl:variable name="ClassID" select="parent::class/@id"/>
     <xsl:variable name="RefID" select="type/@idref"/>
-    <xsl:if test="$RefID!=$ClassID and id($RefID)[self::class or self::reference[@type='class']] and type/@level!='0'">
+    <xsl:if test="$RefID!=$ClassID and id($RefID)[self::class or self::reference[@type='class'] or self::interface] and type/@level!='0'">
       <xsl:element name="reference">
         <xsl:attribute name="node"><xsl:value-of select="name()"/></xsl:attribute>
         <xsl:attribute name="name">
@@ -601,7 +601,7 @@
   <xsl:template match="param | return" mode="ListRef">
     <xsl:variable name="ClassID" select="parent::method/parent::class/@id"/>
     <xsl:variable name="RefID" select="type/@idref"/>
-    <xsl:if test="$RefID!=$ClassID and id($RefID)[self::class or self::reference[@type='class']] and type/@level!='0'">
+    <xsl:if test="$RefID!=$ClassID and id($RefID)[self::class or self::reference[@type='class'] or self::interface] and type/@level!='0'">
       <xsl:element name="reference">
         <xsl:attribute name="node"><xsl:value-of select="name()"/></xsl:attribute>
         <xsl:attribute name="name">
@@ -624,7 +624,7 @@
   <xsl:template match="element" mode="ListRef">
     <xsl:variable name="ClassID" select="ancestor::class/@id"/>
     <xsl:variable name="RefID" select="@idref"/>
-    <xsl:if test="$RefID!=$ClassID and id($RefID)[self::class or self::reference[@type='class']] and @level!='0'">
+    <xsl:if test="$RefID!=$ClassID and id($RefID)[self::class or self::reference[@type='class'] or self::interface] and @level!='0'">
       <xsl:element name="reference">
         <xsl:attribute name="node"><xsl:value-of select="name()"/></xsl:attribute>
         <xsl:attribute name="name">
@@ -776,7 +776,7 @@
       </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="reference" mode="ListInclude">
+  <xsl:template match="reference | interface" mode="ListInclude">
     <xsl:choose>
       <xsl:when test="ancestor::import[@param!='']">&lt;<xsl:value-of select="ancestor::import/@param"/>&gt;</xsl:when>
       <xsl:otherwise>
@@ -831,14 +831,14 @@
   </xsl:template>
 
   <!-- ======================================================================= -->
-  <xsl:template match="reference" mode="Package">
+  <xsl:template match="reference | interface" mode="Package">
     <!--xsl:value-of select="ancestor::import/@param"/>
     <xsl:if test="string-length(ancestor::import/@param)!=0 and string-length(@package)!=0">.</xsl:if-->
     <xsl:value-of select="@package"/>
   </xsl:template>
 
   <!-- ======================================================================= -->
-  <xsl:template match="reference" mode="FullPackageName">
+  <xsl:template match="reference | interface" mode="FullPackageName">
     <xsl:param name="CurrentClassName"/>
     <xsl:param name="CurrentPackageName"/>
 
@@ -905,6 +905,7 @@
     </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 

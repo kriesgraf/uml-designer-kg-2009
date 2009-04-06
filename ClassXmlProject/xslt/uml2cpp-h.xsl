@@ -23,54 +23,80 @@
   <xsl:key match="reference" name="class" use="@name"/>
   <xsl:key match="reference" name="include" use="@value"/>
 <!-- ======================================================================= -->
-  <xsl:template match="/root">
+  <xsl:template match="class">
     <xsl:element name="document">
-    <xsl:choose>
-      <xsl:when test="$InputClass!=''">
-        <xsl:apply-templates select="//root/package[descendant::class[@id=$InputClass]]"/>
-        <xsl:apply-templates select="//root/class[@id=$InputClass]"/>
-      </xsl:when>
-      <xsl:when test="$InputPackage!=''">
-        <xsl:apply-templates select="//root/package[@id=$InputPackage or descendant::package[@id=$InputPackage]]"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates select="class"/>
-        <xsl:apply-templates select="package"/>
-      </xsl:otherwise>
-    </xsl:choose>
-    </xsl:element>
-  </xsl:template>
-<!-- ======================================================================= -->
-  <xsl:template match="root">
-    <xsl:element name="document">
-      <xsl:apply-templates select="class"/>
-      <xsl:apply-templates select="package"/>
+        <xsl:apply-templates select="." mode="Code"/>
     </xsl:element>
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="package">
+    <xsl:element name="document">
+        <xsl:apply-templates select="." mode="Code"/>
+    </xsl:element>
+  </xsl:template>
+<!-- ======================================================================= -->
+  <xsl:template match="/typedef">
+    <xsl:element name="document">
+        No code generation at this level
+    </xsl:element>
+  </xsl:template>
+<!-- ======================================================================= -->
+  <xsl:template match="typedef | property | method">
+    <xsl:element name="document">
+        No code generation at this level
+    </xsl:element>
+  </xsl:template>
+<!-- ======================================================================= -->
+  <xsl:template match="import|relationship">
+    <xsl:element name="document">
+        No code generation for this node
+    </xsl:element>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="/root">
+    <xsl:element name="document">
+    <xsl:choose>
+      <xsl:when test="$InputClass!=''">
+        <xsl:comment>InputClass=<xsl:value-of select="$InputClass"/></xsl:comment>
+        <xsl:apply-templates select="//root/package[descendant::class[@id=$InputClass]]" mode="Code"/>
+        <xsl:apply-templates select="//root/class[@id=$InputClass]" mode="Code"/>
+      </xsl:when>
+      <xsl:when test="$InputPackage!=''">
+        <xsl:comment>InputPackage=<xsl:value-of select="$InputPackage"/></xsl:comment>
+        <xsl:apply-templates select="//root/package[@id=$InputPackage or descendant::package[@id=$InputPackage]]" mode="Code"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:comment>Otherwise</xsl:comment>
+        <xsl:apply-templates select="class" mode="Code"/>
+        <xsl:apply-templates select="package" mode="Code"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    </xsl:element>
+</xsl:template>
+<!-- ======================================================================= -->
+  <xsl:template match="package" mode="Code">
     <xsl:variable name="PackageName"><xsl:value-of select="@folder"/><xsl:if test="not(@folder)"><xsl:value-of select="@name"/></xsl:if></xsl:variable>
     <package name="{$PackageName}">
       <xsl:choose>
         <xsl:when test="$InputClass!=''">
-          <xsl:apply-templates select="package[descendant::class[@id=$InputClass]]"/>
-          <xsl:apply-templates select="class[@id=$InputClass]"/>
+          <xsl:apply-templates select="package[descendant::class[@id=$InputClass]]" mode="Code"/>
+          <xsl:apply-templates select="class[@id=$InputClass]" mode="Code"/>
         </xsl:when>
         <xsl:when test="$InputPackage!=''">
           <xsl:if test="@id=$InputPackage">
-            <xsl:apply-templates select="class"/>
+            <xsl:apply-templates select="class" mode="Code"/>
           </xsl:if>
-          <xsl:apply-templates select="package[@id=$InputPackage or descendant::package[@id=$InputPackage]]"/>
+          <xsl:apply-templates select="package[@id=$InputPackage or descendant::package[@id=$InputPackage]]" mode="Code"/>
         </xsl:when>
         <xsl:otherwise>
-        <xsl:apply-templates select="class"/>
-        <xsl:apply-templates select="package"/>
+        <xsl:apply-templates select="class" mode="Code"/>
+        <xsl:apply-templates select="package" mode="Code"/>
         </xsl:otherwise>
       </xsl:choose>
     </package>
   </xsl:template>
 <!-- ======================================================================= -->
-  <xsl:template match="class">
+  <xsl:template match="class" mode="Code">
     <xsl:element name="code">
       <xsl:attribute name="name"><xsl:value-of select="@name"/>.h</xsl:attribute>
 #ifndef <xsl:apply-templates select="." mode="Entete"/>
@@ -144,7 +170,7 @@ namespace <xsl:value-of select="parent::package/@name"/>
     </xsl:call-template>
   </xsl:if>
     // =========================================================================
-    // Constructors/Destructor/Methods
+    //#Region "ConstructorsDestructor/Methods"
   <xsl:call-template name="Functions">
     <xsl:with-param name="Range">private</xsl:with-param>
   </xsl:call-template>
@@ -154,6 +180,11 @@ namespace <xsl:value-of select="parent::package/@name"/>
   <xsl:call-template name="Functions">
     <xsl:with-param name="Range">public</xsl:with-param>
   </xsl:call-template>
+    //#End Region
+    
+    // =========================================================================
+    //#Region "Other declarations (Not managed)"
+    //#End Region
     };
     <xsl:if test="parent::package">
 }
@@ -165,23 +196,24 @@ namespace <xsl:value-of select="parent::package/@name"/>
   <xsl:template name="Typedef">
 
     // =========================================================================
-    // Predefined types<xsl:if test="typedef[variable/@range='public']">
+    //#Region "Predefined types"<xsl:if test="typedef[variable/@range='public']">
 
-    public:<xsl:apply-templates select="typedef[variable/@range='public']"/>
+    public:<xsl:apply-templates select="typedef[variable/@range='public']" mode="Code"/>
     </xsl:if>
     <xsl:if test="typedef[variable/@range='protected']">
 
-    protected:<xsl:apply-templates select="typedef[variable/@range='protected']"/>
+    protected:<xsl:apply-templates select="typedef[variable/@range='protected']" mode="Code"/>
     </xsl:if>
     <xsl:if test="typedef[variable/@range='private']">
 
-    private:<xsl:apply-templates select="typedef[variable/@range='private']"/>
+    private:<xsl:apply-templates select="typedef[variable/@range='private']" mode="Code"/>
     </xsl:if>
+    //#End Region
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template name="Implements">
     <xsl:if test="inherited"> : </xsl:if>
-    <xsl:apply-templates select="inherited"/>
+    <xsl:apply-templates select="inherited" mode="Code"/>
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="model" mode="Class">
@@ -192,7 +224,7 @@ namespace <xsl:value-of select="parent::package/@name"/>
     <xsl:if test="position()=last()">&gt;</xsl:if>
   </xsl:template>
 <!-- ======================================================================= -->
-  <xsl:template match="inherited">
+  <xsl:template match="inherited" mode="Code">
     <xsl:value-of select="concat(@range,' ')"/>
     <xsl:apply-templates select="id(@idref)" mode="FullPackageName">
       <xsl:with-param name="CurrentPackageName" select="parent::class/parent::package/@name"/>
@@ -203,46 +235,54 @@ namespace <xsl:value-of select="parent::package/@name"/>
 <!-- ======================================================================= -->
   <xsl:template name="Constants">
     // =========================================================================
-    // Constants<xsl:if test="property[variable/@range='public' and @member='class' and type/@modifier='const']">
+    //#Region "Constants"<xsl:if test="property[variable/@range='public' and @member='class' and type/@modifier='const']">
 
-    public:<xsl:apply-templates select="property[variable/@range='public' and @member='class' and type/@modifier='const']"><xsl:sort select="@name"/></xsl:apply-templates>
+    public:<xsl:apply-templates select="property[variable/@range='public' and @member='class' and type/@modifier='const']" mode="Code"><xsl:sort select="@name"/></xsl:apply-templates>
     </xsl:if>
     <xsl:if test="property[variable/@range='protected' and @member='class' and type/@modifier='const']">
 
-    protected:<xsl:apply-templates select="property[variable/@range='protected' and @member='class' and type/@modifier='const']"><xsl:sort select="@name"/></xsl:apply-templates>
+    protected:<xsl:apply-templates select="property[variable/@range='protected' and @member='class' and type/@modifier='const']" mode="Code"><xsl:sort select="@name"/></xsl:apply-templates>
     </xsl:if>
     <xsl:if test="property[variable/@range='private' and @member='class' and type/@modifier='const']">
 
-    private:<xsl:apply-templates select="property[variable/@range='private' and @member='class' and type/@modifier='const']"><xsl:sort select="@name"/></xsl:apply-templates>
+    private:<xsl:apply-templates select="property[variable/@range='private' and @member='class' and type/@modifier='const']" mode="Code"><xsl:sort select="@name"/></xsl:apply-templates>
     </xsl:if>
+    //#End Region
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template name="Properties">
-    <xsl:if test="property">
-
+    <xsl:if test="property[@attribute='yes']">
     // =========================================================================
-    // Properties - member variables<xsl:if test="property[variable/@range='public' and (@member!='class' or type/@modifier!='const')]">
-
-    public:<xsl:apply-templates select="property[variable/@range='public' and (@member!='class' or type/@modifier!='const')]"><xsl:sort select="@name"/></xsl:apply-templates>
+    //#Region "Member variables"
+        <xsl:call-template name="Attributes">
+        <xsl:with-param name="Range">public</xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="Attributes">
+        <xsl:with-param name="Range">protected</xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="Attributes">
+        <xsl:with-param name="Range">private</xsl:with-param>
+        </xsl:call-template>
+    //#End Region
     </xsl:if>
-    <xsl:if test="property[variable/@range='protected' and (@member!='class' or type/@modifier!='const')]">
-
-    protected:<xsl:apply-templates select="property[variable/@range='protected' and (@member!='class' or type/@modifier!='const')]"><xsl:sort select="@name"/></xsl:apply-templates>
-    </xsl:if>
-    <xsl:if test="property[variable/@range='private' and (@member!='class' or type/@modifier!='const')]">
-
-    private:<xsl:apply-templates select="property[variable/@range='private' and (@member!='class' or type/@modifier!='const')]"><xsl:sort select="@name"/></xsl:apply-templates>
-    </xsl:if>
-		<xsl:if test="property[variable/@range!='public'][get[@range!='no'] or set[@range!='no']]">
+	<xsl:if test="property[variable/@range!='public'][get[@range!='no'] or set[@range!='no']]">
     // =========================================================================
-    // get/set methods
+    //#Region "Properties"
         <xsl:call-template name="Accessors">
         <xsl:with-param name="Range">public</xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="Accessors">
         <xsl:with-param name="Range">protected</xsl:with-param>
         </xsl:call-template>
-      </xsl:if>
+    //#End Region
+    </xsl:if>
+  </xsl:template>
+<!-- ======================================================================= -->
+  <xsl:template name="Attributes">
+    <xsl:param name="Range"/>
+    <xsl:if test="property[variable/@range=$Range and (@member!='class' or type/@modifier!='const')]">
+<xsl:text xml:space="preserve">
+    </xsl:text><xsl:value-of select="$Range"/>:<xsl:apply-templates select="property[variable/@range=$Range and (@member!='class' or type/@modifier!='const')]" mode="Code"><xsl:sort select="@name"/></xsl:apply-templates>
     </xsl:if>
   </xsl:template>
 <!-- ======================================================================= -->
@@ -417,6 +457,8 @@ namespace <xsl:value-of select="parent::package/@name"/>
 <!-- ======================================================================= -->
   <xsl:template match="property" mode="Access">
     <xsl:param name="Range"/>
+    
+    <xsl:variable name="ClassImpl"><xsl:value-of select="parent::class/@implementation"/></xsl:variable>
   
 	<xsl:variable name="VarName">
 	    <xsl:value-of select="$PrefixMember"/>
@@ -461,22 +503,31 @@ namespace <xsl:value-of select="parent::package/@name"/>
 	<xsl:if test="get[@range=$Range]">
 	<xsl:text xml:space="preserve">
     </xsl:text>
+	<xsl:if test="@overridable='yes'">virtual </xsl:if>
 	<xsl:if test="@member='class'">static </xsl:if>
     <xsl:if test="get/@modifier='const'">const </xsl:if>
-    <xsl:value-of select="concat($Type,' ',$Get,$GetName,@name)"/>() <xsl:if test="@member!='class'">const</xsl:if>
-    {
-        return <xsl:value-of select="$VarName"/><xsl:if test="contains(type/@desc,'ostringstream')">.str()</xsl:if>;
-    }
-    
+    <xsl:value-of select="concat($Type,' ',$Get,$GetName,@name)"/>() <xsl:if test="@member!='class'">const</xsl:if><xsl:if test="$ClassImpl='abstract'">= 0;
     </xsl:if>
-    <xsl:if test="set[@range=$Range]"><xsl:if test="@member='class'">static </xsl:if>void <xsl:value-of select="concat($SetName,@name,'(',$Const,$Type,' ',$Set,$SetParam)"/>)
-    {
-        <xsl:value-of select="$SetSteatment"/>;
+    <xsl:if test="$ClassImpl!='abstract'">
+    {<xsl:if test="@attribute='yes'">
+        return <xsl:value-of select="$VarName"/><xsl:if test="contains(type/@desc,'ostringstream')">.str()</xsl:if>;</xsl:if>
     }
-
     </xsl:if>
-		<!--
-				-->
+    </xsl:if>
+    <xsl:if test="set[@range=$Range]">
+    <xsl:text xml:space="preserve">
+    </xsl:text>
+	<xsl:if test="@overridable='yes'">virtual </xsl:if>
+    <xsl:if test="@member='class'">static </xsl:if>void <xsl:value-of select="concat($SetName,@name,'(',$Const,$Type,' ',$Set,$SetParam)"/>)<xsl:if test="$ClassImpl='abstract'">= 0;
+    </xsl:if>
+    <xsl:if test="$ClassImpl!='abstract'">
+    {<xsl:if test="@attribute='yes'">
+        <xsl:text xml:space="preserve">
+        </xsl:text>
+        <xsl:value-of select="$SetSteatment"/>;</xsl:if>
+    }
+    </xsl:if>
+    </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
 	<xsl:template match="child | father" mode="Access">
@@ -611,6 +662,8 @@ namespace <xsl:value-of select="parent::package/@name"/>
 <!-- Stylus Studio meta-information - (c) 2004-2007. Progress Software Corporation. All rights reserved.
 <metaInformation>
 <scenarios ><scenario default="yes" name="Test" userelativepaths="yes" externalpreview="no" url="ListOfTypes.xprj" htmlbaseurl="" outputurl="" processortype="msxmldotnet" useresolver="no" profilemode="0" profiledepth="" profilelength="" urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext="" validateoutput="no" validator="internal" customvalidator="" ><parameterValue name="InputClass" value="'class18'"/><parameterValue name="Language" value="'LanguageCplusPlus.xml'"/><parameterValue name="UmlFolder" value="'E:\Documents\Mes projets\UML_project'"/><advancedProp name="sInitialMode" value=""/><advancedProp name="bXsltOneIsOkay" value="true"/><advancedProp name="bSchemaAware" value="false"/><advancedProp name="bXml11" value="false"/><advancedProp name="iValidation" value="0"/><advancedProp name="bExtensions" value="true"/><advancedProp name="iWhitespace" value="0"/><advancedProp name="sInitialTemplate" value=""/>
+
 <advancedProp name="bTinyTree" value="true"/><advancedProp name="bWarnings" value="true"/><advancedProp name="bUseDTD" value="false"/><advancedProp name="iErrorHandling" value="fatal"/></scenario></scenarios><MapperMetaTag><MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/><MapperBlockPosition></MapperBlockPosition><TemplateContext></TemplateContext><MapperFilter side="source"></MapperFilter></MapperMetaTag>
 </metaInformation>
 -->
+

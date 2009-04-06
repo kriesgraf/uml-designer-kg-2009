@@ -221,10 +221,15 @@ Public Class XmlImportSpec
             iterator.Reset()
 
             While iterator.MoveNext
-                Dim xmlcpnt As XmlReferenceSpec = CType(iterator.Current, XmlReferenceSpec)
+                Dim xmlcpnt As XmlComponent = CType(iterator.Current, XmlComponent)
                 If strResult <> "" Then strResult = strResult + ", "
                 xmlcpnt.Tag = Me.Tag
-                strResult = strResult + xmlcpnt.FullpathClassName
+                Select Case xmlcpnt.NodeName
+                    Case "reference"
+                        strResult = strResult + CType(xmlcpnt, XmlReferenceSpec).FullpathClassName
+                    Case "interface"
+                        strResult = strResult + CType(xmlcpnt, XmlInterfaceSpec).FullpathClassName
+                End Select
             End While
         Catch ex As Exception
             Throw ex
