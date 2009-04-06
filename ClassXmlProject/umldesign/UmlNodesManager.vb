@@ -35,7 +35,9 @@ Public Class UmlNodesManager
                 Return False
             End If
 
-            LoadDocument(source, strFilename)
+            If LoadDocument(source, strFilename) = False Then
+                Return False
+            End If
 
             import = New XmlComponent(source.DocumentElement)
             import.Tag = component.Tag
@@ -47,7 +49,7 @@ Public Class UmlNodesManager
             list = import.SelectNodes("//import/export/*")
 
             For Each child In list
-                VerifyRedundancy(component, "project/package " + component.Name, child, "file:" + vbCrLf + strFilename)
+                VerifyRedundancy(component, "project/package" + component.Name, child, "file:" + vbCrLf + strFilename)
             Next child
 
             ' Remove redundant references in current project with imported classes

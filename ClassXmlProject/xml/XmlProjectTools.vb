@@ -23,11 +23,13 @@ Public Class XmlProjectTools
     Public Const cstMaxCircularReferences As Integer = 20
 
     Private Const cstSchemaName As String = "class-model"
+    Private Const cstSchemaVersion As String = "1.3"
     Private Const cstTempDoxygenFile As String = "__doxygenTempFile"
     Private Const cstTempUmlFile As String = "__umlTempFile"
     Private Const cstTag2ImportStyle As String = "tag2imp.xsl"
     Private Const cstDoxygen2ProjectStyle As String = "dox2prj.xsl"
     Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
+    Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xptch"
 
     Public Enum ECardinal
         EFix
@@ -55,6 +57,7 @@ Public Class XmlProjectTools
 
     Public Enum EDtdFileExist
         Equal
+        EqualButDifferent
         NotFound
         Older
         MoreRecent
@@ -86,6 +89,29 @@ Public Class XmlProjectTools
         Return My.Computer.FileSystem.CombinePath(strDestinationFolder, GetDocTypeDeclarationFile())
     End Function
 
+    Public Shared Function CheckVersionDtdFile(ByVal strDestinationFolder As String) As Boolean
+        Try
+            Dim fullpathname As String = GetDestinationDtdFile(strDestinationFolder)
+            Dim document As New XmlDocument
+
+            Dim strXML As String = "<?xml version='1.0' encoding='utf-8'?>" + vbCrLf + _
+                                   "<!DOCTYPE root SYSTEM '" + fullpathname + "'>" + vbCrLf + _
+                                   "<root name='Test'><generation destination='test' language='0' /><comment brief=''></comment></root>"
+
+            document.LoadXml(strXML)
+
+            Dim strCurrentVersion As String = GetAttributeValue(document.DocumentElement, "version")
+
+            If strCurrentVersion IsNot Nothing _
+            Then
+                Return (strCurrentVersion = cstSchemaVersion)
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+        Return False
+    End Function
+
     Public Shared Function CheckDocTypeDeclarationFile(ByVal strDestinationFolder As String) As EDtdFileExist
         Dim strDestination As String = GetDestinationDtdFile(strDestinationFolder)
         Dim strOrigin As String = GetDtdResource()
@@ -103,10 +129,16 @@ Public Class XmlProjectTools
 
             If originInfo.LastWriteTime > destInfo.LastWriteTime _
             Then
+                If CheckVersionDtdFile(strDestinationFolder) Then
+                    Return EDtdFileExist.EqualButDifferent
+                End If
                 Return EDtdFileExist.Older
 
             ElseIf originInfo.LastWriteTime < destInfo.LastWriteTime _
             Then
+                If CheckVersionDtdFile(strDestinationFolder) Then
+                    Return EDtdFileExist.EqualButDifferent
+                End If
                 Return EDtdFileExist.MoreRecent
             Else
                 Return EDtdFileExist.Equal
@@ -124,7 +156,10 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function UseDocTypeDeclarationFileForProject(ByVal strSourceFolder As String) As Boolean
+
         Select Case CheckDocTypeDeclarationFile(strSourceFolder)
+            Case EDtdFileExist.EqualButDifferent
+                ' Copy file below
 
             Case EDtdFileExist.SourceNotFound
                 MsgBox("The resource " + GetDtdResource() + " is missing. " + _
@@ -133,12 +168,16 @@ Public Class XmlProjectTools
 
             Case EDtdFileExist.Equal
                 ' Nothing to do
+                Return True
 
             Case EDtdFileExist.MoreRecent
                 Select Case MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more recent than application resource. " + vbCrLf + _
                            "Maybe this project would corrupt application process. " + vbCrLf + _
                            "Please confirm overwriting this file (Yes), open this project as it is (No), don't open this project (Cancel).", _
                            cstMsgYesNoCancelExclamation)
+
+                    Case MsgBoxResult.Yes
+                        ' Copy file below
 
                     Case MsgBoxResult.No
                         Return True
@@ -156,6 +195,8 @@ Public Class XmlProjectTools
                        = MsgBoxResult.No _
                 Then
                     Return False
+                Else
+                    ' Copy file below
                 End If
 
             Case EDtdFileExist.Older
@@ -167,6 +208,8 @@ Public Class XmlProjectTools
                     = System.Windows.Forms.DialogResult.Cancel _
                 Then
                     Return False
+                Else
+                    ' Copy file below
                 End If
 
             Case Else
@@ -180,6 +223,8 @@ Public Class XmlProjectTools
 
     Public Shared Function UseDocTypeDeclarationFileForImport(ByVal strSourceFolder As String) As Boolean
         Select Case CheckDocTypeDeclarationFile(strSourceFolder)
+            Case EDtdFileExist.EqualButDifferent
+                CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strSourceFolder))
 
             Case EDtdFileExist.SourceNotFound
                 MsgBox("The resource " + GetDtdResource() + " is missing. " + _
@@ -227,6 +272,9 @@ Public Class XmlProjectTools
         Dim bResult As Boolean = False
         Try
             Select Case CheckDocTypeDeclarationFile(strDestinationFolder)
+                Case EDtdFileExist.EqualButDifferent
+                    CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
+                    bResult = True
 
                 Case EDtdFileExist.SourceNotFound
                     MsgBox("The resource " + GetDtdResource() + " is missing. " + _
@@ -331,7 +379,7 @@ Public Class XmlProjectTools
 
         Try
             Dim document As New XmlDocument
-            LoadDocument(document, strTempFile)
+            LoadDocument(document, strTempFile, True)
 
             stage = "Merge iterator with container"
             MergeIteratorContainer(document)
@@ -358,7 +406,7 @@ Public Class XmlProjectTools
             document.Save(strTempFile)
 
             stage = "Reload to check DTD"
-            LoadDocument(document, strTempFile)
+            LoadDocument(document, strTempFile, True)
 
             bResult = True
 
@@ -392,7 +440,7 @@ Public Class XmlProjectTools
 
         Try
             Dim document As New XmlDocument
-            LoadDocument(document, strTempFile)
+            LoadDocument(document, strTempFile, True)
 
             ' Some doxygen types reference in "ref" element, the refid references the relationship child class and not the container type
             stage = "Change Doxygen type references"
@@ -447,7 +495,7 @@ Public Class XmlProjectTools
             document.Save(strTempFile)
 
             stage = "Reload to check DTD"
-            LoadDocument(document, strTempFile)
+            LoadDocument(document, strTempFile, True)
 
             bResult = True
 
@@ -494,15 +542,17 @@ Public Class XmlProjectTools
             Dim strTempFile As String = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
                                                                            cstTempDoxygenFile + ".ximp")
             styleXsl.Transform(strFilename, strTempFile)
-            LoadDocument(document, strTempFile)
+            LoadDocument(document, strTempFile, True)
 
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
 
-    Public Shared Sub LoadDocument(ByVal document As XmlDocument, ByVal strFilename As String, Optional ByVal bWithXsdValidation As Boolean = False)
+    Public Shared Function LoadDocument(ByVal document As XmlDocument, ByVal strFilename As String, Optional ByVal bThrowsException As Boolean = False, Optional ByVal bWithXsdValidation As Boolean = False) As Boolean
         ' TODO replace optional argument bWithXsdValidation with true when XmlSchema validation works with ID/IDREF
+        Dim bDtdError As Boolean = False
+        Dim currentException As Exception = Nothing
         Try
             If bWithXsdValidation Then
                 ' With Xml Schema, we don't save document structure file into project folder.
@@ -524,15 +574,54 @@ Public Class XmlProjectTools
                 End Using
             End If
         Catch ex As XmlSchemaException
-
-            Throw New Exception("LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
+            bDtdError = True
+            currentException = New Exception( _
+                                 "LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
                                 "LinePosition=" + ex.LinePosition.ToString + vbCrLf + _
                                 "Message=" + ex.Message + vbCrLf + _
-                                "SourceUri=" + ex.SourceUri, ex)
+                                "SourceUri=" + ex.SourceUri, _
+                                ex)
+
+            If bThrowsException Then Throw currentException
+
         Catch ex As Exception
             Throw ex
         End Try
-    End Sub
+
+        If bDtdError Then
+            Try
+                Dim strToolsFolder = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
+                Dim strPatchFile As String = My.Computer.FileSystem.CombinePath(strToolsFolder, cstV1_2_To_V1_3_Patch)
+                Dim strTempFile As String = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+                                                                                cstTempUmlFile + ".xprj")
+
+                If MsgBox("Failed to open file:" + vbCrLf + strFilename + vbCrLf + vbCrLf + "You can upgrade version and patch some mistakes (Yes) or leave (No) ?" + _
+                          vbCrLf + vbCrLf + "-----------------------------------------------------------------------------------------" + vbCrLf + _
+                          "Error details:" + vbCrLf + currentException.ToString, _
+                    cstMsgYesNoQuestion) = MsgBoxResult.Yes _
+                Then
+                    ApplyPatchFile(strFilename, strTempFile, strPatchFile)
+
+                    ' Using avoid to remain the file locked for another process
+                    ' the following to Validate succeeds.
+                    Dim settings As XmlReaderSettings = New XmlReaderSettings()
+                    settings.ProhibitDtd = False
+                    settings.ValidationType = System.Xml.ValidationType.DTD
+
+                    Using reader As XmlReader = XmlReader.Create(strTempFile, settings)
+                        document.Load(reader)
+                    End Using
+
+                    bDtdError = False
+                End If
+
+            Catch ex As Exception
+                bDtdError = True
+                MsgExceptionBox(ex)
+            End Try
+        End If
+        Return (bDtdError = False)
+    End Function
 
     Public Shared Function CreateAppendNode(ByVal node As XmlNode, ByVal szElement As String, Optional ByVal bInsertLf As Boolean = True) As XmlNode
         Dim xmlresult As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, szElement, "")
@@ -1198,6 +1287,9 @@ Public Class XmlProjectTools
                                 strResult = strTempo + strSeparator + strResult
                             End If
                         End If
+
+                    Case "model"
+                        strResult = "Model " + GetName(current)
 
                     Case "method"
                         strResult = GetMethodName(current, eTag)

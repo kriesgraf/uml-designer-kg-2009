@@ -29,7 +29,7 @@ Public Class MDIParent
         m_iChildFormNumber += 1
         ChildForm.Text = "New project " & m_iChildFormNumber
         ' this property instantiate the view component
-        ChildForm.ProjectName = ""
+        ChildForm.OpenProject("")
         ChildForm.Show()
 
     End Sub
@@ -84,14 +84,15 @@ Public Class MDIParent
                 If XmlProjectTools.UseDocTypeDeclarationFileForProject(strTempFolder) = True Then
                     Dim ChildForm As New frmProject
                     ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                    ChildForm.ProjectName = FileName
-                    ChildForm.MdiParent = Me
-                    If bFromDoxygenIndex Then
-                        ChildForm.Text = "Project imported from Doxygen"
-                    ElseIf bFromOmgXmiFile Then
-                        ChildForm.Text = "Project imported from XMI"
+                    If ChildForm.OpenProject(FileName) Then
+                        ChildForm.MdiParent = Me
+                        If bFromDoxygenIndex Then
+                            ChildForm.Text = "Project imported from Doxygen"
+                        ElseIf bFromOmgXmiFile Then
+                            ChildForm.Text = "Project imported from XMI"
+                        End If
+                        ChildForm.Show()
                     End If
-                    ChildForm.Show()
                 End If
             End If
         Catch ex As Exception
@@ -129,10 +130,11 @@ Public Class MDIParent
 
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                ChildForm.ProjectName = strTempFile
-                ChildForm.MdiParent = Me
-                ChildForm.Text = "Project imported from XMI"
-                ChildForm.Show()
+                If ChildForm.OpenProject(strTempFile) Then
+                    ChildForm.MdiParent = Me
+                    ChildForm.Text = "Project imported from XMI"
+                    ChildForm.Show()
+                End If
             End If
         Catch ex As Exception
             Me.Cursor = oldCursor
@@ -165,10 +167,11 @@ Public Class MDIParent
 
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                ChildForm.ProjectName = strTempFile
-                ChildForm.MdiParent = Me
-                ChildForm.Text = "Project imported from Doxygen"
-                ChildForm.Show()
+                If ChildForm.OpenProject(strTempFile) Then
+                    ChildForm.MdiParent = Me
+                    ChildForm.Text = "Project imported from Doxygen"
+                    ChildForm.Show()
+                End If
             End If
         Catch ex As Exception
             Me.Cursor = oldCursor
@@ -202,9 +205,10 @@ Public Class MDIParent
 
                     Dim ChildForm As New frmProject
                     ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                    ChildForm.ProjectName = strNewProject
-                    ChildForm.MdiParent = Me
-                    ChildForm.Show()
+                    If ChildForm.OpenProject(strNewProject) Then
+                        ChildForm.MdiParent = Me
+                        ChildForm.Show()
+                    End If
                 Else
                     Me.Cursor = oldCursor
                 End If
@@ -335,11 +339,12 @@ Public Class MDIParent
                 Dim strFilename As String = My.Application.CommandLineArgs.Item(0)
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                ChildForm.ProjectName = strFilename
-                ChildForm.MdiParent = Me
-                ChildForm.Show()
+                If ChildForm.OpenProject(strFilename) Then
+                    ChildForm.MdiParent = Me
+                    ChildForm.Show()
+                End If
             Else
-                OpenFile(sender, e)
+            OpenFile(sender, e)
             End If
 
             Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool

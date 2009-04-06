@@ -52,8 +52,8 @@
     <xsl:text>
 </xsl:text>
     <xsl:element name="root">
-      <xsl:attribute name="version">1.2</xsl:attribute>
-      <!-- UML designer DTD version -->
+	  <!-- UMl Disigner DTD vesion -->
+      <xsl:attribute name="version">1.3</xsl:attribute>
       <xsl:attribute name="name">XMI UML 2.1</xsl:attribute>
       <xsl:text>
 </xsl:text>
