@@ -157,6 +157,8 @@ Public Class XmlRelationSpec
 
         Id = xmlRefNodeCounter.GetNewRelationId()
         Name = "New_" + Id
+        Me.Father.Name = "New_Father_" + Id
+        Me.Child.Name = "New_Child_" + Id
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
