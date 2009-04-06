@@ -325,12 +325,26 @@ Public Class XmlClassSpec
     End Function
 
     Public Overrides Function CanAddComponent(ByVal nodeXml As XmlComponent) As Boolean
-        If nodeXml.NodeName = "dependency" Then
-            If GetFirstClassId(Me, Me.Id).Length = 0 Then
-                MsgBox("Sorry but only one class declared yet!", MsgBoxStyle.Exclamation)
-                Return False
-            End If
-        End If
+        Select nodeXml.NodeName
+            Case "dependency"
+                If GetFirstClassId(Me, Me.Id).Length = 0 Then
+                    MsgBox("Sorry but only one class declared yet!", MsgBoxStyle.Exclamation)
+                    Return False
+                End If
+
+            Case "typedef"
+                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+                With CType(nodeXml, XmlTypedefSpec)
+                    If eLang = ELanguage.Language_Vbasic _
+                    Then
+                        .TypeVarDefinition.Kind = XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
+
+                        Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
+                        .AppendComponent(element)
+                    End If
+                End With
+            Case Else
+        End Select
         Return True
     End Function
 
