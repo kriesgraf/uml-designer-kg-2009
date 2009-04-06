@@ -7,6 +7,8 @@ Imports ClassXmlProject.XmlProjectTools
 Public Class XmlDependencySpec
     Inherits XmlComponent
 
+    Private m_xmlClassNode As XmlNode = Nothing
+
     Public Enum EKindDependency
         Reference
         Body
@@ -32,7 +34,7 @@ Public Class XmlDependencySpec
     DescriptionAttribute("C++ dependency class declaration")> _
     Public ReadOnly Property FullpathClassName() As String
         Get
-            Dim nodeClass As XmlNode = Me.GetElementById(Me.Idref)
+            Dim nodeClass As XmlNode = GetClassNode()
             Return GetFullpathDescription(nodeClass, CType(Me.Tag, ELanguage))
         End Get
     End Property
@@ -53,6 +55,7 @@ Public Class XmlDependencySpec
         End Get
         Set(ByVal value As String)
             ValidateIdReference(value, m_bCreateNodeNow)
+            m_xmlClassNode = Nothing
             SetAttribute("idref", value)
         End Set
     End Property
@@ -126,4 +129,11 @@ Public Class XmlDependencySpec
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
         Idref = GetFirstClassId(Me, Me.ParentClassId)
     End Sub
+
+    Private Function GetClassNode() As XmlNode
+        If m_xmlClassNode Is Nothing Then
+            m_xmlClassNode = Me.GetElementById(Me.Idref)
+        End If
+        Return m_xmlClassNode
+    End Function
 End Class

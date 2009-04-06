@@ -7,13 +7,19 @@ Imports ClassXmlProject.XmlProjectTools
 Public Class XmlInheritSpec
     Inherits XmlComponent
 
+    Private m_xmlClassNode As XmlNode = Nothing
+
     <CategoryAttribute("UML design"), _
     Browsable(False), _
     DescriptionAttribute("Inherited class name")> _
     Public Overrides Property Name() As String
         Get
-            Dim attrib As XmlAttribute = GetElementById(Me.Idref).Attributes.ItemOf("name")
-            If attrib IsNot Nothing Then Return attrib.Value
+            Dim parent As XmlNode = GetClassNode()
+
+            If parent IsNot Nothing Then
+                Dim attrib As XmlAttribute = parent.Attributes.ItemOf("name")
+                If attrib IsNot Nothing Then Return attrib.Value
+            End If
             Return Nothing
         End Get
         Set(ByVal value As String)
@@ -25,7 +31,7 @@ Public Class XmlInheritSpec
     DescriptionAttribute("C++ mother class declaration")> _
     Public ReadOnly Property FullpathClassName() As String
         Get
-            Dim parent As XmlNode = MyBase.GetElementById(Me.Idref)
+            Dim parent As XmlNode = GetClassNode()
             Return GetFullpathDescription(parent, CType(Me.Tag, ELanguage))
         End Get
     End Property
@@ -34,7 +40,7 @@ Public Class XmlInheritSpec
     DescriptionAttribute("Mother class implementation")> _
     Public ReadOnly Property Implementation() As EImplementation
         Get
-            Return ConvertDtdToEnumImpl(GetImplementation(Me.Idref))
+            Return ConvertDtdToEnumImpl(GetImplementation())
         End Get
     End Property
 
@@ -46,6 +52,7 @@ Public Class XmlInheritSpec
         End Get
         Set(ByVal value As String)
             ValidateIdReference(value, m_bCreateNodeNow)
+            m_xmlClassNode = Nothing
             SetAttribute("idref", value)
         End Set
     End Property
@@ -79,16 +86,36 @@ Public Class XmlInheritSpec
         End Try
     End Sub
 
-    Protected Friend Function GetImplementation(ByVal strIdref As String) As String
-        Dim strResult As String = "<unknown>"
-        Dim nodeClass As XmlNode = Me.GetElementById(strIdref)
-        If nodeClass IsNot Nothing Then
-            If nodeClass.Name = "class" Then
-                strResult = GetAttributeValue(nodeClass, "implementation")
-            Else
-                strResult = "<import>"
-            End If
+    Private Function GetImplementation() As String
+        Dim strResult As String = Nothing
+
+        Dim parent As XmlNode = GetClassNode()
+
+        If parent IsNot Nothing Then
+            Select Case m_xmlClassNode.Name
+                Case "class"
+                    strResult = GetAttributeValue(parent, "implementation")
+
+                Case "interface"
+                    If GetAttributeValue(parent, "root") = "yes" _
+                    Then
+                        strResult = "root"
+                    Else
+                        strResult = "abstract"
+                    End If
+
+                Case Else
+                    strResult = "simple"
+            End Select
         End If
+
         Return strResult
+    End Function
+
+    Private Function GetClassNode() As XmlNode
+        If m_xmlClassNode Is Nothing Then
+            m_xmlClassNode = Me.GetElementById(Me.Idref)
+        End If
+        Return m_xmlClassNode
     End Function
 End Class

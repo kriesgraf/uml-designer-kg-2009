@@ -336,9 +336,9 @@ Public Class XmlClassGlobalView
                     End If
                 End If
             End If
-            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + xmlcpnt.Name, _
-                       cstMsgYesNoQuestion, _
-                       xmlcpnt.Name) = MsgBoxResult.Yes _
+            Dim strName As String = xmlcpnt.Name
+            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
+                       cstMsgYesNoQuestion) = MsgBoxResult.Yes _
             Then
                 Dim strNodeName As String = removeNode.NodeName
                 If MyBase.RemoveComponent(removeNode) Then
