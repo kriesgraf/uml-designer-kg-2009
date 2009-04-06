@@ -13,7 +13,7 @@ Public Class VbCodeAnalyser
     ' General declarations
     Private Const cstLineFeed As String = "(_\r\n\s{0,}|)"
     Private Const cstLineFeedWithBlank As String = "( _\r\n\s{0,}|)"
-    Private Const cstAccessModifier As String = "(Protected Friend |Protected |Public |Private )"
+    Private Const cstAccessModifier As String = "(Protected Friend |Protected |Public |Private |)"  ' Nothing for intertface declaration
     Private Const cstVarTypeFuncClassName As String = "(\b[a-zA-Z_][a-zA-Z0-9_]{0,}\b)"
     Private Const cstNamespace As String = "([a-zA-Z09_\.]{1,})"
     Private Const cstMustOverride As String = "MustOverride"
@@ -157,6 +157,7 @@ Public Class VbCodeAnalyser
                         m_iNbLine += 1
                         'm_listLines.Add(m_iNbLine, streamReader.BaseStream.Position)
                         strReadLine = streamReader.ReadLine()
+                        'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
                         If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
                         Then
@@ -233,6 +234,7 @@ Public Class VbCodeAnalyser
             Do
                 m_iNbLine += 1
                 strReadLine = m_lineReader.ReadLine()
+                'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
                 If strReadLine Is Nothing Then
                     m_lineReader.Close()
@@ -270,6 +272,7 @@ Public Class VbCodeAnalyser
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
             Then
@@ -307,6 +310,7 @@ Public Class VbCodeAnalyser
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
             Then
@@ -352,6 +356,7 @@ Public Class VbCodeAnalyser
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
             Then
@@ -398,6 +403,7 @@ Public Class VbCodeAnalyser
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
             If strReadLine IsNot Nothing Then
                 If InStr(strReadLine, "Implements") > 0 And iStopClassDeclaration > 0 Then
@@ -471,6 +477,7 @@ Public Class VbCodeAnalyser
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
                 Then
@@ -501,6 +508,7 @@ Public Class VbCodeAnalyser
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
                 Then
@@ -538,6 +546,7 @@ Public Class VbCodeAnalyser
             m_iNbLine += 1
             'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
             strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
             If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine, bCheckComment) = ProcessState.Instruction _
                 Then
@@ -688,27 +697,8 @@ Public Class VbCodeAnalyser
                                             ByVal strInstruction As String, ByRef strStatement As String, _
                                             ByVal bInterface As Boolean) As ClassMember
 
-        If regAttributeDeclaration.IsMatch(strInstruction) Then
-
-            Dim iPos = GetPosition(regAttributeDeclaration, strInstruction, iStartLine)
-
-            Dim split As String() = regAttributeDeclaration.Split(strInstruction)
-            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Attribute: " + strInstruction)
-            'Console.WriteLine("Attribute name: " + split(3).Trim())
-
-            m_textWriter.Flush()
-            m_textWriter.WriteString(vbCrLf)
-            m_textWriter.WriteStartElement("attribute")
-            m_textWriter.WriteAttributeString("checked", "False")
-            m_textWriter.WriteAttributeString("start", iStartLine.ToString)
-            m_textWriter.WriteAttributeString("end", iStopLine.ToString)
-            m_textWriter.WriteAttributeString("pos", iPos.ToString)
-            m_textWriter.WriteAttributeString("name", split(3).Trim())
-            m_textWriter.WriteEndElement()
-
-            Return ClassMember.AttributeElt
-
-        ElseIf regPropertyDeclaration.IsMatch(strInstruction) Then
+        ' The order of call regex is made to avoid complicated string
+        If regPropertyDeclaration.IsMatch(strInstruction) Then
 
             Dim iPos = GetPosition(regPropertyDeclaration, strInstruction, iStartLine)
 
@@ -825,6 +815,26 @@ Public Class VbCodeAnalyser
 
             Return ClassMember.ImplementedMethod
 
+        ElseIf regAttributeDeclaration.IsMatch(strInstruction) Then
+
+            Dim iPos = GetPosition(regAttributeDeclaration, strInstruction, iStartLine)
+
+            Dim split As String() = regAttributeDeclaration.Split(strInstruction)
+            'Console.WriteLine(iStartLine.ToString + "-" + iStopLine.ToString + " (" + iPos.ToString + ")->Attribute: " + strInstruction)
+            'Console.WriteLine("Attribute name: " + split(3).Trim())
+
+            m_textWriter.Flush()
+            m_textWriter.WriteString(vbCrLf)
+            m_textWriter.WriteStartElement("attribute")
+            m_textWriter.WriteAttributeString("checked", "False")
+            m_textWriter.WriteAttributeString("start", iStartLine.ToString)
+            m_textWriter.WriteAttributeString("end", iStopLine.ToString)
+            m_textWriter.WriteAttributeString("pos", iPos.ToString)
+            m_textWriter.WriteAttributeString("name", split(3).Trim())
+            m_textWriter.WriteEndElement()
+
+            Return ClassMember.AttributeElt
+
         ElseIf CheckClassInstruction(iStartLine, strInstruction, strStatement) Then
 
             Return ClassMember.NestedClass
@@ -920,6 +930,7 @@ Public Class VbCodeAnalyser
                 m_iNbLine += 1
                 'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
                 strReadLine = m_streamReader.ReadLine()
+                'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
                 If strReadLine IsNot Nothing Then
                     If InStr(strReadLine, "'''") = 0 Then
