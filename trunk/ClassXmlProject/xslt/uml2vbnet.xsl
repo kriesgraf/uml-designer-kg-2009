@@ -94,8 +94,8 @@
     <xsl:element name="code">
       <xsl:attribute name="name"><xsl:value-of select="@name"/>.vb</xsl:attribute>
     <xsl:variable name="Request1"><xsl:call-template name="FullImportName"/></xsl:variable>
-    <IMPORTS><xsl:copy-of select="$Request1"/></IMPORTS>
     <!--
+    <IMPORTS><xsl:copy-of select="$Request1"/></IMPORTS>
      -->
     <xsl:variable name="CurrentPackage"><xsl:value-of select="parent::package/@name"/></xsl:variable>
     <xsl:for-each select="msxsl:node-set($Request1)//reference[generate-id()=generate-id(key('include',@value)[1])]">
@@ -383,7 +383,7 @@ End Namespace
   <xsl:variable name="ClassImpl" select="parent::class/@implementation"/>
   <xsl:variable name="InheritedClassImpl">
     <xsl:choose>
-      <xsl:when test="id(@overrides)[self::reference]">simple</xsl:when>
+      <xsl:when test="not(@overrides)"/>
       <xsl:when test="id(@overrides)[self::interface[@root='yes']]">root</xsl:when>
       <xsl:when test="id(@overrides)[self::interface]">abstract</xsl:when>
       <xsl:otherwise><xsl:value-of select="id(@overrides)/@implementation"/></xsl:otherwise>
@@ -429,9 +429,9 @@ End Namespace
 	<xsl:if test="@behaviour='Default'">Default </xsl:if>
 	<xsl:if test="$ClassImpl!='abstract'"><xsl:value-of select="$Range"/></xsl:if>
 	<xsl:if test="@member='class'">Shared </xsl:if>
-	<xsl:if test="@overridable='no' and $InheritedClassImpl!='abstract'">NotOverridable </xsl:if>
+	<xsl:if test="@overridable='no' and @overrides!='' and $InheritedClassImpl!='abstract'">NotOverridable </xsl:if>
 	<xsl:if test="@overrides!='' and $InheritedClassImpl!='abstract'">Overrides </xsl:if>
-	<xsl:if test="@overridable='yes' and (@overrides='' or not(@overrides)) and $InheritedClassImpl!='abstract'">Overridable </xsl:if>
+	<xsl:if test="@overridable='yes' and (@overrides='' or not(@overrides)) and $ClassImpl!='abstract'">Overridable </xsl:if>
 	<xsl:value-of select="$Modifier"/>
     <xsl:text>Property </xsl:text>
 	<xsl:value-of select="concat(@name,'() As ',$Type)"/>
@@ -619,6 +619,7 @@ End Namespace
   </xsl:template>
 <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
