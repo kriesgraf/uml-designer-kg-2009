@@ -343,16 +343,16 @@ Public Class XmlBindingDataListView
             If m_xmlParentNode Is Nothing Then
                 Throw New Exception("m_xmlParentNode property is null")
             Else
-                Dim xmlComponent As XmlComponent = m_xmlParentNode.DuplicateComponent(component)
-                If xmlComponent IsNot Nothing Then
-                    xmlComponent.Tag = m_xmlParentNode.Tag
-                    xmlComponent.Name = component.Name + "_copy"
-                    xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
+                Dim duplicate As XmlComponent = m_xmlParentNode.DuplicateComponent(component)
+                If duplicate IsNot Nothing Then
+                    duplicate.Tag = m_xmlParentNode.Tag
+                    duplicate.Name = component.Name + "_copy"
+                    duplicate.SetIdReference(m_xmlReferenceNodeCounter, True)
 
-                    Dim child As XmlNode = m_xmlParentNode.AppendComponent(component)
+                    Dim child As XmlNode = m_xmlParentNode.AppendComponent(duplicate)
                     If child IsNot Nothing Then
                         Dim xmlView As XmlComponent = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
-                        xmlView.Tag = xmlComponent.Tag
+                        xmlView.Tag = duplicate.Tag
                         Refresh()
                         Return True
                     Else
