@@ -53,11 +53,9 @@ Public Class XmlSuperClassView
                 strIgnoreClasses += GetIDREF(child) + ";"
             Next
 
-            For Each xmlview In m_ListBox.SelectedItems
-
+            For Each xmlview As XmlNodeListView In m_ListBox.SelectedItems
                 Dim xmlcpnt As XmlInheritSpec = MyBase.CreateDocument("inherited", MyBase.Document)
                 xmlcpnt.Idref = xmlview.Id
-
                 MyBase.AppendNode(xmlcpnt.Node)
             Next xmlview
 
