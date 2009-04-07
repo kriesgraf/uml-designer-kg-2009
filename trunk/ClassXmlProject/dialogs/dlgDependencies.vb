@@ -65,16 +65,29 @@ Public Class dlgDependencies
     Private Sub RefreshList()
         Try
             Dim MyList As New ArrayList
-            Dim strID As String = m_xmlDataSource.GetAttribute("id")
+            Dim strID, strQuery, strName As String
+            Dim strNodeName As String = m_xmlDataSource.NodeName
 
             If m_bNoTitle Then Me.Text = m_xmlDataSource.Name + " dependencies"
+
+            Select Case strNodeName
+                Case "property", "method"
+                    strID = m_xmlDataSource.GetAttribute("id", "parent::class | parent::interface")
+                    strName = m_xmlDataSource.Name
+                    strQuery = "//class[" + strNodeName + "[@overrides='" + strID + "']]"
+
+                Case Else
+                    strID = m_xmlDataSource.GetAttribute("id")
+                    strName = m_xmlDataSource.Name
+                    strQuery = "//*[@*[.='" + strID + "' and name()!='id' and name()!='overrides'] and ancestor::*/@id!='" + strID + "']"
+            End Select
 
             If strID Is Nothing _
             Then
                 lsbDependencies.Items.Add("Sorry this node can't be referenced")
                 lsbDependencies.Enabled = False
             Else
-                AddNodeList(m_xmlDataSource, MyList, "//*[@*[.='" + strID + "' and name()!='id'] and ancestor::*/@id!='" + strID + "']")
+                AddNodeList(m_xmlDataSource, MyList, strQuery)
 
                 If MyList.Count = 0 _
                 Then
