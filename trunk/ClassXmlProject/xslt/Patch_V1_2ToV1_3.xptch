@@ -1,0 +1,586 @@
+<?xml version="1.0"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <!-- ======================================================================= -->
+  <xsl:output indent="yes" method="xml" encoding="utf-8"/>
+  <xsl:param name="Debug">1</xsl:param>
+  <xsl:param name="FolderDTD"/>
+  <!-- ======================================================================= -->
+  <xsl:template match="/root">
+    <xsl:text/>
+    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE root SYSTEM "</xsl:text>
+    <xsl:value-of select="$FolderDTD"/>
+    <xsl:text disable-output-escaping="yes">class-model.dtd"&gt;</xsl:text>
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:attribute name="version">1.3</xsl:attribute>
+      <xsl:attribute name="name">
+        <xsl:value-of select="@name"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="generation[1]"/>
+      <xsl:apply-templates select="comment[1]"/>
+      <xsl:apply-templates select="import"/>
+      <xsl:apply-templates select="class"/>
+      <xsl:apply-templates select="package"/>
+      <xsl:apply-templates select="relationship"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="generation">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:if test="not(@language)">
+        <xsl:attribute name="language">0</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@language"/>
+      <xsl:if test="not(@destination)">
+        <xsl:attribute name="destination">C:\</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@destination"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="comment">
+    <xsl:text/>
+    <xsl:choose>
+      <xsl:when test="parent::property | parent::param | parent::return">
+        <xsl:copy-of select="."/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy>
+          <xsl:if test="not(@brief)">
+            <xsl:attribute name="brief">Brief comment</xsl:attribute>
+          </xsl:if>
+          <xsl:copy-of select="@brief"/>
+          <xsl:copy-of select="text()"/>
+        </xsl:copy>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="import">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="Name"/>
+      <xsl:call-template name="Visibility"/>
+      <xsl:copy-of select="@param"/>
+      <xsl:apply-templates select="export[1]"/>
+      <xsl:apply-templates select="body[1]"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="export">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:copy-of select="@source"/>
+      <xsl:copy-of select="@name"/>
+      <xsl:apply-templates select="reference | interface"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="reference">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="ID"/>
+      <xsl:call-template name="Name"/>
+      <xsl:if test="not(@type)">
+        <xsl:attribute name="type">class</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@type"/>
+      <xsl:copy-of select="@package"/>
+      <xsl:copy-of select="@class"/>
+      <xsl:copy-of select="@container"/>
+      <xsl:apply-templates select="collaboration"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="interface">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="Name"/>
+      <xsl:if test="not(@root)">
+        <xsl:attribute name="root">no</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@root"/>
+      <xsl:copy-of select="@package"/>
+      <xsl:apply-templates select="collaboration"/>
+      <xsl:apply-templates select="property"/>
+      <xsl:apply-templates select="method"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="body">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:if test="not(@type)">
+        <xsl:attribute name="type">method</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@type"/>
+      <xsl:copy-of select="line"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="class">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="ID"/>
+      <xsl:call-template name="Name"/>
+      <xsl:call-template name="Visibility"/>
+      <xsl:if test="not(@implementation)">
+        <xsl:attribute name="implementation">simple</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@implementation"/>
+      <xsl:if test="not(@inline)">
+        <xsl:attribute name="inline">none</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@inline"/>
+      <xsl:if test="not(@constructor)">
+        <xsl:attribute name="constructor">
+          <xsl:choose>
+            <xsl:when test="@implementation='abstract'">no</xsl:when>
+            <xsl:otherwise>public</xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@constructor"/>
+      <xsl:if test="not(@destructor)">
+        <xsl:attribute name="destructor">
+          <xsl:choose>
+            <xsl:when test="@implementation='abstract'">no</xsl:when>
+            <xsl:otherwise>public</xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@destructor"/>
+      <xsl:copy-of select="@behaviour"/>
+      <xsl:apply-templates select="model[position()&lt;3]"/>
+      <xsl:apply-templates select="inherited"/>
+      <xsl:apply-templates select="dependency"/>
+      <xsl:apply-templates select="collaboration"/>
+      <xsl:apply-templates select="comment[1]"/>
+      <xsl:apply-templates select="import"/>
+      <xsl:apply-templates select="typedef"/>
+      <xsl:apply-templates select="property"/>
+      <xsl:apply-templates select="method"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="package">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="ID"/>
+      <xsl:call-template name="Name"/>
+      <xsl:copy-of select="@folder"/>
+      <xsl:apply-templates select="comment[1]"/>
+      <xsl:apply-templates select="import"/>
+      <xsl:apply-templates select="typedef"/>
+      <xsl:apply-templates select="class"/>
+      <xsl:apply-templates select="package"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="relationship">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="ID"/>
+      <xsl:if test="not(@action)">
+        <xsl:attribute name="action">Unknown action</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@action"/>
+      <xsl:if test="not(@type)">
+        <xsl:attribute name="type">assembl</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@type"/>
+      <xsl:apply-templates select="father[1]"/>
+      <xsl:apply-templates select="child[1]"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="inherited">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="IDREF"/>
+      <xsl:call-template name="RangePublic"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="collaboration">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="IDREF"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="dependency">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="IDREF"/>
+      <xsl:if test="not(@action)">
+        <xsl:attribute name="action">Unknown action</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@action"/>
+      <xsl:if test="not(@type)">
+        <xsl:attribute name="type">interface</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@type"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="father">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="IDREF"/>
+      <xsl:call-template name="Name"/>
+      <xsl:call-template name="Member"/>
+      <xsl:call-template name="Cardinal"/>
+      <xsl:call-template name="Level"/>
+      <xsl:call-template name="RangeNo"/>
+      <xsl:call-template name="Relation"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="child">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="IDREF"/>
+      <xsl:call-template name="Name"/>
+      <xsl:call-template name="Member"/>
+      <xsl:call-template name="Cardinal"/>
+      <xsl:call-template name="Level"/>
+      <xsl:call-template name="RangePublic"/>
+      <xsl:call-template name="Relation"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="typedef">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="Name"/>
+      <xsl:call-template name="ID"/>
+      <xsl:call-template name="Typedef"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="return">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="Typedef"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Typedef">
+    <xsl:text/>
+    <xsl:apply-templates select="type[1]"/>
+    <xsl:apply-templates select="variable[1]"/>
+    <xsl:apply-templates select="comment[1]"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="type">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:if test="not(@desc) and not(@idref) and not(enumvalue) and not(element)">
+        <xsl:attribute name="desc">int16</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="not(@struct) and element">
+        <xsl:attribute name="struct">struct</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@desc"/>
+      <xsl:copy-of select="@idref"/>
+      <xsl:copy-of select="@struct"/>
+      <xsl:call-template name="Modifier"/>
+      <xsl:call-template name="Level"/>
+      <xsl:if test="not(@by)">
+        <xsl:attribute name="by">0</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@by"/>
+      <xsl:apply-templates select="enumvalue"/>
+      <xsl:apply-templates select="element"/>
+      <xsl:apply-templates select="list"/>
+      <xsl:apply-templates select="array"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="enumvalue">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="Name"/>
+      <xsl:call-template name="ID"/>
+      <xsl:copy-of select="@value"/>
+      <xsl:copy-of select="text()"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="element">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="Name"/>
+      <xsl:if test="not(@num-id)">
+        <xsl:attribute name="num-id">
+          <xsl:value-of select="position()"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@num-id"/>
+      <xsl:if test="not(@desc) and not(@idref)">
+        <xsl:attribute name="desc">int16</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@desc"/>
+      <xsl:copy-of select="@idref"/>
+      <xsl:call-template name="Modifier"/>
+      <xsl:call-template name="Level"/>
+      <xsl:copy-of select="@size"/>
+      <xsl:copy-of select="@sizeref"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="list">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="Level"/>
+      <xsl:if test="not(@type)">
+        <xsl:attribute name="type">simple</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@type"/>
+      <xsl:if test="not(@desc) and not(@idref)">
+        <xsl:attribute name="desc">int16</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@desc"/>
+      <xsl:copy-of select="@idref"/>
+      <xsl:if test="@type='indexed'">
+        <xsl:if test="not(@index-desc) and not(@index-idref)">
+          <xsl:attribute name="index-desc">bool</xsl:attribute>
+        </xsl:if>
+        <xsl:copy-of select="@index-desc"/>
+        <xsl:copy-of select="@index-idref"/>
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="array">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:if test="not(sizeref) and not(size)">
+        <xsl:attribute name="size">10</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@size"/>
+      <xsl:copy-of select="@sizeref"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="variable">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="RangePublic"/>
+      <xsl:copy-of select="@value"/>
+      <xsl:copy-of select="@valref"/>
+      <xsl:copy-of select="@size"/>
+      <xsl:copy-of select="@sizeref"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="property">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:if test="not(@num-id)">
+        <xsl:attribute name="num-id">
+          <xsl:value-of select="position()"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@num-id"/>
+      <xsl:call-template name="Name"/>
+      <xsl:copy-of select="@attribute"/>
+      <xsl:copy-of select="@overridable"/>
+      <xsl:copy-of select="@overrides"/>
+      <xsl:copy-of select="@behaviour"/>
+      <xsl:copy-of select="@access-value"/>
+      <xsl:call-template name="Member"/>
+      <xsl:call-template name="Typedef"/>
+      <xsl:apply-templates select="get[1]"/>
+      <xsl:apply-templates select="set[1]"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="param">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:if test="not(@num-id)">
+        <xsl:attribute name="num-id">
+          <xsl:value-of select="position()"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@num-id"/>
+      <xsl:call-template name="Name"/>
+      <xsl:call-template name="Typedef"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="get">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="RangeNo"/>
+      <xsl:call-template name="By"/>
+      <xsl:call-template name="Modifier"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="set">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:call-template name="RangeNo"/>
+      <xsl:call-template name="By"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="method">
+    <xsl:text/>
+    <xsl:copy>
+      <xsl:if test="not(@num-id)">
+        <xsl:attribute name="num-id">
+          <xsl:value-of select="position()"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@num-id"/>
+      <xsl:copy-of select="@inline"/>
+      <xsl:if test="not(@constructor)">
+        <xsl:call-template name="Name"/>
+        <xsl:attribute name="constructor">no</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@constructor='no'">
+        <xsl:call-template name="Name"/>
+      </xsl:if>
+      <xsl:call-template name="Modifier"/>
+      <xsl:if test="not(@implementation)">
+        <xsl:attribute name="implementation">simple</xsl:attribute>
+      </xsl:if>
+      <xsl:copy-of select="@implementation"/>
+      <xsl:copy-of select="@operator"/>
+      <xsl:copy-of select="@constructor"/>
+      <xsl:copy-of select="@operator"/>
+      <xsl:copy-of select="@behaviour"/>
+      <xsl:copy-of select="@overrides"/>
+      <xsl:call-template name="Member"/>
+      <xsl:apply-templates select="exception"/>
+      <xsl:if test="not(@constructor) and not(return)">
+        <xsl:call-template name="Return"/>
+      </xsl:if>
+      <xsl:if test="@constructor='no'">
+        <xsl:if test="not(return)">
+          <xsl:call-template name="Return"/>
+        </xsl:if>
+        <xsl:apply-templates select="return[1]"/>
+      </xsl:if>
+      <xsl:apply-templates select="comment[1]"/>
+      <xsl:apply-templates select="param"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="ID">
+    <xsl:if test="not(@id)">
+      <xsl:attribute name="id">
+        <xsl:value-of select="generate-id()"/>
+      </xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@id"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="IDREF">
+    <xsl:choose>
+      <xsl:when test="not(@idref)">
+        <xsl:attribute name="idref">
+          <xsl:value-of select="//class/@id"/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:when test="not(id(@idref))">
+        <xsl:attribute name="idref">
+          <xsl:value-of select="//class/@id"/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select="@idref"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Name">
+    <xsl:if test="not(@name)">
+      <xsl:attribute name="name">Unknown</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@name"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Member">
+    <xsl:if test="not(@member)">
+      <xsl:attribute name="member">object</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@member"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Level">
+    <xsl:if test="not(@level)">
+      <xsl:attribute name="level">0</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@level"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Visibility">
+    <xsl:if test="not(@visibility)">
+      <xsl:attribute name="visibility">package</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@visibility"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Modifier">
+    <xsl:if test="not(@modifier)">
+      <xsl:attribute name="modifier">var</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@modifier"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="By">
+    <xsl:if test="not(@by)">
+      <xsl:attribute name="by">val</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@by"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="RangeNo">
+    <xsl:if test="not(@range)">
+      <xsl:attribute name="range">no</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@range"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="RangePublic">
+    <xsl:if test="not(@range)">
+      <xsl:attribute name="range">public</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@range"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Relation">
+    <xsl:if test="not(@cardinal)">
+      <get range="no" by="val" modifier="var"/>
+      <set range="no" by="val"/>
+    </xsl:if>
+    <xsl:if test="(@cardinal='0n' or @cardinal='1n') and not(list) and not(array)">
+      <array size="10"/>
+    </xsl:if>
+    <xsl:apply-templates select="get | set | list | array"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Return">
+    <return>
+      <type desc="void" modifier="var" level="0" by="val"/>
+      <variable range="public"/>
+      <comment brief="A brief comment">A multi-lines comment</comment>
+    </return>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Cardinal">
+    <xsl:if test="not(@cardinal)">
+      <xsl:attribute name="cardinal">1</xsl:attribute>
+    </xsl:if>
+    <xsl:copy-of select="@cardinal"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+</xsl:stylesheet>
+
+

@@ -51,7 +51,7 @@
           name %name; #REQUIRED>
 
 <!--Variable type declaration-->
-<!ELEMENT type (enumvalue*,element*,list?,array?)>
+<!ELEMENT type (enumvalue*,element*,list?)>
 <!ATTLIST type
           desc  %type; #IMPLIED
           idref IDREF #IMPLIED
@@ -86,8 +86,8 @@
 <!ATTLIST method
           %display;
           %num-id;
-          inline (yes | no) #IMPLIED
-          modifier (var | const) #IMPLIED
+          inline (yes | no) "no"
+          modifier (var | const) "var"
           member (object | class) #REQUIRED
           constructor (%constructor;) #REQUIRED
           operator CDATA #IMPLIED
@@ -100,7 +100,7 @@
 
 <!ELEMENT body (line*)>
 <!ATTLIST body
-          type (constructor | destructor | method | class | property) #REQUIRED>
+          type (constructor | destructor | method | class | property) "method">
 
 <!ELEMENT line EMPTY>
 <!ATTLIST line
@@ -108,14 +108,14 @@
 
 
 <!--Property read access-->
-<!ELEMENT get (inline?)>
+<!ELEMENT get EMPTY>
 <!ATTLIST get
           range (no|protected|public) #REQUIRED
           %by;
           %modifier;>
 
 <!--Property write access-->
-<!ELEMENT set (inline?)>
+<!ELEMENT set EMPTY>
 <!ATTLIST set
           range (no|protected|public) #REQUIRED
           %by; >
@@ -145,7 +145,7 @@
 <!ATTLIST export
           %display;
           source CDATA #IMPLIED
-          name CDATA #REQUIRED>
+          name CDATA #IMPLIED>
 
 <!ELEMENT reference (collaboration*) >
 <!ATTLIST reference
@@ -186,7 +186,7 @@
           %id;>
 
 <!--Class declaration-->
-<!ELEMENT class (model*, inherited*, dependency*, collaboration*, inline?, comment, import*, typedef*, property*, method*)>
+<!ELEMENT class (model*, inherited*, dependency*, collaboration*, comment, import*, typedef*, property*, method*)>
 <!ATTLIST class
           %id;
           name %name; #REQUIRED
@@ -224,7 +224,7 @@
           %cardinal;
           %level; >
           
-<!ELEMENT list (#PCDATA)>
+<!ELEMENT list EMPTY>
 <!ATTLIST list
           iterator (yes | no) #IMPLIED
           type (simple | indexed) #REQUIRED
@@ -234,9 +234,8 @@
           index-idref IDREF #IMPLIED
           level (0 | 1 | 2) #IMPLIED >
 
-<!ELEMENT array (#PCDATA)>
+<!ELEMENT array EMPTY>
 <!ATTLIST array
-          member (object | class) #IMPLIED
           sizeref IDREF #IMPLIED
           size CDATA #IMPLIED>
 
