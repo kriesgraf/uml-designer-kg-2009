@@ -68,9 +68,10 @@ Partial Class MDIParent
         Me.HelpToolStripButton = New System.Windows.Forms.ToolStripButton
         Me.StatusStrip = New System.Windows.Forms.StatusStrip
         Me.ToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
-        Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
         Me.strpStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.strpProgressBar = New System.Windows.Forms.ToolStripProgressBar
+        Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
+        Me.DebugToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
         Me.StatusStrip.SuspendLayout()
@@ -188,7 +189,7 @@ Partial Class MDIParent
         '
         'ToolsMenu
         '
-        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DiffToolStripOption, Me.VbMergeToolStripOption, Me.ToolStripSeparator5, Me.OptionsToolStripMenuItem})
+        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DiffToolStripOption, Me.VbMergeToolStripOption, Me.ToolStripSeparator5, Me.DebugToolStripOption, Me.OptionsToolStripMenuItem})
         Me.ToolsMenu.MergeIndex = 4
         Me.ToolsMenu.Name = "ToolsMenu"
         Me.ToolsMenu.Size = New System.Drawing.Size(44, 20)
@@ -404,6 +405,12 @@ Partial Class MDIParent
         Me.strpProgressBar.Size = New System.Drawing.Size(100, 16)
         Me.strpProgressBar.Visible = False
         '
+        'DebugToolStripOption
+        '
+        Me.DebugToolStripOption.Name = "DebugToolStripOption"
+        Me.DebugToolStripOption.Size = New System.Drawing.Size(189, 22)
+        Me.DebugToolStripOption.Text = "Debug commands"
+        '
         'MDIParent
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -474,5 +481,6 @@ Partial Class MDIParent
     Friend WithEvents mnuFileNewOmgUmlFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents strpStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents strpProgressBar As System.Windows.Forms.ToolStripProgressBar
+    Friend WithEvents DebugToolStripOption As System.Windows.Forms.ToolStripMenuItem
 
 End Class

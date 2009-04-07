@@ -45,7 +45,6 @@ Partial Class dlgStructure
         Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuDeleteElement = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
@@ -76,7 +75,7 @@ Partial Class dlgStructure
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.94931!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.05069!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -103,7 +102,7 @@ Partial Class dlgStructure
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.OK_Button.Location = New System.Drawing.Point(358, 3)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(67, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(66, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
@@ -237,9 +236,9 @@ Partial Class dlgStructure
         '
         'mnuElements
         '
-        Me.mnuElements.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddElement, Me.mnuEditElement, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.ToolStripSeparator2, Me.mnuProperties, ToolStripSeparator1, Me.mnuDeleteElement})
+        Me.mnuElements.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddElement, Me.mnuEditElement, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, ToolStripSeparator1, Me.mnuDeleteElement})
         Me.mnuElements.Name = "mnuElements"
-        Me.mnuElements.Size = New System.Drawing.Size(169, 176)
+        Me.mnuElements.Size = New System.Drawing.Size(169, 192)
         '
         'mnuAddElement
         '
@@ -276,16 +275,12 @@ Partial Class dlgStructure
         Me.mnuDuplicate.Size = New System.Drawing.Size(168, 22)
         Me.mnuDuplicate.Text = "Duplicate"
         '
-        'ToolStripSeparator2
-        '
-        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(165, 6)
-        '
         'mnuProperties
         '
         Me.mnuProperties.Name = "mnuProperties"
         Me.mnuProperties.Size = New System.Drawing.Size(168, 22)
         Me.mnuProperties.Text = "Properties..."
+        Me.mnuProperties.Visible = False
         '
         'mnuDeleteElement
         '
@@ -336,7 +331,6 @@ Partial Class dlgStructure
     Friend WithEvents mnuAddElement As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuDeleteElement As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuEditElement As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuProperties As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
     Friend WithEvents btnDelete As System.Windows.Forms.Button

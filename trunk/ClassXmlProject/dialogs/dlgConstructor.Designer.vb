@@ -45,10 +45,11 @@ Partial Class dlgConstructor
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -249,9 +250,9 @@ Partial Class dlgConstructor
         '
         'mnuParam
         '
-        Me.mnuParam.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuEditParam, Me.ToolStripSeparator2, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.ToolStripSeparator1, Me.mnuDelete})
+        Me.mnuParam.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuEditParam, Me.ToolStripSeparator2, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator1, Me.mnuDelete})
         Me.mnuParam.Name = "mnuParam"
-        Me.mnuParam.Size = New System.Drawing.Size(161, 170)
+        Me.mnuParam.Size = New System.Drawing.Size(161, 192)
         '
         'mnuAddParam
         '
@@ -289,6 +290,13 @@ Partial Class dlgConstructor
         Me.mnuPaste.Size = New System.Drawing.Size(160, 22)
         Me.mnuPaste.Text = "Paste"
         '
+        'mnuDuplicate
+        '
+        Me.mnuDuplicate.Name = "mnuDuplicate"
+        Me.mnuDuplicate.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
+        Me.mnuDuplicate.Size = New System.Drawing.Size(160, 22)
+        Me.mnuDuplicate.Text = "Duplicate"
+        '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
@@ -301,12 +309,12 @@ Partial Class dlgConstructor
         Me.mnuDelete.Size = New System.Drawing.Size(160, 22)
         Me.mnuDelete.Text = "Delete"
         '
-        'mnuDuplicate
+        'mnuProperties
         '
-        Me.mnuDuplicate.Name = "mnuDuplicate"
-        Me.mnuDuplicate.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
-        Me.mnuDuplicate.Size = New System.Drawing.Size(160, 22)
-        Me.mnuDuplicate.Text = "Duplicate"
+        Me.mnuProperties.Name = "mnuProperties"
+        Me.mnuProperties.Size = New System.Drawing.Size(160, 22)
+        Me.mnuProperties.Text = "Parameters..."
+        Me.mnuProperties.Visible = False
         '
         'dlgConstructor
         '
@@ -359,5 +367,6 @@ Partial Class dlgConstructor
     Friend WithEvents mnuCopy As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuPaste As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuDuplicate As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuProperties As System.Windows.Forms.ToolStripMenuItem
 
 End Class

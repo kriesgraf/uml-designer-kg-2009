@@ -41,6 +41,11 @@ Public Class dlgStructure
     End Sub
 
     Private Sub dlgStructure_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        If DEBUG_COMMANDS_ACTIVE Then
+            mnuProperties.Visible = True
+        End If
+
         With m_xmlView
             .LoadValues()
             .InitBindingRange(cmbRange)

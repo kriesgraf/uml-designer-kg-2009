@@ -29,6 +29,9 @@ Public Class dlgImport
     End Sub
 
     Private Sub dlgImport_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If XmlProjectTools.DEBUG_COMMANDS_ACTIVE Then
+            mnuImportParameters.Visible = True
+        End If
         Try
             With m_xmlView
                 .LoadValues()
@@ -174,5 +177,10 @@ Public Class dlgImport
             m_xmlView.Updated = True
         End If
         mnuPaste.Enabled = False
+    End Sub
+
+    Private Sub mnuImportParameters_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuImportParameters.Click
+        dlgXmlNodeProperties.DisplayProperties(lsbReferences.SelectedItem)
+        m_xmlView.Updated = True
     End Sub
 End Class

@@ -52,6 +52,12 @@ Public Class dlgClass
 #Region "Private methods"
 
     Private Sub dlgClass_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If DEBUG_COMMANDS_ACTIVE Then
+            InheritsProperties.Visible = True
+            MemberProperties.Visible = True
+            DependencyProperties.Visible = True
+            RelationProperties.Visible = True
+        End If
         Try
             With m_toolTip
                 .AutoPopDelay = 5000

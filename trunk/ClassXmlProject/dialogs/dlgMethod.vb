@@ -38,6 +38,11 @@ Public Class dlgMethod
     End Sub
 
     Private Sub dlgMethod_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        If XmlProjectTools.DEBUG_COMMANDS_ACTIVE Then
+            mnuProperties.Visible = True
+        End If
+
         With m_xmlView
             .LoadValues()
 
