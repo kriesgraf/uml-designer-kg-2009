@@ -48,6 +48,11 @@ Public Class dlgTypeVar
     End Sub
 
     Private Sub dlgTypeVar_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        If XmlProjectTools.DEBUG_COMMANDS_ACTIVE Then
+            mnuEnumProperties.Visible = True
+        End If
+
         Try
             With m_xmlView
                 ' Load document values

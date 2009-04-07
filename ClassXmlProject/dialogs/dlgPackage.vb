@@ -52,6 +52,10 @@ Public Class dlgPackage
 
     Private Sub dlgPackage_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
+        If XmlProjectTools.DEBUG_COMMANDS_ACTIVE Then
+            mnuProperties.Visible = True
+        End If
+
         Try
             With m_xmlView
                 .LoadValues()

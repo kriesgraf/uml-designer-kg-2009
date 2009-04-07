@@ -428,4 +428,9 @@ Public Class MDIParent
         Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
     End Sub
 #End Region
+
+    Private Sub DebugToolStripOption_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DebugToolStripOption.Click
+        Me.DebugToolStripOption.Checked = Not (Me.DebugToolStripOption.Checked)
+        XmlProjectTools.DEBUG_COMMANDS_ACTIVE = Me.DebugToolStripOption.Checked
+    End Sub
 End Class

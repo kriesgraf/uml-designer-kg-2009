@@ -44,7 +44,6 @@ Partial Class dlgPackage
         Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuDependencies = New System.Windows.Forms.ToolStripMenuItem
@@ -227,9 +226,9 @@ Partial Class dlgPackage
         '
         'mnuClass
         '
-        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.ToolStripSeparator2, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuDelete})
+        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuDelete})
         Me.mnuClass.Name = "mnuClass"
-        Me.mnuClass.Size = New System.Drawing.Size(189, 276)
+        Me.mnuClass.Size = New System.Drawing.Size(189, 270)
         '
         'mnuAdd
         '
@@ -301,16 +300,12 @@ Partial Class dlgPackage
         Me.mnuDuplicate.Size = New System.Drawing.Size(188, 22)
         Me.mnuDuplicate.Text = "Duplicate"
         '
-        'ToolStripSeparator2
-        '
-        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(185, 6)
-        '
         'mnuProperties
         '
         Me.mnuProperties.Name = "mnuProperties"
         Me.mnuProperties.Size = New System.Drawing.Size(188, 22)
         Me.mnuProperties.Text = "Properties..."
+        Me.mnuProperties.Visible = False
         '
         'ToolStripSeparator3
         '
@@ -451,7 +446,6 @@ Partial Class dlgPackage
     Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
     Friend WithEvents mnuAddClass As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuAddPackage As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuProperties As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator3 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuImportNodes As System.Windows.Forms.ToolStripMenuItem

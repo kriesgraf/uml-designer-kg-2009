@@ -31,6 +31,7 @@ Partial Class dlgInterface
         Me.OK_Button = New System.Windows.Forms.Button
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
+        Me.gridMembers = New ClassXmlProject.XmlDataGridView
         Me.mnuMembers = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.AddProperty = New System.Windows.Forms.ToolStripMenuItem
         Me.AddMethod = New System.Windows.Forms.ToolStripMenuItem
@@ -39,18 +40,16 @@ Partial Class dlgInterface
         Me.CopyMember = New System.Windows.Forms.ToolStripMenuItem
         Me.PasteMember = New System.Windows.Forms.ToolStripMenuItem
         Me.DuplicateMember = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator8 = New System.Windows.Forms.ToolStripSeparator
         Me.MemberProperties = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuMemberDependencies = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.DeleteMember = New System.Windows.Forms.ToolStripMenuItem
         Me.chkRoot = New System.Windows.Forms.CheckBox
-        Me.gridMembers = New ClassXmlProject.XmlDataGridView
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
-        Me.mnuMembers.SuspendLayout()
         CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.mnuMembers.SuspendLayout()
         Me.SuspendLayout()
         '
         'lblName
@@ -150,11 +149,23 @@ Partial Class dlgInterface
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(540, 238)
         Me.TableLayoutPanel2.TabIndex = 2
         '
+        'gridMembers
+        '
+        Me.gridMembers.ColumnDragStart = 0
+        Me.gridMembers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.TableLayoutPanel2.SetColumnSpan(Me.gridMembers, 3)
+        Me.gridMembers.ContextMenuStrip = Me.mnuMembers
+        Me.gridMembers.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.gridMembers.Location = New System.Drawing.Point(54, 57)
+        Me.gridMembers.Name = "gridMembers"
+        Me.gridMembers.Size = New System.Drawing.Size(483, 138)
+        Me.gridMembers.TabIndex = 10
+        '
         'mnuMembers
         '
-        Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddProperty, Me.AddMethod, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.ToolStripSeparator8, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuMemberDependencies, Me.ToolStripSeparator2, Me.DeleteMember})
+        Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddProperty, Me.AddMethod, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuMemberDependencies, Me.ToolStripSeparator2, Me.DeleteMember})
         Me.mnuMembers.Name = "mnuMembers"
-        Me.mnuMembers.Size = New System.Drawing.Size(227, 226)
+        Me.mnuMembers.Size = New System.Drawing.Size(227, 242)
         '
         'AddProperty
         '
@@ -209,16 +220,12 @@ Partial Class dlgInterface
         Me.DuplicateMember.Size = New System.Drawing.Size(226, 22)
         Me.DuplicateMember.Text = "Duplicate"
         '
-        'ToolStripSeparator8
-        '
-        Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
-        Me.ToolStripSeparator8.Size = New System.Drawing.Size(223, 6)
-        '
         'MemberProperties
         '
         Me.MemberProperties.Name = "MemberProperties"
         Me.MemberProperties.Size = New System.Drawing.Size(226, 22)
         Me.MemberProperties.Text = "Parameters..."
+        Me.MemberProperties.Visible = False
         '
         'ToolStripSeparator5
         '
@@ -256,18 +263,6 @@ Partial Class dlgInterface
         Me.chkRoot.Text = "Root class"
         Me.chkRoot.UseVisualStyleBackColor = True
         '
-        'gridMembers
-        '
-        Me.gridMembers.ColumnDragStart = 0
-        Me.gridMembers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.TableLayoutPanel2.SetColumnSpan(Me.gridMembers, 3)
-        Me.gridMembers.ContextMenuStrip = Me.mnuMembers
-        Me.gridMembers.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridMembers.Location = New System.Drawing.Point(54, 57)
-        Me.gridMembers.Name = "gridMembers"
-        Me.gridMembers.Size = New System.Drawing.Size(483, 138)
-        Me.gridMembers.TabIndex = 10
-        '
         'dlgInterface
         '
         Me.AcceptButton = Me.OK_Button
@@ -283,8 +278,8 @@ Partial Class dlgInterface
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel2.ResumeLayout(False)
         Me.TableLayoutPanel2.PerformLayout()
-        Me.mnuMembers.ResumeLayout(False)
         CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.mnuMembers.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -304,7 +299,6 @@ Partial Class dlgInterface
     Friend WithEvents CopyMember As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents PasteMember As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents DuplicateMember As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator8 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents MemberProperties As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuMemberDependencies As System.Windows.Forms.ToolStripMenuItem

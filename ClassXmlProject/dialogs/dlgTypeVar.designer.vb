@@ -243,6 +243,7 @@ Partial Class dlgTypeVar
         'gridEnumeration
         '
         Me.gridEnumeration.AllowDrop = True
+        Me.gridEnumeration.ColumnDragStart = 0
         Me.gridEnumeration.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.gridEnumeration.ContextMenuStrip = Me.mnuEnumValue
         Me.gridEnumeration.Dock = System.Windows.Forms.DockStyle.Fill
@@ -257,29 +258,30 @@ Partial Class dlgTypeVar
         '
         Me.mnuEnumValue.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEnumProperties, Me.ToolStripSeparator1, Me.mnuDelete})
         Me.mnuEnumValue.Name = "mnuEnumValue"
-        Me.mnuEnumValue.Size = New System.Drawing.Size(142, 76)
+        Me.mnuEnumValue.Size = New System.Drawing.Size(153, 98)
         '
         'mnuAdd
         '
         Me.mnuAdd.Name = "mnuAdd"
-        Me.mnuAdd.Size = New System.Drawing.Size(141, 22)
+        Me.mnuAdd.Size = New System.Drawing.Size(152, 22)
         Me.mnuAdd.Text = "Add"
         '
         'mnuEnumProperties
         '
         Me.mnuEnumProperties.Name = "mnuEnumProperties"
-        Me.mnuEnumProperties.Size = New System.Drawing.Size(141, 22)
+        Me.mnuEnumProperties.Size = New System.Drawing.Size(152, 22)
         Me.mnuEnumProperties.Text = "Parameters..."
+        Me.mnuEnumProperties.Visible = False
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(138, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(149, 6)
         '
         'mnuDelete
         '
         Me.mnuDelete.Name = "mnuDelete"
-        Me.mnuDelete.Size = New System.Drawing.Size(141, 22)
+        Me.mnuDelete.Size = New System.Drawing.Size(152, 22)
         Me.mnuDelete.Text = "Delete"
         '
         'GroupVariable

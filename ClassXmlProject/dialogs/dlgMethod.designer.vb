@@ -42,18 +42,6 @@ Partial Class dlgMethod
         Me.lblBehaviour = New System.Windows.Forms.Label
         Me.cmbBehaviour = New System.Windows.Forms.ComboBox
         Me.grdParams = New ClassXmlProject.XmlDataGridView
-        Me.mnuMembers = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.mnuAddParam = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuAddException = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuEditParam = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
-        Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
-        Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
-        Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.Label7 = New System.Windows.Forms.Label
         Me.FlowLayoutPanel3 = New System.Windows.Forms.FlowLayoutPanel
         Me.txtName = New System.Windows.Forms.TextBox
@@ -65,13 +53,24 @@ Partial Class dlgMethod
         Me.btnDelete = New System.Windows.Forms.Button
         Me.txtComment = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.mnuAddParam = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuAddException = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuEditParam = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuMembers = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         Me.FlowLayoutPanel2.SuspendLayout()
         CType(Me.grdParams, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.mnuMembers.SuspendLayout()
         Me.FlowLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
+        Me.mnuMembers.SuspendLayout()
         Me.SuspendLayout()
         '
         'Label2
@@ -332,85 +331,6 @@ Partial Class dlgMethod
         Me.grdParams.Tag = "param"
         Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
         '
-        'mnuMembers
-        '
-        Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuAddException, Me.mnuEditParam, Me.ToolStripSeparator1, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.ToolStripSeparator3, Me.mnuProperties, Me.ToolStripSeparator2, Me.mnuDelete})
-        Me.mnuMembers.Name = "mnuParam"
-        Me.mnuMembers.Size = New System.Drawing.Size(190, 198)
-        '
-        'mnuAddParam
-        '
-        Me.mnuAddParam.Name = "mnuAddParam"
-        Me.mnuAddParam.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
-        Me.mnuAddParam.Size = New System.Drawing.Size(189, 22)
-        Me.mnuAddParam.Text = "Add param"
-        '
-        'mnuAddException
-        '
-        Me.mnuAddException.Name = "mnuAddException"
-        Me.mnuAddException.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
-        Me.mnuAddException.Size = New System.Drawing.Size(189, 22)
-        Me.mnuAddException.Text = "Add exception..."
-        '
-        'mnuEditParam
-        '
-        Me.mnuEditParam.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
-        Me.mnuEditParam.Name = "mnuEditParam"
-        Me.mnuEditParam.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
-        Me.mnuEditParam.Size = New System.Drawing.Size(189, 22)
-        Me.mnuEditParam.Text = "Edit param..."
-        '
-        'ToolStripSeparator1
-        '
-        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(186, 6)
-        '
-        'mnuCopy
-        '
-        Me.mnuCopy.Image = Global.ClassXmlProject.My.Resources.Resources.Copy
-        Me.mnuCopy.Name = "mnuCopy"
-        Me.mnuCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-        Me.mnuCopy.Size = New System.Drawing.Size(189, 22)
-        Me.mnuCopy.Text = "Copy"
-        '
-        'mnuPaste
-        '
-        Me.mnuPaste.Image = Global.ClassXmlProject.My.Resources.Resources.Paste
-        Me.mnuPaste.Name = "mnuPaste"
-        Me.mnuPaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
-        Me.mnuPaste.Size = New System.Drawing.Size(189, 22)
-        Me.mnuPaste.Text = "Paste"
-        '
-        'mnuDuplicate
-        '
-        Me.mnuDuplicate.Name = "mnuDuplicate"
-        Me.mnuDuplicate.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
-        Me.mnuDuplicate.Size = New System.Drawing.Size(189, 22)
-        Me.mnuDuplicate.Text = "Duplicate"
-        '
-        'ToolStripSeparator3
-        '
-        Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(186, 6)
-        '
-        'mnuProperties
-        '
-        Me.mnuProperties.Name = "mnuProperties"
-        Me.mnuProperties.Size = New System.Drawing.Size(189, 22)
-        Me.mnuProperties.Text = "Properties..."
-        '
-        'ToolStripSeparator2
-        '
-        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(186, 6)
-        '
-        'mnuDelete
-        '
-        Me.mnuDelete.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
-        Me.mnuDelete.Name = "mnuDelete"
-        Me.mnuDelete.Size = New System.Drawing.Size(189, 22)
-        Me.mnuDelete.Text = "Delete"
-        '
         'Label7
         '
         Me.Label7.AutoSize = True
@@ -467,7 +387,7 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.55682!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.44318!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 91.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 92.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -491,7 +411,7 @@ Partial Class dlgMethod
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(417, 6)
+        Me.OK_Button.Location = New System.Drawing.Point(416, 6)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 0
@@ -516,6 +436,81 @@ Partial Class dlgMethod
         Me.txtComment.Size = New System.Drawing.Size(501, 91)
         Me.txtComment.TabIndex = 18
         '
+        'mnuAddParam
+        '
+        Me.mnuAddParam.Name = "mnuAddParam"
+        Me.mnuAddParam.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
+        Me.mnuAddParam.Size = New System.Drawing.Size(189, 22)
+        Me.mnuAddParam.Text = "Add param"
+        '
+        'mnuAddException
+        '
+        Me.mnuAddException.Name = "mnuAddException"
+        Me.mnuAddException.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.mnuAddException.Size = New System.Drawing.Size(189, 22)
+        Me.mnuAddException.Text = "Add exception..."
+        '
+        'mnuEditParam
+        '
+        Me.mnuEditParam.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
+        Me.mnuEditParam.Name = "mnuEditParam"
+        Me.mnuEditParam.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.mnuEditParam.Size = New System.Drawing.Size(189, 22)
+        Me.mnuEditParam.Text = "Edit param..."
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(186, 6)
+        '
+        'mnuCopy
+        '
+        Me.mnuCopy.Image = Global.ClassXmlProject.My.Resources.Resources.Copy
+        Me.mnuCopy.Name = "mnuCopy"
+        Me.mnuCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+        Me.mnuCopy.Size = New System.Drawing.Size(189, 22)
+        Me.mnuCopy.Text = "Copy"
+        '
+        'mnuPaste
+        '
+        Me.mnuPaste.Image = Global.ClassXmlProject.My.Resources.Resources.Paste
+        Me.mnuPaste.Name = "mnuPaste"
+        Me.mnuPaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
+        Me.mnuPaste.Size = New System.Drawing.Size(189, 22)
+        Me.mnuPaste.Text = "Paste"
+        '
+        'mnuDuplicate
+        '
+        Me.mnuDuplicate.Name = "mnuDuplicate"
+        Me.mnuDuplicate.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
+        Me.mnuDuplicate.Size = New System.Drawing.Size(189, 22)
+        Me.mnuDuplicate.Text = "Duplicate"
+        '
+        'mnuProperties
+        '
+        Me.mnuProperties.Name = "mnuProperties"
+        Me.mnuProperties.Size = New System.Drawing.Size(189, 22)
+        Me.mnuProperties.Text = "Properties..."
+        Me.mnuProperties.Visible = False
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(186, 6)
+        '
+        'mnuDelete
+        '
+        Me.mnuDelete.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
+        Me.mnuDelete.Name = "mnuDelete"
+        Me.mnuDelete.Size = New System.Drawing.Size(189, 22)
+        Me.mnuDelete.Text = "Delete"
+        '
+        'mnuMembers
+        '
+        Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuAddException, Me.mnuEditParam, Me.ToolStripSeparator1, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator2, Me.mnuDelete})
+        Me.mnuMembers.Name = "mnuParam"
+        Me.mnuMembers.Size = New System.Drawing.Size(190, 214)
+        '
         'dlgMethod
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -534,10 +529,10 @@ Partial Class dlgMethod
         Me.FlowLayoutPanel2.ResumeLayout(False)
         Me.FlowLayoutPanel2.PerformLayout()
         CType(Me.grdParams, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.mnuMembers.ResumeLayout(False)
         Me.FlowLayoutPanel3.ResumeLayout(False)
         Me.FlowLayoutPanel3.PerformLayout()
         Me.TableLayoutPanel1.ResumeLayout(False)
+        Me.mnuMembers.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -559,21 +554,13 @@ Partial Class dlgMethod
     Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents OK_Button As System.Windows.Forms.Button
     Friend WithEvents Cancel_Button As System.Windows.Forms.Button
-    Friend WithEvents mnuMembers As System.Windows.Forms.ContextMenuStrip
-    Friend WithEvents mnuAddParam As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
-    Friend WithEvents mnuDelete As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnuAddException As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FlowLayoutPanel1 As System.Windows.Forms.FlowLayoutPanel
     Friend WithEvents FlowLayoutPanel2 As System.Windows.Forms.FlowLayoutPanel
     Friend WithEvents chkConst As System.Windows.Forms.CheckBox
     Friend WithEvents chkInline As System.Windows.Forms.CheckBox
     Friend WithEvents btnInline As System.Windows.Forms.Button
     Friend WithEvents grdParams As ClassXmlProject.XmlDataGridView
-    Friend WithEvents mnuEditParam As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Label7 As System.Windows.Forms.Label
-    Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
-    Friend WithEvents mnuProperties As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FlowLayoutPanel3 As System.Windows.Forms.FlowLayoutPanel
     Friend WithEvents chkOperator As System.Windows.Forms.CheckBox
     Friend WithEvents txtOperator As System.Windows.Forms.TextBox
@@ -582,9 +569,16 @@ Partial Class dlgMethod
     Friend WithEvents cmbBehaviour As System.Windows.Forms.ComboBox
     Friend WithEvents btnDelete As System.Windows.Forms.Button
     Friend WithEvents txtComment As System.Windows.Forms.TextBox
+    Friend WithEvents mnuMembers As System.Windows.Forms.ContextMenuStrip
+    Friend WithEvents mnuAddParam As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuAddException As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuEditParam As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuCopy As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuPaste As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator3 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuDuplicate As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuProperties As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents mnuDelete As System.Windows.Forms.ToolStripMenuItem
 
 End Class

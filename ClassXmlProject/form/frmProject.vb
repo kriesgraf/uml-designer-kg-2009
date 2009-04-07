@@ -3,6 +3,7 @@ Imports System.Xml
 Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
+Imports ClassXmlProject.XmlProjectTools
 
 Public Class frmProject
 
@@ -133,6 +134,17 @@ Public Class frmProject
     End Sub
 
     Private Sub frmProject_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If DEBUG_COMMANDS_ACTIVE Then
+            mnuProjectParameters.Visible = True
+            mnuEditProperties.Visible = True
+            mnuPackageProperties.Visible = True
+            mnuClassMemberProperties.Visible = True
+            ReferenceProperties.Visible = True
+            RenumberDatabaseIndex.Visible = True
+            UpdatesCollaborations.Visible = True
+            mnuEditDatabase.Visible = True
+        End If
+
         Dim oldCursor As Cursor = Me.Cursor
         Me.Cursor = Cursors.WaitCursor
         Me.WindowState = FormWindowState.Maximized
