@@ -134,7 +134,7 @@ Public Class XmlImportSpec
         ElseIf document.NodeName = "export" Then
             Me.Parameter = CType(document, XmlExportSpec).Source
             Me.Name = CType(document, XmlExportSpec).Name
-            Return AppendComponent(document)
+            Return document.AppendComponent(document)
         Else
             Return GetExportNode().AppendComponent(document)
         End If
