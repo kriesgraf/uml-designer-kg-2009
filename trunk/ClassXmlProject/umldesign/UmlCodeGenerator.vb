@@ -17,6 +17,9 @@ Public Class UmlCodeGenerator
     Private Const cstCodeSourceVbDotNetStyleSheet As String = "uml2vbnet.xsl"
     Private Const cstTempExport As String = ".umlexp"
 
+    Private Shared m_xsltCppSourceHeaderStyleSheet As XslSimpleTransform = Nothing
+    Private Shared m_xsltVbClassModuleStyleSheet As XslSimpleTransform = Nothing
+
     Private Shared m_bTransformActive As Boolean = False
     Private Shared m_strSeparator As String = Path.DirectorySeparatorChar.ToString
 #End Region
@@ -79,9 +82,17 @@ Public Class UmlCodeGenerator
             argList.Add("InputPackage", strPackageId)
 
             If node IsNot Nothing Then
-                Dim xslStylesheet As XslSimpleTransform = New XslSimpleTransform(True)
-                xslStylesheet.Load(strStyleSheet)
-                xslStylesheet.Transform(node, strTransformation, argList)
+                If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
+                Then
+                    m_xsltCppSourceHeaderStyleSheet = New XslSimpleTransform(True)
+                    m_xsltCppSourceHeaderStyleSheet.Load(strStyleSheet)
+                Else
+                    If m_xsltCppSourceHeaderStyleSheet Is Nothing Then
+                        m_xsltCppSourceHeaderStyleSheet = New XslSimpleTransform(True)
+                        m_xsltCppSourceHeaderStyleSheet.Load(strStyleSheet)
+                    End If
+                End If
+                m_xsltCppSourceHeaderStyleSheet.Transform(node, strTransformation, argList)
 
                 ExtractCode(strTransformation, strPath, ELanguage.Language_CplusPlus)
                 bResult = True
@@ -119,9 +130,17 @@ Public Class UmlCodeGenerator
             argList.Add("InputPackage", strPackageId)
 
             If node IsNot Nothing Then
-                Dim xslStylesheet As XslSimpleTransform = New XslSimpleTransform(True)
-                xslStylesheet.Load(strStyleSheet)
-                xslStylesheet.Transform(node, strTransformation, argList)
+                If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
+                Then
+                    m_xsltVbClassModuleStyleSheet = New XslSimpleTransform(True)
+                    m_xsltVbClassModuleStyleSheet.Load(strStyleSheet)
+                Else
+                    If m_xsltVbClassModuleStyleSheet Is Nothing Then
+                        m_xsltVbClassModuleStyleSheet = New XslSimpleTransform(True)
+                        m_xsltVbClassModuleStyleSheet.Load(strStyleSheet)
+                    End If
+                End If
+                m_xsltVbClassModuleStyleSheet.Transform(node, strTransformation, argList)
 
                 ExtractCode(strTransformation, strPath, ELanguage.Language_Vbasic)
                 bResult = True
