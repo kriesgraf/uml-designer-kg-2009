@@ -113,7 +113,7 @@ Public Class XmlInterfaceSpec
         Return bResult
     End Function
 
-    Protected Friend Overrides Function AppendNode(ByVal child As System.Xml.XmlNode) As System.Xml.XmlNode
+    Protected Friend Overrides Function AppendNode(ByVal child As System.Xml.XmlNode, Optional ByVal observer As Object = Nothing) As System.Xml.XmlNode
         Dim before As XmlNode = Nothing
         Select Case child.Name
             Case "collaboration"

@@ -3,6 +3,7 @@ Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.XmlNodeListView
 Imports System.ComponentModel
 Imports System.Collections
+Imports System.Windows.Forms
 Imports System.Xml
 Imports Microsoft.VisualBasic
 
@@ -126,7 +127,7 @@ Public Class XmlImportSpec
         End Try
     End Sub
 
-    Public Overrides Function AppendComponent(ByVal document As XmlComponent) As XmlNode
+    Public Overrides Function AppendComponent(ByVal document As XmlComponent, Optional ByVal observer As Object = Nothing) As XmlNode
         If CanAddComponent(document) = False _
         Then
             Return Nothing
@@ -134,9 +135,9 @@ Public Class XmlImportSpec
         ElseIf document.NodeName = "export" Then
             Me.Parameter = CType(document, XmlExportSpec).Source
             Me.Name = CType(document, XmlExportSpec).Name
-            Return document.AppendComponent(document)
+            Return MyBase.AppendComponent(document, observer)
         Else
-            Return GetExportNode().AppendComponent(document)
+            Return GetExportNode().AppendComponent(document, observer)
         End If
     End Function
 
@@ -276,18 +277,18 @@ Public Class XmlImportSpec
         Return m_xmlExport
     End Function
 
-    Protected Friend Function LoadDocument(ByVal Filename As System.IO.FileInfo, _
+    Protected Friend Function LoadDocument(ByVal form As Form, ByVal Filename As System.IO.FileInfo, _
                                            Optional ByVal eMode As EImportMode = EImportMode.ReplaceReferences) As Boolean
         Dim bResult As Boolean = False
         Dim bDoxygenTagFile As Boolean = (Filename.Extension.ToLower = ".tag")
         Try
             Select Case eMode
                 Case EImportMode.ReplaceReferences
-                    bResult = ReplaceFileReferences(Filename.FullName, bDoxygenTagFile)
+                    bResult = ReplaceFileReferences(form, Filename.FullName, bDoxygenTagFile)
                 Case EImportMode.MergeReferences
-                    bResult = MergeFileReferences(Filename.FullName, False, bDoxygenTagFile)
+                    bResult = MergeFileReferences(form, Filename.FullName, False, bDoxygenTagFile)
                 Case Else
-                    bResult = MergeFileReferences(Filename.FullName, True, bDoxygenTagFile)
+                    bResult = MergeFileReferences(form, Filename.FullName, True, bDoxygenTagFile)
             End Select
         Catch ex As Exception
             Throw ex
@@ -379,8 +380,11 @@ Public Class XmlImportSpec
         Return bResult
     End Function
 
-    Private Function MergeFileReferences(ByVal strFilename As String, ByVal bAskReplace As Boolean, _
+    Private Function MergeFileReferences(ByVal form As form, ByVal strFilename As String, _
+                                         ByVal bAskReplace As Boolean, _
                                          Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
+
+        Dim observer As InterfProgression = TryCast(form, InterfProgression)
         Dim bResult As Boolean = False
         Try
             Dim bImportOk As Boolean = True
@@ -395,7 +399,7 @@ Public Class XmlImportSpec
 
                 Dim myList As New ArrayList
 
-                If export.LoadImport(strFilename, bDoxygenTagFile) Then
+                If export.LoadImport(form, strFilename, bDoxygenTagFile) Then
                     export.LoadChildrenList()
                     For Each xmlcpnt As XmlComponent In export.ChildrenList
                         xmlcpnt.Tag = export.Tag
@@ -422,20 +426,28 @@ Public Class XmlImportSpec
 
                     If myList.Count > 0 Then
                         SortNodeList(myList)
+
+                        observer.Minimum = 0
+                        observer.Maximum = myList.Count
+
                         If bAskReplace = False _
                         Then
+                            observer.ProgressBarVisible = True
                             For Each element As XmlNodeListView In myList
                                 Debug.Print("Name:=" + element.Name + "-" + element.Id)
                                 m_xmlExport.ReplaceReference(element)
+                                observer.Increment(1)
                             Next
                         ElseIf ShowNodeList(myList, "Select references/interfaces to merge", "Locked, because reference is used by an interface property or method") _
                         Then
+                            observer.ProgressBarVisible = True
                             bResult = True
                             For Each element As XmlNodeListView In myList
                                 Debug.Print("Name:=" + element.Name + "-" + element.Id + "-" + element.CheckedView.ToString)
                                 If element.CheckedView Then
                                     m_xmlExport.ReplaceReference(element)
                                 End If
+                                observer.Increment(1)
                             Next
                         End If
                     End If
@@ -443,11 +455,15 @@ Public Class XmlImportSpec
             End If
         Catch ex As Exception
             Throw ex
+        Finally
+            observer.ProgressBarVisible = False
         End Try
         Return bResult
     End Function
 
-    Private Function ReplaceFileReferences(ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
+    Private Function ReplaceFileReferences(ByVal form As Form, ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
+
+        Dim observer As InterfProgression = TryCast(Form, InterfProgression)
         Dim bResult As Boolean = False
         Try
             Dim bImportOk As Boolean = True
@@ -462,8 +478,8 @@ Public Class XmlImportSpec
 
                 m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
 
-                If m_xmlExport.LoadImport(strFilename, bDoxygenTagFile) Then    ' Clone node at this step
-                    Me.AppendComponent(m_xmlExport)                             ' And append now
+                If m_xmlExport.LoadImport(form, strFilename, bDoxygenTagFile) Then    ' Clone node at this step
+                    Me.AppendComponent(m_xmlExport, observer)                             ' And append now
                     bResult = True
                 End If
             End If

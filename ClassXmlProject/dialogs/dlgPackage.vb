@@ -115,7 +115,7 @@ Public Class dlgPackage
     Private Sub mnuImportNodes_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
                 Handles mnuImportNodes.Click, mnuUpdateNodes.Click
         Try
-            m_xmlView.ImportNodes(CType(sender.Tag, Boolean))
+            m_xmlView.ImportNodes(Me, CType(sender.Tag, Boolean))
 
         Catch ex As Exception
             MsgExceptionBox(ex)

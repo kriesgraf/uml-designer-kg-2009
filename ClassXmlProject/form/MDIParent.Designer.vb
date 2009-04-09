@@ -44,6 +44,7 @@ Partial Class MDIParent
         Me.DiffToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.VbMergeToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
+        Me.DebugToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.WindowsMenu = New System.Windows.Forms.ToolStripMenuItem
         Me.CascadeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -71,7 +72,6 @@ Partial Class MDIParent
         Me.strpStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.strpProgressBar = New System.Windows.Forms.ToolStripProgressBar
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me.DebugToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
         Me.StatusStrip.SuspendLayout()
@@ -212,6 +212,12 @@ Partial Class MDIParent
         '
         Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
         Me.ToolStripSeparator5.Size = New System.Drawing.Size(186, 6)
+        '
+        'DebugToolStripOption
+        '
+        Me.DebugToolStripOption.Name = "DebugToolStripOption"
+        Me.DebugToolStripOption.Size = New System.Drawing.Size(189, 22)
+        Me.DebugToolStripOption.Text = "Debug commands"
         '
         'OptionsToolStripMenuItem
         '
@@ -404,12 +410,6 @@ Partial Class MDIParent
         Me.strpProgressBar.Name = "strpProgressBar"
         Me.strpProgressBar.Size = New System.Drawing.Size(100, 16)
         Me.strpProgressBar.Visible = False
-        '
-        'DebugToolStripOption
-        '
-        Me.DebugToolStripOption.Name = "DebugToolStripOption"
-        Me.DebugToolStripOption.Size = New System.Drawing.Size(189, 22)
-        Me.DebugToolStripOption.Text = "Debug commands"
         '
         'MDIParent
         '

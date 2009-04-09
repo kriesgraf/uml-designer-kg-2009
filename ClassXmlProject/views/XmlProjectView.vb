@@ -21,7 +21,6 @@ Public Class XmlProjectView
     Private m_mnuTypedef As ToolStripItem
     Private m_bUpdated As Boolean = False
 
-    Private Shared m_bPrototypesLoaded As Boolean = InitPrototypes()
     Private Shared m_strCurrentFolder As String = "." + Path.DirectorySeparatorChar.ToString
 #End Region
 
@@ -81,14 +80,14 @@ Public Class XmlProjectView
 
 #Region "Public methods"
 
-    Public Function Open(Optional ByVal strFilename As String = "") As Boolean
+    Public Function Open(ByVal form As Form, Optional ByVal strFilename As String = "") As Boolean
         Try
             m_strFilename = strFilename
             If strFilename <> "" _
             Then
                 Dim strTempPath As String = My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData
 
-                If LoadDocument(strFilename) = False Then
+                If LoadDocument(form, strFilename) = False Then
                     Return False
                 End If
 
@@ -281,7 +280,7 @@ Public Class XmlProjectView
         Return bResult
     End Function
 
-    Public Function ImportNodes(ByVal component As XmlComponent, Optional ByVal bUpdateOnly As Boolean = False) As Boolean
+    Public Function ImportNodes(ByVal form As Form, ByVal component As XmlComponent, Optional ByVal bUpdateOnly As Boolean = False) As Boolean
         Dim bResult As Boolean = False
         Try
             Dim node As XmlNode = component.Node
@@ -302,7 +301,7 @@ Public Class XmlProjectView
                 Dim FileName As String = dlgOpenFile.FileName
                 UpdateCurrentImportFolder(FileName, dlgOpenFile.InitialDirectory)
 
-                bResult = UmlNodesManager.ImportNodes(component, FileName, m_xmlReferenceNodeCounter, bUpdateOnly)
+                bResult = UmlNodesManager.ImportNodes(form, component, FileName, m_xmlReferenceNodeCounter, bUpdateOnly)
                 If bResult Then
                     m_Control.Binding.ResetBindings(True)
                 End If
@@ -462,11 +461,11 @@ Public Class XmlProjectView
         End If
     End Sub
 
-    Public Function AddReferences(ByVal composite As XmlComposite, ByVal eMode As XmlImportSpec.EImportMode) As Boolean
+    Public Function AddReferences(ByVal form As Form, ByVal composite As XmlComposite, ByVal eMode As XmlImportSpec.EImportMode) As Boolean
         Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
         xmlcpnt.Tag = composite.Tag
         xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
-        If xmlcpnt.AddReferences(eMode) Then
+        If xmlcpnt.AddReferences(form, eMode) Then
             Me.Updated = True
             m_Control.Binding.ResetBindings(True)
             m_Control.SelectItem(0)
@@ -540,11 +539,7 @@ Public Class XmlProjectView
         UmlNodesManager.UpdateSimpleTypes(GetSimpleTypesFilename(CType(Me.Properties.GenerationLanguage, ELanguage)))
     End Sub
 
-#End Region
-
-#Region "Private methods"
-
-    Private Shared Function InitPrototypes() As Boolean
+    Public Shared Function InitPrototypes() As Boolean
         Try
             ' Use XmlNodeManager.CreateDocument to clone this objects
             With XmlNodeManager.GetInstance()
@@ -624,15 +619,30 @@ Public Class XmlProjectView
         Return True
     End Function
 
-    Private Function LoadDocument(ByVal strFilename As String) As Boolean
+#End Region
+
+#Region "Private methods"
+
+    Private Function LoadDocument(ByVal form As Form, ByVal strFilename As String) As Boolean
         Try
-            If XmlProjectTools.LoadDocument(m_xmlDocument, strFilename) = False Then
-                Return False
-            End If
+            Dim bChanged As Boolean = False
+
+            Select Case XmlProjectTools.LoadDocument(form, m_xmlDocument, strFilename)
+                Case EResult.Completed
+                    ' Ok, nohting to do
+
+                Case EResult.Failed
+                    Return False
+
+                Case EResult.Converted
+                    bChanged = True
+            End Select
 
             If m_xmlDocument.DocumentElement IsNot Nothing _
             Then
                 m_xmlProperties = XmlNodeManager.GetInstance().CreateDocument(m_xmlDocument.DocumentElement)
+                m_xmlProperties.Updated = bChanged
+                Me.Updated = bChanged
                 m_xmlReferenceNodeCounter = New XmlReferenceNodeCounter(m_xmlDocument)
             End If
         Catch ex As Exception

@@ -399,7 +399,7 @@ Public Class XmlMethodSpec
         End Try
     End Sub
 
-    Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode) As XmlNode
+    Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
         Dim before As XmlNode = Nothing
         ' exception*,return?,comment,param*,inline
         Select Case nodeXml.Name

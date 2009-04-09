@@ -41,8 +41,14 @@ Public Class frmProject
         XmlNodeManager.GetInstance()
     End Sub
 
-    Public Function OpenProject(ByVal filename As String) As Boolean
-        Return m_xmlProject.Open(filename)
+    Public Function OpenProject(ByVal parent As Form, ByVal filename As String) As Boolean
+        If m_xmlProject.Open(parent, filename) Then
+            If m_xmlProject.Updated Then
+                Me.Text = lvwProjectMembers.Path + " *"
+            End If
+            Return True
+        End If
+        Return False
     End Function
 
     Public Sub SaveProject()
@@ -60,7 +66,6 @@ Public Class frmProject
     Public Sub PrintPage()
         Me.docvwProjectDisplay.ShowPrintDialog()
     End Sub
-
 #End Region
 
 #Region "Private methods"
@@ -315,7 +320,7 @@ Public Class frmProject
     End Sub
 
     Private Sub mnuFileOpen_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileOpen.Click
-        Me.Mainframe.OpenFile(sender, e)
+        Me.Mainframe.OpenMultipleFiles(sender, e)
     End Sub
 
     Private Sub mnuFileNewDoxygenFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileNewDoxygenFile.Click
@@ -459,7 +464,7 @@ Public Class frmProject
         Handles mnuReplaceExport.Click, mnuMergeExport.Click, mnuConfirmExport.Click
         Try
             If lvwProjectMembers.Binding.Parent IsNot Nothing Then
-                If m_xmlProject.AddReferences(lvwProjectMembers.Binding.Parent, CType(sender.Tag, XmlImportSpec.EImportMode)) Then
+                If m_xmlProject.AddReferences(Me.Mainframe, lvwProjectMembers.Binding.Parent, CType(sender.Tag, XmlImportSpec.EImportMode)) Then
                     RefreshProjectDisplay(True)
                 End If
             End If
@@ -568,7 +573,7 @@ Public Class frmProject
                 Handles mnuProjectImportNodes.Click, mnuPackageImportNodes.Click
 
         Try
-            m_xmlProject.ImportNodes(lvwProjectMembers.Binding.Parent)
+            m_xmlProject.ImportNodes(Me, lvwProjectMembers.Binding.Parent)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -585,7 +590,7 @@ Public Class frmProject
         End If
 
         If myobject IsNot Nothing Then
-            m_xmlProject.ImportNodes(myobject, True)
+            m_xmlProject.ImportNodes(Me, myobject, True)
         End If
     End Sub
 

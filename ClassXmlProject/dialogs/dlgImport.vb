@@ -4,9 +4,15 @@ Imports System.Windows.Forms
 Public Class dlgImport
     Implements InterfFormDocument
     Implements InterfNodeCounter
+    Implements InterfProgression
+
+#Region "Class declarations"
 
     Private m_xmlView As XmlImportView
 
+#End Region
+
+#Region "Properties"
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
@@ -15,9 +21,28 @@ Public Class dlgImport
         End Set
     End Property
 
-    Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
+    Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
+        Set(ByVal value As Integer)
+            Me.pgbLoadImport.Maximum = value
+        End Set
+    End Property
 
-    End Sub
+    Public WriteOnly Property Minimum() As Integer Implements InterfProgression.Minimum
+        Set(ByVal value As Integer)
+            Me.pgbLoadImport.Minimum = value
+            Me.pgbLoadImport.Value = value
+        End Set
+    End Property
+
+    Public WriteOnly Property ProgressBarVisible() As Boolean Implements InterfProgression.ProgressBarVisible
+        Set(ByVal value As Boolean)
+            Me.pgbLoadImport.Visible = value
+        End Set
+    End Property
+
+#End Region
+
+#Region "Public methods"
 
     Public Sub New()
 
@@ -27,6 +52,19 @@ Public Class dlgImport
         ' Ajoutez une initialisation quelconque après l'appel InitializeComponent().
         m_xmlView = XmlNodeManager.GetInstance().CreateView(Nothing, "import")
     End Sub
+
+    Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
+
+    End Sub
+
+    Public Sub Increment(ByVal value As Integer) Implements InterfProgression.Increment
+        Me.pgbLoadImport.Increment(value)
+        System.Threading.Thread.Sleep(50)
+    End Sub
+
+#End Region
+
+#Region "Private methods"
 
     Private Sub dlgImport_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If XmlProjectTools.DEBUG_COMMANDS_ACTIVE Then
@@ -140,7 +178,7 @@ Public Class dlgImport
     Private Sub AddReferences_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
                 Handles mnuReplace.Click, mnuMerge.Click, mnuConfirm.Click
 
-        m_xmlView.AddReferences(lsbReferences, CType(sender.Tag, XmlImportSpec.EImportMode))
+        m_xmlView.AddReferences(Me, CType(sender.Tag, XmlImportSpec.EImportMode), lsbReferences)
     End Sub
 
     Private Sub RemoveRedundant_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RemoveRedundant.Click
@@ -183,4 +221,5 @@ Public Class dlgImport
         dlgXmlNodeProperties.DisplayProperties(lsbReferences.SelectedItem)
         m_xmlView.Updated = True
     End Sub
+#End Region
 End Class

@@ -5,6 +5,7 @@ Imports Microsoft.VisualBasic
 Imports Microsoft.Win32
 
 Public Class MDIParent
+    Implements InterfProgression
 
 #Region "Class declaration"
 
@@ -18,6 +19,27 @@ Public Class MDIParent
 
 #End Region
 
+#Region "Properties"
+
+    Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
+        Set(ByVal value As Integer)
+            Me.strpProgressBar.Maximum = value * 10
+        End Set
+    End Property
+
+    Public WriteOnly Property Minimum() As Integer Implements InterfProgression.Minimum
+        Set(ByVal value As Integer)
+            Me.strpProgressBar.Minimum = value
+        End Set
+    End Property
+
+    Public WriteOnly Property ProgressBarVisible() As Boolean Implements InterfProgression.ProgressBarVisible
+        Set(ByVal value As Boolean)
+            Me.strpProgressBar.Visible = value
+        End Set
+    End Property
+#End Region
+
 #Region "Public methods"
 
     Public Sub ShowNewForm(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileNew.Click, NewToolStripButton.Click
@@ -29,7 +51,7 @@ Public Class MDIParent
         m_iChildFormNumber += 1
         ChildForm.Text = "New project " & m_iChildFormNumber
         ' this property instantiate the view component
-        ChildForm.OpenProject("")
+        ChildForm.OpenProject(Me, "")
         ChildForm.Show()
 
     End Sub
@@ -39,8 +61,7 @@ Public Class MDIParent
         strpStatusLabel.Text = "Language: " + xmLProject.Properties.Language
     End Sub
 
-    Public Sub OpenFile(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileOpen.Click, OpenToolStripButton.Click
-        Dim oldCursor As Cursor = Me.Cursor
+    Public Sub OpenMultipleFiles(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileOpen.Click, OpenToolStripButton.Click
         Try
             Dim dlgOpenFile As New OpenFileDialog
             If My.Settings.CurrentFolder = m_strCurrentFolder Then
@@ -49,54 +70,17 @@ Public Class MDIParent
                 dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder
             End If
 
-            dlgOpenFile.Title = "Select a project file..."
+            dlgOpenFile.Title = "Select one or several project file..."
             dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj|Doxygen XML index file|index.xml|UML 2.1 XMI file|*.xmi"
+            dlgOpenFile.Multiselect = True
 
             If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
-                Dim FileName As String = dlgOpenFile.FileName
-                Dim bFromDoxygenIndex As Boolean = False
-                Dim bFromOmgXmiFile As Boolean = False
-                My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(FileName)
-
-                If Path.GetFileName(FileName).ToLower = "index.xml" _
-                Then
-                    Me.Cursor = Cursors.WaitCursor
-                    If XmlProjectTools.ConvertDoxygenIndexFile(FileName, FileName) = False Then
-                        Me.Cursor = oldCursor
-                        Exit Sub
-                    End If
-                    Me.Cursor = oldCursor
-                    bFromDoxygenIndex = True
-                ElseIf Path.GetExtension(FileName).ToLower = ".xmi" _
-                Then
-                    Me.Cursor = Cursors.WaitCursor
-                    If XmlProjectTools.ConvertOmgUmlModel(FileName, FileName) = False Then
-                        Me.Cursor = oldCursor
-                        Exit Sub
-                    End If
-                    Me.Cursor = oldCursor
-                    bFromOmgXmiFile = True
-                End If
-
-                Dim strTempFolder = XmlProjectTools.GetProjectPath(FileName)
-
-                If XmlProjectTools.UseDocTypeDeclarationFileForProject(strTempFolder) = True Then
-                    Dim ChildForm As New frmProject
-                    ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                    If ChildForm.OpenProject(FileName) Then
-                        ChildForm.MdiParent = Me
-                        If bFromDoxygenIndex Then
-                            ChildForm.Text = "Project imported from Doxygen"
-                        ElseIf bFromOmgXmiFile Then
-                            ChildForm.Text = "Project imported from XMI"
-                        End If
-                        ChildForm.Show()
-                    End If
-                End If
+                For Each filename As String In dlgOpenFile.FileNames
+                    OpenOneFile(filename)
+                Next
             End If
         Catch ex As Exception
-            Me.Cursor = oldCursor
             MsgExceptionBox(ex)
         End Try
     End Sub
@@ -106,7 +90,6 @@ Public Class MDIParent
     End Sub
 
     Public Sub ImportFromOmgUmlModel()
-        Dim oldCursor As Cursor = Me.Cursor
         Try
             Dim dlgOpenFile As New OpenFileDialog
             If My.Settings.CurrentFolder = m_strCurrentFolder Then
@@ -123,27 +106,22 @@ Public Class MDIParent
                 Dim strTempFile As String = ""
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
 
-                Me.Cursor = Cursors.WaitCursor
-                XmlProjectTools.ConvertOmgUmlModel(dlgOpenFile.FileName, strTempFile)
-
-                Me.Cursor = oldCursor
+                XmlProjectTools.ConvertOmgUmlModel(Me, dlgOpenFile.FileName, strTempFile)
 
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                If ChildForm.OpenProject(strTempFile) Then
+                If ChildForm.OpenProject(Me, strTempFile) Then
                     ChildForm.MdiParent = Me
                     ChildForm.Text = "Project imported from XMI"
                     ChildForm.Show()
                 End If
             End If
         Catch ex As Exception
-            Me.Cursor = oldCursor
             MsgExceptionBox(ex)
         End Try
     End Sub
 
     Public Sub ImportFromDoxygenIndex()
-        Dim oldCursor As Cursor = Me.Cursor
         Try
             Dim dlgOpenFile As New OpenFileDialog
             If My.Settings.CurrentFolder = m_strCurrentFolder Then
@@ -160,27 +138,22 @@ Public Class MDIParent
                 Dim strTempFile As String = ""
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
 
-                Me.Cursor = Cursors.WaitCursor
-                XmlProjectTools.ConvertDoxygenIndexFile(dlgOpenFile.FileName, strTempFile)
-
-                Me.Cursor = oldCursor
+                XmlProjectTools.ConvertDoxygenIndexFile(Me, dlgOpenFile.FileName, strTempFile)
 
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                If ChildForm.OpenProject(strTempFile) Then
+                If ChildForm.OpenProject(Me, strTempFile) Then
                     ChildForm.MdiParent = Me
                     ChildForm.Text = "Project imported from Doxygen"
                     ChildForm.Show()
                 End If
             End If
         Catch ex As Exception
-            Me.Cursor = oldCursor
             MsgExceptionBox(ex)
         End Try
     End Sub
 
     Public Sub ApplyPatch()
-        Dim oldCursor As Cursor = Me.Cursor
         Try
             Dim dlgOpenFile As New OpenFileDialog
             If My.Settings.CurrentFolder = m_strCurrentFolder Then
@@ -197,30 +170,72 @@ Public Class MDIParent
                 Dim strNewProject As String = ""
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
 
-                Me.Cursor = Cursors.WaitCursor
-
                 If XmlProjectTools.ApplyPatch(Me, dlgOpenFile.FileName, strNewProject) Then
-
-                    Me.Cursor = oldCursor
 
                     Dim ChildForm As New frmProject
                     ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                    If ChildForm.OpenProject(strNewProject) Then
+                    If ChildForm.OpenProject(Me, strNewProject) Then
                         ChildForm.MdiParent = Me
                         ChildForm.Show()
                     End If
-                Else
-                    Me.Cursor = oldCursor
                 End If
             End If
         Catch ex As Exception
-            Me.Cursor = oldCursor
             MsgExceptionBox(ex)
         End Try
+    End Sub
+
+    Public Sub Increment(ByVal value As Integer) Implements InterfProgression.Increment
+        Me.strpProgressBar.Increment(value * 10)
+        System.Threading.Thread.Sleep(50)
     End Sub
 #End Region
 
 #Region "Private methods"
+
+    Private Sub OpenOneFile(ByVal filename As String)
+        Try
+            Dim bFromDoxygenIndex As Boolean = False
+            Dim bFromOmgXmiFile As Boolean = False
+            My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(filename)
+
+            If Path.GetFileName(filename).ToLower = "index.xml" _
+            Then
+                If XmlProjectTools.ConvertDoxygenIndexFile(Me, filename, filename) = False Then
+                    Exit Sub
+                End If
+                bFromDoxygenIndex = True
+            ElseIf Path.GetExtension(filename).ToLower = ".xmi" _
+            Then
+                If XmlProjectTools.ConvertOmgUmlModel(Me, filename, filename) = False Then
+                    Exit Sub
+                End If
+                bFromOmgXmiFile = True
+            End If
+
+            Dim strTempFolder = XmlProjectTools.GetProjectPath(filename)
+
+            If XmlProjectTools.UseDocTypeDeclarationFileForProject(strTempFolder) = True Then
+                Dim ChildForm As New frmProject
+                ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
+                If ChildForm.OpenProject(Me, filename) Then
+
+                    ChildForm.MdiParent = Me
+
+                    If bFromDoxygenIndex Then
+                        ChildForm.Text = "Project imported from Doxygen"
+                    ElseIf bFromOmgXmiFile Then
+                        ChildForm.Text = "Project imported from XMI"
+                    End If
+
+                    ChildForm.Show()
+                End If
+            End If
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
 
     Private Sub ToolBarToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ToolBarToolStripMenuItem.Click
         Me.ToolStrip.Visible = Me.ToolBarToolStripMenuItem.Checked
@@ -305,6 +320,8 @@ Public Class MDIParent
     Private Sub MDIParent_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey(cstPrintSetupKey)
         Try
+            XmlProjectView.InitPrototypes()
+
             If key IsNot Nothing Then
                 m_strSetupFooter = key.GetValue("footer").ToString
                 m_strSetupHeader = key.GetValue("header").ToString
@@ -339,12 +356,12 @@ Public Class MDIParent
                 Dim strFilename As String = My.Application.CommandLineArgs.Item(0)
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                If ChildForm.OpenProject(strFilename) Then
+                If ChildForm.OpenProject(Me, strFilename) Then
                     ChildForm.MdiParent = Me
                     ChildForm.Show()
                 End If
             Else
-            OpenFile(sender, e)
+                OpenMultipleFiles(sender, e)
             End If
 
             Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
@@ -427,10 +444,10 @@ Public Class MDIParent
         My.Settings.VbMergeTool = Not (My.Settings.VbMergeTool)
         Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
     End Sub
-#End Region
 
     Private Sub DebugToolStripOption_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DebugToolStripOption.Click
         Me.DebugToolStripOption.Checked = Not (Me.DebugToolStripOption.Checked)
         XmlProjectTools.DEBUG_COMMANDS_ACTIVE = Me.DebugToolStripOption.Checked
     End Sub
+#End Region
 End Class

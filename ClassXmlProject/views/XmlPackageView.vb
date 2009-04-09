@@ -98,7 +98,7 @@ Public Class XmlPackageView
         End Try
     End Sub
 
-    Public Sub ImportNodes(Optional ByVal bUpdateOnly As Boolean = False)
+    Public Sub ImportNodes(ByVal form As Form, Optional ByVal bUpdateOnly As Boolean = False)
         Dim bResult As Boolean = False
         Try
             Dim dlgOpenFile As New OpenFileDialog
@@ -123,7 +123,7 @@ Public Class XmlPackageView
                     My.Settings.ImportFolder = dlgOpenFile.InitialDirectory
                 End If
 
-                If UmlNodesManager.ImportNodes(Me, FileName, m_xmlReferenceNodeCounter, bUpdateOnly) Then
+                If UmlNodesManager.ImportNodes(form, Me, FileName, m_xmlReferenceNodeCounter, bUpdateOnly) Then
                     m_dataControl.Binding.ResetBindings(True)
                     Me.Updated = True
                     bResult = True

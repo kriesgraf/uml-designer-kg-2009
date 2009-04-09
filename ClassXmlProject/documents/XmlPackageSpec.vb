@@ -121,7 +121,7 @@ Public Class XmlPackageSpec
         End Try
     End Sub
 
-    Protected Friend Overrides Function AppendNode(ByVal child As XmlNode) As XmlNode
+    Protected Friend Overrides Function AppendNode(ByVal child As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
         Dim before As XmlNode = Nothing
         Select Case child.Name
             Case "import"

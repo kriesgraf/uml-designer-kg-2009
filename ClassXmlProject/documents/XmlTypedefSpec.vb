@@ -104,8 +104,8 @@ Public Class XmlTypedefSpec
         Return xmlResult
     End Function
 
-    Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent) As System.Xml.XmlNode
-        Return Me.m_xmlType.AppendComponent(nodeXml)
+    Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent, Optional ByVal observer As Object = Nothing) As System.Xml.XmlNode
+        Return Me.m_xmlType.AppendComponent(nodeXml, observer)
     End Function
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
