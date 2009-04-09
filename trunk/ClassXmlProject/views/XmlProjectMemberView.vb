@@ -422,11 +422,11 @@ Public Class XmlProjectMemberView
         Return iResult
     End Function
 
-    Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent) As XmlNode
+    Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent, Optional ByVal observer As Object = Nothing) As XmlNode
         If CanAddComponent(nodeXml) _
         Then
             Dim xmlcpnt As XmlComponent = CreateDocument(Me.Node)
-            Return xmlcpnt.AppendComponent(nodeXml)
+            Return xmlcpnt.AppendComponent(nodeXml, observer)
         End If
         Return Nothing
     End Function

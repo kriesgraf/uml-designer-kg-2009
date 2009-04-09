@@ -33,6 +33,8 @@ Partial Class dlgImport
         Me.cmbVisibility = New System.Windows.Forms.ComboBox
         Me.chkInterface = New System.Windows.Forms.CheckBox
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
+        Me.TableLayoutPanel5 = New System.Windows.Forms.TableLayoutPanel
+        Me.pgbLoadImport = New System.Windows.Forms.ProgressBar
         Me.tblDeclaration = New System.Windows.Forms.TableLayoutPanel
         Me.lsbReferences = New System.Windows.Forms.ListBox
         Me.mnuEditReference = New System.Windows.Forms.ContextMenuStrip(Me.components)
@@ -62,6 +64,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
+        Me.TableLayoutPanel5.SuspendLayout()
         Me.tblDeclaration.SuspendLayout()
         Me.mnuEditReference.SuspendLayout()
         Me.SuspendLayout()
@@ -74,7 +77,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(220, 284)
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(214, 4)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -102,8 +105,6 @@ Partial Class dlgImport
         '
         'TableLayoutPanel3
         '
-        Me.TableLayoutPanel3.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.TableLayoutPanel3.ColumnCount = 2
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.39018!))
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.60982!))
@@ -112,6 +113,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.Controls.Add(Me.txtName, 1, 0)
         Me.TableLayoutPanel3.Controls.Add(Me.txtParam, 1, 1)
         Me.TableLayoutPanel3.Controls.Add(Me.TableLayoutPanel4, 0, 2)
+        Me.TableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel3.Location = New System.Drawing.Point(3, 3)
         Me.TableLayoutPanel3.Name = "TableLayoutPanel3"
         Me.TableLayoutPanel3.RowCount = 3
@@ -119,7 +121,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27.0!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29.0!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(363, 84)
+        Me.TableLayoutPanel3.Size = New System.Drawing.Size(363, 83)
         Me.TableLayoutPanel3.TabIndex = 1
         '
         'Label1
@@ -166,7 +168,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel4, 2)
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65.38461!))
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.61538!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 184.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 186.0!))
         Me.TableLayoutPanel4.Controls.Add(Me.lblVisibility, 1, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.cmbVisibility, 2, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.chkInterface, 0, 0)
@@ -175,16 +177,16 @@ Partial Class dlgImport
         Me.TableLayoutPanel4.Name = "TableLayoutPanel4"
         Me.TableLayoutPanel4.RowCount = 1
         Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel4.Size = New System.Drawing.Size(357, 24)
+        Me.TableLayoutPanel4.Size = New System.Drawing.Size(357, 23)
         Me.TableLayoutPanel4.TabIndex = 5
         '
         'lblVisibility
         '
         Me.lblVisibility.AutoSize = True
         Me.lblVisibility.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblVisibility.Location = New System.Drawing.Point(116, 0)
+        Me.lblVisibility.Location = New System.Drawing.Point(114, 0)
         Me.lblVisibility.Name = "lblVisibility"
-        Me.lblVisibility.Size = New System.Drawing.Size(53, 24)
+        Me.lblVisibility.Size = New System.Drawing.Size(53, 23)
         Me.lblVisibility.TabIndex = 2
         Me.lblVisibility.Text = "Visibility:"
         Me.lblVisibility.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -193,9 +195,9 @@ Partial Class dlgImport
         '
         Me.cmbVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbVisibility.FormattingEnabled = True
-        Me.cmbVisibility.Location = New System.Drawing.Point(175, 3)
+        Me.cmbVisibility.Location = New System.Drawing.Point(173, 3)
         Me.cmbVisibility.Name = "cmbVisibility"
-        Me.cmbVisibility.Size = New System.Drawing.Size(179, 21)
+        Me.cmbVisibility.Size = New System.Drawing.Size(181, 21)
         Me.cmbVisibility.TabIndex = 5
         '
         'chkInterface
@@ -204,7 +206,7 @@ Partial Class dlgImport
         Me.chkInterface.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chkInterface.Location = New System.Drawing.Point(3, 3)
         Me.chkInterface.Name = "chkInterface"
-        Me.chkInterface.Size = New System.Drawing.Size(107, 18)
+        Me.chkInterface.Size = New System.Drawing.Size(105, 17)
         Me.chkInterface.TabIndex = 6
         Me.chkInterface.Text = "Interface declaration"
         Me.chkInterface.UseVisualStyleBackColor = True
@@ -213,18 +215,41 @@ Partial Class dlgImport
         '
         Me.TableLayoutPanel2.ColumnCount = 1
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 0, 2)
+        Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel5, 0, 2)
         Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel3, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.tblDeclaration, 0, 1)
-        Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 3
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 32.64605!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 67.35395!))
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 39.0!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41.0!))
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(369, 316)
         Me.TableLayoutPanel2.TabIndex = 2
+        '
+        'TableLayoutPanel5
+        '
+        Me.TableLayoutPanel5.ColumnCount = 2
+        Me.TableLayoutPanel5.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel5.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel5.Controls.Add(Me.TableLayoutPanel1, 1, 0)
+        Me.TableLayoutPanel5.Controls.Add(Me.pgbLoadImport, 0, 0)
+        Me.TableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel5.Location = New System.Drawing.Point(3, 277)
+        Me.TableLayoutPanel5.Name = "TableLayoutPanel5"
+        Me.TableLayoutPanel5.RowCount = 1
+        Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel5.Size = New System.Drawing.Size(363, 36)
+        Me.TableLayoutPanel5.TabIndex = 3
+        '
+        'pgbLoadImport
+        '
+        Me.pgbLoadImport.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.pgbLoadImport.Location = New System.Drawing.Point(3, 7)
+        Me.pgbLoadImport.Name = "pgbLoadImport"
+        Me.pgbLoadImport.Size = New System.Drawing.Size(175, 22)
+        Me.pgbLoadImport.TabIndex = 1
+        Me.pgbLoadImport.Visible = False
         '
         'tblDeclaration
         '
@@ -234,11 +259,11 @@ Partial Class dlgImport
         Me.tblDeclaration.Controls.Add(Me.lsbReferences, 0, 0)
         Me.tblDeclaration.Controls.Add(Me.txtInterface, 1, 0)
         Me.tblDeclaration.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tblDeclaration.Location = New System.Drawing.Point(3, 93)
+        Me.tblDeclaration.Location = New System.Drawing.Point(3, 92)
         Me.tblDeclaration.Name = "tblDeclaration"
         Me.tblDeclaration.RowCount = 1
         Me.tblDeclaration.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.tblDeclaration.Size = New System.Drawing.Size(363, 180)
+        Me.tblDeclaration.Size = New System.Drawing.Size(363, 179)
         Me.tblDeclaration.TabIndex = 2
         '
         'lsbReferences
@@ -256,7 +281,7 @@ Partial Class dlgImport
         '
         Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator5, Me.EditReference, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.mnuImportParameters, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
         Me.mnuEditReference.Name = "ContextMenuStrip1"
-        Me.mnuEditReference.Size = New System.Drawing.Size(189, 320)
+        Me.mnuEditReference.Size = New System.Drawing.Size(189, 298)
         '
         'NewReference
         '
@@ -400,7 +425,7 @@ Partial Class dlgImport
         Me.txtInterface.Location = New System.Drawing.Point(179, 3)
         Me.txtInterface.Multiline = True
         Me.txtInterface.Name = "txtInterface"
-        Me.txtInterface.Size = New System.Drawing.Size(181, 174)
+        Me.txtInterface.Size = New System.Drawing.Size(181, 173)
         Me.txtInterface.TabIndex = 2
         '
         'dlgImport
@@ -408,7 +433,7 @@ Partial Class dlgImport
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel_Button
-        Me.ClientSize = New System.Drawing.Size(369, 316)
+        Me.ClientSize = New System.Drawing.Size(369, 320)
         Me.Controls.Add(Me.TableLayoutPanel2)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.MaximizeBox = False
@@ -423,6 +448,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel4.ResumeLayout(False)
         Me.TableLayoutPanel4.PerformLayout()
         Me.TableLayoutPanel2.ResumeLayout(False)
+        Me.TableLayoutPanel5.ResumeLayout(False)
         Me.tblDeclaration.ResumeLayout(False)
         Me.tblDeclaration.PerformLayout()
         Me.mnuEditReference.ResumeLayout(False)
@@ -467,5 +493,7 @@ Partial Class dlgImport
     Friend WithEvents NewInterface As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuImportParameters As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents TableLayoutPanel5 As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents pgbLoadImport As System.Windows.Forms.ProgressBar
 
 End Class

@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports ClassXmlProject.XmlProjectTools
 Imports System.Xml
+Imports System.Windows.Forms
 Imports System.IO
 Imports Microsoft.VisualBasic
 
@@ -51,15 +52,29 @@ Public Class XmlExportSpec
 
 #Region "Protected friend methods"
 
-    Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode) As XmlNode
-        Select Case nodeXml.Name
-            Case "reference", "interface"
-                Return Me.Node.AppendChild(nodeXml)
-            Case Else
-                For Each child As XmlNode In nodeXml.SelectNodes("descendant::reference | descendant::interface")
-                    Me.Node.AppendChild(child)
-                Next
-        End Select
+    Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
+        Dim interf As InterfProgression = TryCast(observer, InterfProgression)
+        Try
+            Select Case nodeXml.Name
+                Case "reference", "interface"
+                    Return Me.Node.AppendChild(nodeXml)
+                Case Else
+                    Dim list As XmlNodeList = nodeXml.SelectNodes("descendant::reference | descendant::interface")
+                    If interf IsNot Nothing Then
+                        interf.Minimum = 0
+                        interf.Maximum = list.Count
+                        interf.ProgressBarVisible = True
+                    End If
+                    For Each child As XmlNode In list
+                        Me.Node.AppendChild(child)
+                        If interf IsNot Nothing Then interf.Increment(1)
+                    Next
+            End Select
+        Catch ex As Exception
+            Throw ex
+        Finally
+            If interf IsNot Nothing Then interf.ProgressBarVisible = False
+        End Try
         Return Nothing
     End Function
 
@@ -115,7 +130,7 @@ Public Class XmlExportSpec
         Return bResult
     End Function
 
-    Protected Friend Function LoadImport(ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
+    Protected Friend Function LoadImport(ByVal form As Form, ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
         Dim bResult As Boolean = False
         Try
             ' the following call to Validate succeeds.
@@ -123,12 +138,12 @@ Public Class XmlExportSpec
             Dim strSource As String = GetProjectPath(strFilename)
 
             If bDoxygenTagFile Then
-                XmlProjectTools.ConvertDoxygenTagFile(document, strFilename)
+                XmlProjectTools.ConvertDoxygenTagFile(form, document, strFilename)
             Else
                 If UseDocTypeDeclarationFileForImport(strSource) = False Then
                     Return False
                 End If
-                If XmlProjectTools.LoadDocument(document, strFilename) = False Then
+                If XmlProjectTools.LoadDocument(form, document, strFilename) = EResult.Failed Then
                     Return False
                 End If
             End If

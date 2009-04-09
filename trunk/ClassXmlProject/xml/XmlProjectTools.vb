@@ -33,11 +33,17 @@ Public Class XmlProjectTools
     Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
     Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xptch"
 
+    Public Enum EResult
+        Completed
+        Failed
+        Converted
+    End Enum
+
     Public Enum ECardinal
-        EFix
-        EVariable
-        EEmptyList
-        EFullList
+        Fix
+        Variable
+        EmptyList
+        FullList
     End Enum
 
     Public Enum EKindParent
@@ -359,156 +365,251 @@ Public Class XmlProjectTools
         Next
     End Sub
 
-    Public Shared Function ConvertOmgUmlModel(ByVal strFilename As String, ByRef strTempFile As String) As Boolean
+    Public Shared Function ConvertOmgUmlModel(ByVal form As Form, ByVal strFilename As String, ByRef strTempFile As String) As Boolean
+        Dim oldCursor As Cursor = form.Cursor
+        Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim bResult As Boolean = False
         strTempFile = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
                                                          cstTempUmlFile + ".xprj")
         Try
+            form.Cursor = Cursors.WaitCursor
+
+            observer.Minimum = 0
+            observer.Maximum = 12
+            observer.ProgressBarVisible = True
+
             Dim styleXsl As New XslSimpleTransform(True)
             styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
                                                              My.Settings.ToolsFolder + cstXmi2ProjectStyle))
-
+            observer.Increment(1)
             Dim argList As New Dictionary(Of String, String)
             argList.Add("FolderDTD", My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData + Path.DirectorySeparatorChar)
 
             ' This transformation generates a metafile 85% compliant with end-generated file
             styleXsl.Transform(strFilename, strTempFile, argList)
+            observer.Increment(1)
+
         Catch ex As Exception
             Throw ex
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
         End Try
 
         Dim stage As String = "Format final project to UML Designer"
+        Dim document As New XmlDocument
 
         Try
-            Dim document As New XmlDocument
-            LoadDocument(document, strTempFile, True)
+            observer.ProgressBarVisible = True
+            LoadDocument(form, document, strTempFile, True)
+            observer.Increment(1)
+
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            observer.ProgressBarVisible = False
+        End Try
+
+        Try
+            form.Cursor = Cursors.WaitCursor
+            observer.ProgressBarVisible = True
 
             stage = "Merge iterator with container"
             MergeIteratorContainer(document)
+            observer.Increment(1)
 
             stage = "Find template C++ class"
             FindTemplateClasses(document)
+            observer.Increment(1)
 
             ' Temporary saving to check result before renumber
             document.Save(strTempFile)
+            observer.Increment(1)
 
             stage = "Apply UML Designer element indexation"
             RenumberProject(document.DocumentElement, True)
+            observer.Increment(1)
 
             stage = "Remove prefix in properties"
             CleanPrefixProperties(document)
+            observer.Increment(1)
 
             stage = "Merge properties and accessors"
             MergeAccessorProperties(document)
+            observer.Increment(1)
 
             stage = "Update nodes collabration"
             UpdatesCollaborations(document)
+            observer.Increment(1)
 
             stage = "Final saving"
             document.Save(strTempFile)
+            observer.Increment(1)
 
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
+
+        Try
+            observer.ProgressBarVisible = True
             stage = "Reload to check DTD"
-            LoadDocument(document, strTempFile, True)
-
+            LoadDocument(form, document, strTempFile, True)
+            observer.Increment(1)
             bResult = True
 
         Catch ex As Exception
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            observer.ProgressBarVisible = False
         End Try
         Return bResult
     End Function
 
-    Public Shared Function ConvertDoxygenIndexFile(ByVal strFilename As String, ByRef strTempFile As String) As Boolean
+    Public Shared Function ConvertDoxygenIndexFile(ByVal form As Form, ByVal strFilename As String, ByRef strTempFile As String) As Boolean
+
+        Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim bResult As Boolean = False
+        Dim oldCursor As Cursor = form.Cursor
 
         strTempFile = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
                                                          cstTempDoxygenFile + ".xprj")
         Try
+            form.Cursor = Cursors.WaitCursor
+
+            observer.Minimum = 0
+            observer.Maximum = 18
+            observer.ProgressBarVisible = True
+
             Dim styleXsl As New XslSimpleTransform(True)
             styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
                                                              My.Settings.ToolsFolder + cstDoxygen2ProjectStyle))
+            observer.Increment(1)
 
             Dim argList As New Dictionary(Of String, String)
             argList.Add("DoxFolder", GetProjectPath(strFilename) + Path.DirectorySeparatorChar.ToString)
 
             ' This transformation generates a metafile 80% compliant with end-generated file
             styleXsl.Transform(strFilename, strTempFile, argList)
+            observer.Increment(1)
 
         Catch ex As Exception
             Throw ex
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
         End Try
 
         Dim stage As String = "Format final project to UML Designer"
+        Dim document As New XmlDocument
 
         Try
-            Dim document As New XmlDocument
-            LoadDocument(document, strTempFile, True)
+            observer.ProgressBarVisible = True
+            LoadDocument(form, document, strTempFile, True)
+            observer.Increment(1)
+
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            observer.ProgressBarVisible = False
+        End Try
+
+        Try
+            observer.ProgressBarVisible = True
+            form.Cursor = Cursors.WaitCursor
 
             ' Some doxygen types reference in "ref" element, the refid references the relationship child class and not the container type
             stage = "Change Doxygen type references"
             ChangeDoxygenTypeReferences(document)
+            observer.Increment(1)
 
             ' Some doxygen types remain as simple C++ declaration, we must translate them to UML design Xml elements
             stage = "Rename simple C++ declaration"
             RenameTypeDoxygenResultFile(ELanguage.Language_CplusPlus, document)
+            observer.Increment(1)
 
 
             stage = "Merge iterator with container"
             MergeIteratorContainer(document)
+            observer.Increment(1)
 
             stage = "Find template C++ class"
             FindTemplateClasses(document)
+            observer.Increment(1)
 
             ' Temporary saving to check result before renumber
             document.Save(strTempFile)
+            observer.Increment(1)
 
             ' We insert the external DTD file declaration to be sure that generated file is full compliant
             stage = "Insert the external DTD file declaration"
             Dim docType As XmlDocumentType = document.CreateDocumentType("root", Nothing, "class-model.dtd", "")
+            observer.Increment(1)
             document.InsertBefore(docType, document.FirstChild.NextSibling)
 
             stage = "Apply UML Designer element indexation"
             RenumberProject(document.DocumentElement)
+            observer.Increment(1)
 
             ' Temporary saving to check result before renumber
             document.Save(strTempFile)
+            observer.Increment(1)
 
             ' Remove prefix in properties , accessors, convert doxygen comments
             stage = "Remove prefix in properties"
             CleanPrefixProperties(document)
+            observer.Increment(1)
 
             stage = "Merge properties and acessors"
             MergeAccessorProperties(document)
+            observer.Increment(1)
 
             stage = "update Doxygen comments"
             ConvertDoxygenComments(document)
+            observer.Increment(1)
 
             ' Find collaboration
             stage = "Find collaborations"
             FindCollaborations(document)
+            observer.Increment(1)
 
             ' Find overrided methods
             stage = "Find overrided methods"
             FindOverridedMethods(document)
+            observer.Increment(1)
 
             ' Now document is no more "Standalone"
             stage = "Final saving"
             CType(document.FirstChild, XmlDeclaration).Standalone = "no"
             document.Save(strTempFile)
+            observer.Increment(1)
 
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
+
+        Try
+            observer.ProgressBarVisible = True
             stage = "Reload to check DTD"
-            LoadDocument(document, strTempFile, True)
-
+            LoadDocument(form, document, strTempFile, True)
+            observer.Increment(1)
             bResult = True
 
         Catch ex As Exception
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            observer.ProgressBarVisible = False
         End Try
         Return bResult
     End Function
 
-    Public Shared Function ApplyPatch(ByVal ParentForm As Form, ByVal strOldFile As String, ByRef strNewFile As String) As Boolean
-        Dim oldCursor As Cursor = ParentForm.Cursor
+    Public Shared Function ApplyPatch(ByVal form As Form, ByVal strOldFile As String, ByRef strNewFile As String) As Boolean
+        Dim oldCursor As Cursor = form.Cursor
         Try
             strNewFile = ""
             Dim dlgOpenFile As New OpenFileDialog
@@ -518,46 +619,90 @@ Public Class XmlProjectTools
 
             If (dlgOpenFile.ShowDialog() = DialogResult.OK) _
             Then
-                ParentForm.Cursor = Cursors.WaitCursor
+                form.Cursor = Cursors.WaitCursor
 
                 Dim FilePatch As String = dlgOpenFile.FileName
                 strNewFile = strOldFile + ".new.xprj"
                 ApplyPatchFile(strOldFile, strNewFile, FilePatch)
+
+                ' Using avoid to remain the file locked for another process
+                ' the following to Validate succeeds.
+                Dim settings As XmlReaderSettings = New XmlReaderSettings()
+                settings.ProhibitDtd = False
+                settings.ValidationType = System.Xml.ValidationType.DTD
+
+                Dim document As New XmlDocument
+                Using reader As XmlReader = XmlReader.Create(strNewFile, settings)
+                    document.Load(reader)
+                End Using
+
+                form.Cursor = oldCursor
                 MsgBox("Please find result of conversion in file:" + vbCrLf + strNewFile, MsgBoxStyle.Exclamation)
                 Return True
             End If
 
         Catch ex As Exception
+            form.Cursor = oldCursor
             MsgExceptionBox(ex)
-        Finally
-            ParentForm.Cursor = oldCursor
         End Try
         Return False
     End Function
 
-    Public Shared Sub ConvertDoxygenTagFile(ByVal document As XmlDocument, ByVal strFilename As String)
+    Public Shared Sub ConvertDoxygenTagFile(ByVal form As Form, ByVal document As XmlDocument, ByVal strFilename As String)
+        Dim observer As InterfProgression = CType(form, InterfProgression)
+        Dim oldCursor As Cursor = form.Cursor
         Try
+            form.Cursor = Cursors.WaitCursor
+
+            observer.Minimum = 0
+            observer.Maximum = 6
+            observer.ProgressBarVisible = True
+
             Dim styleXsl As New XslSimpleTransform(True)
             styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
                                                              My.Settings.ToolsFolder + cstTag2ImportStyle))
+            observer.Increment(2)
+            form.Cursor = oldCursor
 
             Dim strTempFile As String = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
                                                                            cstTempDoxygenFile + ".ximp")
             styleXsl.Transform(strFilename, strTempFile)
-            LoadDocument(document, strTempFile, True)
+            observer.Increment(2)
+
+            LoadDocument(form, document, strTempFile, True)
+            observer.Increment(2)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
+    End Sub
+
+    Public Shared Function LoadDocument(ByVal document As XmlDocument, ByVal strFilename As String) As EResult
+        Try
+            document.Load(strFilename)
 
         Catch ex As Exception
             Throw ex
         End Try
-    End Sub
+        Return XmlProjectTools.EResult.Completed
+    End Function
 
-    Public Shared Function LoadDocument(ByVal document As XmlDocument, ByVal strFilename As String, Optional ByVal bThrowsException As Boolean = False, Optional ByVal bWithXsdValidation As Boolean = False) As Boolean
-        ' TODO replace optional argument bWithXsdValidation with true when XmlSchema validation works with ID/IDREF
+    Public Shared Function LoadDocument(ByVal form As Form, ByVal document As XmlDocument, ByVal strFilename As String, _
+                                        Optional ByVal bThrowsException As Boolean = False, _
+                                        Optional ByVal bWithXsdValidation As Boolean = False) As EResult
+
+        Dim oldCursor As Cursor = form.Cursor
+        Dim eResult As EResult = eResult.Failed
         Dim bDtdError As Boolean = False
         Dim currentException As Exception = Nothing
         Try
+            ' TODO replace optional argument bWithXsdValidation with true when XmlSchema validation works with ID/IDREF
             If bWithXsdValidation Then
                 ' With Xml Schema, we don't save document structure file into project folder.
+                form.Cursor = Cursors.WaitCursor
                 document.Load(strFilename)
                 document.Schemas.Add("http://www.classxmlproject.com", _
                                      My.Computer.FileSystem.CombinePath(Application.StartupPath, _
@@ -571,11 +716,15 @@ Public Class XmlProjectTools
                 settings.ValidationType = System.Xml.ValidationType.DTD
 
                 ' Using avoid to remain the file locked for another process
+                form.Cursor = Cursors.WaitCursor
                 Using reader As XmlReader = XmlReader.Create(strFilename, settings)
                     document.Load(reader)
                 End Using
             End If
+            eResult = XmlProjectTools.EResult.Completed
+
         Catch ex As XmlSchemaException
+            eResult = XmlProjectTools.EResult.Failed
             bDtdError = True
             currentException = New Exception( _
                                  "LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
@@ -588,6 +737,8 @@ Public Class XmlProjectTools
 
         Catch ex As Exception
             Throw ex
+        Finally
+            form.Cursor = oldCursor
         End Try
 
         If bDtdError Then
@@ -596,12 +747,15 @@ Public Class XmlProjectTools
                 Dim strPatchFile As String = My.Computer.FileSystem.CombinePath(strToolsFolder, cstV1_2_To_V1_3_Patch)
                 Dim strTempFile As String = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
                                                                                 cstTempUmlFile + ".xprj")
+                Dim fen As New dlgUpgradeProject
 
-                If MsgBox("Failed to open file:" + vbCrLf + strFilename + vbCrLf + vbCrLf + "You can upgrade version and patch some mistakes (Yes) or leave (No) ?" + _
-                          vbCrLf + vbCrLf + "-----------------------------------------------------------------------------------------" + vbCrLf + _
-                          "Error details:" + vbCrLf + currentException.ToString, _
-                    cstMsgYesNoQuestion) = MsgBoxResult.Yes _
+                fen.Filename = strFilename
+                fen.Warning = currentException
+
+                If fen.ShowDialog() = MsgBoxResult.Ok _
                 Then
+                    form.Cursor = Cursors.WaitCursor
+
                     ApplyPatchFile(strFilename, strTempFile, strPatchFile)
 
                     ' Using avoid to remain the file locked for another process
@@ -614,15 +768,23 @@ Public Class XmlProjectTools
                         document.Load(reader)
                     End Using
 
+                    RenumberProject(document, True)
+                    UpdatesCollaborations(document)
+
                     bDtdError = False
+                    form.Cursor = oldCursor
+                    eResult = XmlProjectTools.EResult.Converted
+                    MsgBox("Conversion completed!", MsgBoxStyle.Exclamation)
                 End If
 
             Catch ex As Exception
+                form.Cursor = oldCursor
+                eResult = XmlProjectTools.EResult.Failed
                 bDtdError = True
                 MsgExceptionBox(ex)
             End Try
         End If
-        Return (bDtdError = False)
+        Return eResult
     End Function
 
     Public Shared Function CreateAppendNode(ByVal node As XmlNode, ByVal szElement As String, Optional ByVal bInsertLf As Boolean = True) As XmlNode
@@ -1347,15 +1509,15 @@ Public Class XmlProjectTools
         Dim eResult As ECardinal
         Select Case strCardinal
             Case "1"
-                eResult = ECardinal.EFix
+                eResult = ECardinal.Fix
             Case "01"
-                eResult = ECardinal.EVariable
+                eResult = ECardinal.Variable
             Case "0n"
-                eResult = ECardinal.EEmptyList
+                eResult = ECardinal.EmptyList
             Case "1n"
-                eResult = ECardinal.EFullList
+                eResult = ECardinal.FullList
             Case Else
-                eResult = ECardinal.EFix
+                eResult = ECardinal.Fix
         End Select
         Return eResult
     End Function
@@ -1363,13 +1525,13 @@ Public Class XmlProjectTools
     Public Shared Function CardinalToString(ByVal eCardinal As ECardinal) As String
         Dim strResult As String
         Select Case eCardinal
-            Case eCardinal.EFix
+            Case eCardinal.Fix
                 strResult = "1"
-            Case eCardinal.EVariable
+            Case eCardinal.Variable
                 strResult = "01"
-            Case eCardinal.EEmptyList
+            Case eCardinal.EmptyList
                 strResult = "0n"
-            Case eCardinal.EFullList
+            Case eCardinal.FullList
                 strResult = "1n"
             Case Else
                 strResult = "1"

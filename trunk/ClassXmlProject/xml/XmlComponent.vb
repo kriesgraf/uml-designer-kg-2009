@@ -8,6 +8,13 @@ Imports Microsoft.VisualBasic
 
 #Region "Interfaces"
 
+Public Interface InterfProgression
+    WriteOnly Property Minimum() As Integer
+    WriteOnly Property Maximum() As Integer
+    WriteOnly Property ProgressBarVisible() As Boolean
+    Sub Increment(ByVal value As Integer)
+End Interface
+
 Public Interface InterfObject
     Property InterfObject() As Object
     Sub Update()
@@ -607,8 +614,8 @@ Public Class XmlComponent
         Return GetNode("*[@name='" + child.Name + "']")
     End Function
 
-    Protected Friend Overridable Function AppendNode(ByVal nodeXml As XmlNode) As XmlNode
-        ' TODO : surcharger dans les classes filles pour lesquel l'append ne sait fait pas aussi simplement qu'ici
+    Protected Friend Overridable Function AppendNode(ByVal nodeXml As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
+        ' TODO : Overide thsi method inclasses append action is not simply that here
         Return m_xmlNode.AppendChild(nodeXml)
     End Function
 
@@ -647,10 +654,10 @@ Public Class XmlComponent
         Return True
     End Function
 
-    Public Overridable Function AppendComponent(ByVal nodeXml As XmlComponent) As XmlNode
+    Public Overridable Function AppendComponent(ByVal nodeXml As XmlComponent, Optional ByVal observer As Object = Nothing) As XmlNode
         ' This method is called when order is not defined, also AppendNode must do it
         If CanAddComponent(nodeXml) Then
-            AppendNode(nodeXml.Node)
+            AppendNode(nodeXml.Node, observer)
             nodeXml.NotifyInsert()
             Return nodeXml.Node
         End If

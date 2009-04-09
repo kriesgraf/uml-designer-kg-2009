@@ -19,7 +19,7 @@ Public Class XmlImportView
 
 #End Region
 
-#Region "Public methods"
+#Region "Public properties"
 
     Public ReadOnly Property ClassImport() As Boolean
         Get
@@ -45,6 +45,9 @@ Public Class XmlImportView
             m_bClassInterface = value
         End Set
     End Property
+#End Region
+
+#Region "Public methods"
 
     Public Sub LoadValues()
         m_xmlBindingsList = New XmlBindingsList
@@ -144,10 +147,10 @@ Public Class XmlImportView
         End Try
     End Sub
 
-    Public Overloads Function AddReferences(ByVal eMode As EImportMode) As Boolean
+    Public Overloads Function AddReferences(ByVal form As Form, ByVal eMode As EImportMode) As Boolean
         Dim bResult As Boolean = False
         Try
-            If LoadImport(eMode) Then
+            If LoadImport(form, eMode) Then
                 Me.Updated = True
                 bResult = True
             End If
@@ -157,10 +160,10 @@ Public Class XmlImportView
         Return bResult
     End Function
 
-    Public Overloads Function AddReferences(ByVal list As ListBox, ByVal eMode As EImportMode) As Boolean
+    Public Overloads Function AddReferences(ByVal form As Form, ByVal eMode As EImportMode, ByVal list As ListBox) As Boolean
         Dim bResult As Boolean = False
         Try
-            If LoadImport(eMode) Then
+            If LoadImport(form, eMode) Then
                 InitBindingReferences(list)
                 Me.Updated = True
                 bResult = True
@@ -283,12 +286,11 @@ Public Class XmlImportView
             MsgExceptionBox(ex)
         End Try
     End Sub
-
 #End Region
 
 #Region "Private methods"
 
-    Private Function LoadImport(ByVal eMode As EImportMode) As Boolean
+    Private Function LoadImport(ByVal form As Form, ByVal eMode As EImportMode) As Boolean
         Dim bResult As Boolean = False
         Try
             Dim dlgOpenFile As New OpenFileDialog
@@ -304,7 +306,7 @@ Public Class XmlImportView
             If (dlgOpenFile.ShowDialog() = DialogResult.OK) _
             Then
                 Dim FileName As System.IO.FileInfo = My.Computer.FileSystem.GetFileInfo(dlgOpenFile.FileName)
-                LoadDocument(FileName, eMode)
+                LoadDocument(form, FileName, eMode)
                 ' This class is used both in dlgImport and in frmProject
                 If m_xmlBindingsList IsNot Nothing Then m_xmlBindingsList.ResetValues()
                 bResult = True

@@ -1,5 +1,6 @@
 ﻿Imports System
 Imports System.Xml
+Imports System.Windows.Forms
 Imports System.IO
 Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
@@ -21,10 +22,13 @@ Public Class UmlNodesManager
 
 #If _APP_UML = "1" Then
 
-    Public Shared Function ImportNodes(ByVal component As XmlComposite, _
+    Public Shared Function ImportNodes(ByVal form As Form, _
+                                       ByVal component As XmlComposite, _
                                        ByVal strFilename As String, _
                                        ByVal NodeCounter As XmlReferenceNodeCounter, _
                                        ByVal bUpdateOnly As Boolean) As Boolean
+
+        Dim observer As InterfProgression = CType(form, InterfProgression)
         Try
             Dim source As New XmlDocument
             Dim import As XmlComponent
@@ -35,14 +39,23 @@ Public Class UmlNodesManager
                 Return False
             End If
 
-            If LoadDocument(source, strFilename) = False Then
+            observer.Minimum = 0
+            observer.Maximum = 5
+            observer.ProgressBarVisible = True
+
+            If LoadDocument(form, source, strFilename) = EResult.Failed Then
+                observer.ProgressBarVisible = False
                 Return False
             End If
+
+            observer.Increment(1)
 
             import = New XmlComponent(source.DocumentElement)
             import.Tag = component.Tag
 
             StartInsertion(source, NodeCounter)
+            observer.Increment(1)
+
             Dim list As XmlNodeList
 
             ' Remove redundant imported references
@@ -51,6 +64,7 @@ Public Class UmlNodesManager
             For Each child In list
                 VerifyRedundancy(component, "project/package" + component.Name, child, "file:" + vbCrLf + strFilename)
             Next child
+            observer.Increment(1)
 
             ' Remove redundant references in current project with imported classes
             list = component.SelectNodes("//import/export/*")
@@ -58,6 +72,7 @@ Public Class UmlNodesManager
             For Each child In list
                 VerifyRedundancy(import, "file:" + vbCrLf + strFilename + vbCrLf, child, "project/package " + component.Name)
             Next child
+            observer.Increment(1)
 
             For Each child In import.Node.ChildNodes
                 Select Case child.Name
@@ -72,10 +87,13 @@ Public Class UmlNodesManager
                         component.AppendComponent(xmlcpnt)
                 End Select
             Next child
+            observer.Increment(1)
             Return True
 
         Catch ex As Exception
             Throw ex
+        Finally
+            observer.ProgressBarVisible = False
         End Try
         Return False
     End Function
