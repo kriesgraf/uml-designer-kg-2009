@@ -291,7 +291,7 @@ Public Class XmlRelationParentSpec
                 Name = "New_child"
             End If
             Range = "private"
-            Cardinal = ECardinal.EFix
+            Cardinal = ECardinal.Fix
             Level = 0
             Member = False
             Idref = "class0"

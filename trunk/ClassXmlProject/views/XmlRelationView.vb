@@ -369,8 +369,8 @@ Public Class XmlRelationView
     Private Function CheckCardinal(ByVal xmlParent As XmlRelationParentSpec, ByVal cmbCardinal As ComboCommand) As Boolean
 
         Dim bChanged As Boolean
-        Dim bMultiple As Boolean = (cmbCardinal.Combo.SelectedIndex = ECardinal.EEmptyList _
-                                    Or cmbCardinal.Combo.SelectedIndex = ECardinal.EFullList)
+        Dim bMultiple As Boolean = (cmbCardinal.Combo.SelectedIndex = ECardinal.EmptyList _
+                                    Or cmbCardinal.Combo.SelectedIndex = ECardinal.FullList)
 
         Select Case xmlParent.Kind
             Case EKindParent.Array
@@ -412,9 +412,9 @@ Public Class XmlRelationView
         xmlParent.Cardinal = CType(cmbCardinal.Combo.SelectedIndex, ECardinal)
 
         Select Case xmlParent.Cardinal
-            Case ECardinal.EVariable
+            Case ECardinal.Variable
                 xmlParent.Kind = EKindParent.Reference
-            Case ECardinal.EFix
+            Case ECardinal.Fix
                 xmlParent.Kind = EKindParent.Reference
             Case Else
                 xmlParent.Kind = EKindParent.Container
