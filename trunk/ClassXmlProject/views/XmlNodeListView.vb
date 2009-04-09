@@ -360,7 +360,7 @@ Public Class XmlNodeListView
     Private Shared Sub AddSimpleTypesList(ByVal myList As ArrayList, ByVal eTag As ELanguage)
         Try
             Dim doc As New XmlDocument
-            LoadDocument(doc, GetSimpleTypesFilename(eTag), True)
+            LoadDocument(doc, GetSimpleTypesFilename(eTag))
 
             Dim iterator As IEnumerator = doc.SelectNodes("//type").GetEnumerator()
             iterator.Reset()
