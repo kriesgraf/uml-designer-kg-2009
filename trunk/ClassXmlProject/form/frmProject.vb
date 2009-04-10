@@ -115,7 +115,11 @@ Public Class frmProject
             dlgSaveFile.Title = "Save the project file..."
             dlgSaveFile.Filter = "UML project (*.xprj)|*.xprj"
 
-            dlgSaveFile.FileName = m_xmlProject.Name
+            Dim strFilename As String = m_xmlProject.Name
+            If XmlProjectTools.GetValidFilename(strFilename) Then
+                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename)
+            End If
+            dlgSaveFile.FileName = strFilename
 
             If (dlgSaveFile.ShowDialog(Me) = DialogResult.OK) Then
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgSaveFile.FileName)
@@ -505,16 +509,16 @@ Public Class frmProject
     Private Sub mnuGenerateCode_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
                 Handles mnuProjectGenerate.Click, mnuPackageGenerate.Click
         Try
-            Dim myobject As XmlComponent = CType(lvwProjectMembers.SelectedItem, XmlComponent)
+            Dim xmlcpnt As XmlComponent = CType(lvwProjectMembers.SelectedItem, XmlComponent)
 
-            If myobject Is Nothing Then
-                myobject = lvwProjectMembers.Binding.Parent
+            If xmlcpnt Is Nothing Then
+                xmlcpnt = lvwProjectMembers.Binding.Parent
             End If
 
-            If myobject IsNot Nothing Then
+            If xmlcpnt IsNot Nothing Then
                 Dim strTransformation As String = ""
 
-                If m_xmlProject.GenerateCode(myobject, Me, strTransformation) _
+                If m_xmlProject.GenerateCode(xmlcpnt, Me.Mainframe, strTransformation) _
                 Then
                     Me.docvwProjectDisplay.Display = strTransformation
                 End If
@@ -560,9 +564,9 @@ Public Class frmProject
 
         Try
             If lvwProjectMembers.SelectedItem IsNot Nothing Then
-                m_xmlProject.ExportReferences(CType(lvwProjectMembers.SelectedItem, XmlComponent))
+                m_xmlProject.ExportReferences(Me.Mainframe, CType(lvwProjectMembers.SelectedItem, XmlComponent))
             Else
-                m_xmlProject.ExportReferences(lvwProjectMembers.Binding.Parent)
+                m_xmlProject.ExportReferences(Me.Mainframe, lvwProjectMembers.Binding.Parent)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -573,7 +577,7 @@ Public Class frmProject
                 Handles mnuProjectImportNodes.Click, mnuPackageImportNodes.Click
 
         Try
-            m_xmlProject.ImportNodes(Me, lvwProjectMembers.Binding.Parent)
+            m_xmlProject.ImportNodes(Me.Mainframe, lvwProjectMembers.Binding.Parent)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -590,7 +594,7 @@ Public Class frmProject
         End If
 
         If myobject IsNot Nothing Then
-            m_xmlProject.ImportNodes(Me, myobject, True)
+            m_xmlProject.ImportNodes(Me.Mainframe, myobject, True)
         End If
     End Sub
 
@@ -600,10 +604,8 @@ Public Class frmProject
 
         If lvwProjectMembers.SelectedItem IsNot Nothing Then
             'Debug.Print(CType(sender, ToolStripMenuItem).Name)
-            Dim fen As New dlgDependencies
-            fen.Document = CType(lvwProjectMembers.SelectedItem, XmlComponent)
-            fen.ShowDialog()
-            If CType(fen.Tag, Boolean) = True Then
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(CType(lvwProjectMembers.SelectedItem, XmlComponent), bIsEmpty) Then
                 RefreshProjectDisplay(True)
             End If
         End If
@@ -613,9 +615,9 @@ Public Class frmProject
                 Handles ProjectExportNodesSimpleCopy.Click, PackageExportNodesSimpleCopy.Click
         Try
             If lvwProjectMembers.SelectedItem IsNot Nothing Then
-                m_xmlProject.ExportNodes(CType(lvwProjectMembers.SelectedItem, XmlComponent))
+                m_xmlProject.ExportNodes(Me.Mainframe, CType(lvwProjectMembers.SelectedItem, XmlComponent))
             Else
-                m_xmlProject.ExportNodes(lvwProjectMembers.Binding.Parent)
+                m_xmlProject.ExportNodes(Me.Mainframe, lvwProjectMembers.Binding.Parent)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -627,10 +629,12 @@ Public Class frmProject
         Try
             Dim bRefresh As Boolean = False
             If lvwProjectMembers.SelectedItem IsNot Nothing Then
-                bRefresh = m_xmlProject.ExportNodesExtract(CType(lvwProjectMembers.SelectedItem, XmlComponent))
+                bRefresh = m_xmlProject.ExportNodesExtract(Me.Mainframe, CType(lvwProjectMembers.SelectedItem, XmlComponent))
             Else
-                bRefresh = m_xmlProject.ExportNodesExtract(lvwProjectMembers.Binding.Parent)
+                bRefresh = m_xmlProject.ExportNodesExtract(Me.Mainframe, lvwProjectMembers.Binding.Parent)
             End If
+
+            RefreshProjectDisplay(bRefresh)
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -688,10 +692,12 @@ Public Class frmProject
 
     Private Sub UpdatesCollaborations_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UpdatesCollaborations.Click
         m_xmlProject.UpdatesCollaborations()
+        RefreshProjectDisplay(True)
     End Sub
 
     Private Sub RenumberDatabaseIndex_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles RenumberDatabaseIndex.Click
         m_xmlProject.RenumberDatabaseIndex()
+        RefreshProjectDisplay(True)
     End Sub
 
     Private Sub mnuEditCopy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _

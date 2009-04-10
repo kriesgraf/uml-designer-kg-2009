@@ -105,7 +105,6 @@ Public Class XmlImportSpec
             SetAttribute("visibility", value)
         End Set
     End Property
-
 #End Region
 
 #Region "Public methods"
@@ -199,7 +198,7 @@ Public Class XmlImportSpec
             Case "export"
                 Return RemoveImport()
         End Select
-        'Return False
+        Return False
     End Function
 
 #End Region
@@ -468,23 +467,36 @@ Public Class XmlImportSpec
         Try
             Dim bImportOk As Boolean = True
 
+            observer.Minimum = 0
+            observer.Maximum = 3
+            observer.ProgressBarVisible = True
+
             If m_xmlExport Is Nothing Then
                 m_xmlExport = New XmlExportSpec()   ' Don't create at this step an Xml node!
                 m_xmlExport.Document = Me.Document
             Else
                 bImportOk = m_xmlExport.RemoveReferences()
             End If
+
+            observer.Increment(1)
+
             If bImportOk Then
 
                 m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
 
                 If m_xmlExport.LoadImport(form, strFilename, bDoxygenTagFile) Then    ' Clone node at this step
+                    observer.Increment(1)
+
                     Me.AppendComponent(m_xmlExport, observer)                             ' And append now
+                    observer.Increment(1)
+
                     bResult = True
                 End If
             End If
         Catch ex As Exception
             Throw ex
+        Finally
+            observer.ProgressBarVisible = False
         End Try
         Return bResult
     End Function
@@ -492,6 +504,7 @@ Public Class XmlImportSpec
     Private Function RemoveImport() As Boolean
         Dim bResult As Boolean = False
         Try
+            m_xmlExport.Tag = Me.Tag
             If m_xmlExport.RemoveReferences() Then
                 m_xmlExport = Nothing
                 bResult = True

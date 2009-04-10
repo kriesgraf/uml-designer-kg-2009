@@ -26,7 +26,8 @@ Public Class UmlCodeGenerator
 
 #Region "Public shared methods"
 
-    Public Shared Function Generate(ByVal fen As System.Windows.Forms.Form, ByVal node As XmlNode, ByVal strClassId As String, _
+    Public Shared Function Generate(ByVal fen As System.Windows.Forms.Form, _
+                                    ByVal node As XmlNode, ByVal strClassId As String, _
                                ByVal strPackageId As String, ByVal eLanguage As ELanguage, _
                                ByVal strProgramFolder As String, ByRef strTransformation As String) As Boolean
 
@@ -60,16 +61,35 @@ Public Class UmlCodeGenerator
 
 #Region "Private shared methods"
 
-    Private Shared Function GenerateCppSourceHeader(ByVal fen As System.Windows.Forms.Form, ByVal node As XmlNode, ByVal strClassId As String, _
+    Private Shared Function GenerateCppSourceHeader(ByVal fen As System.Windows.Forms.Form, _
+                                                    ByVal node As XmlNode, ByVal strClassId As String, _
                                                 ByVal strPackageId As String, ByVal strPath As String, _
                                                 ByRef strTransformation As String) As Boolean
         Dim bResult As Boolean = False
+        Dim bCodeMerge As Boolean = False
         Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
         fen.Cursor = Cursors.WaitCursor
+
         Try
             If m_bTransformActive Then Return bResult
-
             m_bTransformActive = True
+
+            Dim count As Integer = 1    ' One step for XSLT transformation
+            If strClassId <> "" Then
+                count += 1
+            ElseIf strPackageId <> "" _
+            Then
+                Dim child As XmlNode = node.SelectSingleNode("//package[@id='" + strPackageId + "']")
+                count += child.SelectNodes("descendant::package | descendant::class").Count
+            Else
+                count += node.SelectNodes("descendant::package | descendant::class").Count
+            End If
+
+            observer.Minimum = 0
+            observer.Maximum = count
+            observer.ProgressBarVisible = True
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceHeaderCppStyleSheet)
@@ -94,13 +114,14 @@ Public Class UmlCodeGenerator
                 End If
                 m_xsltCppSourceHeaderStyleSheet.Transform(node, strTransformation, argList)
 
-                ExtractCode(strTransformation, strPath, ELanguage.Language_CplusPlus)
+                ExtractCode(bCodeMerge, observer, strTransformation, strPath, ELanguage.Language_CplusPlus)
                 bResult = True
             End If
 
         Catch ex As Exception
             Throw ex
         Finally
+            observer.ProgressBarVisible = False
             fen.Cursor = oldCursor
             m_bTransformActive = False
         End Try
@@ -108,16 +129,34 @@ Public Class UmlCodeGenerator
         Return bResult
     End Function
 
-    Private Shared Function GenerateVbClassModule(ByVal fen As System.Windows.Forms.Form, ByVal node As XmlNode, ByVal strClassId As String, _
+    Private Shared Function GenerateVbClassModule(ByVal fen As System.Windows.Forms.Form, _
+                                                  ByVal node As XmlNode, ByVal strClassId As String, _
                                                 ByVal strPackageId As String, ByVal strPath As String, _
                                                 ByRef strTransformation As String) As Boolean
+        Dim bCodeMerge As Boolean = False
         Dim bResult As Boolean = False
         Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
         fen.Cursor = Cursors.WaitCursor
         Try
             If m_bTransformActive Then Return bResult
-
             m_bTransformActive = True
+
+            Dim count As Integer = 1    ' One step for XSLT transformation
+            If strClassId <> "" Then
+                count += 1
+            ElseIf strPackageId <> "" _
+            Then
+                Dim child As XmlNode = node.SelectSingleNode("//package[@id='" + strPackageId + "']")
+                count += child.SelectNodes("descendant::package | descendant::class").Count
+            Else
+                count += node.SelectNodes("descendant::package | descendant::class").Count
+            End If
+
+            observer.Minimum = 0
+            observer.Maximum = count
+            observer.ProgressBarVisible = True
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceVbDotNetStyleSheet)
@@ -141,14 +180,16 @@ Public Class UmlCodeGenerator
                     End If
                 End If
                 m_xsltVbClassModuleStyleSheet.Transform(node, strTransformation, argList)
+                observer.Increment(1)
 
-                ExtractCode(strTransformation, strPath, ELanguage.Language_Vbasic)
+                ExtractCode(bCodeMerge, observer, strTransformation, strPath, ELanguage.Language_Vbasic)
                 bResult = True
             End If
 
         Catch ex As Exception
             Throw ex
         Finally
+            observer.ProgressBarVisible = False
             fen.Cursor = oldCursor
             m_bTransformActive = False
         End Try
@@ -156,8 +197,12 @@ Public Class UmlCodeGenerator
         Return bResult
     End Function
 
-    Private Shared Sub ExtractCode(ByRef strTransformation As String, ByVal strFolder As String, ByVal eLang As ELanguage)
+    Private Shared Sub ExtractCode(ByRef bCodeMerge As Boolean, ByVal observer As InterfProgression, _
+                                   ByVal strTransformation As String, ByVal strFolder As String, ByVal eLang As ELanguage)
         Try
+            If eLang <> ELanguage.Language_CplusPlus Then
+                bCodeMerge = True
+            End If
             ' Load the reader with the data file and ignore all white space nodes.         
             Using reader As XmlTextReader = New XmlTextReader(strTransformation)
 
@@ -169,10 +214,10 @@ Public Class UmlCodeGenerator
                         Case XmlNodeType.Element
                             Select Case reader.Name
                                 Case cstFolderElement
-                                    ExtractPackage(strFolder, reader, eLang, True)
+                                    ExtractPackage(observer, strFolder, reader, eLang, True)
 
                                 Case cstFileElement
-                                    ExtractClass(strFolder, reader, eLang, True)
+                                    ExtractClass(observer, strFolder, reader, eLang, True)
                                 Case Else
                                     'Debug.Print("Node ignored:=" + reader.Name)
                             End Select
@@ -187,9 +232,12 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub ExtractPackage(ByVal currentFolder As String, ByVal reader As XmlTextReader, _
+    Private Shared Sub ExtractPackage(ByVal observer As InterfProgression, _
+                                      ByVal currentFolder As String, ByVal reader As XmlTextReader, _
                                       ByVal eLang As ELanguage, Optional ByVal bUseTempFolder As Boolean = False)
         Try
+            observer.Increment(1)
+
             reader.MoveToFirstAttribute()
             If reader.Name <> "name" Then
                 Exit Sub
@@ -205,10 +253,10 @@ Public Class UmlCodeGenerator
                     Case XmlNodeType.Element
                         Select Case reader.Name
                             Case cstFolderElement
-                                ExtractPackage(strNewFolder, reader, eLang, bUseTempFolder)
+                                ExtractPackage(observer, strNewFolder, reader, eLang, bUseTempFolder)
 
                             Case cstFileElement
-                                ExtractClass(strNewFolder, reader, eLang, bUseTempFolder)
+                                ExtractClass(observer, strNewFolder, reader, eLang, bUseTempFolder)
                             Case Else
                                 'Debug.Print("Node ignored:=" + reader.Name)
                         End Select
@@ -222,12 +270,18 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub ExtractClass(ByVal currentFolder As String, ByVal reader As XmlTextReader, _
+    Private Shared Sub ExtractClass(ByVal observer As InterfProgression, _
+                                    ByVal currentFolder As String, ByVal reader As XmlTextReader, _
                                     ByVal eLang As ELanguage, Optional ByVal bUseTempFolder As Boolean = False)
         Try
+            observer.Increment(1)
+
             reader.MoveToFirstAttribute()
+            Dim bCodeMerge As Boolean = False
+
             If reader.Name <> "name" Then
-                Exit Sub
+                bCodeMerge = (reader.Value = "yes")
+                reader.MoveToNextAttribute()
             End If
 
             Dim strNewFile As String = reader.Value
@@ -259,22 +313,35 @@ Public Class UmlCodeGenerator
                 streamWriter.Close()
             End Using
 
-            If bUseTempFolder And bSourceExists Then
+            If bUseTempFolder Then
                 Select Case eLang
                     Case ELanguage.Language_Vbasic
-                        If My.Settings.VbMergeTool Then
-                            VbCodeMerger.Merge(currentFolder, strNewFile, cstTempExport)
+                        If bSourceExists Then
+                            ' Use can choose between automatic and manual external merger
+                            If My.Settings.VbMergeTool Then
+                                VbCodeMerger.Merge(currentFolder, strNewFile, cstTempExport)
+                            Else
+                                CompareAndMergeFiles(strTempFile, strReleaseFile)
+                            End If
                         Else
-                            CompareAndMergeFiles(strTempFile, strReleaseFile)
+                            ' No need to merge or backup
                         End If
 
                     Case ELanguage.Language_CplusPlus
-                        ' Temporary use inline node to store body code
-                        ' TODO: in next release, deliver a CppCodeMerger class!
-                        BackupFile(strTempFile, strReleaseFile)
+                        If bCodeMerge And bSourceExists Then
+                            ' Temporary use an external merger to add/remove code
+                            CompareAndMergeFiles(strTempFile, strReleaseFile)
+
+                        ElseIf bSourceExists Then
+                            ' No need to merge
+                            BackupFile(strTempFile, strReleaseFile)
+                        End If
 
                     Case Else
-                        CompareAndMergeFiles(strTempFile, strReleaseFile)
+                        If bSourceExists Then
+                            ' No need to merge
+                            BackupFile(strTempFile, strReleaseFile)
+                        End If
                 End Select
             End If
         Catch ex As Exception
