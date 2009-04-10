@@ -435,23 +435,21 @@ Public Class XmlProjectMemberView
         Dim bResult As Boolean = False
         Try
             Dim xmlcpnt As XmlProjectMemberView = CType(removeNode, XmlProjectMemberView)
+
             Select Case xmlcpnt.NodeName
+
                 Case "typedef", "class", "reference", "interface"
                     ' Search link from parent node
-                    If SelectNodes("//*[@*[.='" + GetID(xmlcpnt.Node) + "' and name()!='id']]").Count > 0 Then
+                    If SelectNodes(dlgDependencies.GetQuery(xmlcpnt)).Count > 0 Then
 
                         If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
                               vbCrLf + "Do you want to proceed ?", _
                             cstMsgYesNoQuestion, _
                             xmlcpnt.Label(0)) = MsgBoxResult.Yes _
                         Then
-                            Dim fen As New dlgDependencies
-                            fen.NoTitle = False
-                            fen.Text = "Remove references to " + xmlcpnt.Label(0)
-                            fen.Document = xmlcpnt
-                            fen.ShowDialog()
-                            bResult = CType(fen.Tag, Boolean)
-                            If fen.IsEmpty = False Then
+                            Dim bIsEmpty As Boolean = False
+                            bResult = dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Label(0))
+                            If bIsEmpty = False Then
                                 Return bResult
                             End If
                         Else
@@ -461,7 +459,7 @@ Public Class XmlProjectMemberView
 
                 Case "package", "import"
                     ' Search children from removed node
-                    If removeNode.SelectNodes("descendant::import | class | package | descendant::reference | descendant::interface").Count > 0 Then
+                    If xmlcpnt.SelectNodes(dlgDependencies.GetQuery(xmlcpnt)).Count > 0 Then
                         MsgBox("This element is not empty", MsgBoxStyle.Exclamation, xmlcpnt.Label(0))
                         Return False
                     End If

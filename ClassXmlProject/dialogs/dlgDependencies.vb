@@ -25,15 +25,50 @@ Public Class dlgDependencies
         End Get
     End Property
 
-    Public WriteOnly Property NoTitle() As Boolean
-        Set(ByVal value As Boolean)
-            m_bNoTitle = value
+    Public WriteOnly Property Title() As String
+        Set(ByVal value As String)
+            If value IsNot Nothing Then
+                m_bNoTitle = False
+                Me.Text = value
+            End If
         End Set
     End Property
 
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
         ' Nothing TODO
     End Sub
+
+    Public Shared Function ShowDependencies(ByVal component As XmlComponent, ByRef bIsEmpty As Boolean, Optional ByVal title As String = Nothing) As Boolean
+        Dim fen As New dlgDependencies
+        fen.Title = title
+        fen.Document = component
+        fen.ShowDialog()
+        bIsEmpty = fen.IsEmpty
+        Return (CType(fen.Tag, Boolean))
+    End Function
+
+    Public Shared Function GetQuery(ByVal component As XmlComponent) As String
+        Dim strNodeName As String
+        Dim strQuery As String = Nothing
+
+        strNodeName = component.NodeName
+
+        Select Case strNodeName
+            Case "property", "method"
+                Dim strID As String = component.GetAttribute("id", "parent::class | parent::interface")
+                strQuery = "//class[" + strNodeName + "[@overrides='" + strID + "']]"
+                Return strQuery
+
+            Case "package", "import"
+                strQuery = "descendant::import | class | package | descendant::reference | descendant::interface"
+
+            Case Else
+                Dim strID As String = component.GetAttribute("id")
+                strQuery = "//*[@*[.='" + strID + "' and name()!='id' and name()!='overrides']" + _
+                           " and (ancestor::class/@id!='" + strID + "' or ancestor::interface/@id!='" + strID + "')]"
+        End Select
+        Return strQuery
+    End Function
 
     Private Sub dlgDependencies_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
@@ -65,24 +100,12 @@ Public Class dlgDependencies
     Private Sub RefreshList()
         Try
             Dim MyList As New ArrayList
-            Dim strID, strQuery, strName As String
-            Dim strNodeName As String = m_xmlDataSource.NodeName
 
             If m_bNoTitle Then Me.Text = m_xmlDataSource.Name + " dependencies"
 
-            Select Case strNodeName
-                Case "property", "method"
-                    strID = m_xmlDataSource.GetAttribute("id", "parent::class | parent::interface")
-                    strName = m_xmlDataSource.Name
-                    strQuery = "//class[" + strNodeName + "[@overrides='" + strID + "']]"
+            Dim strQuery As String = GetQuery(m_xmlDataSource)
 
-                Case Else
-                    strID = m_xmlDataSource.GetAttribute("id")
-                    strName = m_xmlDataSource.Name
-                    strQuery = "//*[@*[.='" + strID + "' and name()!='id' and name()!='overrides'] and ancestor::*/@id!='" + strID + "']"
-            End Select
-
-            If strID Is Nothing _
+            If strQuery Is Nothing _
             Then
                 lsbDependencies.Items.Add("Sorry this node can't be referenced")
                 lsbDependencies.Enabled = False
