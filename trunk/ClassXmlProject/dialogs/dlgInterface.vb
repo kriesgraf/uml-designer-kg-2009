@@ -82,10 +82,8 @@ Public Class dlgInterface
 
     Private Sub mnuMemberDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMemberDependencies.Click
         If gridMembers.SelectedItem IsNot Nothing Then
-            Dim fen As New dlgDependencies
-            fen.Document = CType(gridMembers.SelectedItem, XmlComponent)
-            fen.ShowDialog()
-            If CType(fen.Tag, Boolean) = True Then
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(CType(gridMembers.SelectedItem, XmlComponent), bIsEmpty) Then
                 m_xmlView.Updated = True
             End If
         End If

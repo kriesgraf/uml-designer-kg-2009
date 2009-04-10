@@ -59,6 +59,7 @@ Public Class dlgImport
 
     Public Sub Increment(ByVal value As Integer) Implements InterfProgression.Increment
         Me.pgbLoadImport.Increment(value)
+        Application.DoEvents()  ' To ose time to dispatch event
         System.Threading.Thread.Sleep(50)
     End Sub
 
@@ -191,10 +192,8 @@ Public Class dlgImport
 
     Private Sub mnuRefDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuRefDependencies.Click
         If lsbReferences.SelectedItem IsNot Nothing Then
-            Dim fen As New dlgDependencies
-            fen.Document = CType(lsbReferences.SelectedItem, XmlComponent)
-            fen.ShowDialog()
-            If CType(fen.Tag, Boolean) = True Then
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(CType(lsbReferences.SelectedItem, XmlComponent), bIsEmpty) Then
                 m_xmlView.Updated = True
             End If
         End If
