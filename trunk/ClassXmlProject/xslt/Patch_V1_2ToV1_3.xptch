@@ -460,6 +460,7 @@
       <xsl:call-template name="RangeNo"/>
       <xsl:call-template name="By"/>
       <xsl:call-template name="Modifier"/>
+      <xsl:copy-of select="@inline"/>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -469,6 +470,7 @@
     <xsl:copy>
       <xsl:call-template name="RangeNo"/>
       <xsl:call-template name="By"/>
+      <xsl:copy-of select="@inline"/>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -772,6 +774,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
