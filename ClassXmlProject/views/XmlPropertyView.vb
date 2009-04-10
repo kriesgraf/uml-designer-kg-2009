@@ -14,8 +14,9 @@ Public Class XmlPropertyView
     Private m_ArrayButton As RadioButtonArray
     Private m_eClassImplementation As EImplementation = EImplementation.Unknown
 
-    Private m_cmbRange As ComboBox
-    Private m_chkMember As New CheckBox
+    Private m_cmbRange, m_cmbSetAccess, m_cmbGetAccess As ComboBox
+    Private m_chkMember, m_chkGetInline, m_chkSetInline As CheckBox
+
     Private m_cmdBehaviour As New ComboCommand
 
     Private WithEvents m_chkAttribute As New CheckBox
@@ -226,6 +227,40 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
+    Public Sub InitBindingGetInline(ByVal dataControl As CheckBox)
+        Try
+            m_chkGetInline = dataControl
+            dataControl.ThreeState = False
+            m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetInline", "Checked")
+
+            If Me.Tag = ELanguage.Language_Vbasic _
+            Then
+                dataControl.Checked = False
+                dataControl.Enabled = False
+                dataControl.Visible = False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
+    Public Sub InitBindingSetInline(ByVal dataControl As CheckBox)
+        Try
+            m_chkSetInline = dataControl
+            dataControl.ThreeState = False
+            m_xmlBindingsList.AddBinding(dataControl, Me, "AccessSetInline", "Checked")
+
+            If Me.Tag = ELanguage.Language_Vbasic _
+            Then
+                dataControl.Checked = False
+                dataControl.Enabled = False
+                dataControl.Visible = False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
     Public Sub InitBindingOverridable(ByVal control As CheckBox)
         Try
             m_bInitOk = False
@@ -269,6 +304,8 @@ Public Class XmlPropertyView
 
     Public Sub InitBindingGetAccess(ByVal dataControl As ComboBox, ByVal label As Label)
         Try
+            m_bInitOk = False
+            m_cmbGetAccess = dataControl
             dataControl.DropDownStyle = ComboBoxStyle.DropDownList
             dataControl.Items.AddRange(New Object() {"no", "protected", "public"})
             m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetRange", "SelectedItem")
@@ -281,6 +318,8 @@ Public Class XmlPropertyView
 
         Catch ex As Exception
             Throw ex
+        Finally
+            m_bInitOk = True
         End Try
     End Sub
 
@@ -308,6 +347,8 @@ Public Class XmlPropertyView
 
     Public Sub InitBindingSetAccess(ByVal dataControl As ComboBox, ByVal label As Label)
         Try
+            m_bInitOk = False
+            m_cmbSetAccess = dataControl
             dataControl.DropDownStyle = ComboBoxStyle.DropDownList
             dataControl.Items.AddRange(New Object() {"no", "protected", "public"})
             m_xmlBindingsList.AddBinding(dataControl, Me, "AccessSetRange", "SelectedItem")
@@ -319,6 +360,8 @@ Public Class XmlPropertyView
             End If
         Catch ex As Exception
             Throw ex
+        Finally
+            m_bInitOk = True
         End Try
     End Sub
 
@@ -382,15 +425,21 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Private Sub HandlingAttribute(ByVal sender As Object, ByVal e As System.EventArgs) Handles m_chkAttribute.CheckedChanged
+    Public Sub HandlingAttribute(ByVal sender As Object, ByVal e As System.EventArgs) Handles m_chkAttribute.CheckedChanged
         If m_bInitOk = False Then Exit Sub
 
         If m_chkAttribute.Checked _
         Then
             m_cmbRange.Enabled = True
+            m_chkGetInline.Enabled = (CType(m_cmbGetAccess.SelectedItem, String) <> "no")
+            m_chkSetInline.Enabled = (CType(m_cmbSetAccess.SelectedItem, String) <> "no")
         Else
             m_cmbRange.SelectedIndex = 0
             m_cmbRange.Enabled = False
+            m_chkGetInline.Enabled = False
+            m_chkSetInline.Enabled = False
+            m_chkGetInline.Checked = (CType(m_cmbGetAccess.SelectedItem, String) <> "no")
+            m_chkSetInline.Checked = (CType(m_cmbSetAccess.SelectedItem, String) <> "no")
         End If
     End Sub
 
