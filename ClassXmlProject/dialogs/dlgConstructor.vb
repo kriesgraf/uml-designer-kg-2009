@@ -63,7 +63,7 @@ Public Class dlgConstructor
             .InitBindingBrief(txtBrief)
             .InitBindingComment(txtComment)
             .InitBindingRange(cmbRange)
-            .InitBindingCheckInline(chkInline, btnInline)
+            .InitBindingCheckInline(chkInline)
             .InitBindingCheckCopy(chkCopy)
 
             .LoadParamMembers(grdParams)
@@ -83,10 +83,6 @@ Public Class dlgConstructor
 
     Private Sub mnuEditParam_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuEditParam.Click
         grdParams.EditCurrentItem()
-    End Sub
-
-    Private Sub btnInline_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnInline.Click
-        m_xmlView.ShowDialogCodeInline()
     End Sub
 
     Private Sub chkCopy_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkCopy.Click

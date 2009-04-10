@@ -3,8 +3,8 @@
 <!-- ======================================================================= -->
   <xsl:output method="xml" cdata-section-elements="code" encoding="ISO-8859-1"/>
 <!-- ======================================================================= -->
-  <xsl:param name="UmlFolder">E:\Documents\Mes projets\UML_project</xsl:param>
-  <xsl:param name="InputClass">class18</xsl:param>
+  <xsl:param name="UmlFolder"/>
+  <xsl:param name="InputClass"/>
   <xsl:param name="InputPackage"/>
   <!-- ======================================================================= -->
   <xsl:variable name="FileLanguage"><xsl:value-of select="$UmlFolder"/>\language.xml</xsl:variable>
@@ -98,6 +98,23 @@
 <!-- ======================================================================= -->
   <xsl:template match="class" mode="Code">
     <xsl:element name="code">
+      <xsl:choose>
+        <xsl:when test="@inline!='none'">
+          <xsl:attribute name="Merge">yes</xsl:attribute>
+        </xsl:when>
+        <xsl:when test="method/@inline='yes'">
+          <xsl:attribute name="Merge">yes</xsl:attribute>
+        </xsl:when>
+        <xsl:when test="property[@attribute='yes' and (get[@range!='no' and @inline='yes'] or set[@range!='no' and @inline='yes'])]">
+          <xsl:attribute name="Merge">yes</xsl:attribute>
+        </xsl:when>
+        <xsl:when test="property[@attribute='no' and @implementationt!='abstract' and (get[@range!='no'] or set[@range='no'])]">
+          <xsl:attribute name="Merge">yes</xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+        <xsl:attribute name="Merge">no</xsl:attribute>
+          </xsl:otherwise>
+      </xsl:choose>
       <xsl:attribute name="name"><xsl:value-of select="@name"/>.h</xsl:attribute>
 #ifndef <xsl:apply-templates select="." mode="Entete"/>
 #define <xsl:apply-templates select="." mode="Entete"/>
@@ -663,7 +680,19 @@ namespace <xsl:value-of select="parent::package/@name"/>
 <metaInformation>
 <scenarios ><scenario default="yes" name="Test" userelativepaths="yes" externalpreview="no" url="ListOfTypes.xprj" htmlbaseurl="" outputurl="" processortype="msxmldotnet" useresolver="no" profilemode="0" profiledepth="" profilelength="" urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext="" validateoutput="no" validator="internal" customvalidator="" ><parameterValue name="InputClass" value="'class18'"/><parameterValue name="Language" value="'LanguageCplusPlus.xml'"/><parameterValue name="UmlFolder" value="'E:\Documents\Mes projets\UML_project'"/><advancedProp name="sInitialMode" value=""/><advancedProp name="bXsltOneIsOkay" value="true"/><advancedProp name="bSchemaAware" value="false"/><advancedProp name="bXml11" value="false"/><advancedProp name="iValidation" value="0"/><advancedProp name="bExtensions" value="true"/><advancedProp name="iWhitespace" value="0"/><advancedProp name="sInitialTemplate" value=""/>
 
+
+
+
+
+
+
 <advancedProp name="bTinyTree" value="true"/><advancedProp name="bWarnings" value="true"/><advancedProp name="bUseDTD" value="false"/><advancedProp name="iErrorHandling" value="fatal"/></scenario></scenarios><MapperMetaTag><MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/><MapperBlockPosition></MapperBlockPosition><TemplateContext></TemplateContext><MapperFilter side="source"></MapperFilter></MapperMetaTag>
 </metaInformation>
 -->
+
+
+
+
+
+
 

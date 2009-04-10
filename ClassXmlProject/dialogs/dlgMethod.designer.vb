@@ -38,10 +38,20 @@ Partial Class dlgMethod
         Me.cmbMember = New System.Windows.Forms.ComboBox
         Me.chkConst = New System.Windows.Forms.CheckBox
         Me.chkInline = New System.Windows.Forms.CheckBox
-        Me.btnInline = New System.Windows.Forms.Button
         Me.lblBehaviour = New System.Windows.Forms.Label
         Me.cmbBehaviour = New System.Windows.Forms.ComboBox
         Me.grdParams = New ClassXmlProject.XmlDataGridView
+        Me.mnuMembers = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.mnuAddParam = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuAddException = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuEditParam = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.Label7 = New System.Windows.Forms.Label
         Me.FlowLayoutPanel3 = New System.Windows.Forms.FlowLayoutPanel
         Me.txtName = New System.Windows.Forms.TextBox
@@ -53,24 +63,13 @@ Partial Class dlgMethod
         Me.btnDelete = New System.Windows.Forms.Button
         Me.txtComment = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuAddParam = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuAddException = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuEditParam = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
-        Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
-        Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuMembers = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         Me.FlowLayoutPanel2.SuspendLayout()
         CType(Me.grdParams, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.mnuMembers.SuspendLayout()
         Me.FlowLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
-        Me.mnuMembers.SuspendLayout()
         Me.SuspendLayout()
         '
         'Label2
@@ -247,7 +246,6 @@ Partial Class dlgMethod
         Me.FlowLayoutPanel2.Controls.Add(Me.cmbMember)
         Me.FlowLayoutPanel2.Controls.Add(Me.chkConst)
         Me.FlowLayoutPanel2.Controls.Add(Me.chkInline)
-        Me.FlowLayoutPanel2.Controls.Add(Me.btnInline)
         Me.FlowLayoutPanel2.Controls.Add(Me.lblBehaviour)
         Me.FlowLayoutPanel2.Controls.Add(Me.cmbBehaviour)
         Me.FlowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
@@ -281,27 +279,17 @@ Partial Class dlgMethod
         Me.chkInline.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
         Me.chkInline.Location = New System.Drawing.Point(165, 3)
         Me.chkInline.Name = "chkInline"
-        Me.chkInline.Size = New System.Drawing.Size(54, 17)
+        Me.chkInline.Size = New System.Drawing.Size(115, 17)
         Me.chkInline.TabIndex = 12
-        Me.chkInline.Text = "Inline:"
+        Me.chkInline.Text = "Custom inline code"
         Me.chkInline.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         Me.chkInline.UseVisualStyleBackColor = True
-        '
-        'btnInline
-        '
-        Me.btnInline.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.btnInline.Location = New System.Drawing.Point(225, 3)
-        Me.btnInline.Name = "btnInline"
-        Me.btnInline.Size = New System.Drawing.Size(97, 21)
-        Me.btnInline.TabIndex = 13
-        Me.btnInline.Text = "Inline"
-        Me.btnInline.UseVisualStyleBackColor = True
         '
         'lblBehaviour
         '
         Me.lblBehaviour.AutoSize = True
         Me.lblBehaviour.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblBehaviour.Location = New System.Drawing.Point(328, 0)
+        Me.lblBehaviour.Location = New System.Drawing.Point(286, 0)
         Me.lblBehaviour.Name = "lblBehaviour"
         Me.lblBehaviour.Size = New System.Drawing.Size(58, 27)
         Me.lblBehaviour.TabIndex = 14
@@ -311,7 +299,7 @@ Partial Class dlgMethod
         'cmbBehaviour
         '
         Me.cmbBehaviour.FormattingEnabled = True
-        Me.cmbBehaviour.Location = New System.Drawing.Point(392, 3)
+        Me.cmbBehaviour.Location = New System.Drawing.Point(350, 3)
         Me.cmbBehaviour.Name = "cmbBehaviour"
         Me.cmbBehaviour.Size = New System.Drawing.Size(97, 21)
         Me.cmbBehaviour.TabIndex = 15
@@ -331,110 +319,11 @@ Partial Class dlgMethod
         Me.grdParams.Tag = "param"
         Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
         '
-        'Label7
+        'mnuMembers
         '
-        Me.Label7.AutoSize = True
-        Me.Label7.Dock = System.Windows.Forms.DockStyle.Right
-        Me.Label7.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.Label7.Location = New System.Drawing.Point(31, 0)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(65, 33)
-        Me.Label7.TabIndex = 16
-        Me.Label7.Text = "Return type:"
-        Me.Label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        'FlowLayoutPanel3
-        '
-        Me.FlowLayoutPanel3.Controls.Add(Me.txtName)
-        Me.FlowLayoutPanel3.Controls.Add(Me.chkOperator)
-        Me.FlowLayoutPanel3.Controls.Add(Me.txtOperator)
-        Me.FlowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FlowLayoutPanel3.Location = New System.Drawing.Point(102, 36)
-        Me.FlowLayoutPanel3.Name = "FlowLayoutPanel3"
-        Me.FlowLayoutPanel3.Size = New System.Drawing.Size(501, 27)
-        Me.FlowLayoutPanel3.TabIndex = 17
-        '
-        'txtName
-        '
-        Me.txtName.Location = New System.Drawing.Point(3, 3)
-        Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(123, 20)
-        Me.txtName.TabIndex = 2
-        '
-        'chkOperator
-        '
-        Me.chkOperator.AutoSize = True
-        Me.chkOperator.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
-        Me.chkOperator.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.chkOperator.Location = New System.Drawing.Point(132, 3)
-        Me.chkOperator.Name = "chkOperator"
-        Me.chkOperator.Size = New System.Drawing.Size(67, 20)
-        Me.chkOperator.TabIndex = 3
-        Me.chkOperator.Text = "Operator"
-        Me.chkOperator.TextAlign = System.Drawing.ContentAlignment.BottomCenter
-        Me.chkOperator.UseVisualStyleBackColor = True
-        '
-        'txtOperator
-        '
-        Me.txtOperator.Location = New System.Drawing.Point(205, 3)
-        Me.txtOperator.Name = "txtOperator"
-        Me.txtOperator.Size = New System.Drawing.Size(119, 20)
-        Me.txtOperator.TabIndex = 4
-        '
-        'TableLayoutPanel1
-        '
-        Me.TableLayoutPanel1.ColumnCount = 3
-        Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.55682!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.44318!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 92.0!))
-        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
-        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
-        Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
-        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 491)
-        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
-        Me.TableLayoutPanel1.RowCount = 1
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(600, 35)
-        Me.TableLayoutPanel1.TabIndex = 0
-        '
-        'Cancel_Button
-        '
-        Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.Location = New System.Drawing.Point(520, 6)
-        Me.Cancel_Button.Name = "Cancel_Button"
-        Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
-        Me.Cancel_Button.TabIndex = 1
-        Me.Cancel_Button.Text = "Cancel"
-        '
-        'OK_Button
-        '
-        Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(416, 6)
-        Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(67, 23)
-        Me.OK_Button.TabIndex = 0
-        Me.OK_Button.Text = "OK"
-        '
-        'btnDelete
-        '
-        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.btnDelete.Location = New System.Drawing.Point(3, 6)
-        Me.btnDelete.Name = "btnDelete"
-        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
-        Me.btnDelete.TabIndex = 2
-        Me.btnDelete.Text = "Delete"
-        Me.btnDelete.UseVisualStyleBackColor = True
-        '
-        'txtComment
-        '
-        Me.txtComment.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtComment.Location = New System.Drawing.Point(102, 184)
-        Me.txtComment.Multiline = True
-        Me.txtComment.Name = "txtComment"
-        Me.txtComment.Size = New System.Drawing.Size(501, 91)
-        Me.txtComment.TabIndex = 18
+        Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuAddException, Me.mnuEditParam, Me.ToolStripSeparator1, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator2, Me.mnuDelete})
+        Me.mnuMembers.Name = "mnuParam"
+        Me.mnuMembers.Size = New System.Drawing.Size(190, 192)
         '
         'mnuAddParam
         '
@@ -505,11 +394,110 @@ Partial Class dlgMethod
         Me.mnuDelete.Size = New System.Drawing.Size(189, 22)
         Me.mnuDelete.Text = "Delete"
         '
-        'mnuMembers
+        'Label7
         '
-        Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuAddException, Me.mnuEditParam, Me.ToolStripSeparator1, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator2, Me.mnuDelete})
-        Me.mnuMembers.Name = "mnuParam"
-        Me.mnuMembers.Size = New System.Drawing.Size(190, 214)
+        Me.Label7.AutoSize = True
+        Me.Label7.Dock = System.Windows.Forms.DockStyle.Right
+        Me.Label7.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.Label7.Location = New System.Drawing.Point(31, 0)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(65, 33)
+        Me.Label7.TabIndex = 16
+        Me.Label7.Text = "Return type:"
+        Me.Label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'FlowLayoutPanel3
+        '
+        Me.FlowLayoutPanel3.Controls.Add(Me.txtName)
+        Me.FlowLayoutPanel3.Controls.Add(Me.chkOperator)
+        Me.FlowLayoutPanel3.Controls.Add(Me.txtOperator)
+        Me.FlowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.FlowLayoutPanel3.Location = New System.Drawing.Point(102, 36)
+        Me.FlowLayoutPanel3.Name = "FlowLayoutPanel3"
+        Me.FlowLayoutPanel3.Size = New System.Drawing.Size(501, 27)
+        Me.FlowLayoutPanel3.TabIndex = 17
+        '
+        'txtName
+        '
+        Me.txtName.Location = New System.Drawing.Point(3, 3)
+        Me.txtName.Name = "txtName"
+        Me.txtName.Size = New System.Drawing.Size(123, 20)
+        Me.txtName.TabIndex = 2
+        '
+        'chkOperator
+        '
+        Me.chkOperator.AutoSize = True
+        Me.chkOperator.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
+        Me.chkOperator.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.chkOperator.Location = New System.Drawing.Point(132, 3)
+        Me.chkOperator.Name = "chkOperator"
+        Me.chkOperator.Size = New System.Drawing.Size(67, 20)
+        Me.chkOperator.TabIndex = 3
+        Me.chkOperator.Text = "Operator"
+        Me.chkOperator.TextAlign = System.Drawing.ContentAlignment.BottomCenter
+        Me.chkOperator.UseVisualStyleBackColor = True
+        '
+        'txtOperator
+        '
+        Me.txtOperator.Location = New System.Drawing.Point(205, 3)
+        Me.txtOperator.Name = "txtOperator"
+        Me.txtOperator.Size = New System.Drawing.Size(119, 20)
+        Me.txtOperator.TabIndex = 4
+        '
+        'TableLayoutPanel1
+        '
+        Me.TableLayoutPanel1.ColumnCount = 3
+        Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.55682!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.44318!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 94.0!))
+        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
+        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 491)
+        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
+        Me.TableLayoutPanel1.RowCount = 1
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(600, 35)
+        Me.TableLayoutPanel1.TabIndex = 0
+        '
+        'Cancel_Button
+        '
+        Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.Location = New System.Drawing.Point(519, 6)
+        Me.Cancel_Button.Name = "Cancel_Button"
+        Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
+        Me.Cancel_Button.TabIndex = 1
+        Me.Cancel_Button.Text = "Cancel"
+        '
+        'OK_Button
+        '
+        Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.OK_Button.Location = New System.Drawing.Point(415, 6)
+        Me.OK_Button.Name = "OK_Button"
+        Me.OK_Button.Size = New System.Drawing.Size(67, 23)
+        Me.OK_Button.TabIndex = 0
+        Me.OK_Button.Text = "OK"
+        '
+        'btnDelete
+        '
+        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.Location = New System.Drawing.Point(3, 6)
+        Me.btnDelete.Name = "btnDelete"
+        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
+        Me.btnDelete.TabIndex = 2
+        Me.btnDelete.Text = "Delete"
+        Me.btnDelete.UseVisualStyleBackColor = True
+        '
+        'txtComment
+        '
+        Me.txtComment.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtComment.Location = New System.Drawing.Point(102, 184)
+        Me.txtComment.Multiline = True
+        Me.txtComment.Name = "txtComment"
+        Me.txtComment.Size = New System.Drawing.Size(501, 91)
+        Me.txtComment.TabIndex = 18
         '
         'dlgMethod
         '
@@ -529,10 +517,10 @@ Partial Class dlgMethod
         Me.FlowLayoutPanel2.ResumeLayout(False)
         Me.FlowLayoutPanel2.PerformLayout()
         CType(Me.grdParams, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.mnuMembers.ResumeLayout(False)
         Me.FlowLayoutPanel3.ResumeLayout(False)
         Me.FlowLayoutPanel3.PerformLayout()
         Me.TableLayoutPanel1.ResumeLayout(False)
-        Me.mnuMembers.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -558,7 +546,6 @@ Partial Class dlgMethod
     Friend WithEvents FlowLayoutPanel2 As System.Windows.Forms.FlowLayoutPanel
     Friend WithEvents chkConst As System.Windows.Forms.CheckBox
     Friend WithEvents chkInline As System.Windows.Forms.CheckBox
-    Friend WithEvents btnInline As System.Windows.Forms.Button
     Friend WithEvents grdParams As ClassXmlProject.XmlDataGridView
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents FlowLayoutPanel3 As System.Windows.Forms.FlowLayoutPanel

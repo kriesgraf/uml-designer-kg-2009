@@ -56,7 +56,7 @@ Public Class dlgMethod
             .InitBindingRange(cmbRange, lblRange)
             .InitBindingMember(cmbMember, lblMember)
             .InitBindingModifier(chkConst)
-            .InitBindingCheckInline(chkInline, btnInline)
+            .InitBindingCheckInline(chkInline)
             .InitBindingBehaviour(cmbBehaviour, lblBehaviour)
             ' Must be initialized at the end because updates others controls
             .InitBindingImplementation(cmbImplementation, lblImplementation)
@@ -138,10 +138,6 @@ Public Class dlgMethod
         If grdParams.DeleteSelectedItems() Then
             m_xmlView.Updated = True
         End If
-    End Sub
-
-    Private Sub btnInline_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnInline.Click
-        m_xmlView.ShowDialogCodeInline()
     End Sub
 
     Private Sub mnuEditParam_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuEditParam.Click

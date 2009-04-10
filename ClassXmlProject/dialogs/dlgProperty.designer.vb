@@ -33,11 +33,13 @@ Partial Class dlgProperty
         Me.lblGetBy = New System.Windows.Forms.Label
         Me.cmbGetBy = New System.Windows.Forms.ComboBox
         Me.chkModifier = New System.Windows.Forms.CheckBox
+        Me.chkGetInline = New System.Windows.Forms.CheckBox
         Me.lblSetAccess = New System.Windows.Forms.Label
         Me.FlowLayoutPanel2 = New System.Windows.Forms.FlowLayoutPanel
         Me.cmbSetAccess = New System.Windows.Forms.ComboBox
         Me.lblSetBy = New System.Windows.Forms.Label
         Me.cmbSetby = New System.Windows.Forms.ComboBox
+        Me.chkSetInline = New System.Windows.Forms.CheckBox
         Me.Label9 = New System.Windows.Forms.Label
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
         Me.Cancel_Button = New System.Windows.Forms.Button
@@ -116,9 +118,9 @@ Partial Class dlgProperty
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.OK_Button.Location = New System.Drawing.Point(418, 7)
+        Me.OK_Button.Location = New System.Drawing.Point(416, 7)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(58, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(57, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
@@ -152,6 +154,7 @@ Partial Class dlgProperty
         Me.FlowLayoutPanel1.Controls.Add(Me.lblGetBy)
         Me.FlowLayoutPanel1.Controls.Add(Me.cmbGetBy)
         Me.FlowLayoutPanel1.Controls.Add(Me.chkModifier)
+        Me.FlowLayoutPanel1.Controls.Add(Me.chkGetInline)
         Me.FlowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FlowLayoutPanel1.Location = New System.Drawing.Point(104, 134)
         Me.FlowLayoutPanel1.Margin = New System.Windows.Forms.Padding(0)
@@ -197,6 +200,17 @@ Partial Class dlgProperty
         Me.chkModifier.Text = "Const"
         Me.chkModifier.UseVisualStyleBackColor = True
         '
+        'chkGetInline
+        '
+        Me.chkGetInline.AutoSize = True
+        Me.chkGetInline.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
+        Me.chkGetInline.Location = New System.Drawing.Point(249, 3)
+        Me.chkGetInline.Name = "chkGetInline"
+        Me.chkGetInline.Size = New System.Drawing.Size(115, 17)
+        Me.chkGetInline.TabIndex = 14
+        Me.chkGetInline.Text = "Custom inline code"
+        Me.chkGetInline.UseVisualStyleBackColor = True
+        '
         'lblSetAccess
         '
         Me.lblSetAccess.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
@@ -214,6 +228,7 @@ Partial Class dlgProperty
         Me.FlowLayoutPanel2.Controls.Add(Me.cmbSetAccess)
         Me.FlowLayoutPanel2.Controls.Add(Me.lblSetBy)
         Me.FlowLayoutPanel2.Controls.Add(Me.cmbSetby)
+        Me.FlowLayoutPanel2.Controls.Add(Me.chkSetInline)
         Me.FlowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FlowLayoutPanel2.Location = New System.Drawing.Point(104, 170)
         Me.FlowLayoutPanel2.Margin = New System.Windows.Forms.Padding(0)
@@ -248,6 +263,17 @@ Partial Class dlgProperty
         Me.cmbSetby.Size = New System.Drawing.Size(64, 21)
         Me.cmbSetby.TabIndex = 11
         '
+        'chkSetInline
+        '
+        Me.chkSetInline.AutoSize = True
+        Me.chkSetInline.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
+        Me.chkSetInline.Location = New System.Drawing.Point(190, 3)
+        Me.chkSetInline.Name = "chkSetInline"
+        Me.chkSetInline.Size = New System.Drawing.Size(115, 17)
+        Me.chkSetInline.TabIndex = 14
+        Me.chkSetInline.Text = "Custom inline code"
+        Me.chkSetInline.UseVisualStyleBackColor = True
+        '
         'Label9
         '
         Me.Label9.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
@@ -266,7 +292,7 @@ Partial Class dlgProperty
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 86.61972!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.38028!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 91.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -281,7 +307,7 @@ Partial Class dlgProperty
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.Cancel_Button.Location = New System.Drawing.Point(482, 7)
+        Me.Cancel_Button.Location = New System.Drawing.Point(479, 7)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -526,5 +552,7 @@ Partial Class dlgProperty
     Friend WithEvents chkOverridable As System.Windows.Forms.CheckBox
     Friend WithEvents chkMember As System.Windows.Forms.CheckBox
     Friend WithEvents chkAttribute As System.Windows.Forms.CheckBox
+    Friend WithEvents chkGetInline As System.Windows.Forms.CheckBox
+    Friend WithEvents chkSetInline As System.Windows.Forms.CheckBox
 
 End Class

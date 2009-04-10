@@ -21,7 +21,6 @@ Public Class XmlMethodSpec
     End Enum
 
     Private m_xmlReturnValue As XmlTypeVarSpec
-    Private m_xmlInline As XmlCodeInline
 
 #End Region
 
@@ -91,14 +90,6 @@ Public Class XmlMethodSpec
     End Property
 
     <CategoryAttribute("XmlComponent"), _
-    DescriptionAttribute("Component inline")> _
-    Public ReadOnly Property CodeInline() As XmlCodeInline
-        Get
-            Return m_xmlInline
-        End Get
-    End Property
-
-    <CategoryAttribute("XmlComponent"), _
     DescriptionAttribute("Component return value")> _
     Public ReadOnly Property ReturnValue() As XmlTypeVarSpec
         Get
@@ -155,7 +146,7 @@ Public Class XmlMethodSpec
     End Property
 
     <CategoryAttribute("UML design"), _
-    DescriptionAttribute("Inline code")> _
+   DescriptionAttribute("C++ custom inline code")> _
     Public Property Inline() As Boolean
         Get
             Return (CheckAttribute("inline", "yes", "no"))
@@ -370,30 +361,6 @@ Public Class XmlMethodSpec
                 Dim nodeType As XmlNode = GetNode("return/type")
                 m_xmlReturnValue = TryCast(CreateDocument(nodeType, bLoadChildren), XmlTypeVarSpec)
             End If
-
-            Dim nodeInline As XmlNode
-
-            If TestNode("inline") = False And m_bCreateNodeNow Then
-                nodeInline = CreateAppendNode("inline")
-            Else
-                nodeInline = GetNode("inline")
-            End If
-
-            If TestNode("inline/body[@type='method']") Then
-
-                m_xmlInline = TryCast(CreateDocument(GetNode("inline/body[@type='method']"), bLoadChildren), XmlCodeInline)
-
-            ElseIf m_bCreateNodeNow Then
-
-                m_xmlInline = TryCast(MyBase.CreateDocument("body", MyBase.Document, bLoadChildren), XmlCodeInline)
-
-                With m_xmlInline
-                    .m_bCreateNodeNow = True
-                    .Kind = "method"
-                    .m_bCreateNodeNow = False
-                    nodeInline.AppendChild(.Node)
-                End With
-            End If
         Catch ex As Exception
             Throw ex
         End Try
@@ -405,10 +372,6 @@ Public Class XmlMethodSpec
         Select Case nodeXml.Name
             Case "comment"
                 before = GetNode("param")
-
-                If before Is Nothing Then
-                    before = GetNode("inline")
-                End If
 
             Case "exception"
                 before = GetNode("return")
@@ -429,7 +392,7 @@ Public Class XmlMethodSpec
                 End If
 
             Case "param"
-                before = GetNode("inline")
+                before = Nothing
         End Select
 
         If before Is Nothing Then
