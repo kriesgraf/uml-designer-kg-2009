@@ -78,10 +78,12 @@ Public Class XmlExportSpec
         Return Nothing
     End Function
 
-    Protected Friend Sub ReplaceReference(ByVal destination As XmlComponent)
-        Dim origin As XmlNode = FindNode(destination)
+    Protected Friend Sub ReplaceReference(ByVal destination As XmlNodeListView)
+        Dim origin As XmlNode = FindNode(destination)   ' If origin is nothing append at the end of list
         Me.Node.InsertBefore(Me.Document.ImportNode(destination.Node, True), origin)
-        RemoveNode(origin)
+        If destination.Info Then
+            RemoveNode(origin)
+        End If
     End Sub
 
     Protected Friend Function RemoveReferences() As Boolean
