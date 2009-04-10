@@ -1,7 +1,6 @@
 <!--This DTD document allows to design classes throw UML modelisation-->
 <!--  Version 1.2 -->
 <!-- Predefined entities -->
-<!ENTITY % display "display (yes | no) #IMPLIED" >
 <!ENTITY % range "public | private | protected" >
 <!ENTITY % modifier "modifier (var | const) #REQUIRED" >
 <!ENTITY % by "by (val|ref) #REQUIRED" >
@@ -28,7 +27,6 @@
 <!ELEMENT typedef (%declaration;)>
 <!ATTLIST typedef
           name %name; #REQUIRED
-          %display;
           %id; >
 
 <!--Enumerate value-->
@@ -72,19 +70,16 @@
 <!ELEMENT param (%declaration;)>
 <!ATTLIST param
           %num-id;
-          %display;
           name %name; #REQUIRED>
           
 <!ELEMENT exception EMPTY>
 <!ATTLIST exception
-         %display;
          %idref; >
 
 
 <!--Method declaration-->
 <!ELEMENT method (exception*,return?,comment,param*,inline?)>
 <!ATTLIST method
-          %display;
           %num-id;
           inline (yes | no) "no"
           modifier (var | const) "var"
@@ -110,6 +105,7 @@
 <!--Property read access-->
 <!ELEMENT get EMPTY>
 <!ATTLIST get
+          inline (yes | no) "no"
           range (no|protected|public) #REQUIRED
           %by;
           %modifier;>
@@ -117,13 +113,13 @@
 <!--Property write access-->
 <!ELEMENT set EMPTY>
 <!ATTLIST set
+          inline (yes | no) "no"
           range (no|protected|public) #REQUIRED
           %by; >
 
 <!--Property declaration-->
 <!ELEMENT property (%declaration;,get,set)>
 <!ATTLIST property
-           %display;
            %num-id;
            attribute (no|yes) "yes"
            overridable (no|yes) "no"
@@ -136,14 +132,12 @@
 <!--Super-class implementation-->
 <!ELEMENT import (export|body)? >
 <!ATTLIST import
-          %display;
           visibility (common | package) #REQUIRED
           param CDATA #IMPLIED
           name CDATA #REQUIRED>
 
 <!ELEMENT export (reference|interface)* >
 <!ATTLIST export
-          %display;
           source CDATA #IMPLIED
           name CDATA #IMPLIED>
 
@@ -177,7 +171,6 @@
 
 <!ELEMENT collaboration EMPTY>
 <!ATTLIST collaboration
-          %display;
           %idref;>
 
 <!ELEMENT model (#PCDATA) >
@@ -190,8 +183,7 @@
 <!ATTLIST class
           %id;
           name %name; #REQUIRED
-		  %display;
-          visibility (common | package) #REQUIRED
+		  visibility (common | package) #REQUIRED
           implementation (simple | final | virtual | root | abstract | exception | container) #REQUIRED
           destructor   (%constructor;) #REQUIRED
           inline   (none | constructor | destructor | both) #REQUIRED
@@ -201,7 +193,6 @@
 <!--Relationship declaration-->
 <!ELEMENT relationship (father,child)>
 <!ATTLIST relationship
-          %display;
           %id;
           action CDATA #REQUIRED
           type (comp|aggreg|assembl) #REQUIRED>
@@ -242,7 +233,6 @@
 <!--Package declaration-->
 <!ELEMENT package (comment,import*,typedef*,class*,package*)>
 <!ATTLIST package
-          %display;
           %id;
           folder CDATA #IMPLIED
           name %name; "unique">
@@ -258,8 +248,7 @@
 <!--Root element-->
 <!ELEMENT root (generation,comment,import*,class*,package*,relationship*)>
 <!ATTLIST root
-		      version CDATA #FIXED "1.3"
-          %display;
+		  version CDATA #FIXED "1.3"
           name CDATA #REQUIRED>
 
 
