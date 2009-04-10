@@ -15,6 +15,7 @@ Imports ClassXmlProject.UmlCodeGenerator
 
 Public Class XmlProjectTools
 
+#Region "Class declarations"
     Public Shared DEBUG_COMMANDS_ACTIVE As Boolean = False
 
     Public Const cstMsgYesNoExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
@@ -79,6 +80,10 @@ Public Class XmlProjectTools
         Dim ilevel As Integer
         Dim strIdref As String
     End Structure
+
+#End Region
+
+#Region "Public shared methods"
 
     Public Shared Function CreateNewProject() As String
         Return "<?xml version='1.0' encoding='utf-8'?>" + vbCrLf + _
@@ -791,12 +796,6 @@ Public Class XmlProjectTools
         Dim xmlresult As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, szElement, "")
         node.AppendChild(xmlresult)
         Return xmlresult
-    End Function
-
-    Private Shared Function CreateAppendCollaboration(ByVal node As XmlNode) As XmlNode
-        Dim collaboration As XmlNode = CreateNode(node, "collaboration")
-        Dim parent As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(node)
-        Return parent.AppendNode(collaboration)
     End Function
 
     Public Shared Sub AddAttributeValue(ByRef node As XmlNode, ByVal strAttribute As String, Optional ByVal strValue As String = "")
@@ -1742,6 +1741,53 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
+    Public Shared Function GetValidFilename(ByRef filename As String) As Boolean
+        Dim bResult As Boolean = False
+        Try
+
+            If filename Is Nothing Then
+                filename = "ValidFilename"
+                Return True
+            End If
+
+            Dim index As Integer = InStr(filename, "/")
+            If index > 0 Then
+                bResult = True
+                filename = filename.Substring(0, index - 1) + "-" + filename.Substring(index)
+            End If
+
+            index = InStr(filename, "\")
+            If index > 0 Then
+                bResult = True
+                filename = filename.Substring(0, index - 1) + "-" + filename.Substring(index)
+            End If
+
+            ' Determines if there are bad characters in the name.
+            For Each badChar As Char In System.IO.Path.GetInvalidPathChars
+                index = InStr(filename, badChar)
+                If index > 0 Then
+                    bResult = True
+                    filename = filename.Substring(0, index - 1) + "-" + filename.Substring(index)
+                End If
+            Next
+        Catch ex As Exception
+            Throw ex
+        End Try
+
+        ' The name passes basic validation.
+        Return bResult
+    End Function
+
+#End Region
+
+#Region "Private shared methods"
+
+    Private Shared Function CreateAppendCollaboration(ByVal node As XmlNode) As XmlNode
+        Dim collaboration As XmlNode = CreateNode(node, "collaboration")
+        Dim parent As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(node)
+        Return parent.AppendNode(collaboration)
+    End Function
+
     Private Shared Sub FindTemplateClasses(ByVal document As XmlDocument)
         Try
             Dim i As Integer
@@ -2046,7 +2092,10 @@ Public Class XmlProjectTools
             child = document.SelectSingleNode("//generation")
             new_child = document.CreateNode(XmlNodeType.Element, "generation", "")
 
-            Dim strProjectPath As String = GetProjectPath(child.FirstChild.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
+            Dim strProjectPath As String = "c:\" 'GetProjectPath(child.FirstChild.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
+            If child.FirstChild IsNot Nothing Then
+                strProjectPath = GetProjectPath(child.FirstChild.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
+            End If
             AddAttributeValue(new_child, "language", CStr(CType(eLang, Integer)))
             AddAttributeValue(new_child, "destination", strProjectPath)
             child.ParentNode.ReplaceChild(new_child, child)
@@ -2122,12 +2171,19 @@ Public Class XmlProjectTools
                 Case "param"
 
                     method = parent.ParentNode
+                    Dim classNode As XmlNode = method.ParentNode
 
                     If GetName(method) = "" Then
-                        strResult = GetFullpathDescription(GetNode(method, "parent::class"), eTag) + strSeparator + "<Constructor>, argument " + GetName(method)
+                        strResult = GetFullpathDescription(classNode, eTag) + strSeparator + "<Constructor>, argument " + GetName(method)
                     Else
-                        strResult = GetFullpathDescription(GetNode(method, "parent::class"), eTag) + strSeparator + GetName(method) + ", argument " + GetName(parent)
+                        strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", argument " + GetName(parent)
                     End If
+
+                Case "return"
+
+                    method = parent.ParentNode
+                    Dim classNode As XmlNode = method.ParentNode
+                    strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", return value"
 
                 Case "property"
 
@@ -2144,4 +2200,6 @@ Public Class XmlProjectTools
         End Try
         Return strResult
     End Function
+
+#End Region
 End Class
