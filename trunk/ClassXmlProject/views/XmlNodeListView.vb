@@ -357,6 +357,28 @@ Public Class XmlNodeListView
         Return False
     End Function
 
+    Public Shared Function GetListReferences(ByVal component As XmlComponent, ByRef listResult As ArrayList) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim strName As String = component.Name
+            Dim strID As String = GetID(component.Node)
+            Dim strQuery As String = "//*[@name='" + strName + "' and @id!='" + strID + "']"
+
+            If listResult Is Nothing Then
+                Dim listNode As XmlNodeList = component.SelectNodes(strQuery)
+                Return (listNode.Count > 0)
+            End If
+
+            AddNodeList(component, listResult, strQuery)
+            Return (listResult.Count > 0)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
+    End Function
+
+
     Private Shared Sub AddSimpleTypesList(ByVal myList As ArrayList, ByVal eTag As ELanguage)
         Try
             Dim doc As New XmlDocument

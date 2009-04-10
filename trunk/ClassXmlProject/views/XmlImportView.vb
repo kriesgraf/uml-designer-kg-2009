@@ -177,19 +177,8 @@ Public Class XmlImportView
     Protected Friend Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim fen As New dlgRedundancy
-            fen.Document = Me
-            fen.Node = component.Node
-            If CType(fen.Document, XmlRefRedundancyView).GetListReferences IsNot Nothing Then
-                fen.Text = "Check redundancies..."
-                fen.Message = component.Name + " is redundant with:"
-                fen.ShowDialog()
-                If CType(fen.Tag, Boolean) = True Then
-                    CheckReferences()
-                    bResult = True
-                End If
-            Else
-                MsgBox("No redundancies", MsgBoxStyle.Exclamation)
+            If component IsNot Nothing Then
+                dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node, component.Name + " is redundant with:", True)
             End If
         Catch ex As Exception
             Throw ex
@@ -217,7 +206,39 @@ Public Class XmlImportView
         Return bResult
     End Function
 
-    Public Overloads Function RemoveAllReferences() As Boolean
+    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Select Case removeNode.NodeName
+                Case "reference", "interface"
+                    If SelectNodes(dlgDependencies.GetQuery(removeNode)).Count > 0 Then
+
+                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
+                                  vbCrLf + "Do you want to proceed", _
+                                    cstMsgYesNoQuestion, _
+                                    removeNode.Name) = MsgBoxResult.Yes _
+                        Then
+                            Dim bIsEmpty As Boolean = False
+                            bResult = dlgDependencies.ShowDependencies(removeNode, bIsEmpty, "Remove references to " + removeNode.Name)
+                            If bIsEmpty = False Then
+                                Return bResult
+                            End If
+                        Else
+                            Return False
+                        End If
+                    End If
+                    bResult = MyBase.RemoveComponent(removeNode)
+
+                Case "export"
+                    bResult = MyBase.RemoveComponent(removeNode)
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Function RemoveAllReferences() As Boolean
         Dim bResult As Boolean = False
         Try
             If RemoveComponent(m_xmlExport) Then
@@ -230,7 +251,7 @@ Public Class XmlImportView
         Return bResult
     End Function
 
-    Public Overloads Function RemoveAllReferences(ByVal list As ListBox) As Boolean
+    Public Function RemoveAllReferences(ByVal list As ListBox) As Boolean
         Dim bResult As Boolean = False
         Try
             If RemoveComponent(m_xmlExport) Then

@@ -29,6 +29,24 @@ Public Class dlgRedundancy
         End Set
     End Property
 
+    Public Shared Function VerifyRedundancy(ByVal component As XmlComponent, ByVal strMessage1 As String, _
+                                            ByVal child As XmlNode, ByVal strMessage2 As String, _
+                                            Optional ByVal bDisplayEmptyList As Boolean = False) As Boolean
+        If bDisplayEmptyList = False Then
+            If XmlNodeListView.GetListReferences(component, Nothing) = False Then
+                Return False
+            End If
+        End If
+        Dim fen As New dlgRedundancy
+        fen.Document = component
+        fen.Node = child
+        fen.Text = strMessage1
+        fen.Message = strMessage2
+        fen.ShowDialog()
+        Return (CType(fen.Tag, Boolean))
+    End Function
+
+
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         If m_xmlView.UpdateValues(lsbRedundantClasses) Then
             Me.Tag = True
