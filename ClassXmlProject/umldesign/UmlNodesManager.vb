@@ -60,9 +60,11 @@ Public Class UmlNodesManager
 
             ' Remove redundant imported references
             list = import.SelectNodes("//import/export/*")
+            Dim strName As String
 
             For Each child In list
-                VerifyRedundancy(component, "project/package" + component.Name, child, "file:" + vbCrLf + strFilename)
+                strName = GetName(child.ParentNode.ParentNode)
+                dlgRedundancy.VerifyRedundancy(component, "Find redundancies in import " + strName + "...", child, GetName(child) + " is redundant with:")
             Next child
             observer.Increment(1)
 
@@ -70,7 +72,8 @@ Public Class UmlNodesManager
             list = component.SelectNodes("//import/export/*")
 
             For Each child In list
-                VerifyRedundancy(import, "file:" + vbCrLf + strFilename + vbCrLf, child, "project/package " + component.Name)
+                strName = GetName(child.ParentNode.ParentNode)
+                dlgRedundancy.VerifyRedundancy(import, "Find redundancies in import " + strName + "...", child, GetName(child) + " is redundant with:")
             Next child
             observer.Increment(1)
 
@@ -98,133 +101,219 @@ Public Class UmlNodesManager
         Return False
     End Function
 
-    Public Shared Sub ExportNodes(ByVal node As XmlNode, ByVal strFilename As String, _
+    Public Shared Sub ExportNodes(ByVal fen As Form, ByVal node As XmlNode, ByVal strFilename As String, _
                                   ByVal strFullpathPackage As String, ByVal eLang As ELanguage)
-        Dim source As New XmlDocument
-        Dim strXML As String
-        Dim strComment As String
 
-        strComment = GetNodeString(node, "comment/@brief")
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+        Dim oldCursor As Cursor = fen.Cursor
+        Try
+            Dim source As New XmlDocument
+            Dim strXML As String
+            Dim strComment As String
 
-        Dim strPath As String = GetProjectPath(strFilename)
-        If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
-        strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
-        strXML += GetDtdDeclaration("root")
+            fen.Cursor = Cursors.WaitCursor
+            observer.Minimum = 0
+            observer.Maximum = 8
+            observer.ProgressBarVisible = True
 
-        strXML += vbCrLf + "<root name='" + strFullpathPackage + "'>"
-        strXML += vbCrLf + "<generation destination='c:\' language='0'/>"
-        strXML += vbCrLf + "<comment brief='" + strComment + "'/>"
-        strXML += vbCrLf + "<import name='" + GetName(node) + "_unreferenced' param='' visibility='package'>"
-        strXML += vbCrLf + "<export name='" + GetName(node) + "_unreferenced'>"
-        strXML += vbCrLf + "</export>"
-        strXML += vbCrLf + "</import>"
-        strXML += vbCrLf + "</root>" + vbCrLf
+            strComment = GetNodeString(node, "comment/@brief")
 
-        source.LoadXml(strXML)
+            Dim strPath As String = GetProjectPath(strFilename)
+            If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
+            observer.Increment(1)
 
-        Dim child As XmlNode
-        Dim listID As New SortedList
+            strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
+            strXML += GetDtdDeclaration("root")
 
-        child = node.CloneNode(True)
+            strXML += vbCrLf + "<root name='" + strFullpathPackage + "'>"
+            strXML += vbCrLf + "<generation destination='c:\' language='0'/>"
+            strXML += vbCrLf + "<comment brief='" + strComment + "'/>"
+            strXML += vbCrLf + "<import name='" + GetName(node) + "_unreferenced' param='' visibility='package'>"
+            strXML += vbCrLf + "<export name='" + GetName(node) + "_unreferenced'>"
+            strXML += vbCrLf + "</export>"
+            strXML += vbCrLf + "</import>"
+            strXML += vbCrLf + "</root>" + vbCrLf
 
-        GetListDescendant(child, listID, "collaboration/@idref")
-        ExportRelationships(source, node, listID)
+            source.LoadXml(strXML)
+            observer.Increment(1)
 
-        AddNodesAndLinkUnreferencedNodes(source, node, child, eLang)
+            Dim child As XmlNode
+            Dim listID As New SortedList
 
-        child = GetNode(source, "/root/import/export")
-        If child.HasChildNodes = False Then
-            RemoveNode(child.ParentNode)
-        End If
-        source.Save(strFilename)
+            child = node.CloneNode(True)
+            observer.Increment(1)
+
+            GetListDescendant(child, listID, "collaboration/@idref")
+            observer.Increment(1)
+
+            ExportRelationships(source, node, listID)
+            observer.Increment(1)
+
+            AddNodesAndLinkUnreferencedNodes(source, node, child, eLang)
+            observer.Increment(1)
+
+            child = GetNode(source, "/root/import/export")
+            If child.HasChildNodes = False Then
+                RemoveNode(child.ParentNode)
+            End If
+            observer.Increment(1)
+
+            source.Save(strFilename)
+            observer.Increment(1)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            fen.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
     End Sub
 
-    Public Shared Sub ExportClassReferences(ByVal node As XmlNode, ByVal strFilename As String, _
+    Public Shared Sub ExportClassReferences(ByVal fen As Form, ByVal node As XmlNode, ByVal strFilename As String, _
                                             ByVal strFullpathPackage As String, ByVal eLang As ELanguage)
+        Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
         Try
             Dim source As New XmlDocument
             Dim strXML As String
             Dim index As Integer = 1
             Dim strPath As String = GetProjectPath(strFilename)
 
+            fen.Cursor = Cursors.WaitCursor
+            observer.ProgressBarVisible = True
+            observer.Minimum = 0
+            observer.Maximum = 5
+
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
+            observer.Increment(1)
+
             strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
             strXML += GetDtdDeclaration("export")
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>" + vbCrLf
-            strXML += vbCrLf + ExportElementClass(node, "")
+            strXML += vbCrLf + ExportElementClass(observer, node, "")    ' Increment observer
             strXML += vbCrLf + "</export>"
 
             source.LoadXml(strXML)
+            observer.Increment(1)
 
             LinkUnreferencedNodes(source, node, eLang)
+            observer.Increment(1)
 
             source.Save(strFilename)
+            observer.Increment(1)
 
         Catch ex As Exception
             Throw ex
+        Finally
+            fen.Cursor = oldCursor
+            observer.ProgressBarVisible = False
         End Try
     End Sub
 
-    Public Shared Sub ExportPackageReferences(ByVal node As XmlNode, ByVal strFilename As String, _
+    Public Shared Sub ExportPackageReferences(ByVal fen As Form, ByVal node As XmlNode, ByVal strFilename As String, _
                                               ByVal strFullpathPackage As String, ByVal eLang As ELanguage)
+        Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
         Try
             Dim source As New XmlDocument
             Dim strXML As String
             Dim index As Integer = 1
             Dim strPath As String = GetProjectPath(strFilename)
 
+            fen.Cursor = Cursors.WaitCursor
+            observer.ProgressBarVisible = True
+            observer.Minimum = 0
+            observer.Maximum = 5 + node.SelectNodes("descendant::package | descendant::class").Count
+
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
+            observer.Increment(1)
+
             strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
             strXML += GetDtdDeclaration("export")
 
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>" + vbCrLf
-
-            strXML += vbCrLf + ExportElementPackage(node, "", eLang)
-
+            strXML += vbCrLf + ExportElementPackage(observer, node, "", eLang)    ' Increment observer
             strXML += vbCrLf + "</export>"
 
             source.LoadXml(strXML)
+            observer.Increment(1)
 
             LinkUnreferencedNodes(source, node, eLang)
+            observer.Increment(1)
 
             source.Save(strFilename)
+            observer.Increment(1)
 
         Catch ex As Exception
             Throw ex
+        Finally
+            fen.Cursor = oldCursor
+            observer.ProgressBarVisible = False
         End Try
     End Sub
 
-    Public Shared Sub ExportTypedefReferences(ByVal node As XmlNode, ByVal strFilename As String, _
+    Public Shared Sub ExportTypedefReferences(ByVal fen As Form, ByVal node As XmlNode, ByVal strFilename As String, _
                                               ByVal strFullpathPackage As String)
+        Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
         Try
             Dim source As New XmlDocument
             Dim strXML As String
             Dim strPath As String = GetProjectPath(strFilename)
 
+            fen.Cursor = Cursors.WaitCursor
+            observer.ProgressBarVisible = True
+            observer.Minimum = 0
+            observer.Maximum = 4
+
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
+            observer.Increment(1)
+
             strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
             strXML += GetDtdDeclaration("export")
 
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>"
             strXML += vbCrLf + ExportElementTypedef(node.ParentNode, node, "")
             strXML += vbCrLf + "</export>"
+            observer.Increment(1)
+
             'Debug.Print(strXML)
             source.LoadXml(strXML)
+            observer.Increment(1)
+
             source.Save(strFilename)
+            observer.Increment(1)
 
         Catch ex As Exception
             Throw ex
+        Finally
+            fen.Cursor = oldCursor
+            observer.ProgressBarVisible = False
         End Try
     End Sub
 
-    Public Shared Sub ReExport(ByVal node As XmlNode, ByVal strFilename As String, ByVal strFullpathPackage As String)
+    Public Shared Sub ReExport(ByVal fen As Form, ByVal node As XmlNode, ByVal strFilename As String, ByVal strFullpathPackage As String)
+
+        Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
         Try
             Dim source As New XmlDocument
             'Dim typedef As XmlNode
             Dim strXML As String
             Dim strPath As String = GetProjectPath(strFilename)
 
+            fen.Cursor = Cursors.WaitCursor
+            observer.ProgressBarVisible = True
+            observer.Minimum = 0
+            observer.Maximum = 5
+
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
+            observer.Increment(1)
+
             strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
             strXML += GetDtdDeclaration("export")
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>"
@@ -233,33 +322,50 @@ Public Class UmlNodesManager
                 strXML += vbCrLf + ref.OuterXml
             Next ref
             strXML += vbCrLf + "</export>"
+            observer.Increment(1)
+
             'Debug.Print(strXML)
             source.LoadXml(strXML)
+            observer.Increment(1)
+
             Dim list As XmlNodeList = source.SelectNodes("//collaboration")
             For Each child As XmlNode In list
                 child.ParentNode.RemoveChild(child)
             Next child
+            observer.Increment(1)
 
             source.Save(strFilename)
+            observer.Increment(1)
 
         Catch ex As Exception
             Throw ex
+        Finally
+            fen.Cursor = oldCursor
+            observer.ProgressBarVisible = False
         End Try
     End Sub
 
-    Public Shared Function ExtractReferences(ByVal node As XmlNode, ByVal strFullpathPackage As String, _
-                                             ByVal eLang As ELanguage) As Boolean
+    Public Shared Function ExtractReferences(ByVal fen As Form, ByVal node As XmlNode, _
+                                             ByVal strFullpathPackage As String, ByVal eLang As ELanguage) As Boolean
+
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+        Dim oldCursor As Cursor = fen.Cursor
         Dim bResult As Boolean = False
         Try
             Dim parent As XmlNode = node.ParentNode
             Dim xmlParent As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(parent)
 
+            observer.ProgressBarVisible = True
+            observer.Minimum = 0
+
             Dim strXML As String = "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>"
             Select Case node.Name
                 Case "class"
-                    strXML += vbCrLf + ExportElementClass(node, "")
+                    observer.Maximum = 2
+                    strXML += vbCrLf + ExportElementClass(observer, node, "")
                 Case "package"
-                    strXML += vbCrLf + ExportElementPackage(node, "", eLang)
+                    observer.Maximum = 1 + node.SelectNodes("descendant::package | descendant::class").Count
+                    strXML += vbCrLf + ExportElementPackage(observer, node, "", eLang)
             End Select
             strXML += vbCrLf + "</export>"
 
@@ -269,8 +375,13 @@ Public Class UmlNodesManager
                 parent.RemoveChild(node)
                 bResult = True
             End If
+            observer.Increment(1)
+
         Catch ex As Exception
             Throw ex
+        Finally
+            fen.Cursor = oldCursor
+            observer.ProgressBarVisible = False
         End Try
         Return bResult
     End Function
@@ -282,10 +393,12 @@ Public Class UmlNodesManager
         Return CType(fen.Tag, Boolean)
     End Function
 
-    Private Shared Function ExportElementPackage(ByVal node As XmlNode, ByVal strCurrentPackage As String, _
+    Private Shared Function ExportElementPackage(ByVal observer As InterfProgression, ByVal node As XmlNode, ByVal strCurrentPackage As String, _
                                               ByVal eLang As ELanguage) As String
         Dim strXML As String = ""
         Try
+            observer.Increment(1)
+
             If strCurrentPackage = "" Then
                 strCurrentPackage = GetName(node)
             Else
@@ -293,9 +406,9 @@ Public Class UmlNodesManager
             End If
             For Each current As XmlNode In node.SelectNodes("class | package")
                 If current.Name = "class" Then
-                    strXML += vbCrLf + ExportElementClass(current, strCurrentPackage)
+                    strXML += vbCrLf + ExportElementClass(observer, current, strCurrentPackage)
                 Else
-                    strXML += vbCrLf + ExportElementPackage(current, strCurrentPackage, eLang)
+                    strXML += vbCrLf + ExportElementPackage(observer, current, strCurrentPackage, eLang)
                 End If
             Next current
         Catch ex As Exception
@@ -304,9 +417,13 @@ Public Class UmlNodesManager
         Return strXML
     End Function
 
-    Private Shared Function ExportElementClass(ByVal node As XmlNode, ByVal strCurrentPackage As String) As String
+    Private Shared Function ExportElementClass(ByVal observer As InterfProgression, ByVal node As XmlNode, ByVal strCurrentPackage As String) As String
+
         Dim strXML As String = ""
+
         Try
+            observer.Increment(1)
+
             Dim strImplementation As String = GetAttributeValue(node, "implementation")
             Dim strName As String = GetName(node)
 
@@ -321,7 +438,9 @@ Public Class UmlNodesManager
                     Dim iContainer = node.SelectNodes("model").Count
                     strXML += " container='" + CStr(iContainer) + "' id='" + GetID(node) + "'/>"
 
-                    For Each typedef As XmlNode In SelectNodes(node, "typedef[variable/@range='public']")
+                    Dim list As XmlNodeList = SelectNodes(node, "typedef[variable/@range='public']")
+
+                    For Each typedef As XmlNode In list
                         strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
                     Next typedef
 
@@ -378,10 +497,6 @@ Public Class UmlNodesManager
             Dim attrib As XmlAttribute = member.Node.Attributes("overrides")
             If attrib IsNot Nothing Then
                 member.Node.Attributes.Remove(attrib)
-            End If
-            Dim node As XmlNode = member.Node.SelectSingleNode("inline")
-            If node IsNot Nothing Then
-                member.Node.RemoveChild(node)
             End If
             member.InterfaceMember = True
             strXML += vbCrLf + member.OuterXml
@@ -527,20 +642,6 @@ Public Class UmlNodesManager
             End If
         Next
     End Sub
-
-    Private Shared Function VerifyRedundancy(ByVal component As XmlComponent, ByVal strMessage1 As String, ByVal child As XmlNode, ByVal strMessage2 As String) As Boolean
-        Dim bResult As Boolean = False
-        Dim fen As New dlgRedundancy
-        fen.Document = component
-        fen.Node = child
-        If CType(fen.Document, XmlRefRedundancyView).GetListReferences IsNot Nothing Then
-            fen.Text = "Check redundancies..."
-            fen.Message = "In " + strMessage1 + " found redundancy with " + strMessage2
-            fen.ShowDialog()
-            bResult = (CType(fen.Tag, Boolean))
-        End If
-        Return bResult
-    End Function
 #End If
 
     Public Shared Function RenameType(ByVal eLang As ELanguage, ByRef nodeDoxygen As XmlNode) As Boolean

@@ -23,19 +23,23 @@ Public Class MDIParent
 
     Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
         Set(ByVal value As Integer)
-            Me.strpProgressBar.Maximum = value * 10
+            Me.strpProgressBar.Maximum = value
+            Debug.Print("Maximum=" + value.ToString)
         End Set
     End Property
 
     Public WriteOnly Property Minimum() As Integer Implements InterfProgression.Minimum
         Set(ByVal value As Integer)
             Me.strpProgressBar.Minimum = value
+            Me.strpProgressBar.Value = value
+            Debug.Print("Minimum=" + value.ToString)
         End Set
     End Property
 
     Public WriteOnly Property ProgressBarVisible() As Boolean Implements InterfProgression.ProgressBarVisible
         Set(ByVal value As Boolean)
             Me.strpProgressBar.Visible = value
+            Application.DoEvents()  ' To ose time to dispatch event
         End Set
     End Property
 #End Region
@@ -186,7 +190,9 @@ Public Class MDIParent
     End Sub
 
     Public Sub Increment(ByVal value As Integer) Implements InterfProgression.Increment
-        Me.strpProgressBar.Increment(value * 10)
+        Me.strpProgressBar.Increment(value)
+        Application.DoEvents()  ' To lose time to dispatch event
+        Debug.Print("Step=" + Me.strpProgressBar.Value.ToString)
         System.Threading.Thread.Sleep(50)
     End Sub
 #End Region
