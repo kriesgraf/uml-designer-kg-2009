@@ -84,6 +84,7 @@ Partial Class dlgRedundancy
         Me.lblMessage.Size = New System.Drawing.Size(377, 51)
         Me.lblMessage.TabIndex = 2
         Me.lblMessage.Text = "Label1"
+        Me.lblMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'TableLayoutPanel2
         '

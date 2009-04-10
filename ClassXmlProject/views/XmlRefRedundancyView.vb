@@ -40,9 +40,9 @@ Public Class XmlRefRedundancyView
 
     Public Sub LoadNodes(ByVal listbox As ListBox)
         Try
-            Dim listResult As ArrayList = GetListReferences()
-
-            If listResult IsNot Nothing Then
+            Dim listResult As New ArrayList
+            If XmlNodeListView.GetListReferences(Me, listResult) _
+            Then
                 listbox.SelectionMode = SelectionMode.One
                 listbox.DisplayMember = "FullUmlPathName"
                 listbox.ValueMember = "Id"
@@ -55,30 +55,4 @@ Public Class XmlRefRedundancyView
             Throw ex
         End Try
     End Sub
-
-    Public Function GetListReferences() As ArrayList
-        Dim listResult As ArrayList = Nothing
-        Try
-            Dim strName As String = Me.Name
-            Dim strID As String = XmlProjectTools.GetID(Me.Node)
-
-            Dim listNodes As XmlNodeList = SelectNodes("//*[not(self::root) and @name='" + strName + "' and @id!='" + strID + "']")
-
-            If listNodes.Count > 0 Then
-                listResult = New ArrayList
-
-                Dim iterator As IEnumerator = listNodes.GetEnumerator()
-                iterator.Reset()
-
-                While iterator.MoveNext()
-                    Dim xmlcpnt As New XmlNodeListView(CType(iterator.Current, XmlNode))
-                    xmlcpnt.Tag = Me.Tag
-                    listResult.Add(xmlcpnt)
-                End While
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return listResult
-    End Function
 End Class
