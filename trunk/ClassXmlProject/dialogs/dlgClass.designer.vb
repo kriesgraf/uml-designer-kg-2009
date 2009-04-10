@@ -99,8 +99,6 @@ Partial Class dlgClass
         Me.cmbVisibility = New System.Windows.Forms.ComboBox
         Me.cmbImplementation = New System.Windows.Forms.ComboBox
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel
-        Me.btnConstructor = New System.Windows.Forms.Button
-        Me.btnDestructor = New System.Windows.Forms.Button
         Me.chkPartial = New System.Windows.Forms.CheckBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.TableLayoutPanel3.SuspendLayout()
@@ -403,39 +401,39 @@ Partial Class dlgClass
         '
         Me.mnuRelations.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddRelation, Me.EditRelation, Me.RelationProperties, Me.ToolStripSeparator4, Me.DeleteRelation})
         Me.mnuRelations.Name = "mnuRelations"
-        Me.mnuRelations.Size = New System.Drawing.Size(153, 120)
+        Me.mnuRelations.Size = New System.Drawing.Size(142, 98)
         '
         'AddRelation
         '
         Me.AddRelation.Image = Global.ClassXmlProject.My.Resources.Resources.network
         Me.AddRelation.Name = "AddRelation"
-        Me.AddRelation.Size = New System.Drawing.Size(152, 22)
+        Me.AddRelation.Size = New System.Drawing.Size(141, 22)
         Me.AddRelation.Text = "Add"
         '
         'EditRelation
         '
         Me.EditRelation.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
         Me.EditRelation.Name = "EditRelation"
-        Me.EditRelation.Size = New System.Drawing.Size(152, 22)
+        Me.EditRelation.Size = New System.Drawing.Size(141, 22)
         Me.EditRelation.Text = "Edit..."
         '
         'RelationProperties
         '
         Me.RelationProperties.Name = "RelationProperties"
-        Me.RelationProperties.Size = New System.Drawing.Size(152, 22)
+        Me.RelationProperties.Size = New System.Drawing.Size(141, 22)
         Me.RelationProperties.Text = "Parameters..."
         Me.RelationProperties.Visible = False
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(149, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(138, 6)
         '
         'DeleteRelation
         '
         Me.DeleteRelation.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.DeleteRelation.Name = "DeleteRelation"
-        Me.DeleteRelation.Size = New System.Drawing.Size(152, 22)
+        Me.DeleteRelation.Size = New System.Drawing.Size(141, 22)
         Me.DeleteRelation.Text = "Delete"
         '
         'TableLayoutPanel7
@@ -515,7 +513,7 @@ Partial Class dlgClass
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(251, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(248, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(66, 23)
         Me.OK_Button.TabIndex = 0
@@ -525,7 +523,7 @@ Partial Class dlgClass
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(355, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(354, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -536,7 +534,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.90058!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.09941!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 135.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 138.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -927,8 +925,6 @@ Partial Class dlgClass
         'FlowLayoutPanel1
         '
         Me.TableLayoutPanel5.SetColumnSpan(Me.FlowLayoutPanel1, 2)
-        Me.FlowLayoutPanel1.Controls.Add(Me.btnConstructor)
-        Me.FlowLayoutPanel1.Controls.Add(Me.btnDestructor)
         Me.FlowLayoutPanel1.Controls.Add(Me.chkPartial)
         Me.FlowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FlowLayoutPanel1.Location = New System.Drawing.Point(244, 63)
@@ -936,30 +932,12 @@ Partial Class dlgClass
         Me.FlowLayoutPanel1.Size = New System.Drawing.Size(210, 38)
         Me.FlowLayoutPanel1.TabIndex = 10
         '
-        'btnConstructor
-        '
-        Me.btnConstructor.Location = New System.Drawing.Point(3, 3)
-        Me.btnConstructor.Name = "btnConstructor"
-        Me.btnConstructor.Size = New System.Drawing.Size(91, 35)
-        Me.btnConstructor.TabIndex = 10
-        Me.btnConstructor.Text = "Constructor"
-        Me.btnConstructor.UseVisualStyleBackColor = True
-        '
-        'btnDestructor
-        '
-        Me.btnDestructor.Location = New System.Drawing.Point(100, 3)
-        Me.btnDestructor.Name = "btnDestructor"
-        Me.btnDestructor.Size = New System.Drawing.Size(90, 35)
-        Me.btnDestructor.TabIndex = 11
-        Me.btnDestructor.Text = "Destructor"
-        Me.btnDestructor.UseVisualStyleBackColor = True
-        '
         'chkPartial
         '
         Me.chkPartial.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                     Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.chkPartial.AutoSize = True
-        Me.chkPartial.Location = New System.Drawing.Point(3, 44)
+        Me.chkPartial.Location = New System.Drawing.Point(3, 3)
         Me.chkPartial.Name = "chkPartial"
         Me.chkPartial.Size = New System.Drawing.Size(55, 17)
         Me.chkPartial.TabIndex = 12
@@ -1069,8 +1047,6 @@ Partial Class dlgClass
     Friend WithEvents EditMember As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Label12 As System.Windows.Forms.Label
     Friend WithEvents TableLayoutPanel9 As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents btnConstructor As System.Windows.Forms.Button
-    Friend WithEvents btnDestructor As System.Windows.Forms.Button
     Friend WithEvents gridRelations As ClassXmlProject.XmlDataGridView
     Friend WithEvents mnuRelations As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents AddRelation As System.Windows.Forms.ToolStripMenuItem
