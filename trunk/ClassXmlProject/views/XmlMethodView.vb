@@ -18,7 +18,6 @@ Public Class XmlMethodView
 
     Private m_cmdMember As New ComboCommand
     Private m_cmdBehaviour As New ComboCommand
-    Private m_cmdInline As New InlineCommand
 
     Private WithEvents m_cmbImplementation As ComboBox
     Private WithEvents m_chkOperator As CheckBox
@@ -64,30 +63,6 @@ Public Class XmlMethodView
         End If
         CType(frmResult, InterfFormDocument).Document = document
         Return frmResult
-    End Function
-
-    Public Function ShowDialogCodeInline() As Boolean
-        Dim bResult As Boolean = False
-        Try
-            If Me.CodeInline Is Nothing Then
-                m_bCreateNodeNow = True
-                ChangeReferences()
-                m_bCreateNodeNow = False
-                Me.CodeInline.SetDefaultValues()
-            End If
-
-            Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me.CodeInline)
-            fen.Text = "Inline code"
-            fen.ShowDialog()
-            If CType(fen.Tag, Boolean) = True Then
-                Me.Updated = True
-                bResult = True
-            End If
-
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        End Try
-        Return bResult
     End Function
 
     Public Sub InitBindingName(ByVal dataControl As TextBox, ByVal label As Label)
@@ -259,15 +234,13 @@ Public Class XmlMethodView
         m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
     End Sub
 
-    Public Sub InitBindingCheckInline(ByVal dataControl As CheckBox, ByVal btnControl As Button)
-        m_cmdInline.Inline = dataControl
-        m_cmdInline.Body = btnControl
+    Public Sub InitBindingCheckInline(ByVal dataControl As CheckBox)
 
         If Me.Tag <> ELanguage.Language_CplusPlus _
             Or m_eClassImplementation = EImplementation.Interf _
             Or Me.Node.ParentNode.Name = "interface" _
         Then
-            m_cmdInline.Visible = False
+            dataControl.Visible = False
         Else
             m_xmlBindingsList.AddBinding(dataControl, Me, "Inline", "Checked")
         End If

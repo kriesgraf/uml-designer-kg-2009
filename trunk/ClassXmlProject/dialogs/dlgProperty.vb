@@ -59,8 +59,10 @@ Public Class dlgProperty
             .InitBindingGetAccess(cmbGetAccess, lblGetAccess)
             .InitBindingGetBy(cmbGetBy, lblGetBy)
             .InitBindingGetModifier(chkModifier)
+            .InitBindingGetInline(chkGetInline)
             .InitBindingSetAccess(cmbSetAccess, lblSetAccess)
             .InitBindingSetby(cmbSetby, lblSetBy)
+            .InitBindingSetInline(chkSetInline)
             .InitBindingBehaviour(cmbBehaviour, lblBehaviour)
 
             .UpdateOption(optTypeArray)
@@ -158,10 +160,12 @@ Public Class dlgProperty
 
     Private Sub cmbGetAccess_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbGetAccess.SelectedIndexChanged
         ChangeCombo(True)
+        m_xmlView.HandlingAttribute(sender, e)
     End Sub
 
     Private Sub cmbSetAccess_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSetAccess.SelectedIndexChanged
         ChangeCombo(False)
+        m_xmlView.HandlingAttribute(sender, e)
     End Sub
 
     Private Sub cmdType_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdType.Click

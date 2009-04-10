@@ -178,6 +178,36 @@ Public Class XmlPropertySpec
         End Set
     End Property
 
+    <CategoryAttribute("UML design"), _
+   DescriptionAttribute("C++ getter custom inline code")> _
+    Public Property AccessGetInline() As Boolean
+        Get
+            Return (CheckAttribute("inline", "yes", "no", "get"))
+        End Get
+        Set(ByVal value As Boolean)
+            If value Then
+                SetAttribute("inline", "yes", "get")
+            Else
+                SetAttribute("inline", "no", "get")
+            End If
+        End Set
+    End Property
+
+    <CategoryAttribute("UML design"), _
+   DescriptionAttribute("C++ setter custom inline code")> _
+    Public Property AccessSetInline() As Boolean
+        Get
+            Return (CheckAttribute("inline", "yes", "no", "set"))
+        End Get
+        Set(ByVal value As Boolean)
+            If value Then
+                SetAttribute("inline", "yes", "set")
+            Else
+                SetAttribute("inline", "no", "set")
+            End If
+        End Set
+    End Property
+
     <TypeConverter(GetType(UmlMemberVisibility)), _
     CategoryAttribute("UML design"), _
    DescriptionAttribute("Set accessor visibility")> _
@@ -253,9 +283,11 @@ Public Class XmlPropertySpec
             MemberAttribute = True
 
             AccessGetBy = "val"
+            AccessGetInline = False
             AccessGetModifier = False
             AccessGetRange = "public"
             AccessSetBy = "val"
+            AccessSetInline = False
             AccessSetRange = "no"
 
         Catch ex As Exception

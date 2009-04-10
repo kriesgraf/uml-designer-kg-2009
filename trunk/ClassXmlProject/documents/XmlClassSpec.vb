@@ -14,8 +14,6 @@ Public Class XmlClassSpec
     Inherits XmlComposite
     Implements InterfNodeCounter
 
-    Private m_xmlInlineConst As XmlCodeInline
-    Private m_xmlInlineDest As XmlCodeInline
     Protected m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
 
 #Region "Properties"
@@ -58,22 +56,6 @@ Public Class XmlClassSpec
     Public ReadOnly Property FullpathClassName() As String
         Get
             Return GetFullpathDescription(Me.Node, CType(Me.Tag, ELanguage))
-        End Get
-    End Property
-
-    <CategoryAttribute("XmlComponent"), _
-    DescriptionAttribute("Inline constructor")> _
-    Public ReadOnly Property InlineConstructor() As XmlCodeInline
-        Get
-            Return m_xmlInlineConst
-        End Get
-    End Property
-
-    <CategoryAttribute("XmlComponent"), _
-    DescriptionAttribute("Inline destructor")> _
-    Public ReadOnly Property InlineDestructor() As XmlCodeInline
-        Get
-            Return m_xmlInlineDest
         End Get
     End Property
 
@@ -372,53 +354,6 @@ Public Class XmlClassSpec
         End If
     End Sub
 
-    Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
-        Try
-            MyBase.ChangeReferences(bLoadChildren)
-
-            Dim nodeInline As XmlNode
-
-            If TestNode("inline") = False And m_bCreateNodeNow Then
-                nodeInline = CreateAppendNode("inline")
-            Else
-                nodeInline = GetNode("inline")
-            End If
-
-            If TestNode("inline/body[@type='constructor']") Then
-
-                m_xmlInlineConst = TryCast(CreateDocument(GetNode("inline/body[@type='constructor']"), bLoadChildren), XmlCodeInline)
-
-            ElseIf m_bCreateNodeNow Then
-                m_xmlInlineConst = TryCast(MyBase.CreateDocument("body", MyBase.Document, bLoadChildren), XmlCodeInline)
-
-                With m_xmlInlineConst
-                    .m_bCreateNodeNow = True
-                    .Kind = "constructor"
-                    .m_bCreateNodeNow = False
-                    nodeInline.AppendChild(.Node)
-                End With
-            End If
-
-            If TestNode("inline/body[@type='destructor']") Then
-
-                m_xmlInlineDest = TryCast(CreateDocument(GetNode("inline/body[@type='destructor']"), bLoadChildren), XmlCodeInline)
-
-            ElseIf m_bCreateNodeNow Then
-
-                m_xmlInlineDest = TryCast(MyBase.CreateDocument("body", MyBase.Document, bLoadChildren), XmlCodeInline)
-
-                With m_xmlInlineDest
-                    .m_bCreateNodeNow = True
-                    .Kind = "destructor"
-                    .m_bCreateNodeNow = False
-                    nodeInline.AppendChild(.Node)
-                End With
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
     Protected Friend Overrides Function AppendNode(ByVal child As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
         Dim before As XmlNode = Nothing
         Select Case child.Name
@@ -434,43 +369,24 @@ Public Class XmlClassSpec
                 End If
 
                 If before Is Nothing Then
-                    before = GetNode("inline")
-                End If
-
-                If before Is Nothing Then
                     before = GetNode("comment")
                 End If
 
-            Case "inline"
-                before = GetNode("comment")
-
             Case "dependency"
                 before = GetNode("collaboration")
-
-                If before Is Nothing Then
-                    before = GetNode("inline")
-                End If
 
                 If before Is Nothing Then
                     before = GetNode("comment")
                 End If
 
             Case "collaboration"
-                before = GetNode("inline")
-
-                If before Is Nothing Then
-                    before = GetNode("comment")
-                End If
+                before = GetNode("comment")
 
             Case "inherited"
                 before = GetNode("dependency")
 
                 If before Is Nothing Then
                     before = GetNode("collaboration")
-                End If
-
-                If before Is Nothing Then
-                    before = GetNode("inline")
                 End If
 
                 If before Is Nothing Then

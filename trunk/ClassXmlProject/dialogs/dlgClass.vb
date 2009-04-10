@@ -79,11 +79,11 @@ Public Class dlgClass
                 ' Combo Implementation is used by several methods, reference must be set previously
                 .InitBindingImplementation(lblImplementation, cmbImplementation)
                 .UpdateMenuConstructor(AddConstructor)
-                .InitBindingConstructor(lblConstructor, cmbConstructor, btnConstructor)
-                .InitBindingDestructor(lblDestructor, cmbDestructor, btnDestructor)
+                .InitBindingConstructor(lblConstructor, cmbConstructor)
+                .InitBindingDestructor(lblDestructor, cmbDestructor)
                 .InitBindingVisibility(cmbVisibility)
                 .InitBindingInline(lblInline, cmbModelInline)
-                .InitBindingPartial(btnConstructor, btnDestructor, chkPartial)
+                .InitBindingPartial(chkPartial)
                 ' Load document values into controls
                 .LoadDependencies(gridDependencies)
                 .LoadInheritedMembers(gridInherited)
@@ -129,36 +129,9 @@ Public Class dlgClass
         End If
     End Sub
 
-    Private Sub btnDestructor_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnDestructor.Click
-        m_xmlView.ShowDialogDestructor()
-    End Sub
-
-    Private Sub btnConstructor_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnConstructor.Click
-        m_xmlView.ShowDialogConstructor()
-    End Sub
-
     Private Sub cmbModelInline_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmbModelInline.SelectedIndexChanged
 
-        If m_xmlView.MustCheckTemplate() = False _
-        Then
-            Select Case CType(CType(sender, ComboBox).SelectedItem, String)
-                Case "constructor"
-                    btnConstructor.Enabled = True
-                    btnDestructor.Enabled = False
-
-                Case "destructor"
-                    btnConstructor.Enabled = False
-                    btnDestructor.Enabled = True
-
-                Case "both"
-                    btnConstructor.Enabled = True
-                    btnDestructor.Enabled = True
-
-                Case "none"
-                    btnConstructor.Enabled = False
-                    btnDestructor.Enabled = False
-            End Select
-        End If
+        m_xmlView.MustCheckTemplate()
     End Sub
 
     Private Sub txtBrief_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtBrief.TextChanged
@@ -255,10 +228,8 @@ Public Class dlgClass
 
     Private Sub mnuMemberDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMemberDependencies.Click
         If gridMembers.SelectedItem IsNot Nothing Then
-            Dim fen As New dlgDependencies
-            fen.Document = CType(gridMembers.SelectedItem, XmlComponent)
-            fen.ShowDialog()
-            If CType(fen.Tag, Boolean) = True Then
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(CType(gridMembers.SelectedItem, XmlComponent), bIsEmpty) Then
                 m_xmlView.Updated = True
             End If
         End If

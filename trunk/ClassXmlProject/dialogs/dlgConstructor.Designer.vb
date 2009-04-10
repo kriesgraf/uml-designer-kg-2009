@@ -35,7 +35,6 @@ Partial Class dlgConstructor
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel
         Me.chkCopy = New System.Windows.Forms.CheckBox
         Me.chkInline = New System.Windows.Forms.CheckBox
-        Me.btnInline = New System.Windows.Forms.Button
         Me.cmbRange = New System.Windows.Forms.ComboBox
         Me.Label3 = New System.Windows.Forms.Label
         Me.grdParams = New ClassXmlProject.XmlDataGridView
@@ -46,10 +45,10 @@ Partial Class dlgConstructor
         Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuDuplicate = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -175,7 +174,6 @@ Partial Class dlgConstructor
         '
         Me.FlowLayoutPanel1.Controls.Add(Me.chkCopy)
         Me.FlowLayoutPanel1.Controls.Add(Me.chkInline)
-        Me.FlowLayoutPanel1.Controls.Add(Me.btnInline)
         Me.FlowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FlowLayoutPanel1.Location = New System.Drawing.Point(163, 3)
         Me.FlowLayoutPanel1.Name = "FlowLayoutPanel1"
@@ -199,19 +197,10 @@ Partial Class dlgConstructor
         Me.chkInline.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
         Me.chkInline.Location = New System.Drawing.Point(115, 3)
         Me.chkInline.Name = "chkInline"
-        Me.chkInline.Size = New System.Drawing.Size(54, 17)
+        Me.chkInline.Size = New System.Drawing.Size(115, 17)
         Me.chkInline.TabIndex = 1
-        Me.chkInline.Text = "Inline:"
+        Me.chkInline.Text = "Custom inline code"
         Me.chkInline.UseVisualStyleBackColor = True
-        '
-        'btnInline
-        '
-        Me.btnInline.Location = New System.Drawing.Point(175, 3)
-        Me.btnInline.Name = "btnInline"
-        Me.btnInline.Size = New System.Drawing.Size(91, 21)
-        Me.btnInline.TabIndex = 2
-        Me.btnInline.Text = "Inline"
-        Me.btnInline.UseVisualStyleBackColor = True
         '
         'cmbRange
         '
@@ -252,7 +241,7 @@ Partial Class dlgConstructor
         '
         Me.mnuParam.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuEditParam, Me.ToolStripSeparator2, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator1, Me.mnuDelete})
         Me.mnuParam.Name = "mnuParam"
-        Me.mnuParam.Size = New System.Drawing.Size(161, 192)
+        Me.mnuParam.Size = New System.Drawing.Size(161, 170)
         '
         'mnuAddParam
         '
@@ -297,6 +286,13 @@ Partial Class dlgConstructor
         Me.mnuDuplicate.Size = New System.Drawing.Size(160, 22)
         Me.mnuDuplicate.Text = "Duplicate"
         '
+        'mnuProperties
+        '
+        Me.mnuProperties.Name = "mnuProperties"
+        Me.mnuProperties.Size = New System.Drawing.Size(160, 22)
+        Me.mnuProperties.Text = "Parameters..."
+        Me.mnuProperties.Visible = False
+        '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
@@ -308,13 +304,6 @@ Partial Class dlgConstructor
         Me.mnuDelete.Name = "mnuDelete"
         Me.mnuDelete.Size = New System.Drawing.Size(160, 22)
         Me.mnuDelete.Text = "Delete"
-        '
-        'mnuProperties
-        '
-        Me.mnuProperties.Name = "mnuProperties"
-        Me.mnuProperties.Size = New System.Drawing.Size(160, 22)
-        Me.mnuProperties.Text = "Parameters..."
-        Me.mnuProperties.Visible = False
         '
         'dlgConstructor
         '
@@ -354,7 +343,6 @@ Partial Class dlgConstructor
     Friend WithEvents cmbRange As System.Windows.Forms.ComboBox
     Friend WithEvents chkCopy As System.Windows.Forms.CheckBox
     Friend WithEvents chkInline As System.Windows.Forms.CheckBox
-    Friend WithEvents btnInline As System.Windows.Forms.Button
     Friend WithEvents grdParams As ClassXmlProject.XmlDataGridView
     Friend WithEvents mnuParam As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents mnuAddParam As System.Windows.Forms.ToolStripMenuItem

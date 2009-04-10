@@ -128,7 +128,7 @@ Public Class XmlClassGlobalView
         End Try
     End Sub
 
-    Public Sub InitBindingConstructor(ByVal titleControl As Label, ByVal dataControl As ComboBox, ByVal btnControl As Button)
+    Public Sub InitBindingConstructor(ByVal titleControl As Label, ByVal dataControl As ComboBox)
         Try
             m_cmdConstructor.Combo = dataControl
             m_cmdConstructor.Title = titleControl
@@ -139,11 +139,9 @@ Public Class XmlClassGlobalView
 
                 Case ELanguage.Language_Vbasic
                     titleControl.Text = "Default New method:"
-                    btnControl.Visible = False
 
                 Case ELanguage.Language_Java
                     titleControl.Text = "Default constructor:"
-                    btnControl.Visible = False
             End Select
 
             With dataControl
@@ -159,7 +157,7 @@ Public Class XmlClassGlobalView
         End Try
     End Sub
 
-    Public Sub InitBindingDestructor(ByVal titleControl As Label, ByVal dataControl As ComboBox, ByVal btnControl As Button)
+    Public Sub InitBindingDestructor(ByVal titleControl As Label, ByVal dataControl As ComboBox)
         Try
             m_cmdDestructor.Combo = dataControl
             m_cmdDestructor.Title = titleControl
@@ -169,11 +167,6 @@ Public Class XmlClassGlobalView
                 .Items.AddRange(New Object() {"no", "private", "protected", "public"})
             End With
             m_xmlBindingsList.AddBinding(dataControl, Me, "Destructor", "SelectedItem")
-
-            If MyBase.GenerationLanguage <> ELanguage.Language_CplusPlus _
-            Then
-                btnControl.Visible = False
-            End If
 
             UpdateDestructorControl()
 
@@ -242,16 +235,12 @@ Public Class XmlClassGlobalView
         End Try
     End Sub
 
-    Public Sub InitBindingPartial(ByVal btn1 As Button, ByVal btn2 As Button, ByVal chkPartial As CheckBox)
+    Public Sub InitBindingPartial(ByVal chkPartial As CheckBox)
         If Me.Tag = ELanguage.Language_Vbasic Then
-            btn1.Visible = False
-            btn2.Visible = False
             chkPartial.Visible = True
             chkPartial.Enabled = True
             m_xmlBindingsList.AddBinding(chkPartial, Me, "PartialDecl", "Checked")
         Else
-            btn1.Visible = True
-            btn2.Visible = True
             chkPartial.Visible = False
             chkPartial.Enabled = False
         End If
@@ -315,20 +304,16 @@ Public Class XmlClassGlobalView
             Dim xmlcpnt As XmlComponent = CreateDocument(removeNode.Node)
             If removeNode.NodeName = "typedef" Then
 
-                If SelectNodes("//*[@*[.='" + GetID(removeNode.Node) + "' and name()!='id']]").Count > 0 Then
+                If SelectNodes(dlgDependencies.GetQuery(removeNode)).Count > 0 Then
 
                     If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
                               vbCrLf + "Do you want to proceed", _
                                 cstMsgYesNoQuestion, _
                                 xmlcpnt.Name) = MsgBoxResult.Yes _
                     Then
-                        Dim fen As New dlgDependencies
-                        fen.NoTitle = False
-                        fen.Text = "Remove references to " + xmlcpnt.Name
-                        fen.Document = xmlcpnt
-                        fen.ShowDialog()
-                        bResult = CType(fen.Tag, Boolean)
-                        If fen.IsEmpty = False Then
+                        Dim bIsEmpty As Boolean = False
+                        bResult = dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Name)
+                        If bIsEmpty = False Then
                             Return bResult
                         End If
                     Else
@@ -347,53 +332,6 @@ Public Class XmlClassGlobalView
                     End If
                     bResult = True
                 End If
-            End If
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        End Try
-        Return bResult
-    End Function
-
-    Public Function ShowDialogConstructor() As Boolean
-        Dim bResult As Boolean = False
-        Try
-            If Me.InlineConstructor Is Nothing Then
-                m_bCreateNodeNow = True
-                ChangeReferences()
-                m_bCreateNodeNow = False
-                Me.InlineConstructor.SetDefaultValues()
-            End If
-
-            Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me.InlineConstructor)
-            fen.Text = "Constructor"
-            fen.ShowDialog()
-            If CType(fen.Tag, Boolean) Then
-                Me.Updated = True
-                bResult = True
-            End If
-
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        End Try
-        Return bResult
-    End Function
-
-    Public Function ShowDialogDestructor() As Boolean
-        Dim bResult As Boolean = False
-        Try
-            If Me.InlineDestructor Is Nothing Then
-                m_bCreateNodeNow = True
-                ChangeReferences()
-                m_bCreateNodeNow = False
-                Me.InlineDestructor.SetDefaultValues()
-            End If
-
-            Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me.InlineDestructor)
-            fen.Text = "Destructor"
-            fen.ShowDialog()
-            If CType(fen.Tag, Boolean) Then
-                Me.Updated = True
-                bResult = True
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
