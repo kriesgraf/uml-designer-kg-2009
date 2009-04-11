@@ -6,7 +6,7 @@ Imports System.Xml
 Public Class XmlParamSpec
     Inherits XmlComponent
 
-    Private m_xmlType As XmlTypeVarSpec
+    Private m_xmlType As XmlTypeVarSpec = Nothing
 
     <CategoryAttribute("UML design"), _
     DescriptionAttribute("Full path type description")> _
@@ -66,8 +66,8 @@ Public Class XmlParamSpec
             m_bCreateNodeNow = bCreateNodeNow
 
             ChangeReferences()
-            m_xmlType.SetDefaultValues(bCreateNodeNow)
-            m_xmlType.Descriptor = "int16"
+            Me.TypeVarDefinition.SetDefaultValues(bCreateNodeNow)
+            Me.TypeVarDefinition.Descriptor = "int16"
 
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
             NumId = "0"
@@ -94,7 +94,10 @@ Public Class XmlParamSpec
             Else
                 nodeXml = GetNode("type")
             End If
+
             m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
+            If m_xmlType IsNot Nothing Then m_xmlType.Tag = Me.Tag
+
         Catch ex As Exception
             Throw ex
         End Try

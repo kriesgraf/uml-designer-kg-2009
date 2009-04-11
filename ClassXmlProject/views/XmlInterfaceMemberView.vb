@@ -12,8 +12,8 @@ Public Class XmlInterfaceMemberView
     Implements InterfViewControl
     Implements InterfObject
 
-    Private m_xmlAdapter As XmlTypeVarSpec
-    Private m_xmlClassView As XmlInterfaceView
+    Private m_xmlAdapter As XmlTypeVarSpec = Nothing
+    Private m_xmlClassView As XmlInterfaceView = Nothing
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
 
     Public Property InterfObject() As Object Implements InterfObject.InterfObject
@@ -23,6 +23,15 @@ Public Class XmlInterfaceMemberView
         Set(ByVal value As Object)
             m_xmlClassView = TryCast(value, XmlInterfaceView)
         End Set
+    End Property
+
+    Public ReadOnly Property TypeVarDefinition() As XmlTypeVarSpec
+        Get
+            If m_xmlAdapter IsNot Nothing Then
+                m_xmlAdapter.Tag = Me.Tag
+            End If
+            Return m_xmlAdapter
+        End Get
     End Property
 
     Public ReadOnly Property ImplementationView() As String
@@ -78,12 +87,12 @@ Public Class XmlInterfaceMemberView
             If m_xmlAdapter Is Nothing Then
                 Return GetAttribute("constructor")
             Else
-                Return m_xmlAdapter.Range
+                Return Me.TypeVarDefinition.Range
             End If
         End Get
         Set(ByVal value As String)
             If m_xmlAdapter IsNot Nothing Then
-                m_xmlAdapter.Range = value
+                Me.TypeVarDefinition.Range = value
             End If
         End Set
     End Property
@@ -93,8 +102,7 @@ Public Class XmlInterfaceMemberView
             If m_xmlAdapter Is Nothing Then
                 Return "<constructor>"
             Else
-                m_xmlAdapter.Tag = Me.Tag
-                Return m_xmlAdapter.FullpathTypeDescription
+                Return Me.TypeVarDefinition.FullpathTypeDescription
             End If
         End Get
     End Property
@@ -134,8 +142,7 @@ Public Class XmlInterfaceMemberView
 
                         fen = XmlNodeManager.GetInstance().CreateForm(Me)
                     Else
-                        m_xmlAdapter.Tag = Me.Tag
-                        fen = XmlNodeManager.GetInstance().CreateForm(m_xmlAdapter)
+                        fen = XmlNodeManager.GetInstance().CreateForm(Me.TypeVarDefinition)
                     End If
                 Else
                     fen = XmlNodeManager.GetInstance().CreateForm(Me)
@@ -263,6 +270,7 @@ Public Class XmlInterfaceMemberView
         Else
             m_xmlAdapter = MyBase.CreateDocument(GetNode("type"))
         End If
+        If m_xmlAdapter IsNot Nothing Then m_xmlAdapter.Tag = Me.Tag
     End Sub
 
     Public Function CanDropItem(ByVal component As XmlComponent) As Boolean Implements InterfGridViewNotifier.CanDropItem

@@ -28,7 +28,7 @@ Public Class XmlContainerSpec
             m_bCreateNodeNow = bCreateNodeNow
             Name = "New_container"
             ChangeReferences()
-            m_xmlType.SetContainerValues(bCreateNodeNow)
+            Me.TypeVarDefinition.SetContainerValues(bCreateNodeNow)
 
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
             Id = "class0"

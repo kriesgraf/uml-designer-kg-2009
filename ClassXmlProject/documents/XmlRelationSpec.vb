@@ -12,8 +12,8 @@ Public Class XmlRelationSpec
         Assembly
     End Enum
 
-    Private m_xmlFather As XmlRelationParentSpec
-    Private m_xmlChild As XmlRelationParentSpec
+    Private m_xmlFather As XmlRelationParentSpec = Nothing
+    Private m_xmlChild As XmlRelationParentSpec = Nothing
 
     Protected Friend ReadOnly Property Father() As XmlRelationParentSpec
         Get
@@ -109,10 +109,15 @@ Public Class XmlRelationSpec
 
     Public ReadOnly Property Reference(ByVal strId As String) As XmlComponent
         Get
-            If strId = m_xmlFather.Idref Then
-                Return m_xmlChild
+            If strId = Me.Father.Idref _
+            Then
+                Return Me.Child
+
+            ElseIf strId = Me.Child.Idref _
+            Then
+                Return Me.Father
             Else
-                Return m_xmlFather
+                Throw New Exception("Reference id '" + strId + "' is unknown")
             End If
         End Get
     End Property
@@ -126,17 +131,17 @@ Public Class XmlRelationSpec
             m_bCreateNodeNow = bCreateNodeNow
             ChangeReferences(False)
 
-            m_xmlFather.SetDefaultValues(bCreateNodeNow)
+            Me.Father.SetDefaultValues(bCreateNodeNow)
             ' Set an existing class element
             Dim strFatherID As String = GetFirstClassId(Me)
-            m_xmlFather.Idref = strFatherID
-            m_xmlChild.SetDefaultValues(bCreateNodeNow)
+            Me.Father.Idref = strFatherID
+            Me.Child.SetDefaultValues(bCreateNodeNow)
             ' Set an existing class element that could be father
             Dim strChildID As String = GetFirstClassId(Me, strFatherID)
             If strChildID.Length = 0 Then
-                m_xmlChild.Idref = GetFirstClassId(Me)
+                Me.Child.Idref = GetFirstClassId(Me)
             Else
-                m_xmlChild.Idref = strChildID
+                Me.Child.Idref = strChildID
             End If
             Id = "relation0"
             Action = "New_Action"
@@ -162,8 +167,8 @@ Public Class XmlRelationSpec
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
-        XmlProjectTools.UpdateOneCollaboration(Me.Document, m_xmlFather.Idref)
-        XmlProjectTools.UpdateOneCollaboration(Me.Document, m_xmlChild.Idref)
+        XmlProjectTools.UpdateOneCollaboration(Me.Document, Me.Father.Idref)
+        XmlProjectTools.UpdateOneCollaboration(Me.Document, Me.Child.Idref)
     End Sub
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
@@ -175,19 +180,23 @@ Public Class XmlRelationSpec
                 nodeXml = CreateAppendNode("father")
             End If
             m_xmlFather = CreateDocument(nodeXml, bLoadChildren)
+            If m_xmlFather IsNot Nothing Then m_xmlFather.Tag = Me.Tag
+
             nodeXml = GetNode("child")
             If nodeXml Is Nothing And m_bCreateNodeNow Then
                 nodeXml = CreateAppendNode("child")
             End If
             m_xmlChild = CreateDocument(nodeXml, bLoadChildren)
+            If m_xmlChild IsNot Nothing Then m_xmlChild.Tag = Me.Tag
+
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
 
     Protected Friend Overrides Function RemoveMe() As Boolean
-        Dim strFatherID As String = m_xmlFather.Idref
-        Dim strChildID As String = m_xmlChild.Idref
+        Dim strFatherID As String = Me.Father.Idref
+        Dim strChildID As String = Me.Child.Idref
         If MyBase.RemoveMe() Then
             XmlProjectTools.UpdateOneCollaboration(Me.Document, strFatherID)
             If strFatherID <> strChildID Then

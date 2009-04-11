@@ -10,7 +10,7 @@ End Interface
 Public Class XmlCollaborationSpec
     Inherits XmlComponent
 
-    Private m_xmlRelation As XmlRelationSpec
+    Private m_xmlRelation As XmlRelationSpec = Nothing
 
     <CategoryAttribute("UML design"), _
     DescriptionAttribute("Parent name")> _
@@ -77,8 +77,7 @@ Public Class XmlCollaborationSpec
     DescriptionAttribute("Relation parent component")> _
     Public ReadOnly Property RelationParent() As XmlRelationParentSpec
         Get
-            Dim xmlResult As XmlRelationParentSpec = m_xmlRelation.Reference(Me.ClassId)
-            xmlResult.Tag = Me.Tag
+            Dim xmlResult As XmlRelationParentSpec = Me.RelationSpec.Reference(Me.ClassId)
             Return xmlResult
         End Get
     End Property
@@ -110,8 +109,8 @@ Public Class XmlCollaborationSpec
 
             ChangeReferences()
 
-            m_xmlRelation.SetDefaultValues(bCreateNodeNow)
-            RelationId = m_xmlRelation.Id
+            Me.RelationSpec.SetDefaultValues(bCreateNodeNow)
+            RelationId = Me.RelationSpec.Id
 
         Catch ex As Exception
             Throw ex
@@ -134,6 +133,9 @@ Public Class XmlCollaborationSpec
             Else
                 m_xmlRelation = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlRelationSpec)
             End If
+
+            If m_xmlRelation IsNot Nothing Then m_xmlRelation.Tag = Me.Tag
+
         Catch ex As Exception
             Throw ex
         End Try
@@ -144,18 +146,18 @@ Public Class XmlCollaborationSpec
             Throw New Exception("Argument 'xmlRefNodeCounter' is null")
         End If
 
-        m_xmlRelation.SetIdReference(xmlRefNodeCounter, True)
-        RelationId = m_xmlRelation.Id
+        Me.RelationSpec.SetIdReference(xmlRefNodeCounter, True)
+        RelationId = Me.RelationSpec.Id
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
 
-        m_xmlRelation.Father.Idref = ClassId
+        Me.RelationSpec.Father.Idref = ClassId
         Dim strChildID As String = GetFirstClassId(Me, ClassId)
         If strChildID.Length = 0 Then
-            m_xmlRelation.Child.Idref = GetFirstClassId(Me)
+            Me.RelationSpec.Child.Idref = GetFirstClassId(Me)
         Else
-            m_xmlRelation.Child.Idref = strChildID
+            Me.RelationSpec.Child.Idref = strChildID
             XmlProjectTools.UpdateOneCollaboration(Me.Document, strChildID)
         End If
     End Sub
