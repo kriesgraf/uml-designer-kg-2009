@@ -149,7 +149,7 @@ Public Class DataListView
     ''' <remarks></remarks>
     Public Sub SelectItem(ByVal index As Integer)
         If MyBase.Items.Count > 0 Then
-            If Items.Count > index Then
+            If Items.Count > index And index > 0 Then
                 MyBase.Items(index).Selected = True
             End If
         End If

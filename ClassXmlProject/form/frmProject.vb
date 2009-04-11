@@ -44,7 +44,7 @@ Public Class frmProject
     Public Function OpenProject(ByVal parent As Form, ByVal filename As String) As Boolean
         If m_xmlProject.Open(parent, filename) Then
             If m_xmlProject.Updated Then
-                Me.Text = lvwProjectMembers.Path + " *"
+                RefreshProjectDisplay()
             End If
             Return True
         End If
@@ -70,11 +70,7 @@ Public Class frmProject
 
 #Region "Private methods"
 
-    Private Sub RefreshProjectDisplay(Optional ByVal bUpdated As Boolean = False)
-        If bUpdated Then
-            m_xmlProject.Updated = True
-        End If
-
+    Private Sub RefreshProjectDisplay()
         If lvwProjectMembers.SelectedItem IsNot Nothing _
         Then
             docvwProjectDisplay.DataSource = CType(lvwProjectMembers.SelectedItem, XmlComponent).Node
@@ -302,7 +298,7 @@ Public Class frmProject
             Else
                 docvwProjectDisplay.DataSource = CType(lvwProjectMembers.Binding.Parent, XmlComponent).Node
             End If
-            RefreshProjectDisplay(True)
+            RefreshProjectDisplay()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -363,8 +359,8 @@ Public Class frmProject
                 ReferenceProperties.Click
         Try
             dlgXmlNodeProperties.DisplayProperties(lvwProjectMembers.SelectedItem)
-            ' Set flag Updated to prevent to close project without saving
-            RefreshProjectDisplay(True)
+
+            RefreshProjectDisplay()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -375,9 +371,9 @@ Public Class frmProject
         Handles mnuProjectEdit.Click, mnuPackageEdit.Click, mnuClassMemberEdit.Click, EditReference.Click
 
         Try
-            If lvwProjectMembers.EditCurrentItem() Then
-                ' Set flag Updated to prevent to close project without saving
-                RefreshProjectDisplay(True)
+            If lvwProjectMembers.EditCurrentItem() _
+            Then
+                RefreshProjectDisplay()
             End If
 
             mnuEditPaste.Enabled = XmlComponent.Clipboard.CanPaste
@@ -392,9 +388,9 @@ Public Class frmProject
                 Handles mnuProjectDelete.Click, mnuPackageDelete.Click, mnuClassDeleteMember.Click, _
                 DeleteReference.Click
         Try
-            If lvwProjectMembers.DeleteSelectedItems() Then
-                ' Set flag Updated to prevent to close project without saving
-                RefreshProjectDisplay(True)
+            If lvwProjectMembers.DeleteSelectedItems() _
+            Then
+                RefreshProjectDisplay()
             End If
 
         Catch ex As Exception
@@ -407,7 +403,7 @@ Public Class frmProject
             If m_xmlProject.EditProperties() Then
                 m_xmlProject.UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
-                RefreshProjectDisplay(True)
+                RefreshProjectDisplay()
             End If
 
         Catch ex As Exception
@@ -434,7 +430,7 @@ Public Class frmProject
                     If m_xmlProject.MoveUpNode(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
                         .Binding.ResetBindings(True)
                         docvwProjectDisplay.DataSource = .Binding.Parent.Node
-                        RefreshProjectDisplay(True)
+                        RefreshProjectDisplay()
                     End If
                 End If
             End With
@@ -456,8 +452,8 @@ Public Class frmProject
 
         Try
             lvwProjectMembers.AddItem(CType(sender.Tag, String))
-            ' Set flag Updated to prevent to close project without saving
-            RefreshProjectDisplay(True)
+
+            RefreshProjectDisplay()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -469,7 +465,7 @@ Public Class frmProject
         Try
             If lvwProjectMembers.Binding.Parent IsNot Nothing Then
                 If m_xmlProject.AddReferences(Me.Mainframe, lvwProjectMembers.Binding.Parent, CType(sender.Tag, XmlImportSpec.EImportMode)) Then
-                    RefreshProjectDisplay(True)
+                    RefreshProjectDisplay()
                 End If
             End If
         Catch ex As Exception
@@ -484,7 +480,7 @@ Public Class frmProject
                     If m_xmlProject.RemoveRedundantReference(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
                         .Binding.ResetBindings(True)
                         docvwProjectDisplay.DataSource = .Binding.Parent.Node
-                        RefreshProjectDisplay(True)
+                        RefreshProjectDisplay()
                     End If
                 End If
             End With
@@ -498,7 +494,7 @@ Public Class frmProject
             If lvwProjectMembers.Binding.Parent IsNot Nothing Then
                 If m_xmlProject.RemoveAllReferences(lvwProjectMembers.Binding.Parent) Then
                     docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
-                    RefreshProjectDisplay(True)
+                    RefreshProjectDisplay()
                 End If
             End If
         Catch ex As Exception
@@ -540,7 +536,7 @@ Public Class frmProject
     Private Sub mnuOverrideProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuOverrideProperties.Click
         Try
             If m_xmlProject.OverrideProperties(lvwProjectMembers.Binding.Parent) Then
-                RefreshProjectDisplay(True)
+                RefreshProjectDisplay()
             End If
 
         Catch ex As Exception
@@ -551,7 +547,7 @@ Public Class frmProject
     Private Sub mnuOverrideMethods_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuOverrideMethods.Click
         Try
             If m_xmlProject.OverrideMethods(lvwProjectMembers.Binding.Parent) Then
-                RefreshProjectDisplay(True)
+                RefreshProjectDisplay()
             End If
 
         Catch ex As Exception
@@ -606,7 +602,7 @@ Public Class frmProject
             'Debug.Print(CType(sender, ToolStripMenuItem).Name)
             Dim bIsEmpty As Boolean = False
             If dlgDependencies.ShowDependencies(CType(lvwProjectMembers.SelectedItem, XmlComponent), bIsEmpty) Then
-                RefreshProjectDisplay(True)
+                RefreshProjectDisplay()
             End If
         End If
     End Sub
@@ -633,8 +629,9 @@ Public Class frmProject
             Else
                 bRefresh = m_xmlProject.ExportNodesExtract(Me.Mainframe, lvwProjectMembers.Binding.Parent)
             End If
-
-            RefreshProjectDisplay(bRefresh)
+            If bRefresh Then
+                RefreshProjectDisplay()
+            End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -685,19 +682,19 @@ Public Class frmProject
 
     Private Sub mnuEditDuplicate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuEditDuplicate.Click
         If lvwProjectMembers.DuplicateSelectedItem() Then
-            ' Set flag Updated to prevent to close project without saving
-            RefreshProjectDisplay(True)
+
+            RefreshProjectDisplay()
         End If
     End Sub
 
     Private Sub UpdatesCollaborations_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UpdatesCollaborations.Click
         m_xmlProject.UpdatesCollaborations()
-        RefreshProjectDisplay(True)
+        RefreshProjectDisplay()
     End Sub
 
     Private Sub RenumberDatabaseIndex_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles RenumberDatabaseIndex.Click
         m_xmlProject.RenumberDatabaseIndex()
-        RefreshProjectDisplay(True)
+        RefreshProjectDisplay()
     End Sub
 
     Private Sub mnuEditCopy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
@@ -712,7 +709,7 @@ Public Class frmProject
                 Handles mnuEditPaste.Click, btnPaste.Click
 
         If lvwProjectMembers.PasteItem() Then
-            RefreshProjectDisplay(True)
+            RefreshProjectDisplay()
         End If
         mnuEditPaste.Enabled = False
         btnPaste.Enabled = False

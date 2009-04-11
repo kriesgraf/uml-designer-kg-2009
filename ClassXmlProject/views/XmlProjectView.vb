@@ -16,10 +16,9 @@ Public Class XmlProjectView
     Private m_Control As XmlDataListView
     Private m_xmlDocument As New XmlDocument
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
-    Private m_xmlProperties As XmlProjectProperties
+    Private m_xmlProperties As XmlProjectProperties = Nothing
     Private m_strFilename As String
     Private m_mnuTypedef As ToolStripItem
-    Private m_bUpdated As Boolean = False
 
     Private Shared m_strCurrentFolder As String = "." + Path.DirectorySeparatorChar.ToString
 #End Region
@@ -36,10 +35,10 @@ Public Class XmlProjectView
     Public Property Updated() As Boolean
         Get
             ' This flag prevents to close project without saving
-            Return m_bUpdated
+            Return Me.Properties.Updated
         End Get
         Set(ByVal value As Boolean)
-            m_bUpdated = value
+            Me.Properties.Updated = value
         End Set
     End Property
 
@@ -427,7 +426,8 @@ Public Class XmlProjectView
     Public Sub LoadMembers()
         Try
             m_Control.Binding.NodeCounter = m_xmlReferenceNodeCounter
-            Dim xmlcpnt As XmlProjectMemberView = New XmlProjectMemberView(Me.Properties.Node)
+            '            Dim xmlcpnt As XmlProjectMemberView = New XmlProjectMemberView(Me.Properties.Node)
+            Dim xmlcpnt As XmlComposite = CType(Me.Properties, XmlComposite)
             m_Control.Binding.LoadItems(xmlcpnt, "project_member_view", "import")
             m_Control.CurrentContext = "project"
         Catch ex As Exception

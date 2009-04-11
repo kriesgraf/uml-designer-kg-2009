@@ -7,6 +7,7 @@ Imports System.Xml
 
 Public Class XmlProjectProperties
     Inherits XmlComposite
+    Implements InterfListViewContext
 
     Public Function Edit() As Boolean
         Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me)
@@ -74,6 +75,12 @@ Public Class XmlProjectProperties
         Set(ByVal value As String)
             SetNodeString("comment", value)
         End Set
+    End Property
+
+    Public ReadOnly Property CurrentContext() As String Implements InterfListViewContext.CurrentContext
+        Get
+            Return "project"
+        End Get
     End Property
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
