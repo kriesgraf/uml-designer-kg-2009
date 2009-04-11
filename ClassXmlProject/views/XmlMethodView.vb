@@ -8,7 +8,6 @@ Public Class XmlMethodView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
     Private m_txtName As TextBox
     Private m_txtOperator As TextBox
     Private m_bInitProceed As Boolean = False

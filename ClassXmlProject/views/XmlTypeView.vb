@@ -12,7 +12,6 @@ Public Class XmlTypeView
     Implements InterfViewForm
 
     Private m_xmlBindingsList As XmlBindingsList
-    'Private m_xmlNodeManager As XmlNodeManager
     Private m_xmlComboTypedef As XmlBindingCombo
     Private m_xmlComboValue As XmlBindingCombo
     Private m_xmlComboSize As XmlBindingCombo
@@ -163,20 +162,6 @@ Public Class XmlTypeView
         Catch ex As Exception
             Throw ex
         End Try
-    End Sub
-
-    Private Sub AddModelList(ByRef myList As ArrayList)
-        If GetNode("ancestor::class[@implementation='container']") IsNot Nothing Then
-            Debug.Print("Insert model")
-            Dim iterator As IEnumerator = MyBase.SelectNodes("ancestor::class/model").GetEnumerator
-            iterator.Reset()
-            While iterator.MoveNext
-                Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(CType(iterator.Current, XmlNode))
-                xmlcpnt.Tag = Me.Tag
-                Debug.Print(xmlcpnt.FullpathClassName)
-                myList.Add(xmlcpnt)
-            End While
-        End If
     End Sub
 
     Public Sub InitBindingTypedefs(ByVal control As ComboBox)
