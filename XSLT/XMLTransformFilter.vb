@@ -151,14 +151,16 @@ Friend Class XMLTransformFilter
         Try
             If m_bXSLChange Then
                 LoadXSL()
+                'If cmdParams.Enabled = True Then
+                '    cmdParams_Click(Me, Nothing)
+                'End If
                 m_bXSLChange = False
             End If
 
-            Dim strFullPathFilename As String = m_strPath + m_strFileName + m_strMedia
+            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_strMedia)
             Dim doc As New XmlDocument
             doc.Load(m_strFileXML)
             m_styleXSL.Transform(doc.DocumentElement, strFullPathFilename, m_dicoParamList)
-            '            m_styleXSL.Transform(m_strFileXML, strFullPathFilename, m_dicoParamList)
 
             Afficher()
             cmdSave.Enabled = True
@@ -176,7 +178,7 @@ Friend Class XMLTransformFilter
 
             AfficherSauvegarde()
 
-            Dim strFullPathFilename As String = m_strPath + m_strFileName + m_strMedia
+            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_strMedia)
             WebBrowser.Navigate(New System.Uri(strFullPathFilename))
 
         Catch ex As Exception
@@ -236,7 +238,7 @@ Friend Class XMLTransformFilter
                 Throw New Exception("Filename is empty")
             End If
 
-            Dim strFullPathFilename As String = m_strPath + m_strFileName + m_strMedia
+            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_strMedia)
             TextEditBox.LoadFile(strFullPathFilename, RichTextBoxStreamType.PlainText)
 
         Catch ex As Exception
@@ -257,15 +259,7 @@ Friend Class XMLTransformFilter
     Private Function RetirerChemin(ByRef strFullPathName As String) As String
         Dim strResult As String
         Try
-            Dim i As Integer
-
-            strResult = strFullPathName
-
-            i = InStrRev(strResult, "\")
-
-            If i > 0 Then
-                strResult = Mid(strResult, i + 1)
-            End If
+            strResult = My.Computer.FileSystem.GetName(strFullPathName)
 
         Catch ex As Exception
             Throw ex
@@ -449,7 +443,7 @@ Friend Class XMLTransformFilter
             m_eType = eOuputFormat.NONE
 
             If FileXML.SelectedIndex > -1 Then
-                tempo = FileXML.Path + "\" + FileXML.Items(FileXML.SelectedIndex)
+                tempo = My.Computer.FileSystem.CombinePath(FileXML.Path, FileXML.Items(FileXML.SelectedIndex))
 
                 If m_strFileXML <> tempo Then
 
@@ -476,7 +470,7 @@ Friend Class XMLTransformFilter
 
             If FileXSL.SelectedIndex > -1 Then
 
-                tempo = FileXSL.Path & "\" & FileXSL.Items(FileXSL.SelectedIndex)
+                tempo = My.Computer.FileSystem.CombinePath(FileXSL.Path, FileXSL.Items(FileXSL.SelectedIndex))
 
                 If m_strFileXSL <> tempo Then
 
@@ -547,22 +541,22 @@ Friend Class XMLTransformFilter
                     If InStr(m_strFileXML, "\") = 0 Then
                         LabelXML.Text = m_strFileXML
 
-                        m_strFileXML = Application.StartupPath & "\" & m_strFileXML
+                        m_strFileXML = My.Computer.FileSystem.CombinePath(Application.StartupPath, m_strFileXML)
 
                     ElseIf InStr(m_strFileXML, "..") > 0 Then
                         LabelXML.Text = RetirerChemin(m_strFileXML)
-                        m_strFileXML = Application.StartupPath & "\" & m_strFileXML
+                        m_strFileXML = My.Computer.FileSystem.CombinePath(Application.StartupPath, m_strFileXML)
                     Else
                         LabelXML.Text = RetirerChemin(m_strFileXML)
                     End If
 
                     If InStr(m_strFileXSL, "\") = 0 Then
                         LabelXSL.Text = m_strFileXSL
-                        m_strFileXSL = Application.StartupPath & "\" & m_strFileXSL
+                        m_strFileXSL = My.Computer.FileSystem.CombinePath(Application.StartupPath, m_strFileXSL)
 
                     ElseIf InStr(m_strFileXSL, "..") > 0 Then
                         LabelXML.Text = RetirerChemin(m_strFileXSL)
-                        m_strFileXSL = Application.StartupPath & "\" & m_strFileXSL
+                        m_strFileXSL = My.Computer.FileSystem.CombinePath(Application.StartupPath, m_strFileXSL)
                     Else
                         LabelXML.Text = RetirerChemin(m_strFileXSL)
                     End If
@@ -578,7 +572,7 @@ Friend Class XMLTransformFilter
                     m_strFileXML = tempo
 
                     If InStr(m_strFileXML, "\") = 0 Then
-                        m_strFileXML = Application.StartupPath & "\" & m_strFileXML
+                        m_strFileXML = My.Computer.FileSystem.CombinePath(Application.StartupPath, m_strFileXML)
                     End If
 
                     m_bXmlSelected = True
@@ -646,7 +640,7 @@ Friend Class XMLTransformFilter
 
     Private Sub cmdValidate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdValidate.Click
         Try
-            LoadDocument(m_strPath + m_strFileName + m_strMedia)
+            LoadDocument(My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_strMedia))
 
         Catch ex As Exception
             MsgExceptionBox(ex)
