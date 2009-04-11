@@ -32,8 +32,8 @@ Public Class XmlImportSpec
         CheckReferences
     End Enum
 
-    Private m_xmlInline As XmlCodeInline
-    Protected m_xmlExport As XmlExportSpec
+    Private m_xmlInline As XmlCodeInline = Nothing
+    Private m_xmlExport As XmlExportSpec
     Protected m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
 
 #End Region
@@ -46,8 +46,8 @@ Public Class XmlImportSpec
     Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
         Set(ByVal value As XmlReferenceNodeCounter)
             m_xmlReferenceNodeCounter = value
-            If m_xmlExport IsNot Nothing Then
-                m_xmlExport.NodeCounter = value
+            If Me.ChildExportNode IsNot Nothing Then
+                Me.ChildExportNode.NodeCounter = value
             End If
         End Set
     End Property
@@ -72,10 +72,16 @@ Public Class XmlImportSpec
     DescriptionAttribute("Inline Body")> _
     Public Property InlineBody() As XmlCodeInline
         Get
+            If m_xmlInline IsNot Nothing Then
+                m_xmlInline.Tag = Me.Tag
+            End If
             Return m_xmlInline
         End Get
         Set(ByVal value As XmlCodeInline)
             m_xmlInline = value
+            If m_xmlInline IsNot Nothing Then
+                m_xmlInline.Tag = Me.Tag
+            End If
         End Set
     End Property
 
@@ -136,12 +142,12 @@ Public Class XmlImportSpec
             Me.Name = CType(document, XmlExportSpec).Name
             Return MyBase.AppendComponent(document, observer)
         Else
-            Return GetExportNode().AppendComponent(document, observer)
+            Return ChildExportNode().AppendComponent(document, observer)
         End If
     End Function
 
     Public Overrides Function InsertComponent(ByVal document As XmlComponent, ByVal before As XmlComponent) As XmlNode
-        Return GetExportNode().InsertComponent(document, before)
+        Return ChildExportNode().InsertComponent(document, before)
     End Function
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
@@ -156,36 +162,6 @@ Public Class XmlImportSpec
 
     Public Function CanDropItem(ByVal child As XmlComponent, Optional ByVal bCheckOnly As Boolean = True) As Boolean
         Return (Me.Parameter = child.GetAttribute("param"))
-    End Function
-
-    Public Function PasteReference() As Boolean
-        Try
-            ' Get back from the specific clipboard shared by all projects
-            Dim bCopy As Boolean
-            Dim component As XmlComponent = XmlComponent.Clipboard.GetData(bCopy)
-            Dim parent As XmlComposite = GetExportNode()
-
-            If parent.CanPasteItem(component) _
-            Then
-                ' Method XmlNode.AppendChild make a cut/paste if node is not cloned.
-                If bCopy = True Then
-                    component = GetExportNode().DuplicateComponent(component)
-                    component.SetIdReference(m_xmlReferenceNodeCounter, True)
-                End If
-
-
-                If component IsNot Nothing Then
-                    parent.AppendComponent(component)
-                    Return True
-                End If
-            Else
-                MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + parent.NodeName + "' !", MsgBoxStyle.Exclamation)
-            End If
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return False
     End Function
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
@@ -209,21 +185,20 @@ Public Class XmlImportSpec
         Dim strResult As String = ""
         Try
 
-            If m_xmlExport Is Nothing Then
+            If Me.ChildExportNode Is Nothing Then
                 Return ""
             End If
 
-            m_xmlExport.LoadChildrenList()
+            Me.ChildExportNode.LoadChildrenList()
 
-            If m_xmlExport.ChildrenList.Count = 0 Then Return ""
+            If Me.ChildExportNode.ChildrenList.Count = 0 Then Return ""
 
-            Dim iterator As IEnumerator = m_xmlExport.ChildrenList.GetEnumerator()
+            Dim iterator As IEnumerator = Me.ChildExportNode.ChildrenList.GetEnumerator()
             iterator.Reset()
 
             While iterator.MoveNext
                 Dim xmlcpnt As XmlComponent = CType(iterator.Current, XmlComponent)
                 If strResult <> "" Then strResult = strResult + ", "
-                xmlcpnt.Tag = Me.Tag
                 Select Case xmlcpnt.NodeName
                     Case "reference"
                         strResult = strResult + CType(xmlcpnt, XmlReferenceSpec).FullpathClassName
@@ -243,10 +218,14 @@ Public Class XmlImportSpec
 
             If TestNode("body") Then
                 m_xmlInline = TryCast(CreateDocument(GetNode("body")), XmlCodeInline)
-            End If
-            If TestNode("export") Then
+                If m_xmlInline IsNot Nothing Then m_xmlInline.Tag = Me.Tag
+
+            ElseIf TestNode("export") Then
                 m_xmlExport = TryCast(CreateDocument(GetNode("export")), XmlExportSpec)
-                m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
+                If m_xmlExport IsNot Nothing Then
+                    m_xmlExport.Tag = Me.Tag
+                    m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
+                End If
             End If
         Catch ex As Exception
             Throw ex
@@ -257,7 +236,7 @@ Public Class XmlImportSpec
 
 #Region "Protected Friends methods"
 
-    Protected Friend Function GetExportNode() As XmlExportSpec
+    Protected Friend Function ChildExportNode() As XmlExportSpec
         If m_xmlInline IsNot Nothing Then
             Throw New Exception("Can't get 'export' node when 'inline' is active")
         End If
@@ -273,6 +252,8 @@ Public Class XmlImportSpec
                 AppendComponent(m_xmlExport)
             End If
         End If
+        If m_xmlExport IsNot Nothing Then m_xmlExport.Tag = Me.Tag
+
         Return m_xmlExport
     End Function
 
@@ -306,28 +287,11 @@ Public Class XmlImportSpec
         Return bResult
     End Function
 
-    Protected Friend Function DuplicateReference(ByVal component As XmlComponent) As Boolean
-        Dim bResult As Boolean = False
-        Try
-            Dim xmlComponent As XmlComponent = m_xmlExport.DuplicateComponent(component)
-            If xmlComponent IsNot Nothing Then
-                xmlComponent.Tag = m_xmlExport.Tag
-                xmlComponent.Name = component.Name + "_copy"
-                xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
-                m_xmlExport.AppendComponent(xmlComponent)
-                bResult = True
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return bResult
-    End Function
-
     Protected Friend Function CheckReferences() As Boolean
         Dim bResult As Boolean = False
         Try
-            If m_xmlExport.SelectNodes().Count = 0 Then
-                m_xmlExport.RemoveMe()
+            If Me.ChildExportNode.SelectNodes().Count = 0 Then
+                Me.ChildExportNode.RemoveMe()
                 m_xmlExport = Nothing
                 bResult = True
             End If
@@ -360,16 +324,17 @@ Public Class XmlImportSpec
 
             If m_xmlExport Is Nothing Then
                 m_xmlExport = New XmlExportSpec()
-                m_xmlExport.Document = Me.Document
+                Me.ChildExportNode.Document = Me.Document
             Else
-                bImportOk = m_xmlExport.RemoveReferences()
+                bImportOk = Me.ChildExportNode.RemoveReferences()
             End If
-            If bImportOk Then
 
-                m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
+            If bImportOk _
+            Then
+                Me.ChildExportNode.NodeCounter = m_xmlReferenceNodeCounter
 
-                If m_xmlExport.LoadStringImport(strXML) Then
-                    Me.AppendComponent(m_xmlExport)
+                If Me.ChildExportNode.LoadStringImport(strXML) Then
+                    Me.AppendComponent(Me.ChildExportNode)
                     bResult = True
                 End If
             End If
@@ -391,7 +356,7 @@ Public Class XmlImportSpec
             If m_xmlExport Is Nothing Then
                 MsgBox("Import empty, please use command 'Replace' !", MsgBoxStyle.Exclamation)
             Else
-                Dim export As XmlExportSpec = New XmlExportSpec()
+                Dim export As XmlExportSpec = New XmlExportSpec()   ' We don't use base method MyBase.CreateDocument, because don't want to create an XmlNode instance
                 export.Document = Me.Document
                 export.NodeCounter = m_xmlReferenceNodeCounter
                 export.Tag = Me.Tag
@@ -403,7 +368,7 @@ Public Class XmlImportSpec
                     For Each xmlcpnt As XmlComponent In export.ChildrenList
                         xmlcpnt.Tag = export.Tag
                         Dim added As XmlNodeListView = AddComponentList(xmlcpnt, myList)
-                        Dim found As XmlNode = m_xmlExport.FindNode(xmlcpnt)
+                        Dim found As XmlNode = Me.ChildExportNode.FindNode(xmlcpnt)
                         Dim strID As String = Nothing
 
 
@@ -434,7 +399,7 @@ Public Class XmlImportSpec
                             observer.ProgressBarVisible = True
                             For Each element As XmlNodeListView In myList
                                 Debug.Print("Name:=" + element.Name + "-" + element.Id)
-                                m_xmlExport.ReplaceReference(element)
+                                Me.ChildExportNode.ReplaceReference(element)
                                 observer.Increment(1)
                             Next
                         ElseIf ShowNodeList(myList, "Select references/interfaces to merge", "Locked, because reference is used by an interface property or method") _
@@ -444,7 +409,7 @@ Public Class XmlImportSpec
                             For Each element As XmlNodeListView In myList
                                 Debug.Print("Name:=" + element.Name + "-" + element.Id + "-" + element.CheckedView.ToString)
                                 If element.CheckedView Then
-                                    m_xmlExport.ReplaceReference(element)
+                                    Me.ChildExportNode.ReplaceReference(element)
                                 End If
                                 observer.Increment(1)
                             Next
@@ -473,21 +438,21 @@ Public Class XmlImportSpec
 
             If m_xmlExport Is Nothing Then
                 m_xmlExport = New XmlExportSpec()   ' Don't create at this step an Xml node!
-                m_xmlExport.Document = Me.Document
+                Me.ChildExportNode.Document = Me.Document
             Else
-                bImportOk = m_xmlExport.RemoveReferences()
+                bImportOk = Me.ChildExportNode.RemoveReferences()
             End If
 
             observer.Increment(1)
 
             If bImportOk Then
 
-                m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
+                Me.ChildExportNode.NodeCounter = m_xmlReferenceNodeCounter
 
-                If m_xmlExport.LoadImport(form, strFilename, bDoxygenTagFile) Then    ' Clone node at this step
+                If Me.ChildExportNode.LoadImport(form, strFilename, bDoxygenTagFile) Then    ' Clone node at this step
                     observer.Increment(1)
 
-                    Me.AppendComponent(m_xmlExport, observer)                             ' And append now
+                    Me.AppendComponent(Me.ChildExportNode, observer)                             ' And append now
                     observer.Increment(1)
 
                     bResult = True
@@ -504,8 +469,7 @@ Public Class XmlImportSpec
     Private Function RemoveImport() As Boolean
         Dim bResult As Boolean = False
         Try
-            m_xmlExport.Tag = Me.Tag
-            If m_xmlExport.RemoveReferences() Then
+            If Me.ChildExportNode.RemoveReferences() Then
                 m_xmlExport = Nothing
                 bResult = True
             End If

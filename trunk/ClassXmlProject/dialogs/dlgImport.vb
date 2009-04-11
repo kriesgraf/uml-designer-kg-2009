@@ -79,7 +79,7 @@ Public Class dlgImport
                 .InitBindingFullpathName(txtParam)
                 .InitBindingVisibility(cmbVisibility)
                 .InitBindingInterface(chkInterface)
-                .InitBindingReferences(lsbReferences)
+                .InitBindingListReferences(lsbReferences)
                 .InitBindingBodyInterface(txtInterface)
 
                 Me.Text = .Name
@@ -200,7 +200,7 @@ Public Class dlgImport
     End Sub
 
     Private Sub DuplicateReference_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DuplicateReference.Click
-        m_xmlView.Duplicate(lsbReferences)
+        m_xmlView.DuplicateReference(lsbReferences)
     End Sub
 
     Private Sub mnuCopy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuCopy.Click
@@ -210,9 +210,7 @@ Public Class dlgImport
     End Sub
 
     Private Sub mnuPaste_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuCopy.Click
-        If m_xmlView.PasteReference() Then
-            m_xmlView.Updated = True
-        End If
+        m_xmlView.PasteReference(lsbReferences)
         mnuPaste.Enabled = False
     End Sub
 
