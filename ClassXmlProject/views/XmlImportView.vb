@@ -110,19 +110,24 @@ Public Class XmlImportView
         m_txtInterface = dataControl
     End Sub
 
-    Public Sub InitBindingReferences(ByVal listbox As ListBox)
+    Public Sub InitBindingListReferences(ByVal listbox As ListBox, Optional ByVal bClear As Boolean = False)
         Try
             Dim listNode As New ArrayList
             Dim iterator As IEnumerator = SelectNodes("descendant::reference | descendant::interface").GetEnumerator
             iterator.Reset()
             While iterator.MoveNext
                 Dim xmlNode As XmlNode = TryCast(iterator.Current, XmlNode)
+                ' the listbox support heterogeneous data source
                 Dim xmlcpnt As XmlComponent = m_xmlNodeManager.CreateView(xmlNode, xmlNode.Name, Me.Document)
                 xmlcpnt.Tag = Me.Tag
                 listNode.Add(xmlcpnt)
             End While
+            If bClear Then
+                listbox.DataSource = Nothing
+                listbox.Items.Clear()
+            End If
             listbox.DataSource = listNode
-            listbox.DisplayMember = "Name"
+            listbox.DisplayMember = "FullpathClassName"
         Catch ex As Exception
             Throw ex
         End Try
@@ -130,16 +135,11 @@ Public Class XmlImportView
 
     Public Sub AddNew(ByVal list As ListBox, ByVal name As String)
         Try
-            If m_xmlExport Is Nothing Then
-                m_xmlExport = CreateDocument("export", Me.Document)
-                AppendNode(m_xmlExport.Node)
-            End If
             Dim xmlcpnt As XmlComponent = CreateDocument(name, Me.Document)
-
-            m_xmlExport.AppendNode(xmlcpnt.Node)
             xmlcpnt.SetIdReference(m_xmlReferenceNodeCounter)
+            AppendComponent(xmlcpnt)
 
-            InitBindingReferences(list)
+            InitBindingListReferences(list, True)
             Me.Updated = True
 
         Catch ex As Exception
@@ -164,7 +164,7 @@ Public Class XmlImportView
         Dim bResult As Boolean = False
         Try
             If LoadImport(form, eMode) Then
-                InitBindingReferences(list)
+                InitBindingListReferences(list, True)
                 Me.Updated = True
                 bResult = True
             End If
@@ -190,7 +190,7 @@ Public Class XmlImportView
         Dim bResult As Boolean = False
         Try
             If RemoveRedundant(TryCast(list.SelectedItem, XmlComponent)) Then
-                InitBindingReferences(list)
+                InitBindingListReferences(list, True)
                 Me.Updated = True
                 If Me.GetNode("descendant::reference | descendant::interface") Is Nothing Then
                     If MsgBox("Do you want to remove the import " + Me.Name + " too ?", _
@@ -204,6 +204,30 @@ Public Class XmlImportView
             Throw ex
         End Try
         Return bResult
+    End Function
+
+    Public Function PasteReference(ByVal list As ListBox) As Boolean
+        Try
+            ' Get back from the specific clipboard shared by all projects
+            Dim bCopy As Boolean
+            Dim component As XmlComponent = XmlComponent.Clipboard.GetData(bCopy)
+
+            If Me.ChildExportNode.CanPasteItem(component) _
+            Then
+                If PasteOrDuplicate(component, bCopy) Then
+                    InitBindingListReferences(list, True)
+                    Me.Updated = True
+                    Return True
+                Else
+                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
+                End If
+            Else
+                MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
     End Function
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
@@ -241,7 +265,7 @@ Public Class XmlImportView
     Public Function RemoveAllReferences() As Boolean
         Dim bResult As Boolean = False
         Try
-            If RemoveComponent(m_xmlExport) Then
+            If RemoveComponent(Me.ChildExportNode) Then
                 bResult = True
                 Me.Updated = True
             End If
@@ -254,7 +278,7 @@ Public Class XmlImportView
     Public Function RemoveAllReferences(ByVal list As ListBox) As Boolean
         Dim bResult As Boolean = False
         Try
-            If RemoveComponent(m_xmlExport) Then
+            If RemoveComponent(Me.ChildExportNode) Then
                 list.Items.Clear()
                 Me.Updated = True
                 bResult = True
@@ -269,7 +293,7 @@ Public Class XmlImportView
         Try
             If list.SelectedItem IsNot Nothing Then
                 If RemoveComponent(CType(list.SelectedItem, XmlComponent)) Then
-                    InitBindingReferences(list)
+                    InitBindingListReferences(list, True)
                     Me.Updated = True
                 End If
             End If
@@ -278,19 +302,21 @@ Public Class XmlImportView
         End Try
     End Sub
 
-    Public Sub Duplicate(ByVal list As ListBox)
+    Public Sub DuplicateReference(ByVal list As ListBox)
         Try
             If list.SelectedItem IsNot Nothing Then
-                If DuplicateReference(CType(list.SelectedItem, XmlComponent)) Then
-                    InitBindingReferences(list)
+                Dim component As XmlComponent = CType(list.SelectedItem, XmlComponent)
+                If PasteOrDuplicate(component) Then
+                    InitBindingListReferences(list, True)
                     Me.Updated = True
+                Else
+                    MsgBox("Sorry can't duplicate " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
                 End If
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
     End Sub
-
 
     Public Sub Edit(ByVal list As ListBox)
         Try
@@ -299,7 +325,7 @@ Public Class XmlImportView
                 fen = m_xmlNodeManager.CreateForm(CType(list.SelectedItem, XmlComponent))
                 fen.ShowDialog()
                 If CType(fen.Tag, Boolean) Then
-                    InitBindingReferences(list)
+                    InitBindingListReferences(list, True)
                     Me.Updated = True
                 End If
             End If
@@ -338,5 +364,30 @@ Public Class XmlImportView
         Return bResult
     End Function
 
+    Private Function PasteOrDuplicate(ByVal component As XmlComponent, Optional ByVal bDuplicate As Boolean = True) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim xmlComponent As XmlComponent = component
+
+            If bDuplicate Then
+                xmlComponent = Me.DuplicateComponent(component)
+            End If
+
+            If xmlComponent IsNot Nothing Then
+                xmlComponent.Tag = Me.Tag
+                xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
+
+                If bDuplicate Then
+                    xmlComponent.Name = component.Name + "_copy"
+                    If Me.ChildExportNode.AppendComponent(xmlComponent) IsNot Nothing Then
+                        bResult = True
+                    End If
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
 #End Region
 End Class
