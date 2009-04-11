@@ -85,20 +85,16 @@ Public Class dlgPackage
 
     Private Sub mnuAdd_Click(ByVal sender As ToolStripItem, ByVal e As System.EventArgs) _
         Handles mnuAddPackage.Click, mnuAddClass.Click, mnuAddImport.Click
+
         gridClasses.AddItem(CType(sender.Tag, String))
-        m_xmlView.Updated = True
     End Sub
 
     Private Sub mnuDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDelete.Click
-        If gridClasses.DeleteSelectedItems() Then
-            m_xmlView.Updated = True
-        End If
-    End Sub
+        gridClasses.DeleteSelectedItems()
+            End Sub
 
     Private Sub mnuEdit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuEdit.Click
-        If gridClasses.EditCurrentItem() Then
-            m_xmlView.Updated = True
-        End If
+        gridClasses.EditCurrentItem()
     End Sub
 
     Private Sub chkFolder_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkFolder.CheckedChanged
@@ -123,7 +119,7 @@ Public Class dlgPackage
     End Sub
 
     Private Sub gridClasses_RowValuesChanged(ByVal sender As Object) Handles gridClasses.RowValuesChanged
-        m_xmlView.Updated = True
+        ' TODO: for future use
     End Sub
 
     Private Sub btnFolder_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnFolder.Click
@@ -150,16 +146,11 @@ Public Class dlgPackage
     End Sub
 
     Private Sub mnuPaste_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuPaste.Click
-        If gridClasses.PasteItem() Then
-            m_xmlView.Updated = True
-        End If
-        mnuPaste.Enabled = False
+        mnuPaste.Enabled = Not (gridClasses.PasteItem())
     End Sub
 
     Private Sub mnuDuplicate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDuplicate.Click
-        If gridClasses.DuplicateSelectedItem() Then
-            m_xmlView.Updated = True
-        End If
+        gridClasses.DuplicateSelectedItem()
     End Sub
 
     Private Sub mnuDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuDependencies.Click

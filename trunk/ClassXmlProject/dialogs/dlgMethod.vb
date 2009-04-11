@@ -131,24 +131,18 @@ Public Class dlgMethod
 
     Private Sub mnuAddParam_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuAddParam.Click
         grdParams.AddItem("param")
-        m_xmlView.Updated = True
     End Sub
 
     Private Sub mnuDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDelete.Click
-        If grdParams.DeleteSelectedItems() Then
-            m_xmlView.Updated = True
-        End If
+        grdParams.DeleteSelectedItems()
     End Sub
 
     Private Sub mnuEditParam_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuEditParam.Click
-        If grdParams.EditCurrentItem() Then
-            m_xmlView.Updated = True
-        End If
+        grdParams.EditCurrentItem()
     End Sub
 
     Private Sub mnuProperties_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuProperties.Click
         dlgXmlNodeProperties.DisplayProperties(grdParams.SelectedItem)
-        m_xmlView.Updated = True
     End Sub
 
     Private Sub chkOperator_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkOperator.CheckedChanged
@@ -175,7 +169,7 @@ Public Class dlgMethod
     End Sub
 
     Private Sub grdParams_RowValuesChanged(ByVal sender As Object) Handles grdParams.RowValuesChanged
-        m_xmlView.Updated = True
+        ' TODO: for future use
     End Sub
 
     Private Sub mnuCopy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuCopy.Click
@@ -183,16 +177,11 @@ Public Class dlgMethod
     End Sub
 
     Private Sub mnuPaste_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuPaste.Click
-        If grdParams.PasteItem() Then
-            m_xmlView.Updated = True
-        End If
-        mnuPaste.Enabled = False
+        mnuPaste.Enabled = Not (grdParams.PasteItem())
     End Sub
 
     Private Sub mnuDuplicate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDuplicate.Click
-        If grdParams.DuplicateSelectedItem() Then
-            m_xmlView.Updated = True
-        End If
+        grdParams.DuplicateSelectedItem()
     End Sub
 End Class
 

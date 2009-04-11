@@ -44,7 +44,14 @@ Public Class XmlDataGridView
         End Set
     End Property
 
-    Public Function DeleteSelectedItems(Optional ByVal iRemainRow As Integer = -1, Optional ByVal bAskRefresh As Boolean = True) As Boolean
+    Public Sub New()
+        m_xmlBinding = New XmlBindingDataGridView(Me)
+        m_bRaiseDataError = False
+        Me.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect
+
+    End Sub
+
+    Public Sub DeleteSelectedItems(Optional ByVal iRemainRow As Integer = -1)
         Dim bResult As Boolean = False
         Try
             Dim iterator As IEnumerator = Me.SelectedRows.GetEnumerator
@@ -52,22 +59,21 @@ Public Class XmlDataGridView
 
             If Me.RowCount - Me.SelectedRows.Count - 1 < iRemainRow Then
                 MsgBox(CStr(iRemainRow) + " row(s) must remain in the list", MsgBoxStyle.Critical)
-                Exit Function
+                Exit Sub
             End If
-            Dim bChanged As Boolean = (Me.SelectedRows.Count > 1 Or bAskRefresh)
+
             While iterator.MoveNext
                 component = CType(CType(iterator.Current, DataGridViewRow).DataBoundItem, XmlComponent)
                 If m_xmlBinding.DeleteItem(component) Then
                     bResult = True
                 End If
             End While
-            m_xmlBinding.ResetBindings(bChanged)
+            m_xmlBinding.ResetBindings(bResult)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
-        Return bResult
-    End Function
+    End Sub
 
     Public Function CopySelectedItem() As Boolean
         Dim bResult As Boolean = False
@@ -94,38 +100,33 @@ Public Class XmlDataGridView
     End Function
 
     Public Function PasteItem() As Boolean
-        Dim bResult As Boolean = False
         Try
-            bResult = m_xmlBinding.PasteItem()
+            Return m_xmlBinding.PasteItem()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
-        Return bResult
+        Return False
     End Function
 
-    Public Function DuplicateSelectedItem() As Boolean
-        Dim bResult As Boolean = False
+    Public Sub DuplicateSelectedItem()
         Try
             Dim component As XmlComponent = CType(Me.SelectedItem, XmlComponent)
-
             If component IsNot Nothing Then
-                If m_xmlBinding.DuplicateItem(component) Then
-                    bResult = True
+                If m_xmlBinding.DuplicateOrPasteItem(component) = False Then
+                    MsgBox("Sorry can't dupplicate " + component.NodeName + " '" + component.Name + "'!", MsgBoxStyle.Exclamation)
                 End If
             End If
-            If bResult Then m_xmlBinding.ResetBindings(True)
-
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
-        Return bResult
-    End Function
+    End Sub
 
     Public Sub DeleteItem(ByVal component As XmlComponent)
         Try
-            m_xmlBinding.DeleteItem(component)
-            m_xmlBinding.ResetBindings(True)
+            If m_xmlBinding.DeleteItem(component) Then
+                m_xmlBinding.ResetBindings(True)
+            End If
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -141,18 +142,16 @@ Public Class XmlDataGridView
         End Try
     End Sub
 
-    Public Function EditCurrentItem() As Boolean
-        Dim bResult As Boolean = False
+    Public Sub EditCurrentItem()
         Try
             If Me.CurrentRow IsNot Nothing Then
                 Dim e As New DataGridViewCellEventArgs(0, Me.CurrentRow.Index)
-                bResult = m_xmlBinding.CellContentClick(Me, e, True)
+                m_xmlBinding.CellContentClick(Me, e, True)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
-        Return bResult
-    End Function
+    End Sub
 
     Private Sub UpdateCells()
         ' TODO: check if rows are updated....
@@ -261,18 +260,12 @@ Public Class XmlDataGridView
         End Try
     End Sub
 
-    Public Sub New()
-        m_xmlBinding = New XmlBindingDataGridView(Me)
-        m_bRaiseDataError = False
-        Me.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect
-
-    End Sub
-
     Private Sub OnItemChanged()
         RaiseEvent RowValuesChanged(Me)
     End Sub
 
     Private Sub XmlDataGridView_CellValueChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles Me.CellValueChanged
+        m_xmlBinding.CellValueChanged(sender, e)
         RaiseEvent RowValuesChanged(Me)
     End Sub
 End Class

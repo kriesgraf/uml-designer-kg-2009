@@ -10,6 +10,7 @@ Public Class XmlProjectMemberView
     Inherits XmlComposite
     Implements InterfListViewNotifier
     Implements InterfListViewControl
+    Implements InterfListViewContext
     Implements InterfViewControl
     Implements InterfNodeCounter
     Implements IEnumerable  ' Use by BindingSource to load information
@@ -31,7 +32,7 @@ Public Class XmlProjectMemberView
     End Enum
 
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
-    Private m_xmlParentView As XmlProjectMemberView
+    Private m_xmlParentView As XmlProjectMemberView = Nothing
 
 #End Region
 
@@ -63,7 +64,7 @@ Public Class XmlProjectMemberView
         End Get
     End Property
 
-    Public ReadOnly Property CurrentContext() As String Implements InterfListViewNotifier.CurrentContext
+    Public ReadOnly Property CurrentContext() As String Implements InterfListViewContext.CurrentContext
         Get
             Dim strNodeName As String = MyBase.NodeName
             If strNodeName = "root" Then
