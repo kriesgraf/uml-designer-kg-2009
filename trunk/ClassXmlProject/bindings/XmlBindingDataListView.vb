@@ -5,9 +5,14 @@ Imports System.Collections
 Imports System.Collections.Generic
 Imports Microsoft.VisualBasic
 
-Public Interface InterfListViewNotifier
+Public Interface InterfListViewContext
 
     ReadOnly Property CurrentContext() As String
+
+End Interface
+
+Public Interface InterfListViewNotifier
+
     Function EventDoubleClick(ByRef bDisplayChildren As Boolean, Optional ByVal bEditMode As Boolean = False) As Boolean
     Function EventClick() As Boolean
     Function CanDrag() As Boolean
@@ -29,6 +34,7 @@ Public Class XmlBindingDataListView
     Private m_strFirstNodeName As String
     Private m_strPath As String
 
+    Private m_xmlRootNode As XmlComposite
     Private m_xmlParentNode As XmlComposite
     Private m_xmlNodeHistory As ArrayList
     Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
@@ -81,6 +87,7 @@ Public Class XmlBindingDataListView
                                     ".LoadXmlNodes(Nothing," + strViewName + ")")
             End If
 
+            m_xmlRootNode = composite
             InitStack(composite)
             m_strFirstNodeName = strFirstNodeName
             m_strViewName = strViewName
@@ -110,6 +117,7 @@ Public Class XmlBindingDataListView
     End Function
 
     Public Function CanDropItem(ByVal parent As ListViewItem, ByVal child As ListViewItem) As Boolean
+        Debug.Print("XmlBindingDataListView.CanDropItem")
         Dim interf As InterfListViewNotifier = TryCast(parent.Tag, InterfListViewNotifier)
         If interf IsNot Nothing Then
             Return interf.CanDropItem(TryCast(child.Tag, XmlComponent))
@@ -118,9 +126,14 @@ Public Class XmlBindingDataListView
     End Function
 
     Public Function DropItem(ByVal parent As ListViewItem, ByVal child As ListViewItem) As Boolean
+        Debug.Print("XmlBindingDataListView.DropItem")
         Dim interf As InterfListViewNotifier = TryCast(parent.Tag, InterfListViewNotifier)
         If interf IsNot Nothing Then
-            Return interf.CanDropItem(TryCast(child.Tag, XmlComponent), False)
+            If interf.CanDropItem(TryCast(child.Tag, XmlComponent), False) Then
+                m_xmlRootNode.Updated = True
+                ResetBindings(True)
+                Return True
+            End If
         End If
         Return False
     End Function
@@ -142,7 +155,7 @@ Public Class XmlBindingDataListView
             m_strPath = m_xmlParentNode.Name
             'Debug.Print("GoHomeNode:=(" + CStr(m_currentIndex) + ")" + m_xmlParentNode.ToString)
             Refresh()
-            m_dataControl.CurrentContext = CType(m_xmlParentNode, InterfListViewNotifier).CurrentContext
+            m_dataControl.CurrentContext = CType(m_xmlParentNode, InterfListViewContext).CurrentContext
         End If
         Return False
     End Function
@@ -167,7 +180,7 @@ Public Class XmlBindingDataListView
         m_strPath = m_strPath + "/" + m_xmlParentNode.Name
         'Debug.Print("PushNode:=(" + CStr(m_currentIndex) + ")" + composite.ToString)
         Refresh()
-        m_dataControl.CurrentContext = CType(composite, InterfListViewNotifier).CurrentContext
+        m_dataControl.CurrentContext = CType(composite, InterfListViewContext).CurrentContext
     End Sub
 
     Public Function PopNode() As Boolean
@@ -178,7 +191,7 @@ Public Class XmlBindingDataListView
             m_strPath = Left(m_strPath, InStrRev(m_strPath, "/") - 1)
             'Debug.Print("PopNode:=(" + CStr(m_currentIndex) + ")" + m_xmlParentNode.ToString)
             Refresh()
-            m_dataControl.CurrentContext = CType(m_xmlParentNode, InterfListViewNotifier).CurrentContext
+            m_dataControl.CurrentContext = CType(m_xmlParentNode, InterfListViewContext).CurrentContext
         End If
         Return (m_currentIndex > 0)
     End Function
@@ -207,9 +220,13 @@ Public Class XmlBindingDataListView
                     InterfNotifier.EventClick()
                 End If
             End If
-            If bChanged Then
+            If bChanged _
+            Then
+                m_xmlRootNode.Updated = True
                 Refresh()
-            ElseIf bDisplayChildren Then
+
+            ElseIf bDisplayChildren _
+            Then
                 PushNode(composite)
             End If
         Catch ex As Exception
@@ -268,6 +285,7 @@ Public Class XmlBindingDataListView
                         .Update()
                     End With
 
+                    m_xmlRootNode.Updated = True
                     Refresh()
                 End If
             End If
@@ -311,56 +329,50 @@ Public Class XmlBindingDataListView
 
                 If m_xmlParentNode.CanPasteItem(component) _
                 Then
-                    ' Method XmlNode.AppendChild make a cut/paste if node is not cloned.
-                    If bCopy = True Then
-                        component = m_xmlParentNode.DuplicateComponent(component)
-                        component.SetIdReference(m_xmlReferenceNodeCounter, True)
-                    End If
-
-
-                    If component IsNot Nothing Then
-                        Dim child As XmlNode = m_xmlParentNode.AppendComponent(component)
-                        If child IsNot Nothing Then
-                            Refresh()
-                            Return True
-                        Else
-                            MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
-                        End If
+                    If DuplicateOrPasteItem(component, bCopy) Then
+                        ' Refresh is done in method "DuplicateItem"
+                        Return True
                     Else
-                        MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
+                        MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
                     End If
+                Else
+                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
                 End If
             End If
-
         Catch ex As Exception
             Throw ex
         End Try
         Return False
     End Function
 
-    Public Function DuplicateItem(ByVal component As XmlComponent) As Boolean
+    Public Function DuplicateOrPasteItem(ByVal component As XmlComponent, Optional ByVal bDuplicate As Boolean = True) As Boolean
         Try
             If m_xmlParentNode Is Nothing Then
                 Throw New Exception("m_xmlParentNode property is null")
             Else
-                Dim duplicate As XmlComponent = m_xmlParentNode.DuplicateComponent(component)
-                If duplicate IsNot Nothing Then
-                    duplicate.Tag = m_xmlParentNode.Tag
-                    duplicate.Name = component.Name + "_copy"
-                    duplicate.SetIdReference(m_xmlReferenceNodeCounter, True)
+                Dim xmlComponent As XmlComponent = component
 
-                    Dim child As XmlNode = m_xmlParentNode.AppendComponent(duplicate)
+                If bDuplicate Then
+                    xmlComponent = m_xmlParentNode.DuplicateComponent(component)
+                End If
+
+                If xmlComponent IsNot Nothing Then
+                    xmlComponent.Tag = m_xmlParentNode.Tag
+
+                    If bDuplicate Then
+                        xmlComponent.Name = component.Name + "_copy"
+                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
+                    End If
+
+                    ' Append a node not duplicated cause move node to new location.
+                    Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
                     If child IsNot Nothing Then
-                        Dim xmlView As XmlComponent = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
-                        xmlView.Tag = duplicate.Tag
+                        m_xmlRootNode.Updated = True
                         Refresh()
                         Return True
-                    Else
-                        MsgBox("Sorry can't dupplicate node '" + component.NodeName + "'!", MsgBoxStyle.Exclamation)
                     End If
                 End If
             End If
-
         Catch ex As Exception
             Throw ex
         End Try
@@ -369,8 +381,12 @@ Public Class XmlBindingDataListView
 
     Public Function DeleteItem(ByVal component As XmlComponent) As Boolean
         Try
-            Return m_xmlParentNode.RemoveComponent(component)
-
+            If component IsNot Nothing Then
+                If m_xmlParentNode.RemoveComponent(component) Then
+                    m_xmlRootNode.Updated = True
+                    Return True
+                End If
+            End If
         Catch ex As Exception
             Throw ex
         End Try

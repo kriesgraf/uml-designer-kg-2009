@@ -145,7 +145,7 @@ Public Class XmlDataListView
             Dim component As XmlComponent = Nothing
             If Me.SelectedItem IsNot Nothing Then
                 component = CType(Me.SelectedItem, XmlComponent)
-                If m_xmlBinding.DuplicateItem(component) Then
+                If m_xmlBinding.DuplicateOrPasteItem(component) Then
                     bChanged = True
                 End If
                 If bChanged Then m_xmlBinding.ResetBindings(bAskRefresh)
