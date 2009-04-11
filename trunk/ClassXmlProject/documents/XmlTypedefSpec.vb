@@ -6,13 +6,13 @@ Imports System.Xml
 Public Class XmlTypedefSpec
     Inherits XmlComponent
 
-    Protected m_xmlType As XmlTypeVarSpec
+    Private m_xmlType As XmlTypeVarSpec
 
     <CategoryAttribute("UML design"), _
     DescriptionAttribute("Full path type description")> _
     Public ReadOnly Property FullpathTypeDescription() As String
         Get
-            Return m_xmlType.FullpathTypeDescription
+            Return Me.TypeVarDefinition.FullpathTypeDescription
         End Get
     End Property
 
@@ -60,10 +60,10 @@ Public Class XmlTypedefSpec
     DescriptionAttribute("Constructor visibility")> _
     Public Property Range() As String
         Get
-            Return m_xmlType.Range
+            Return Me.TypeVarDefinition.Range
         End Get
         Set(ByVal value As String)
-            m_xmlType.Range = value
+            Me.TypeVarDefinition.Range = value
         End Set
     End Property
 
@@ -105,7 +105,7 @@ Public Class XmlTypedefSpec
     End Function
 
     Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent, Optional ByVal observer As Object = Nothing) As System.Xml.XmlNode
-        Return Me.m_xmlType.AppendComponent(nodeXml, observer)
+        Return Me.TypeVarDefinition.AppendComponent(nodeXml, observer)
     End Function
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
@@ -116,9 +116,9 @@ Public Class XmlTypedefSpec
             m_bCreateNodeNow = bCreateNodeNow
 
             ChangeReferences()
-            m_xmlType.SetDefaultValues(bCreateNodeNow)
-            m_xmlType.Descriptor = "int16"
-            m_xmlType.Range = "public"
+            Me.TypeVarDefinition.SetDefaultValues(bCreateNodeNow)
+            Me.TypeVarDefinition.Descriptor = "int16"
+            Me.TypeVarDefinition.Range = "public"
 
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
             Id = "class0"
@@ -140,7 +140,7 @@ Public Class XmlTypedefSpec
 
         For Each enumvalue In XmlProjectTools.SelectNodes(Me.Node, "descendant::enumvalue")
             Dim strId2 As String = GetID(enumvalue)
-            SetID(enumvalue, "enum" + XmlNodeCounter.AfterStr(Me.Id, "class") + "_" + XmlNodeCounter.AfterStr(strId2, "_"))
+            SetID(enumvalue, "enum" + XmlNodeCounter.AfterStr(Me.Id, "class") + "_" + GetName(enumvalue))
         Next
     End Sub
 
@@ -155,6 +155,8 @@ Public Class XmlTypedefSpec
                 nodeXml = GetNode("type")
             End If
             m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
+            If m_xmlType IsNot Nothing Then m_xmlType.Tag = Me.Tag
+
         Catch ex As Exception
             Throw ex
         End Try

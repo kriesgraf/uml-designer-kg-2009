@@ -9,7 +9,16 @@ Public Class XmlMethodMemberView
     Implements InterfGridViewNotifier
     Implements InterfViewControl
 
-    Private m_xmlAdapter As XmlTypeVarSpec
+    Private m_xmlAdapter As XmlTypeVarSpec = Nothing
+
+    Public ReadOnly Property TypeVarDefinition() As XmlTypeVarSpec
+        Get
+            If m_xmlAdapter IsNot Nothing Then
+                m_xmlAdapter.Tag = Me.Tag
+            End If
+            Return m_xmlAdapter
+        End Get
+    End Property
 
     Public Property Comment() As String
         Get
@@ -33,10 +42,13 @@ Public Class XmlMethodMemberView
         Get
             If m_xmlAdapter Is Nothing Then
                 Dim xmlNode As XmlNode = MyBase.GetElementById(MyBase.GetAttribute("idref"))
-                Return GetFullpathDescription(xmlNode, CType(Me.Tag, ELanguage))
+
+                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+                Dim strResult As String = GetFullpathDescription(xmlNode, eLang)
+                If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
+                Return strResult
             Else
-                m_xmlAdapter.Tag = Me.Tag
-                Return m_xmlAdapter.FullpathTypeDescription
+                Return Me.TypeVarDefinition.FullpathTypeDescription
             End If
         End Get
     End Property
@@ -50,7 +62,7 @@ Public Class XmlMethodMemberView
                 If m_xmlAdapter IsNot Nothing _
                 Then
                     m_xmlAdapter.Tag = Me.Tag
-                    fen = XmlNodeManager.GetInstance().CreateForm(m_xmlAdapter)
+                    fen = XmlNodeManager.GetInstance().CreateForm(Me.TypeVarDefinition)
                 Else
                     Dim xmlcpnt As XmlComponent = New XmlComponent(MyBase.Node.ParentNode)
                     fen = New dlgException
@@ -95,6 +107,7 @@ Public Class XmlMethodMemberView
         ElseIf TestNode("type") Then
 
             m_xmlAdapter = New XmlTypeVarSpec(GetNode("type"))
+            m_xmlAdapter.Tag = Me.Tag
         Else
             m_xmlAdapter = Nothing
         End If

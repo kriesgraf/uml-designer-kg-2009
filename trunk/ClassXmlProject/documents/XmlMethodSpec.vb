@@ -20,7 +20,7 @@ Public Class XmlMethodSpec
         EK_Operator
     End Enum
 
-    Private m_xmlReturnValue As XmlTypeVarSpec
+    Private m_xmlReturnValue As XmlTypeVarSpec = Nothing
 
 #End Region
 
@@ -93,6 +93,9 @@ Public Class XmlMethodSpec
     DescriptionAttribute("Component return value")> _
     Public ReadOnly Property ReturnValue() As XmlTypeVarSpec
         Get
+            If m_xmlReturnValue IsNot Nothing Then
+                m_xmlReturnValue.Tag = Me.Tag
+            End If
             Return m_xmlReturnValue
         End Get
     End Property
@@ -196,7 +199,7 @@ Public Class XmlMethodSpec
 
                 Return GetAttribute("constructor")
             Else
-                Return m_xmlReturnValue.Range
+                Return Me.ReturnValue.Range
             End If
         End Get
         Set(ByVal value As String)
@@ -205,7 +208,7 @@ Public Class XmlMethodSpec
 
                 SetAttribute("constructor", value)
             Else
-                m_xmlReturnValue.Range = value
+                Me.ReturnValue.Range = value
             End If
         End Set
     End Property
@@ -298,8 +301,8 @@ Public Class XmlMethodSpec
 
             ChangeReferences()
 
-            m_xmlReturnValue.SetDefaultValues(bCreateNodeNow)
-            m_xmlReturnValue.Descriptor = "void"
+            Me.ReturnValue.SetDefaultValues(bCreateNodeNow)
+            Me.ReturnValue.Descriptor = "void"
 
             Dim xmlParam As XmlParamSpec = CreateDocument(GetNode("param"))
             xmlParam.SetDefaultValues(bCreateNodeNow)
@@ -360,6 +363,7 @@ Public Class XmlMethodSpec
             If TestNode("return") Then
                 Dim nodeType As XmlNode = GetNode("return/type")
                 m_xmlReturnValue = TryCast(CreateDocument(nodeType, bLoadChildren), XmlTypeVarSpec)
+                If m_xmlReturnValue IsNot Nothing Then m_xmlReturnValue.Tag = Me.Tag
             End If
         Catch ex As Exception
             Throw ex

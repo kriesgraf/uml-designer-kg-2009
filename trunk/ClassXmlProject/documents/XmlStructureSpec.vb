@@ -8,13 +8,13 @@ Public Class XmlStructureSpec
     DescriptionAttribute("Union structure")> _
     Public Property Union() As Boolean
         Get
-            Return (m_xmlType.CheckAttribute("struct", "union", "struct"))
+            Return (Me.TypeVarDefinition.CheckAttribute("struct", "union", "struct"))
         End Get
         Set(ByVal value As Boolean)
             If value Then
-                m_xmlType.SetAttribute("struct", "union")
+                Me.TypeVarDefinition.SetAttribute("struct", "union")
             Else
-                m_xmlType.SetAttribute("struct", "struct")
+                Me.TypeVarDefinition.SetAttribute("struct", "struct")
             End If
         End Set
     End Property
@@ -43,7 +43,7 @@ Public Class XmlStructureSpec
             m_bCreateNodeNow = bCreateNodeNow
             Name = "New_structure"
             ChangeReferences()
-            m_xmlType.SetStructureValues(bCreateNodeNow)
+            Me.TypeVarDefinition.SetStructureValues(bCreateNodeNow)
 
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
             Id = "class0"

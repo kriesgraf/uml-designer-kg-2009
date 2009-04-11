@@ -22,10 +22,18 @@ Public Class XmlTypeVarSpec
         EK_Container
     End Enum
 
-    Private m_xmlVariable As XmlVariableSpec
+    Private m_xmlVariable As XmlVariableSpec = Nothing
+
 #End Region
 
 #Region "Properties"
+
+    Public ReadOnly Property VariableDefinition() As XmlVariableSpec
+        Get
+            If m_xmlVariable IsNot Nothing Then m_xmlVariable.Tag = Me.Tag
+            Return m_xmlVariable
+        End Get
+    End Property
 
     Public ReadOnly Property ParentName() As String
         Get
@@ -349,7 +357,7 @@ Public Class XmlTypeVarSpec
             Kind = EKindDeclaration.EK_SimpleType
             m_bCreateNodeNow = bCreateNodeNow
             ChangeReferences()
-            m_xmlVariable.SetDefaultValues(bCreateNodeNow)
+            Me.VariableDefinition.SetDefaultValues(bCreateNodeNow)
             Descriptor = "void"
             Level = 0
             By = False
@@ -369,7 +377,7 @@ Public Class XmlTypeVarSpec
             Kind = EKindDeclaration.EK_Container
             m_bCreateNodeNow = bCreateNodeNow
             ChangeReferences()
-            m_xmlVariable.SetDefaultValues(bCreateNodeNow)
+            Me.VariableDefinition.SetDefaultValues(bCreateNodeNow)
             Descriptor = "int16"
             Level = 0
             By = False
@@ -390,7 +398,7 @@ Public Class XmlTypeVarSpec
             Kind = EKindDeclaration.EK_Structure
             m_bCreateNodeNow = bCreateNodeNow
             ChangeReferences()
-            m_xmlVariable.SetDefaultValues(bCreateNodeNow)
+            Me.VariableDefinition.SetDefaultValues(bCreateNodeNow)
         Catch ex As Exception
             Throw ex
         Finally
@@ -433,6 +441,8 @@ Public Class XmlTypeVarSpec
             End If
 
             m_xmlVariable = CreateDocument(nodeXml)
+            If m_xmlVariable IsNot Nothing Then m_xmlVariable.Tag = Me.Tag
+
         Catch ex As Exception
             Throw ex
         End Try

@@ -9,18 +9,10 @@ Public Class XmlPropertySpec
 
 #Region "Class declarations"
 
-    Private m_xmlType As XmlTypeVarSpec
+    Private m_xmlType As XmlTypeVarSpec = Nothing
 #End Region
 
 #Region "Properties (Adapter pattern)"
-
-    <CategoryAttribute("Code generation"), _
-    DescriptionAttribute("Project language")> _
-    Public ReadOnly Property GenerationLanguage() As ELanguage
-        Get
-            Return CType(MyBase.Tag, ELanguage)
-        End Get
-    End Property
 
     <CategoryAttribute("UML design"), _
     DescriptionAttribute("VB.NET property declaration")> _
@@ -67,7 +59,7 @@ Public Class XmlPropertySpec
     DescriptionAttribute("Full path type description")> _
     Public ReadOnly Property FullpathTypeDescription() As String
         Get
-            Return m_xmlType.FullpathTypeDescription
+            Return Me.TypeVarDefinition.FullpathTypeDescription
         End Get
     End Property
 
@@ -87,10 +79,10 @@ Public Class XmlPropertySpec
    DescriptionAttribute("Member visibility")> _
     Public Property Range() As String
         Get
-            Return m_xmlType.Range
+            Return Me.TypeVarDefinition.Range
         End Get
         Set(ByVal value As String)
-            m_xmlType.Range = value
+            Me.TypeVarDefinition.Range = value
         End Set
     End Property
 
@@ -271,9 +263,9 @@ Public Class XmlPropertySpec
             m_bCreateNodeNow = bCreateNodeNow
 
             ChangeReferences()
-            m_xmlType.SetDefaultValues(bCreateNodeNow)
-            m_xmlType.Descriptor = "int16"
-            m_xmlType.Range = "private"
+            Me.TypeVarDefinition.SetDefaultValues(bCreateNodeNow)
+            Me.TypeVarDefinition.Descriptor = "int16"
+            Me.TypeVarDefinition.Range = "private"
 
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
             Member = False
@@ -315,7 +307,10 @@ Public Class XmlPropertySpec
             Else
                 nodeXml = GetNode("type")
             End If
+
             m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
+            If m_xmlType IsNot Nothing Then m_xmlType.Tag = Me.Tag
+
         Catch ex As Exception
             Throw ex
         End Try
