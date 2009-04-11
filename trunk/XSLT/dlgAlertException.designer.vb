@@ -43,7 +43,7 @@ Partial Class dlgAlertException
         Me.txtStackTrace.Multiline = True
         Me.txtStackTrace.Name = "txtStackTrace"
         Me.txtStackTrace.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txtStackTrace.Size = New System.Drawing.Size(432, 106)
+        Me.txtStackTrace.Size = New System.Drawing.Size(784, 115)
         Me.txtStackTrace.TabIndex = 0
         Me.txtStackTrace.Text = "Stack trace"
         '
@@ -59,7 +59,7 @@ Partial Class dlgAlertException
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 1
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 62.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(432, 52)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(784, 298)
         Me.TableLayoutPanel2.TabIndex = 0
         '
         'lblMessage
@@ -71,18 +71,18 @@ Partial Class dlgAlertException
         Me.lblMessage.Margin = New System.Windows.Forms.Padding(10, 10, 10, 0)
         Me.lblMessage.Multiline = True
         Me.lblMessage.Name = "lblMessage"
-        Me.lblMessage.Size = New System.Drawing.Size(337, 52)
+        Me.lblMessage.Size = New System.Drawing.Size(689, 288)
         Me.lblMessage.TabIndex = 3
         Me.lblMessage.Text = "Message"
         '
         'PictureBox1
         '
-        Me.PictureBox1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.PictureBox1.Dock = System.Windows.Forms.DockStyle.Top
         Me.PictureBox1.Image = Global.XSLT.My.Resources.Resources.interdit_32
         Me.PictureBox1.InitialImage = Nothing
         Me.PictureBox1.Location = New System.Drawing.Point(3, 3)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(69, 56)
+        Me.PictureBox1.Size = New System.Drawing.Size(69, 32)
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
         Me.PictureBox1.TabIndex = 2
         Me.PictureBox1.TabStop = False
@@ -101,15 +101,15 @@ Partial Class dlgAlertException
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.txtStackTrace)
-        Me.SplitContainer1.Size = New System.Drawing.Size(432, 162)
-        Me.SplitContainer1.SplitterDistance = 52
+        Me.SplitContainer1.Size = New System.Drawing.Size(784, 417)
+        Me.SplitContainer1.SplitterDistance = 298
         Me.SplitContainer1.TabIndex = 1
         '
         'dlgAlertException
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(432, 162)
+        Me.ClientSize = New System.Drawing.Size(784, 417)
         Me.Controls.Add(Me.SplitContainer1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
