@@ -9,7 +9,7 @@ Public Class XmlClassInheritedView
     Implements InterfViewControl
     Implements InterfObject
 
-    Private m_xmlClassView As XmlClassGlobalView
+    Private m_xmlClassView As XmlClassGlobalView = Nothing
     Protected Const cstFullpathClassName As String = "ClassName"
 
     Public ReadOnly Property ClassName() As String
