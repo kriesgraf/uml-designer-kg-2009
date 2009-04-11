@@ -124,8 +124,7 @@ Public Class dlgDependencies
                         lsbDependencies.Items.Add("Close this dialog box to complete the operation")
                     End If
                 Else
-                    MyList.Sort(New XmlNodeListView(""))
-
+                    XmlNodeListView.SortNodeList(MyList)
                     lsbDependencies.DataSource = MyList
                     lsbDependencies.DisplayMember = "FullpathClassName"
                     m_bEmpty = False
