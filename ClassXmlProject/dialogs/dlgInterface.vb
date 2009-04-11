@@ -71,13 +71,10 @@ Public Class dlgInterface
                 Handles AddProperty.Click, AddMethod.Click
 
         gridMembers.AddItem(CType(sender.Tag, String))
-        m_xmlView.Updated = True
     End Sub
 
     Private Sub mnuEditMember_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles EditMember.Click
-        If gridMembers.EditCurrentItem() Then
-            m_xmlView.Updated = True
-        End If
+        gridMembers.EditCurrentItem()
     End Sub
 
     Private Sub mnuMemberDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMemberDependencies.Click
@@ -95,9 +92,7 @@ Public Class dlgInterface
     End Sub
 
     Private Sub DuplicateMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DuplicateMember.Click
-        If gridMembers.DuplicateSelectedItem() Then
-            m_xmlView.Updated = True
-        End If
+        gridMembers.DuplicateSelectedItem()
     End Sub
 
     Private Sub CopyMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CopyMember.Click
@@ -105,19 +100,14 @@ Public Class dlgInterface
     End Sub
 
     Private Sub PasteMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PasteMember.Click
-        If gridMembers.PasteItem() Then
-            m_xmlView.Updated = True
-        End If
-        PasteMember.Enabled = False
+        PasteMember.Enabled = Not (gridMembers.PasteItem())
     End Sub
 
     Private Sub mnuDeleteMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteMember.Click
-        If gridMembers.DeleteSelectedItems() Then
-            m_xmlView.Updated = True
-        End If
+        gridMembers.DeleteSelectedItems()
     End Sub
 
     Private Sub GridRowValuesChanged(ByVal sender As Object) Handles gridMembers.RowValuesChanged
-        m_xmlView.Updated = True
+        ' TODO: for future use
     End Sub
 End Class

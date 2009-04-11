@@ -123,13 +123,22 @@ Public Class XmlBindingDataGridView
                 Else
                     bResult = InterfNotifier.EventClick(sender.Columns(e.ColumnIndex).DataPropertyName)
                 End If
+
+                If bResult Then
+                    m_xmlParentNode.Updated = True
+                    ResetBindings(True)
+                End If
             End If
-            If bResult Then ResetBindings(True)
         Catch ex As Exception
             Throw ex
         End Try
         Return bResult
     End Function
+
+    Public Sub CellValueChanged(ByVal sender As Object, ByVal e As DataGridViewCellEventArgs)
+        ' TODO: for future use
+        m_xmlParentNode.Updated = True
+    End Sub
 
     Public Function RowHeaderClick(ByVal sender As DataGridView, ByVal e As DataGridViewCellMouseEventArgs, _
                                    ByVal bDoubleClick As Boolean) As Boolean
@@ -152,6 +161,11 @@ Public Class XmlBindingDataGridView
                     bResult = InterfNotifier.EventDoubleClick("")
                 Else
                     bResult = InterfNotifier.EventClick("")
+                End If
+
+                If bResult Then
+                    m_xmlParentNode.Updated = True
+                    ResetBindings(True)
                 End If
             End If
         Catch ex As Exception
@@ -240,6 +254,7 @@ Public Class XmlBindingDataGridView
 
                 Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
                 If child IsNot Nothing Then
+
                     xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
                     xmlView.Tag = xmlComponent.Tag
 
@@ -250,7 +265,8 @@ Public Class XmlBindingDataGridView
                         End With
                     End If
 
-                    Refresh()
+                    m_xmlParentNode.Updated = True
+                    ResetBindings(True)
 
                     If m_dataControl.AllowUserToAddRows = False Then
                         m_BindingSource.ResetBindings(True)
@@ -277,6 +293,7 @@ Public Class XmlBindingDataGridView
         Dim interf As InterfGridViewNotifier = TryCast(before, InterfGridViewNotifier)
         If interf IsNot Nothing Then
             If interf.CanDropItem(CType(component, XmlComponent)) Then
+                m_xmlParentNode.Updated = True
                 ResetBindings(True)
                 Return True
             End If
@@ -284,29 +301,36 @@ Public Class XmlBindingDataGridView
         Return False
     End Function
 
-    Public Function DuplicateItem(ByVal component As XmlComponent) As Boolean
+    Public Function DuplicateOrPasteItem(ByVal component As XmlComponent, Optional ByVal bDuplicate As Boolean = True) As Boolean
         Try
             If m_xmlParentNode Is Nothing Then
                 Throw New Exception("m_xmlParentNode property is null")
             Else
-                Dim xmlComponent As XmlComponent = m_xmlParentNode.DuplicateComponent(component)
+                Dim xmlComponent As XmlComponent = component
+
+                If bDuplicate Then
+                    xmlComponent = m_xmlParentNode.DuplicateComponent(component)
+                End If
+
                 If xmlComponent IsNot Nothing Then
                     xmlComponent.Tag = m_xmlParentNode.Tag
-                    xmlComponent.Name = component.Name + "_copy"
-                    xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
 
+                    If bDuplicate Then
+                        xmlComponent.Name = component.Name + "_copy"
+                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
+                    End If
+
+                    ' Append a node not duplicated cause move node to new location.
                     Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
                     If child IsNot Nothing Then
-                        Dim xmlView As XmlComponent = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
-                        xmlView.Tag = xmlComponent.Tag
-
-                        Refresh()
+                        m_xmlParentNode.Updated = True
+                        ResetBindings(True)
                         Return True
-                    Else
-                        MsgBox("Sorry can't dupplicate node '" + component.NodeName + "'!", MsgBoxStyle.Exclamation)
                     End If
                 End If
             End If
+        Catch ex1 As ArgumentException
+            Debug.Print(ex1.ToString)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -317,6 +341,7 @@ Public Class XmlBindingDataGridView
     Public Function DeleteItem(ByVal component As XmlComponent) As Boolean
         If component IsNot Nothing Then
             If m_xmlParentNode.RemoveComponent(component) Then
+                m_xmlParentNode.Updated = True
                 If m_BindingSource.List.Count < 1 Then m_dataControl.AllowUserToAddRows = False
                 Return True
             End If
@@ -347,6 +372,7 @@ Public Class XmlBindingDataGridView
     End Function
 
     Public Function PasteItem() As Boolean
+        Dim bResult As Boolean = False
         Try
             If m_xmlParentNode Is Nothing Then
                 Throw New Exception("m_xmlParentNode property is null")
@@ -357,33 +383,22 @@ Public Class XmlBindingDataGridView
 
                 If m_xmlParentNode.CanPasteItem(component) _
                 Then
-                    ' Method XmlNode.AppendChild make a cut/paste if node is not cloned.
-                    If bCopy = True Then
-                        component = m_xmlParentNode.DuplicateComponent(component)
-                        component.SetIdReference(m_xmlReferenceNodeCounter, True)
-                    End If
-
-
-                    If component IsNot Nothing Then
-                        Dim child As XmlNode = m_xmlParentNode.AppendComponent(component)
-                        If child IsNot Nothing _
-                        Then
-                            Refresh()
-                            Return True
-                        Else
-                            MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
-                        End If
+                    ' Refresh is done in method "DuplicateItem"
+                    If DuplicateOrPasteItem(component, bCopy) Then
+                        bResult = True
+                    Else
+                        MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
                     End If
                 Else
-                    MsgBox("Sorry can't paste node '" + component.NodeName + "' on '" + m_xmlParentNode.NodeName + "' !", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
                 End If
             End If
-
         Catch ex As Exception
             Throw ex
         End Try
-        Return False
+        Return bResult
     End Function
+
     Private Sub m_BindingSource_DataError(ByVal sender As Object, ByVal e As System.Windows.Forms.BindingManagerDataErrorEventArgs) Handles m_BindingSource.DataError
         If m_bRaiseDataError Then
             If MsgBox(e.Exception.ToString + vbCrLf + vbCrLf + "Please press Cancel if you have notice the reason of this error.", _

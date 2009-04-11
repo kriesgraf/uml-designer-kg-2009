@@ -70,19 +70,14 @@ Public Class dlgStructure
 
     Private Sub mnuAddElement_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuAddElement.Click
         grdElements.AddItem()
-        m_xmlView.Updated = True
     End Sub
 
     Private Sub mnuDeleteElement_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDeleteElement.Click
-        If grdElements.DeleteSelectedItems(1) Then
-            m_xmlView.Updated = True
-        End If
-    End Sub
+        grdElements.DeleteSelectedItems(1)
+            End Sub
 
     Private Sub mnuEditElement_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuEditElement.Click
-        If grdElements.EditCurrentItem() Then
-            m_xmlView.Updated = True
-        End If
+        grdElements.EditCurrentItem()
     End Sub
 
     Private Sub mnuProperties_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuProperties.Click
@@ -102,7 +97,7 @@ Public Class dlgStructure
     End Sub
 
     Private Sub grdElements_RowValuesChanged(ByVal sender As Object) Handles grdElements.RowValuesChanged
-        m_xmlView.Updated = True
+        ' TODO: for future use
     End Sub
 
     Private Sub mnuCopy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuCopy.Click
@@ -110,15 +105,10 @@ Public Class dlgStructure
     End Sub
 
     Private Sub mnuPaste_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuPaste.Click
-        If grdElements.PasteItem() Then
-            m_xmlView.Updated = True
-        End If
-        mnuPaste.Enabled = False
+        mnuPaste.Enabled = Not (grdElements.PasteItem())
     End Sub
 
     Private Sub mnuDuplicate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuDuplicate.Click
-        If grdElements.DuplicateSelectedItem() Then
-            m_xmlView.Updated = True
-        End If
-    End Sub
+        grdElements.DuplicateSelectedItem()
+            End Sub
 End Class

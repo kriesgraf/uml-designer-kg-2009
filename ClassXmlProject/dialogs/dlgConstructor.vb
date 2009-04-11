@@ -113,7 +113,7 @@ Public Class dlgConstructor
     End Sub
 
     Private Sub grdParams_RowValuesChanged(ByVal sender As Object) Handles grdParams.RowValuesChanged
-        m_xmlView.Updated = True
+        ' TODO: for future use
     End Sub
 
     Private Sub mnuCopy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuCopy.Click
@@ -121,15 +121,10 @@ Public Class dlgConstructor
     End Sub
 
     Private Sub mnuPaste_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuPaste.Click
-        If grdParams.PasteItem() Then
-            m_xmlView.Updated = True
-        End If
-        mnuPaste.Enabled = False
+        mnuPaste.Enabled = Not (grdParams.PasteItem())
     End Sub
 
     Private Sub mnuDuplicate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuDuplicate.Click
-        If grdParams.DuplicateSelectedItem() Then
-            m_xmlView.Updated = True
-        End If
+        grdParams.DuplicateSelectedItem()
     End Sub
 End Class

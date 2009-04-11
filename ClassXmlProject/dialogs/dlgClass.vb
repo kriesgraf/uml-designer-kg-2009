@@ -139,27 +139,19 @@ Public Class dlgClass
     End Sub
 
     Private Sub mnuDeleteSuperClass_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteSuperClass.Click
-        If gridInherited.DeleteSelectedItems() Then
-            m_xmlView.Updated = True
-        End If
+        gridInherited.DeleteSelectedItems()
     End Sub
 
     Private Sub mnuDeleteMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteMember.Click
-        If gridMembers.DeleteSelectedItems() Then
-            m_xmlView.Updated = True
-        End If
+        gridMembers.DeleteSelectedItems()
     End Sub
 
     Private Sub mnuDeleteDependency_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteDependency.Click
-        If gridDependencies.DeleteSelectedItems() Then
-            m_xmlView.Updated = True
-        End If
+        gridDependencies.DeleteSelectedItems()
     End Sub
 
     Private Sub mnuDeleteRelation_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles DeleteRelation.Click
-        If gridRelations.DeleteSelectedItems() Then
-            m_xmlView.Updated = True
-        End If
+        gridRelations.DeleteSelectedItems()
     End Sub
 
     Private Sub mnuAddSuperClass_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles AddSuperClass.Click
@@ -178,12 +170,10 @@ Public Class dlgClass
 
     Private Sub mnuAddDependency_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddDependency.Click
         gridDependencies.AddItem()
-        m_xmlView.Updated = True
     End Sub
 
     Private Sub mnuAddRelation_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles AddRelation.Click
         gridRelations.AddItem()
-        m_xmlView.Updated = True
     End Sub
 
     Private Sub mnuAddMember_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
@@ -191,19 +181,14 @@ Public Class dlgClass
                         AddStructure.Click, AddContainer.Click
 
         gridMembers.AddItem(CType(sender.Tag, String))
-        m_xmlView.Updated = True
     End Sub
 
     Private Sub mnuEditMember_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles EditMember.Click
-        If gridMembers.EditCurrentItem() Then
-            m_xmlView.Updated = True
-        End If
+        gridMembers.EditCurrentItem()
     End Sub
 
     Private Sub mnuEditRelation_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditRelation.Click
-        If gridRelations.EditCurrentItem() Then
-            m_xmlView.Updated = True
-        End If
+        gridRelations.EditCurrentItem()
     End Sub
 
     Private Sub mnuInheritsProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles InheritsProperties.Click
@@ -241,11 +226,12 @@ Public Class dlgClass
                 gridMembers.RowValuesChanged, _
                 gridRelations.RowValuesChanged
 
-        m_xmlView.Updated = True
+        ' TODO: for future use
     End Sub
 
     Private Sub mnuOverrideProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuOverrideProperties.Click
-        If m_xmlView.OverrideProperties(m_xmlView.CurrentClassImpl) Then
+        If m_xmlView.OverrideProperties(m_xmlView.CurrentClassImpl) _
+        Then
             gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
         Else
@@ -254,7 +240,8 @@ Public Class dlgClass
     End Sub
 
     Private Sub mnuOverrideMethods_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuOverrideMethods.Click
-        If m_xmlView.OverrideMethods(m_xmlView.CurrentClassImpl) Then
+        If m_xmlView.OverrideMethods(m_xmlView.CurrentClassImpl) _
+        Then
             gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
         Else
@@ -263,9 +250,7 @@ Public Class dlgClass
     End Sub
 
     Private Sub DuplicateMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DuplicateMember.Click
-        If gridMembers.DuplicateSelectedItem() Then
-            m_xmlView.Updated = True
-        End If
+        gridMembers.DuplicateSelectedItem()
     End Sub
 
     Private Sub CopyMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CopyMember.Click
@@ -273,10 +258,7 @@ Public Class dlgClass
     End Sub
 
     Private Sub PasteMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PasteMember.Click
-        If gridMembers.PasteItem() Then
-            m_xmlView.Updated = True
-        End If
-        PasteMember.Enabled = False
+        PasteMember.Enabled = Not (gridMembers.PasteItem())
     End Sub
 #End Region
 End Class

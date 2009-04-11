@@ -86,14 +86,11 @@ Public Class dlgTypeVar
     End Sub
 
     Private Sub mnuDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDelete.Click
-        If gridEnumeration.DeleteSelectedItems() Then
-            m_xmlView.Updated = True
-        End If
+        gridEnumeration.DeleteSelectedItems()
     End Sub
 
     Private Sub mnuAdd_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuAdd.Click
         gridEnumeration.AddItem()
-        m_xmlView.Updated = True
     End Sub
 
     Public Sub New()
@@ -161,6 +158,6 @@ Public Class dlgTypeVar
     End Sub
 
     Private Sub gridEnumeration_RowValuesChanged(ByVal sender As Object) Handles gridEnumeration.RowValuesChanged
-        m_xmlView.Updated = True
+        ' TODO: for future use
     End Sub
 End Class
