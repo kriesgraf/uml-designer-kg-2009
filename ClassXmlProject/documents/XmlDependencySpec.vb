@@ -35,7 +35,10 @@ Public Class XmlDependencySpec
     Public ReadOnly Property FullpathClassName() As String
         Get
             Dim nodeClass As XmlNode = GetClassNode()
-            Return GetFullpathDescription(nodeClass, CType(Me.Tag, ELanguage))
+            Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+            Dim strResult As String = GetFullpathDescription(nodeClass, eLang)
+            If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
+            Return strResult
         End Get
     End Property
 

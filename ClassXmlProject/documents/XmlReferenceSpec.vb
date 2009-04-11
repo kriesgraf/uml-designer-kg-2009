@@ -17,7 +17,10 @@ Public Class XmlReferenceSpec
 
     Public ReadOnly Property FullpathClassName() As String
         Get
-            Return GetFullpathDescription(Me.Node, CType(Me.Tag, ELanguage))
+            Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+            Dim strResult As String = GetFullpathDescription(Me.Node, eLang)
+            If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
+            Return strResult
         End Get
     End Property
 
