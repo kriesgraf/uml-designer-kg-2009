@@ -426,7 +426,6 @@ Public Class XmlProjectView
     Public Sub LoadMembers()
         Try
             m_Control.Binding.NodeCounter = m_xmlReferenceNodeCounter
-            '            Dim xmlcpnt As XmlProjectMemberView = New XmlProjectMemberView(Me.Properties.Node)
             Dim xmlcpnt As XmlComposite = CType(Me.Properties, XmlComposite)
             m_Control.Binding.LoadItems(xmlcpnt, "project_member_view", "import")
             m_Control.CurrentContext = "project"

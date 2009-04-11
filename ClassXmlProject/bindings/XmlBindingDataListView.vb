@@ -86,9 +86,10 @@ Public Class XmlBindingDataListView
                 Throw New Exception("Node to load must not be null in call of " + Me.ToString() + _
                                     ".LoadXmlNodes(Nothing," + strViewName + ")")
             End If
-
+            ' Remain reference of root node in its own original instance
             m_xmlRootNode = composite
-            InitStack(composite)
+            Dim view As XmlComponent = XmlNodeManager.GetInstance().CreateView(composite.Node, strViewName)
+            InitStack(view)
             m_strFirstNodeName = strFirstNodeName
             m_strViewName = strViewName
 
