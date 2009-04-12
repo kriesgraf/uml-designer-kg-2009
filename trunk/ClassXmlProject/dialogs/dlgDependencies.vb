@@ -39,12 +39,15 @@ Public Class dlgDependencies
     End Sub
 
     Public Shared Function ShowDependencies(ByVal component As XmlComponent, ByRef bIsEmpty As Boolean, Optional ByVal title As String = Nothing) As Boolean
-        Dim fen As New dlgDependencies
-        fen.Title = title
-        fen.Document = component
-        fen.ShowDialog()
-        bIsEmpty = fen.IsEmpty
-        Return (CType(fen.Tag, Boolean))
+        If component IsNot Nothing Then
+            Dim fen As New dlgDependencies
+            fen.Title = title
+            fen.Document = component
+            fen.ShowDialog()
+            bIsEmpty = fen.IsEmpty
+            Return (CType(fen.Tag, Boolean))
+        End If
+        Return False
     End Function
 
     Public Shared Function GetQuery(ByVal component As XmlComponent) As String
