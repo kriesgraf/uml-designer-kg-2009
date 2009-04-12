@@ -148,7 +148,6 @@ Public Class XmlDataListView
                 If m_xmlBinding.DuplicateOrPasteItem(component) Then
                     bChanged = True
                 End If
-                If bChanged Then m_xmlBinding.ResetBindings(bAskRefresh)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -156,7 +155,7 @@ Public Class XmlDataListView
         Return bChanged
     End Function
 
-    Public Function DeleteSelectedItems(Optional ByVal bAskRefresh As Boolean = True) As Boolean
+    Public Function DeleteSelectedItems() As Boolean
         Dim bChanged As Boolean = False
         Try
             Dim component As XmlComponent = Nothing
@@ -168,7 +167,7 @@ Public Class XmlDataListView
                         bChanged = True
                     End If
                 Next
-                If bChanged Then m_xmlBinding.ResetBindings(bAskRefresh)
+                If bChanged Then m_xmlBinding.ResetBindings(True)
                 If MyBase.Items.Count = 0 Then
                     MyBase.OnEmptyZoneClick()
                 End If

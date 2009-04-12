@@ -10,7 +10,6 @@ Public Class frmProject
 #Region "Class declarations"
 
     Private m_xmlProject As New XmlProjectView
-    Private OptionVisuMode As Integer = -1
 
 #End Region
 
@@ -43,9 +42,6 @@ Public Class frmProject
 
     Public Function OpenProject(ByVal parent As Form, ByVal filename As String) As Boolean
         If m_xmlProject.Open(parent, filename) Then
-            If m_xmlProject.Updated Then
-                RefreshProjectDisplay()
-            End If
             Return True
         End If
         Return False
@@ -54,9 +50,8 @@ Public Class frmProject
     Public Sub SaveProject()
         If m_xmlProject.Save() = False Then
             SaveAs()
-        Else
-            RefreshProjectDisplay()
         End If
+        RefreshUpdatedPath(True)
     End Sub
 
     Public Sub PrintPreview()
@@ -70,32 +65,36 @@ Public Class frmProject
 
 #Region "Private methods"
 
-    Private Sub RefreshProjectDisplay()
-        If lvwProjectMembers.SelectedItem IsNot Nothing _
-        Then
-            docvwProjectDisplay.DataSource = CType(lvwProjectMembers.SelectedItem, XmlComponent).Node
-        Else
-            docvwProjectDisplay.DataSource = CType(lvwProjectMembers.Binding.Parent, XmlComponent).Node
+    Private Sub RefreshUpdatedPath(ByVal bPathUpdated As Boolean)
+        If bPathUpdated Then
+            lvwProjectMembers.Binding.UpdatePath()
         End If
-
-        Me.Mainframe.UpdateItemControls(m_xmlProject)
 
         If m_xmlProject.Updated Then
             Me.Text = lvwProjectMembers.Path + " *"
         Else
             Me.Text = lvwProjectMembers.Path
         End If
+
+        Me.Mainframe.UpdateItemControls(m_xmlProject)
     End Sub
 
-    Private Sub UpdateButtons()
-        RefreshProjectDisplay()
+    Private Sub RefreshProjectView(ByVal component As Object)
+        Dim oldCursor As Cursor = Me.Cursor
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            docvwProjectDisplay.DataSource = CType(component, XmlComponent).Node
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            Me.Cursor = oldCursor
+        End Try
+    End Sub
+
+    Private Sub RefreshButtonsListView()
         btnHome.Enabled = lvwProjectMembers.Binding.IsNotHome()
         btnUp.Enabled = btnHome.Enabled
-        UpdateButtonProjectView()
-    End Sub
-
-    Private Sub UpdateButtonProjectView()
-        btnProjectView.Text = btnProjectView.DropDownItems(lvwProjectMembers.View).Text
     End Sub
 
     Private Function SaveAs() As Boolean
@@ -120,8 +119,7 @@ Public Class frmProject
             If (dlgSaveFile.ShowDialog(Me) = DialogResult.OK) Then
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgSaveFile.FileName)
                 m_xmlProject.SaveAs(dlgSaveFile.FileName)
-                lvwProjectMembers.UpdatePath()
-                RefreshProjectDisplay()
+                RefreshUpdatedPath(True)
                 mnuFileSave.Enabled = False
                 Return True
             End If
@@ -130,6 +128,20 @@ Public Class frmProject
         End Try
         Return False
     End Function
+
+    Private Sub MouseWheelMsg()
+        MsgBox("The document view uses Internet Explorer application to display project info." + _
+                vbCrLf + "But your IE version is not compatible with this command, also we invite you to use the mouse wheel." + _
+                vbCrLf + vbCrLf + "To zoom out with mouse whell:" + vbCrLf + "Please click inside document view, press the key 'Ctrl' and hold down while rotate the wheel.", _
+                MsgBoxStyle.Critical)
+
+        btnZoomIn.Enabled = False
+        btnZoomOut.Enabled = False
+    End Sub
+
+#End Region
+
+#Region "Private event methods"
 
     Private Sub frmProject_Activated(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Activated
         mnuEditPaste.Enabled = XmlComponent.Clipboard.CanPaste
@@ -150,12 +162,8 @@ Public Class frmProject
             mnuEditDatabase.Visible = True
         End If
 
-        Dim oldCursor As Cursor = Me.Cursor
-        Me.Cursor = Cursors.WaitCursor
         Me.WindowState = FormWindowState.Maximized
         Try
-            btnUp.Enabled = False
-
             If m_xmlProject.IsNew _
             Then
                 ' We call project by its form name at beginning
@@ -177,27 +185,27 @@ Public Class frmProject
                 DocViewMenuItem_Click(UmlViewToolStripMenuItem, Nothing)
 
                 If .IsNew Then
-                    docvwProjectDisplay.DataSource = CType(lvwProjectMembers.Binding.Parent, XmlComponent).Node
+                    RefreshProjectView(lvwProjectMembers.Binding.Parent)
                     mnuProjectProperties_Click(Me, Nothing)
                 Else
                     Me.Text = .Name
                     lvwProjectMembers.SelectItem(0)
-                    If lvwProjectMembers.SelectedItem IsNot Nothing Then
-                        docvwProjectDisplay.DataSource = CType(lvwProjectMembers.SelectedItem, XmlComponent).Node
+                    If lvwProjectMembers.SelectedItem IsNot Nothing _
+                    Then
+                        RefreshProjectView(lvwProjectMembers.SelectedItem)
                     Else
-                        docvwProjectDisplay.DataSource = CType(lvwProjectMembers.Binding.Parent, XmlComponent).Node
+                        RefreshProjectView(lvwProjectMembers.Binding.Parent)
                     End If
                 End If
 
                 .UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
             End With
 
-            UpdateButtons()
+            RefreshUpdatedPath(True)
+            RefreshButtonsListView()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
-        Finally
-            Me.Cursor = oldCursor
         End Try
     End Sub
 
@@ -208,7 +216,7 @@ Public Class frmProject
                 If m_xmlProject.Updated Then
 
                     m_xmlProject.Updated = False
-                    'Me.Mainframe.UpdateItemControls(m_xmlProject)
+                    Me.Mainframe.UpdateItemControls(m_xmlProject)
 
                     If MsgBox("Would you want to save updates ?", vbYesNo + vbDefaultButton1 + vbQuestion, Me.Text) = vbYes Then
                         If SaveAs() = False Then
@@ -228,11 +236,13 @@ Public Class frmProject
                 eResult = MsgBox("Would you want to save updates ?", vbYesNoCancel + vbDefaultButton1 + vbQuestion, Me.Text)
                 If eResult = vbYes Then
                     m_xmlProject.Save()
-                    'Me.Mainframe.UpdateItemControls(m_xmlProject)
                     e.Cancel = False
                 ElseIf eResult = vbCancel Then
                     e.Cancel = True
+                Else
+                    m_xmlProject.Updated = False
                 End If
+                Me.Mainframe.UpdateItemControls(m_xmlProject)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -258,21 +268,19 @@ Public Class frmProject
     End Sub
 
     Private Sub lvwProjectMembers_EmptyZoneClick(ByVal sender As DataListView, ByVal e As System.EventArgs) Handles lvwProjectMembers.EmptyZoneClick
-        docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
+        RefreshProjectView(lvwProjectMembers.Binding.Parent)
     End Sub
 
     Private Sub lvwProjectMembers_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles lvwProjectMembers.SelectedIndexChanged
-        Dim oldCursor As Cursor = Me.Cursor
-        Me.Cursor = Cursors.WaitCursor
         Try
-            If lvwProjectMembers.SelectedIndex <> -1 Then
-                docvwProjectDisplay.DataSource = CType(lvwProjectMembers.SelectedItem, XmlComponent).Node
+            If lvwProjectMembers.SelectedItem IsNot Nothing _
+            Then
+                RefreshProjectView(lvwProjectMembers.SelectedItem)
+            Else
+                RefreshProjectView(lvwProjectMembers.Binding.Parent)
             End If
-
         Catch ex As Exception
             MsgExceptionBox(ex)
-        Finally
-            Me.Cursor = oldCursor
         End Try
     End Sub
 
@@ -281,9 +289,10 @@ Public Class frmProject
                         lvwProjectMembers.GoParentLevel, _
                         lvwProjectMembers.GoChildLevel
         Try
-            docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
+            RefreshUpdatedPath(True)
+            RefreshProjectView(lvwProjectMembers.Binding.Parent)
             m_xmlProject.UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
-            UpdateButtons()
+            RefreshButtonsListView()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -293,12 +302,7 @@ Public Class frmProject
     Private Sub lvwProjectMembers_ItemChanged(ByVal sender As Object, ByVal e As DataListViewEventArgs) Handles lvwProjectMembers.ItemChanged
         lvwProjectMembers.SelectItem(e.SelectedIndex)
         Try
-            If lvwProjectMembers.SelectedItem IsNot Nothing Then
-                docvwProjectDisplay.DataSource = CType(lvwProjectMembers.SelectedItem, XmlComponent).Node
-            Else
-                docvwProjectDisplay.DataSource = CType(lvwProjectMembers.Binding.Parent, XmlComponent).Node
-            End If
-            RefreshProjectDisplay()
+            RefreshUpdatedPath(False)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -312,7 +316,7 @@ Public Class frmProject
 
     Private Sub mnuFileSave_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuFileSave.Click
         m_xmlProject.Save()
-        RefreshProjectDisplay()
+        RefreshUpdatedPath(True)
     End Sub
 
     Private Sub mnuFileNew_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileNew.Click
@@ -359,8 +363,8 @@ Public Class frmProject
                 ReferenceProperties.Click
         Try
             dlgXmlNodeProperties.DisplayProperties(lvwProjectMembers.SelectedItem)
-
-            RefreshProjectDisplay()
+            m_xmlProject.Updated = True
+            RefreshUpdatedPath(True)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -373,7 +377,7 @@ Public Class frmProject
         Try
             If lvwProjectMembers.EditCurrentItem() _
             Then
-                RefreshProjectDisplay()
+                RefreshUpdatedPath(False)
             End If
 
             mnuEditPaste.Enabled = XmlComponent.Clipboard.CanPaste
@@ -390,7 +394,7 @@ Public Class frmProject
         Try
             If lvwProjectMembers.DeleteSelectedItems() _
             Then
-                RefreshProjectDisplay()
+                RefreshUpdatedPath(False)
             End If
 
         Catch ex As Exception
@@ -403,7 +407,7 @@ Public Class frmProject
             If m_xmlProject.EditProperties() Then
                 m_xmlProject.UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
-                RefreshProjectDisplay()
+                RefreshUpdatedPath(True)
             End If
 
         Catch ex As Exception
@@ -415,7 +419,7 @@ Public Class frmProject
         Try
             If m_xmlProject.EditParameters() Then
                 m_xmlProject.UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
-                RefreshProjectDisplay()
+                RefreshUpdatedPath(True)
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
             End If
         Catch ex As Exception
@@ -426,12 +430,9 @@ Public Class frmProject
     Private Sub mnuPackageMoveUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuPackageMoveUp.Click
         Try
             With lvwProjectMembers
-                If .SelectedItem IsNot Nothing And .Binding.Parent IsNot Nothing Then
-                    If m_xmlProject.MoveUpNode(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
-                        .Binding.ResetBindings(True)
-                        docvwProjectDisplay.DataSource = .Binding.Parent.Node
-                        RefreshProjectDisplay()
-                    End If
+                If m_xmlProject.MoveUpNode(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
+                    RefreshProjectView(.Binding.Parent)
+                    RefreshUpdatedPath(False)
                 End If
             End With
             Me.Activate()
@@ -452,8 +453,7 @@ Public Class frmProject
 
         Try
             lvwProjectMembers.AddItem(CType(sender.Tag, String))
-
-            RefreshProjectDisplay()
+            RefreshUpdatedPath(False)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -463,10 +463,9 @@ Public Class frmProject
     Private Sub mnuImportExport_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
         Handles mnuReplaceExport.Click, mnuMergeExport.Click, mnuConfirmExport.Click
         Try
-            If lvwProjectMembers.Binding.Parent IsNot Nothing Then
-                If m_xmlProject.AddReferences(Me.Mainframe, lvwProjectMembers.Binding.Parent, CType(sender.Tag, XmlImportSpec.EImportMode)) Then
-                    RefreshProjectDisplay()
-                End If
+            If m_xmlProject.AddReferences(Me.Mainframe, lvwProjectMembers.Binding.Parent, CType(sender.Tag, XmlImportSpec.EImportMode)) _
+            Then
+                RefreshUpdatedPath(False)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -476,12 +475,9 @@ Public Class frmProject
     Private Sub mnuFindRedundant_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles FindRedundant.Click
         Try
             With lvwProjectMembers
-                If .SelectedItem IsNot Nothing And .Binding.Parent IsNot Nothing Then
-                    If m_xmlProject.RemoveRedundantReference(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
-                        .Binding.ResetBindings(True)
-                        docvwProjectDisplay.DataSource = .Binding.Parent.Node
-                        RefreshProjectDisplay()
-                    End If
+                If m_xmlProject.RemoveRedundantReference(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
+                    RefreshProjectView(.Binding.Parent)
+                    RefreshUpdatedPath(False)
                 End If
             End With
         Catch ex As Exception
@@ -491,11 +487,9 @@ Public Class frmProject
 
     Private Sub mnuRemoveAll_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RemoveAll.Click
         Try
-            If lvwProjectMembers.Binding.Parent IsNot Nothing Then
-                If m_xmlProject.RemoveAllReferences(lvwProjectMembers.Binding.Parent) Then
-                    docvwProjectDisplay.DataSource = lvwProjectMembers.Binding.Parent.Node
-                    RefreshProjectDisplay()
-                End If
+            If m_xmlProject.RemoveAllReferences(lvwProjectMembers.Binding.Parent) _
+                Then
+                RefreshUpdatedPath(False)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -536,7 +530,7 @@ Public Class frmProject
     Private Sub mnuOverrideProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuOverrideProperties.Click
         Try
             If m_xmlProject.OverrideProperties(lvwProjectMembers.Binding.Parent) Then
-                RefreshProjectDisplay()
+                RefreshUpdatedPath(False)
             End If
 
         Catch ex As Exception
@@ -547,7 +541,7 @@ Public Class frmProject
     Private Sub mnuOverrideMethods_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuOverrideMethods.Click
         Try
             If m_xmlProject.OverrideMethods(lvwProjectMembers.Binding.Parent) Then
-                RefreshProjectDisplay()
+                RefreshUpdatedPath(False)
             End If
 
         Catch ex As Exception
@@ -598,12 +592,10 @@ Public Class frmProject
         Handles mnuRefDependencies.Click, mnuProjectDependencies.Click, _
                 mnuPackageDependencies.Click, mnuClassDependencies.Click
 
-        If lvwProjectMembers.SelectedItem IsNot Nothing Then
-            'Debug.Print(CType(sender, ToolStripMenuItem).Name)
-            Dim bIsEmpty As Boolean = False
-            If dlgDependencies.ShowDependencies(CType(lvwProjectMembers.SelectedItem, XmlComponent), bIsEmpty) Then
-                RefreshProjectDisplay()
-            End If
+        'Debug.Print(CType(sender, ToolStripMenuItem).Name)
+        Dim bIsEmpty As Boolean = False
+        If dlgDependencies.ShowDependencies(CType(lvwProjectMembers.SelectedItem, XmlComponent), bIsEmpty) Then
+            RefreshUpdatedPath(False)
         End If
     End Sub
 
@@ -630,7 +622,7 @@ Public Class frmProject
                 bRefresh = m_xmlProject.ExportNodesExtract(Me.Mainframe, lvwProjectMembers.Binding.Parent)
             End If
             If bRefresh Then
-                RefreshProjectDisplay()
+                RefreshUpdatedPath(False)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -664,8 +656,9 @@ Public Class frmProject
                 TileToolStripMenuItem.Click
 
         Try
-            lvwProjectMembers.View = CType(sender.Tag, View)
-            UpdateButtonProjectView()
+            Dim eView As View = CType(sender.Tag, View)
+            lvwProjectMembers.View = eView
+            btnProjectView.Text = btnProjectView.DropDownItems(eView).Text
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -683,18 +676,18 @@ Public Class frmProject
     Private Sub mnuEditDuplicate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuEditDuplicate.Click
         If lvwProjectMembers.DuplicateSelectedItem() Then
 
-            RefreshProjectDisplay()
+            RefreshUpdatedPath(False)
         End If
     End Sub
 
     Private Sub UpdatesCollaborations_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UpdatesCollaborations.Click
         m_xmlProject.UpdatesCollaborations()
-        RefreshProjectDisplay()
+        RefreshUpdatedPath(False)
     End Sub
 
     Private Sub RenumberDatabaseIndex_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles RenumberDatabaseIndex.Click
         m_xmlProject.RenumberDatabaseIndex()
-        RefreshProjectDisplay()
+        RefreshUpdatedPath(False)
     End Sub
 
     Private Sub mnuEditCopy_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
@@ -709,7 +702,7 @@ Public Class frmProject
                 Handles mnuEditPaste.Click, btnPaste.Click
 
         If lvwProjectMembers.PasteItem() Then
-            RefreshProjectDisplay()
+            RefreshUpdatedPath(False)
         End If
         mnuEditPaste.Enabled = False
         btnPaste.Enabled = False
@@ -733,16 +726,6 @@ Public Class frmProject
         If docvwProjectDisplay.DicreaseTextSize() = False Then
             MouseWheelMsg()
         End If
-    End Sub
-
-    Private Sub MouseWheelMsg()
-        MsgBox("The document view uses Internet Explorer application to display project info." + _
-                vbCrLf + "But your IE version is not compatible with this command, also we invite you to use the mouse wheel." + _
-                vbCrLf + vbCrLf + "To zoom out with mouse whell:" + vbCrLf + "Please click inside document view, press the key 'Ctrl' and hold down while rotate the wheel.", _
-                MsgBoxStyle.Critical)
-
-        btnZoomIn.Enabled = False
-        btnZoomOut.Enabled = False
     End Sub
 #End Region
 End Class
