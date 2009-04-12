@@ -198,6 +198,7 @@ Public Class XmlBindingDataListView
     End Function
 
     Public Sub ResetBindings(ByVal metaDataChanged As Boolean)
+        ' use "metaDataChanged" for future use
         Refresh()
     End Sub
 

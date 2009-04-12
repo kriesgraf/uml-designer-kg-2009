@@ -9,3 +9,6 @@ copy xslt\*.GIF bin\Debug\xslt
 mkdir bin\Release\xslt
 copy xslt\*.x* bin\Release\xslt
 copy xslt\*.GIF bin\Release\xslt
+
+copy xslt\lass-model.xml E:\Documents\Mes projets\UML
+copy xslt\lass-model.xml E:\Documents\Mes projets\

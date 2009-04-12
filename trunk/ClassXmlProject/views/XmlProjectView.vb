@@ -164,7 +164,6 @@ Public Class XmlProjectView
         If m_xmlProperties.Edit() Then
             ' We go home to be sure that language info is reflected back to all tree nodes
             m_Control.GoHome()
-            m_Control.Binding.ResetBindings(True)
             Me.Updated = True
             Return True
         End If
@@ -175,7 +174,6 @@ Public Class XmlProjectView
         dlgXmlNodeProperties.DisplayProperties(m_xmlProperties)
         ' We go home to be sure that language info is reflected back to all tree nodes
         m_Control.GoHome()
-        m_Control.Binding.ResetBindings(True)
         Me.Updated = True
         Return True
     End Function
@@ -471,47 +469,58 @@ Public Class XmlProjectView
     End Sub
 
     Public Function AddReferences(ByVal form As Form, ByVal composite As XmlComposite, ByVal eMode As XmlImportSpec.EImportMode) As Boolean
-        Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
-        xmlcpnt.Tag = composite.Tag
-        xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
-        If xmlcpnt.AddReferences(form, eMode) Then
-            Me.Updated = True
-            m_Control.Binding.ResetBindings(True)
-            m_Control.SelectItem(0)
-            Return True
+
+        If composite IsNot Nothing Then
+            Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
+            xmlcpnt.Tag = composite.Tag
+            xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
+            If xmlcpnt.AddReferences(form, eMode) Then
+                Me.Updated = True
+                m_Control.Binding.ResetBindings(True)
+                m_Control.SelectItem(0)
+                Return True
+            End If
         End If
         Return False
     End Function
 
     Public Function RemoveRedundantReference(ByVal import As XmlComposite, ByVal reference As XmlComponent) As Boolean
-        Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(import.Node, "import")
-        xmlcpnt.Tag = import.Tag
-        If xmlcpnt.RemoveRedundant(reference) Then
-            Me.Updated = True
-            Return True
+        If import IsNot Nothing And reference IsNot Nothing Then
+            Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(import.Node, "import")
+            xmlcpnt.Tag = import.Tag
+            If xmlcpnt.RemoveRedundant(reference) Then
+                m_Control.Binding.ResetBindings(True)
+                Me.Updated = True
+                Return True
+            End If
         End If
         Return False
     End Function
 
     Public Function MoveUpNode(ByVal parent As XmlComposite, ByVal child As XmlComponent) As Boolean
-        Select Case child.NodeName
-            Case "package", "class", "import"
-                If parent.MoveUpComponent(child) Then
-                    Me.Updated = True
-                    Return True
-                End If
-        End Select
+        If parent IsNot Nothing And child IsNot Nothing Then
+            Select Case child.NodeName
+                Case "package", "class", "import"
+                    If parent.MoveUpComponent(child) Then
+                        m_Control.Binding.ResetBindings(True)
+                        Me.Updated = True
+                        Return True
+                    End If
+            End Select
+        End If
         Return False
     End Function
 
     Public Function RemoveAllReferences(ByVal composite As XmlComposite) As Boolean
-        Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
-        xmlcpnt.Tag = composite.Tag
-        xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
-        If xmlcpnt.RemoveAllReferences() Then
-            m_Control.Binding.ResetBindings(True)
-            Me.Updated = True
-            Return True
+        If composite IsNot Nothing Then
+            Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
+            xmlcpnt.Tag = composite.Tag
+            xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
+            If xmlcpnt.RemoveAllReferences() Then
+                m_Control.Binding.ResetBindings(True)
+                Me.Updated = True
+                Return True
+            End If
         End If
         Return False
     End Function

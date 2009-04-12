@@ -354,6 +354,9 @@ Public Class MDIParent
                 My.Computer.FileSystem.CreateDirectory(strTmpFolder)
             End If
 
+            SaveToolStripButton.Enabled = False
+            strpStatusLabel.Text = "Ready"
+
             If XmlProjectTools.CopyDocTypeDeclarationFile(strTmpFolder, True) = False Then
 
                 Me.Close()
