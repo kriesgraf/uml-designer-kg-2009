@@ -300,8 +300,8 @@ Public Class frmProject
     End Sub
 
     Private Sub lvwProjectMembers_ItemChanged(ByVal sender As Object, ByVal e As DataListViewEventArgs) Handles lvwProjectMembers.ItemChanged
-        lvwProjectMembers.SelectItem(e.SelectedIndex)
         Try
+            ' TODO: for future use
             RefreshUpdatedPath(False)
 
         Catch ex As Exception
@@ -430,7 +430,7 @@ Public Class frmProject
     Private Sub mnuPackageMoveUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuPackageMoveUp.Click
         Try
             With lvwProjectMembers
-                If m_xmlProject.MoveUpNode(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then
+                If m_xmlProject.MoveUpNode(CType(.Binding.Parent, XmlProjectMemberView), CType(.SelectedItem, XmlComponent)) Then
                     RefreshProjectView(.Binding.Parent)
                     RefreshUpdatedPath(False)
                 End If
