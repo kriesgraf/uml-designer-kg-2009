@@ -75,7 +75,7 @@ Partial Class dlgStructure
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.94931!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.05069!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -91,7 +91,7 @@ Partial Class dlgStructure
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(435, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(434, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -100,7 +100,7 @@ Partial Class dlgStructure
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(358, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(357, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(66, 23)
         Me.OK_Button.TabIndex = 0
@@ -238,7 +238,7 @@ Partial Class dlgStructure
         '
         Me.mnuElements.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddElement, Me.mnuEditElement, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, ToolStripSeparator1, Me.mnuDeleteElement})
         Me.mnuElements.Name = "mnuElements"
-        Me.mnuElements.Size = New System.Drawing.Size(169, 192)
+        Me.mnuElements.Size = New System.Drawing.Size(169, 170)
         '
         'mnuAddElement
         '
