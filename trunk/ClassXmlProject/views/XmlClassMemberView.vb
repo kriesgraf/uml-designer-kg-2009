@@ -111,6 +111,7 @@ Public Class XmlClassMemberView
         Select Case Me.NodeName
             Case "property"
                 Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
+                xmlProperty.Tag = Me.Tag
 
                 Select Case m_xmlClassView.CurrentClassImpl
                     Case XmlProjectTools.EImplementation.Interf
@@ -128,6 +129,7 @@ Public Class XmlClassMemberView
 
             Case "method"
                 Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
+                xmlMethod.Tag = Me.Tag
 
                 Select Case m_xmlClassView.CurrentClassImpl
                     Case XmlProjectTools.EImplementation.Interf

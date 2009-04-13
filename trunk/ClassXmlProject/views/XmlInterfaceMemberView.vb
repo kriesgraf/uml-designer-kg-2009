@@ -110,14 +110,16 @@ Public Class XmlInterfaceMemberView
     Public Sub UpdateObject() Implements InterfObject.Update
         Select Case Me.NodeName
             Case "property"
-                Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
-                xmlProperty.OverridableProperty = True
+                Dim xmlcpnt As XmlPropertySpec = CreateDocument(Me.Node)
+                xmlcpnt.Tag = Me.Tag
+                xmlcpnt.OverridableProperty = True
 
             Case "method"
                 If m_xmlClassView.CurrentClassImpl = XmlProjectTools.EImplementation.Interf _
                 Then
-                    Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
-                    xmlMethod.Implementation = XmlProjectTools.EImplementation.Interf
+                    Dim xmlcpnt As XmlMethodSpec = CreateDocument(Me.Node)
+                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.Implementation = XmlProjectTools.EImplementation.Interf
                 End If
 
             Case Else

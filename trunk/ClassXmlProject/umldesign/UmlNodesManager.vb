@@ -87,6 +87,7 @@ Public Class UmlNodesManager
 
                     Case Else
                         Dim xmlcpnt As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(component.Document.ImportNode(child, True))
+                        xmlcpnt.Tag = component.Tag
                         component.AppendComponent(xmlcpnt)
                 End Select
             Next child

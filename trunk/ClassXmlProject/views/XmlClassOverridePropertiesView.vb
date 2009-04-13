@@ -124,6 +124,8 @@ Public Class XmlClassOverridePropertiesView
     Private Sub ReplaceVirtualProperty(ByVal dstProperty As XmlNode, ByVal srcProperty As XmlNode)
         Dim child As XmlNode
         Dim xmlcpnt As XmlPropertySpec = CreateDocument(dstProperty)
+        xmlcpnt.Tag = Me.Tag
+
         Dim list As XmlNodeList = SelectNodes(dstProperty, "param")
 
         dstProperty.RemoveAll()

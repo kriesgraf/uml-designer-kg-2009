@@ -136,6 +136,7 @@ Public Class XmlImportView
     Public Sub AddNew(ByVal list As ListBox, ByVal name As String)
         Try
             Dim xmlcpnt As XmlComponent = CreateDocument(name, Me.Document)
+            xmlcpnt.Tag = Me.Tag
             xmlcpnt.SetIdReference(m_xmlReferenceNodeCounter)
             AppendComponent(xmlcpnt)
 

@@ -511,6 +511,7 @@ Public Class XmlTypeVarSpec
                         Value = ""
                         VarSize = ""
                         Dim xmlcpnt As XmlElementSpec = New XmlElementSpec(AppendNode(CreateNode("element")))
+                        xmlcpnt.Tag = Me.Tag
                         xmlcpnt.SetDefaultValues(True)
                     End If
 
@@ -525,6 +526,7 @@ Public Class XmlTypeVarSpec
                         Value = ""
                         VarSize = ""
                         Dim xmlcpnt As XmlElementSpec = New XmlElementSpec(AppendNode(CreateNode("element")))
+                        xmlcpnt.Tag = Me.Tag
                         xmlcpnt.SetDefaultValues(True)
                     End If
 

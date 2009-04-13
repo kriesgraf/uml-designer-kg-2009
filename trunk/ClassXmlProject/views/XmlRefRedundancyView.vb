@@ -29,8 +29,10 @@ Public Class XmlRefRedundancyView
                     XmlProjectTools.AddAttributeValue(child, "idref", strNewID)
                 Next child
 
-                Dim xlmcpnt As XmlComposite = CreateDocument(Me.Node.ParentNode.ParentNode)
-                bResult = xlmcpnt.RemoveComponent(Me)
+                Dim xmlcpnt As XmlComposite = CreateDocument(Me.Node.ParentNode.ParentNode)
+                xmlcpnt.Tag = Me.Tag
+
+                bResult = xmlcpnt.RemoveComponent(Me)
             End If
         Catch ex As Exception
             Throw ex

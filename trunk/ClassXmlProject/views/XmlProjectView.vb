@@ -497,7 +497,7 @@ Public Class XmlProjectView
         Return False
     End Function
 
-    Public Function MoveUpNode(ByVal parent As XmlComposite, ByVal child As XmlComponent) As Boolean
+    Public Function MoveUpNode(ByVal parent As XmlProjectMemberView, ByVal child As XmlComponent) As Boolean
         If parent IsNot Nothing And child IsNot Nothing Then
             Select Case child.NodeName
                 Case "package", "class", "import"
@@ -528,6 +528,8 @@ Public Class XmlProjectView
     Public Function OverrideProperties(ByVal composite As XmlComposite) As Boolean
         If composite.NodeName = "class" Then
             Dim xmlcpnt As XmlClassSpec = XmlNodeManager.GetInstance().CreateDocument(composite.Node)
+            xmlcpnt.Tag = Me.Properties.Tag
+
             If xmlcpnt.OverrideProperties(xmlcpnt.Implementation) Then
                 Me.Updated = True
                 m_Control.Binding.ResetBindings(True)
@@ -542,6 +544,8 @@ Public Class XmlProjectView
     Public Function OverrideMethods(ByVal composite As XmlComposite) As Boolean
         If composite.NodeName = "class" Then
             Dim xmlcpnt As XmlClassSpec = XmlNodeManager.GetInstance().CreateDocument(composite.Node)
+            xmlcpnt.Tag = Me.Properties.Tag
+
             If xmlcpnt.OverrideMethods(xmlcpnt.Implementation) Then
                 Me.Updated = True
                 m_Control.Binding.ResetBindings(True)
@@ -659,6 +663,7 @@ Public Class XmlProjectView
             If m_xmlDocument.DocumentElement IsNot Nothing _
             Then
                 m_xmlProperties = XmlNodeManager.GetInstance().CreateDocument(m_xmlDocument.DocumentElement)
+
                 m_xmlProperties.Updated = bChanged
                 Me.Updated = bChanged
                 m_xmlReferenceNodeCounter = New XmlReferenceNodeCounter(m_xmlDocument)

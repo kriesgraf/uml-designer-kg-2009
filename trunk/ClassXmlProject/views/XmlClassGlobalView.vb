@@ -302,6 +302,8 @@ Public Class XmlClassGlobalView
         Dim bResult As Boolean = False
         Try
             Dim xmlcpnt As XmlComponent = CreateDocument(removeNode.Node)
+            xmlcpnt.Tag = removeNode.Tag
+
             If removeNode.NodeName = "typedef" Then
 
                 If SelectNodes(dlgDependencies.GetQuery(removeNode)).Count > 0 Then

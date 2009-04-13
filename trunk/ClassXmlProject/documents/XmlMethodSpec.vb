@@ -305,6 +305,7 @@ Public Class XmlMethodSpec
             Me.ReturnValue.Descriptor = "void"
 
             Dim xmlParam As XmlParamSpec = CreateDocument(GetNode("param"))
+            xmlParam.Tag = Me.Tag
             xmlParam.SetDefaultValues(bCreateNodeNow)
             xmlParam.NumId = "1"
             xmlParam = Nothing
@@ -344,6 +345,9 @@ Public Class XmlMethodSpec
                     xmlResult = MyBase.Clone(nodeXml, bLoadChildren)
                 End If
             End If
+
+            If xmlResult IsNot Nothing Then xmlResult.Tag = Me.Tag
+
         Catch ex As Exception
             Throw ex
         End Try
