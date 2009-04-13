@@ -49,18 +49,6 @@ Public Class XmlComposite
         End Try
     End Function
 
-    Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
-        Try
-            Me.Node.RemoveChild(child.Node)
-            Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
-            parent.AppendComponent(child)
-            Return True
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
     Public Overridable Function DuplicateComponent(ByVal component As XmlComponent) As XmlComponent
         Return CreateDocument(component.Node.CloneNode(True))
     End Function
