@@ -275,6 +275,7 @@ Public Class DataListView
         'DataListView
         '
         Me.AllowDrop = True
+        Me.LabelEdit = True
         Me.MultiSelect = False
         Me.ResumeLayout(False)
 
@@ -308,16 +309,14 @@ End Class
 ''' </summary>
 ''' <remarks></remarks>
 Public Class DataListViewEventArgs
-    Inherits EventArgs
-
-    ''' <summary>
-    ''' Selected item
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public SelectedIndex As Integer
+    Inherits LabelEditEventArgs
 
     Public Sub New(Optional ByVal value As Integer = -1)
-        SelectedIndex = value
+        MyBase.New(value)
+    End Sub
+
+    Public Sub New(ByVal value As LabelEditEventArgs)
+        MyBase.New(value.Item, value.Label)
     End Sub
 End Class
 

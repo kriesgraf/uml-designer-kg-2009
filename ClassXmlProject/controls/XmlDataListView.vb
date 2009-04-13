@@ -237,6 +237,13 @@ Public Class XmlDataListView
         End Try
     End Sub
 
+    Private Sub XmlDataListView_AfterLabelEdit(ByVal sender As Object, ByVal e As LabelEditEventArgs) Handles Me.AfterLabelEdit
+        If m_xmlBinding.AfterLabelEdit(Me, New DataListViewEventArgs(e)) Then
+            OnItemChanged(New DataListViewEventArgs(e))
+        End If
+    End Sub
+
+
     Private Sub OnGoHomeLevel(ByVal e As DataListViewEventArgs)
         RaiseEvent GoHomeLevel(Me, e)
     End Sub

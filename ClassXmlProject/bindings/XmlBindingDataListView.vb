@@ -202,6 +202,17 @@ Public Class XmlBindingDataListView
         Refresh()
     End Sub
 
+    Public Function AfterLabelEdit(ByVal sender As DataListView, ByVal e As DataListViewEventArgs) As Boolean
+
+        Dim component As XmlComponent = TryCast(sender.DataBoundItem(e.Item), XmlComponent)
+        If component IsNot Nothing Then
+            component.Name = e.Label
+            m_xmlRootNode.Updated = True
+            Return True
+        End If
+        Return False
+    End Function
+
     Public Function ItemClick(ByRef bChanged As Boolean, ByVal sender As DataListView, ByVal e As DataListViewEventArgs, _
                               ByVal bDoubleClick As Boolean, ByVal bEditMode As Boolean) As Boolean
         Dim bDisplayChildren As Boolean = False
@@ -209,7 +220,7 @@ Public Class XmlBindingDataListView
         bChanged = False
 
         Try
-            Dim composite As XmlComposite = CType(sender.DataBoundItem(e.SelectedIndex), XmlComposite)
+            Dim composite As XmlComposite = CType(sender.DataBoundItem(e.Item), XmlComposite)
             Dim InterfNotifier As InterfListViewNotifier = TryCast(composite, InterfListViewNotifier)
 
             If InterfNotifier IsNot Nothing Then
