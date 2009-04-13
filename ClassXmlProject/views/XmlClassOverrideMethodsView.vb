@@ -125,6 +125,8 @@ Public Class XmlClassOverrideMethodsView
         Try
             Dim child As XmlNode
             Dim xmlcpnt As XmlMethodSpec = CreateDocument(dstMethod)
+            xmlcpnt.Tag = Me.Tag
+
             Dim list As XmlNodeList = SelectNodes(dstMethod, "param")
 
             For Each child In list
@@ -145,6 +147,8 @@ Public Class XmlClassOverrideMethodsView
     Private Sub ReplaceVirtualMethod(ByVal dstMethod As XmlNode, ByVal srcMethod As XmlNode)
         Dim child As XmlNode
         Dim xmlcpnt As XmlMethodSpec = CreateDocument(dstMethod)
+        xmlcpnt.Tag = Me.Tag
+
         Dim list As XmlNodeList = SelectNodes(dstMethod, "param")
 
         For Each child In list

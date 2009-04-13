@@ -35,6 +35,7 @@ Public Class XmlConstructorSpec
 
             If MyBase.SelectNodes("param").Count = 1 Then
                 Dim xmlcpnt As XmlParamSpec = MyBase.CreateDocument(MyBase.GetNode("param"))
+                xmlcpnt.Tag = Me.Tag
                 If xmlcpnt.TypeVarDefinition.Modifier = True And _
                     xmlcpnt.TypeVarDefinition.By = True And _
                     xmlcpnt.TypeVarDefinition.Level = 0 And _
@@ -60,12 +61,15 @@ Public Class XmlConstructorSpec
 
             If MyBase.SelectNodes("param").Count = 1 Then
                 xmlcpnt = MyBase.CreateDocument(MyBase.GetNode("param"))
+                xmlcpnt.Tag = Me.Tag
             Else
                 MyBase.RemoveAllNodes("param")
                 xmlcpnt = CreateDocument(CreateAppendNode("param"))
+                xmlcpnt.Tag = Me.Tag
                 xmlcpnt.SetDefaultValues(True)
                 xmlcpnt.NumId = "1"
             End If
+
             With xmlcpnt.TypeVarDefinition
                 .Kind = XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
                 .Level = 0
@@ -91,6 +95,7 @@ Public Class XmlConstructorSpec
 
             If bCreateNodeNow Then
                 Dim xmlParam As XmlParamSpec = CreateDocument(CreateAppendNode("param"))
+                xmlParam.Tag = Me.Tag
                 xmlParam.SetDefaultValues(bCreateNodeNow)
                 xmlParam.NumId = "1"
                 xmlParam = Nothing

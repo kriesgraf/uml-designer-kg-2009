@@ -109,6 +109,8 @@ Public Class XmlInterfaceView
         Dim bResult As Boolean = False
         Try
             Dim xmlcpnt As XmlComponent = CreateDocument(removeNode.Node)
+            xmlcpnt.Tag = Me.Tag
+
             If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + xmlcpnt.Name, _
                        cstMsgYesNoQuestion, _
                        xmlcpnt.Name) = MsgBoxResult.Yes _

@@ -325,6 +325,7 @@ Public Class XmlClassSpec
                         .TypeVarDefinition.Kind = XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
 
                         Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
+                        element.Tag = Me.Tag
                         .AppendComponent(element)
                     End If
                 End With

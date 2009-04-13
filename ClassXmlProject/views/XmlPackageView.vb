@@ -144,7 +144,9 @@ Public Class XmlPackageView
         Dim bResult As Boolean = False
         Try
             Dim xmlcpnt As XmlComponent = CreateDocument(removeNode.Node)
-            Select xmlcpnt.NodeName
+            xmlcpnt.Tag = Me.Tag
+
+            Select Case xmlcpnt.NodeName
 
                 Case "package", "import"
                     ' Search children from removed node

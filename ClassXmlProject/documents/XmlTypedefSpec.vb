@@ -98,6 +98,9 @@ Public Class XmlTypedefSpec
                     End Select
                 End If
             End If
+
+            If xmlResult IsNot Nothing Then xmlResult.Tag = Me.Tag
+
         Catch ex As Exception
             Throw ex
         End Try

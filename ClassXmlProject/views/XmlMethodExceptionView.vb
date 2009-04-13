@@ -41,6 +41,7 @@ Public Class XmlMethodExceptionView
             ' TODO : create a prototype in class XmlNodeManager
             ' Note: this class is used as document and view !
             Dim xmlcpnt As XmlExceptionSpec = New XmlExceptionSpec(CType(iterator.Current, XmlNode))
+            xmlcpnt.Tag = Me.Tag
             'xmlcpnt.Document = MyBase.Document
             Debug.Print(xmlcpnt.ToString + "(" + xmlcpnt.Idref + ")")
             list.Add(xmlcpnt)
@@ -52,6 +53,7 @@ Public Class XmlMethodExceptionView
             For Each xmlNode As XmlExceptionSpec In m_ListBox.SelectedItems
 
                 Dim xmlcpnt As XmlExceptionSpec = MyBase.CreateDocument("exception", MyBase.Document)
+                xmlcpnt.Tag = Me.Tag
                 xmlcpnt.Idref = xmlNode.Idref
 
                 MyBase.AppendNode(xmlcpnt.Node)
