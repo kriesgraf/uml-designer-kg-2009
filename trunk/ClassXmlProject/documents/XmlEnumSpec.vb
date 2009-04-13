@@ -3,33 +3,12 @@ Imports System.ComponentModel
 Imports System.Xml
 Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlNodeCounter
+Imports ClassXmlProject.XmlReferenceNodeCounter
 
 Public Class XmlEnumSpec
     Inherits XmlComponent
 
     Private Const cstInitialName As String = "NEW_ENUMVALUE"
-
-    <CategoryAttribute("UML design"), _
-   DescriptionAttribute("Name. Must be different than " + cstInitialName)> _
-    Public Overrides Property Name() As String
-        Get
-            Return MyBase.Name
-        End Get
-        Set(ByVal value As String)
-            If MyBase.Name = cstInitialName Then
-                ' If value is/contains  "cstInitialName" we refused to update "Name"
-                ' Because use Name and typedef ID to make a unique ID
-                If value.StartsWith(cstInitialName) = False Then
-                    Me.Id = Me.Id + "_" + value
-                    MyBase.Name = value
-                Else
-                    MsgBox("Please choose a name different than '" + cstInitialName + "'", MsgBoxStyle.Exclamation)
-                End If
-            Else
-                MyBase.Name = value
-            End If
-        End Set
-    End Property
 
     <CategoryAttribute("XmlComponent"), _
     DescriptionAttribute("Component id")> _
@@ -95,17 +74,21 @@ Public Class XmlEnumSpec
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
+
+        Dim strPrefix As String = ""
         Dim node As XmlNode = GetNode("ancestor::typedef/@id")
-        Dim strId As String = ""
         If node Is Nothing Then
             node = GetNode("ancestor::property/@num-id")
-            strId = node.Value
+            strPrefix = node.Value + "_"
             node = GetNode("ancestor::class/@id")
-            strId = AfterStr(node.Value, "class") + "_" + strId + "_"
+            strPrefix = AfterStr(node.Value, "class") + "_" + strPrefix
         Else
-            strId = AfterStr(node.Value, "class")
+            strPrefix += AfterStr(node.Value, "class") + "_"
         End If
-        Id = "enum" + strId
+        strPrefix = "enum" + strPrefix
+
+        Me.Id = GenerateNumericId(Me.Node.ParentNode, "enumvalue", strPrefix, "id")
+        Me.Name = cstInitialName + AfterStr(Me.Id, strPrefix)
     End Sub
 
     Protected Friend Function CheckName() As Boolean

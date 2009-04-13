@@ -20,11 +20,15 @@ Public Class XmlEnumView
             .AllowUserToAddRows = True
             .AllowUserToResizeRows = True
             .AllowUserToOrderColumns = True
+            .EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2
         End With
+
+        Dim size As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.Fill
+        Dim size2 As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.AllCells
 
         Dim col1 As DataGridViewColumn = New DataGridViewTextBoxColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size2
             .DataPropertyName = "Name"
             .HeaderText = "Name"
             .Name = "ControlName_Name"
@@ -33,7 +37,7 @@ Public Class XmlEnumView
 
         col1 = New DataGridViewTextBoxColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size2
             .DataPropertyName = "Value"
             .HeaderText = "Value"
             .Name = "ControlName_Value"
@@ -42,7 +46,7 @@ Public Class XmlEnumView
 
         col1 = New DataGridViewTextBoxColumn
         With col1
-            .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            .AutoSizeMode = size
             .DataPropertyName = "Comment"
             .HeaderText = "Comment"
             .Name = "ControlName_Comment"

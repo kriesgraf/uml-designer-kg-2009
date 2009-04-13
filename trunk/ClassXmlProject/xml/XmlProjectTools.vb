@@ -1582,12 +1582,18 @@ Public Class XmlProjectTools
 
                     Case "enumvalue"
                         parent = GetNode(child, "parent::type/parent::*")
-                        If parent.Name <> "typedef" Then
-                            parent = parent.ParentNode
-                        End If
-                        strID = GetID(child)
-                        strID = "enum" + XmlNodeCounter.AfterStr(GetID(parent), "class") + "_" + XmlNodeCounter.AfterStr(strID, "_")
-                        'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
+                        Dim strPrefix As String = ""
+
+                        Select Case parent.Name
+                            Case "typedef"
+                                strPrefix += XmlNodeCounter.AfterStr(GetID(parent), "class") + "_"
+                            Case "property"
+                                strPrefix = GetNodeString(parent, "@num-id") + "_"
+                                parent = GetNode(parent, "parent::class")
+                                strPrefix = XmlNodeCounter.AfterStr(GetID(parent), "class") + "_" + strPrefix
+                        End Select
+                        strPrefix = "enum" + strPrefix
+                        strID = XmlReferenceNodeCounter.GenerateNumericId(child.ParentNode, "enumvalue", strPrefix, "id")
                         ChangeID(child, import, strID)
 
                     Case Else
