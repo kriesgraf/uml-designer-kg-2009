@@ -236,7 +236,7 @@ Public Class XmlClassMemberView
         With col1
             .AutoSizeMode = size
             .DataPropertyName = "NodeName"
-            .ReadOnly = False
+            .ReadOnly = True
             .HeaderText = "Node"
             .Name = "ControlName_Node"
         End With
