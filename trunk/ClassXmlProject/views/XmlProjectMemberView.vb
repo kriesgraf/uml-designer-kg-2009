@@ -214,14 +214,16 @@ Public Class XmlProjectMemberView
             Case "property"
                 If m_xmlParentView.ClassImpl = EImplementation.Interf _
                 Then
-                    Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
-                    xmlProperty.OverridableProperty = True
+                    Dim xmlcpnt As XmlPropertySpec = CreateDocument(Me.Node)
+                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.OverridableProperty = True
                 End If
             Case "method"
                 If m_xmlParentView.ClassImpl = EImplementation.Interf _
                 Then
-                    Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
-                    xmlMethod.Implementation = EImplementation.Interf
+                    Dim xmlcpnt As XmlMethodSpec = CreateDocument(Me.Node)
+                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.Implementation = EImplementation.Interf
                 End If
 
             Case Else
@@ -241,8 +243,9 @@ Public Class XmlProjectMemberView
             Case "class"
                 bResult = False
             Case "import"
-                Dim component As XmlImportSpec = CreateDocument(Me.Node)
-                bResult = component.CanDropItem(child)
+                Dim xmlcpnt As XmlImportSpec = CreateDocument(Me.Node)
+                xmlcpnt.Tag = Me.Tag
+                bResult = xmlcpnt.CanDropItem(child)
         End Select
         If bResult And bCheckOnly = False Then
             DropAppendComponent(child)
@@ -329,6 +332,7 @@ Public Class XmlProjectMemberView
 
             Case Else
                 xmlResult = MyBase.DuplicateComponent(component)
+                xmlResult.Tag = Me.Tag
         End Select
         Return xmlResult
     End Function
@@ -427,6 +431,8 @@ Public Class XmlProjectMemberView
         If CanAddComponent(nodeXml) _
         Then
             Dim xmlcpnt As XmlComponent = CreateDocument(Me.Node)
+            xmlcpnt.Tag = Me.Tag
+
             Return xmlcpnt.AppendComponent(nodeXml, observer)
         End If
         Return Nothing
@@ -471,6 +477,7 @@ Public Class XmlProjectMemberView
                        xmlcpnt.Label(0)) = MsgBoxResult.Yes _
             Then
                 Dim parent As XmlComposite = CreateDocument(MyBase.Node)
+                parent.Tag = Me.Tag
                 If parent.RemoveComponent(xmlcpnt) Then
                     bResult = True
                 End If
@@ -481,11 +488,27 @@ Public Class XmlProjectMemberView
         Return bResult
     End Function
 
+    Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
+        Try
+            Me.Node.RemoveChild(child.Node)
+            Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
+            parent.Tag = Me.Tag
+
+            parent.AppendComponent(child)
+            Return True
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Protected Friend Overrides Function RemoveMe() As Boolean
         Dim bResult As Boolean = False
         If Me.NodeName = "relationship" _
         Then
             Dim xmlcpnt As XmlRelationSpec = CreateDocument(Me.Node)
+            xmlcpnt.Tag = Me.Tag
+
             bResult = xmlcpnt.RemoveMe()
         Else
             bResult = MyBase.RemoveMe()
