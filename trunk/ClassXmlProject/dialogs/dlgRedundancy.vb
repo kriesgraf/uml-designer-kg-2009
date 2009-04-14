@@ -33,10 +33,17 @@ Public Class dlgRedundancy
         End Set
     End Property
 
+    Public WriteOnly Property ImportName() As String
+        Set(ByVal value As String)
+            m_xmlView.ImportName = value
+        End Set
+    End Property
+
     Public Shared Function VerifyRedundancy(ByVal projectNode As XmlComponent, ByVal strMessage1 As String, _
                                             ByVal child As XmlNode, _
-                                            Optional ByVal bDisplayEmptyList As Boolean = False, _
-                                            Optional ByVal bListToCheck As Boolean = True) As EResult
+                                            Optional ByVal strImportName As String = "", _
+                                            Optional ByVal bDisplayEmptyList As Boolean = True, _
+                                            Optional ByVal bListToCheck As Boolean = False) As EResult
         If bDisplayEmptyList = False Then
             If XmlNodeListView.GetListReferences(projectNode, child, Nothing) = False Then
                 Return EResult.RedundancyIgnored
@@ -45,6 +52,7 @@ Public Class dlgRedundancy
         Dim fen As New dlgRedundancy
         fen.Document = projectNode
         fen.Node = child
+        fen.ImportName = strImportName
         fen.Text = strMessage1
         fen.ListToCheck = bListToCheck
 
