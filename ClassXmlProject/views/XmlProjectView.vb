@@ -227,7 +227,7 @@ Public Class XmlProjectView
                 End If
             End If
 
-            Dim node As XmlNode = component.Node
+            Dim nodeXml As XmlNode = component.Node
             Dim dlgSaveFile As New SaveFileDialog
 
             If My.Settings.ImportFolder = m_strCurrentFolder Then
@@ -236,7 +236,7 @@ Public Class XmlProjectView
                 dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
             End If
 
-            Dim strFilename As String = GetName(node)
+            Dim strFilename As String = GetName(nodeXml)
             If XmlProjectTools.GetValidFilename(strFilename) Then
                 MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename)
             End If
@@ -251,23 +251,23 @@ Public Class XmlProjectView
                 Dim eLang As ELanguage = CType(Me.Properties.GenerationLanguage, ELanguage)
                 Dim strFullPackage As String
 
-                Select Case node.Name
+                Select Case nodeXml.Name
                     Case "root"
                         MsgBox("Needless to export a whole project", MsgBoxStyle.Exclamation)
 
                     Case "package"
-                        strFullPackage = GetFullpathPackage(node, eLang)
-                        UmlNodesManager.ExportNodes(fen, node, dlgSaveFile.FileName, strFullPackage, eLang)
+                        strFullPackage = GetFullpathPackage(nodeXml, eLang)
+                        UmlNodesManager.ExportNodes(fen, nodeXml, dlgSaveFile.FileName, strFullPackage, eLang)
                         If bExtractReferences Then
-                            strFullPackage = GetFullpathPackage(node, eLang, GetName(node))
-                            bResult = UmlNodesManager.ExtractReferences(fen, node, strFullPackage, eLang)
+                            strFullPackage = GetFullpathPackage(nodeXml, eLang, GetName(nodeXml))
+                            bResult = UmlNodesManager.ExtractReferences(fen, nodeXml, strFullPackage, eLang)
                         End If
 
                     Case "class"
-                        strFullPackage = GetFullpathPackage(node, eLang)
-                        UmlNodesManager.ExportNodes(fen, node, dlgSaveFile.FileName, strFullPackage, eLang)
+                        strFullPackage = GetFullpathPackage(nodeXml, eLang)
+                        UmlNodesManager.ExportNodes(fen, nodeXml, dlgSaveFile.FileName, strFullPackage, eLang)
                         If bExtractReferences Then
-                            bResult = UmlNodesManager.ExtractReferences(fen, node, strFullPackage, eLang)
+                            bResult = UmlNodesManager.ExtractReferences(fen, nodeXml, strFullPackage, eLang)
                         End If
 
                     Case Else
@@ -285,7 +285,7 @@ Public Class XmlProjectView
     Public Function ImportNodes(ByVal form As Form, ByVal component As XmlComponent, Optional ByVal bUpdateOnly As Boolean = False) As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim node As XmlNode = component.Node
+            Dim nodeXml As XmlNode = component.Node
             Dim dlgOpenFile As New OpenFileDialog
 
             If My.Settings.ImportFolder = m_strCurrentFolder Then
@@ -296,7 +296,7 @@ Public Class XmlProjectView
 
             dlgOpenFile.Title = "Select a project file..."
             dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj"
-            dlgOpenFile.FileName = GetName(node)
+            dlgOpenFile.FileName = GetName(nodeXml)
 
             If dlgOpenFile.ShowDialog() = DialogResult.OK Then
 
@@ -315,7 +315,7 @@ Public Class XmlProjectView
 
     Public Sub ExportReferences(ByVal fen As Form, ByVal component As XmlComponent)
         Try
-            Dim node As XmlNode = component.Node
+            Dim nodeXml As XmlNode = component.Node
             Dim dlgSaveFile As New SaveFileDialog
             Dim strFullPackage As String
 
@@ -325,7 +325,7 @@ Public Class XmlProjectView
                 dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
             End If
 
-            Dim strFilename As String = GetName(node)
+            Dim strFilename As String = GetName(nodeXml)
             If XmlProjectTools.GetValidFilename(strFilename) Then
                 MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename)
             End If
@@ -343,49 +343,48 @@ Public Class XmlProjectView
 
                 Dim eLang As ELanguage = CType(Me.Properties.GenerationLanguage, ELanguage)
 
-                Select Case node.Name
+                Select Case nodeXml.Name
                     Case "root"
-                        strFullPackage = GetName(node)
-                        ExportPackageReferences(fen, node, strFilename, strFullPackage, eLang)
+                        ExportRootReferences(fen, nodeXml, strFilename, eLang)
 
                     Case "package"
-                        strFullPackage = GetFullpathPackage(node, eLang)
+                        strFullPackage = GetFullpathPackage(nodeXml, eLang)
 
-                        If SelectNodes(node, "descendant::import").Count > 0 Then
+                        If SelectNodes(nodeXml, "descendant::import").Count > 0 Then
                             MsgBox("Import members will not be exported", vbExclamation)
                         End If
-                        If SelectNodes(node, "descendant::class[@visibility='package']").Count > 0 Then
-                            ExportPackageReferences(fen, node, strFilename, strFullPackage, eLang)
+                        If SelectNodes(nodeXml, "descendant::class[@visibility='package']").Count > 0 Then
+                            ExportPackageReferences(fen, nodeXml, strFilename, strFullPackage, eLang)
                         Else
-                            MsgBox("Class " + GetName(node) + " has no class members with package visibility", vbExclamation)
+                            MsgBox("Class " + GetName(nodeXml) + " has no class members with package visibility", vbExclamation)
                         End If
 
                     Case "class"
-                        strFullPackage = GetFullpathPackage(node, eLang)
+                        strFullPackage = GetFullpathPackage(nodeXml, eLang)
 
-                        If GetNodeString(node, "@visibility") = "package" Then
-                            ExportClassReferences(fen, node, strFilename, strFullPackage, eLang)
+                        If GetNodeString(nodeXml, "@visibility") = "package" Then
+                            ExportClassReferences(fen, nodeXml, strFilename, strFullPackage, eLang)
                         Else
-                            MsgBox("Class " + GetName(node) + " has not a package visibility", vbExclamation)
+                            MsgBox("Class " + GetName(nodeXml) + " has not a package visibility", vbExclamation)
                         End If
                     Case "typedef"
-                        strFullPackage = GetFullpathPackage(node.ParentNode, eLang)
+                        strFullPackage = GetFullpathPackage(nodeXml.ParentNode, eLang)
 
-                        If GetNodeString(node.ParentNode, "@visibility") = "package" Then
-                            If GetNodeString(node, "variable/@range") = "public" Then
-                                ExportTypedefReferences(fen, node, strFilename, strFullPackage)
+                        If GetNodeString(nodeXml.ParentNode, "@visibility") = "package" Then
+                            If GetNodeString(nodeXml, "variable/@range") = "public" Then
+                                ExportTypedefReferences(fen, nodeXml, strFilename, strFullPackage)
                             Else
-                                MsgBox("Typedef " + GetName(node) + " is not public", vbExclamation)
+                                MsgBox("Typedef " + GetName(nodeXml) + " is not public", vbExclamation)
                             End If
                         Else
-                            MsgBox("Class " + GetName(node.ParentNode) + " has not a package visibility", vbExclamation)
+                            MsgBox("Class " + GetName(nodeXml.ParentNode) + " has not a package visibility", vbExclamation)
                         End If
 
                     Case "import"
-                        If node.HasChildNodes = True Then
-                            ReExport(fen, node.LastChild, strFilename, GetAttributeValue(node, "param"))
+                        If nodeXml.HasChildNodes = True Then
+                            ReExport(fen, nodeXml.LastChild, strFilename, GetAttributeValue(nodeXml, "param"))
                         Else
-                            MsgBox("Import " + GetName(node) + ", nothing to export", MsgBoxStyle.Exclamation)
+                            MsgBox("Import " + GetName(nodeXml) + ", nothing to export", MsgBoxStyle.Exclamation)
                         End If
                 End Select
             End If
@@ -417,6 +416,22 @@ Public Class XmlProjectView
                 Throw New Exception("Argument " + component.ToString + " is not compatible with code generation")
         End Select
         Return bResult
+    End Function
+
+    Public Function SearchDependencies(ByVal component As XmlComponent) As Boolean
+        Try
+            If component Is Nothing Then Return False
+
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(component, bIsEmpty) _
+            Then
+                Me.Updated = True
+                Return True
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
     End Function
 
     Public Sub LoadMembers()
