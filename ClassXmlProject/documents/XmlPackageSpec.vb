@@ -126,7 +126,7 @@ Public Class XmlPackageSpec
         If component IsNot Nothing Then
             Select Case component.NodeName
                 Case "class"
-                    If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node, True, False) _
+                    If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node) _
                         = dlgRedundancy.EResult.RedundancyChanged _
                     Then
                         Me.Updated = True

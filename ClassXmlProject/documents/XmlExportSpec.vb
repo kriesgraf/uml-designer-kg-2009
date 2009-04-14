@@ -48,11 +48,13 @@ Public Class XmlExportSpec
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 
-    Public Function SearchRedundancies(ByVal projectNode As XmlComponent, ByVal strName As String) As Boolean
+    Public Function SearchRedundancies(ByVal projectNode As XmlComponent, ByVal name As String) As Boolean
         Dim child As XmlNode
 
         For Each child In SelectNodes("reference | interface")
-            Select Case dlgRedundancy.VerifyRedundancy(projectNode, "Find redundancies in file '" + strName + "' with project...", child)
+            Select Case dlgRedundancy.VerifyRedundancy(projectNode, _
+                                                       "Find redundancies in file '" + name + "' with project...", _
+                                                       child, name, False, True)
                 Case dlgRedundancy.EResult.RedundancyIgnoredAll
                     Exit For
 
