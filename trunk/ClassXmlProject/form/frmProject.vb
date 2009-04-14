@@ -414,6 +414,7 @@ Public Class frmProject
             If m_xmlProject.EditProperties() Then
                 m_xmlProject.UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
                 docvwProjectDisplay.Language = m_xmlProject.Properties.GenerationLanguage
+                lvwProjectMembers.Binding.ResetBindings(True)
                 RefreshUpdatedPath(True)
             End If
 
@@ -603,8 +604,7 @@ Public Class frmProject
                 mnuPackageDependencies.Click, mnuClassDependencies.Click
 
         'Debug.Print(CType(sender, ToolStripMenuItem).Name)
-        Dim bIsEmpty As Boolean = False
-        If dlgDependencies.ShowDependencies(CType(lvwProjectMembers.SelectedItem, XmlComponent), bIsEmpty) Then
+        If m_xmlProject.SearchDependencies(CType(lvwProjectMembers.SelectedItem, XmlComponent)) Then
             RefreshUpdatedPath(False)
         End If
     End Sub

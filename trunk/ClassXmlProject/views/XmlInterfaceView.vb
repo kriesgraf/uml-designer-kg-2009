@@ -48,6 +48,22 @@ Public Class XmlInterfaceView
         m_xmlBindingsList.UpdateValues()
     End Sub
 
+    Public Function SearchDependencies(ByVal component As XmlComponent) As Boolean
+        Try
+            If component Is Nothing Then Return False
+
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(component, bIsEmpty) _
+            Then
+                Me.Updated = True
+                Return True
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
+    End Function
+
     Public Function CreateForm(ByVal document As XmlComponent) As System.Windows.Forms.Form Implements InterfViewForm.CreateForm
         Dim frmResult As New dlgInterface
         CType(frmResult, InterfFormDocument).Document = document

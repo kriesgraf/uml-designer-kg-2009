@@ -191,9 +191,8 @@ Public Class dlgImport
     End Sub
 
     Private Sub mnuRefDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuRefDependencies.Click
-        Dim bIsEmpty As Boolean = False
-        If dlgDependencies.ShowDependencies(CType(lsbReferences.SelectedItem, XmlComponent), bIsEmpty) Then
-            m_xmlView.Updated = True
+        If m_xmlView.SearchDependencies(CType(lsbReferences.SelectedItem, XmlComponent)) Then
+            m_xmlView.InitBindingListReferences(lsbReferences, True)
         End If
     End Sub
 

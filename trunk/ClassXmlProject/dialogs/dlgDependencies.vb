@@ -2,6 +2,7 @@
 Imports System.Xml
 Imports System.Windows.Forms
 Imports System.Collections
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlNodeListView
 
 Public Class dlgDependencies
@@ -40,6 +41,17 @@ Public Class dlgDependencies
 
     Public Shared Function ShowDependencies(ByVal component As XmlComponent, ByRef bIsEmpty As Boolean, Optional ByVal title As String = Nothing) As Boolean
         If component IsNot Nothing Then
+            Select Case component.NodeName
+                Case "import", "package"
+                    If component.SelectNodes(GetQueryListDependencies(component)).Count > 0 _
+                    Then
+                        MsgBox("No search at this level!", MsgBoxStyle.Exclamation)
+                    Else
+                        MsgBox("Element empty!", MsgBoxStyle.Information)
+                    End If
+                    Return False
+            End Select
+
             Dim fen As New dlgDependencies
             fen.Title = title
             fen.Document = component
@@ -48,29 +60,6 @@ Public Class dlgDependencies
             Return (CType(fen.Tag, Boolean))
         End If
         Return False
-    End Function
-
-    Public Shared Function GetQuery(ByVal component As XmlComponent) As String
-        Dim strNodeName As String
-        Dim strQuery As String = Nothing
-
-        strNodeName = component.NodeName
-
-        Select Case strNodeName
-            Case "property", "method"
-                Dim strID As String = component.GetAttribute("id", "parent::class | parent::interface")
-                strQuery = "//class[" + strNodeName + "[@overrides='" + strID + "']]"
-                Return strQuery
-
-            Case "package", "import"
-                strQuery = "descendant::import | class | package | descendant::reference | descendant::interface"
-
-            Case Else
-                Dim strID As String = component.GetAttribute("id")
-                strQuery = "//*[@*[.='" + strID + "' and name()!='id' and name()!='overrides']" + _
-                           " and (ancestor::class/@id!='" + strID + "' or ancestor::interface/@id!='" + strID + "')]"
-        End Select
-        Return strQuery
     End Function
 
     Private Sub dlgDependencies_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -106,7 +95,7 @@ Public Class dlgDependencies
 
             If m_bNoTitle Then Me.Text = m_xmlDataSource.Name + " dependencies"
 
-            Dim strQuery As String = GetQuery(m_xmlDataSource)
+            Dim strQuery As String = GetQueryListDependencies(m_xmlDataSource)
 
             If strQuery Is Nothing _
             Then
@@ -129,7 +118,7 @@ Public Class dlgDependencies
                 Else
                     XmlNodeListView.SortNodeList(MyList)
                     lsbDependencies.DataSource = MyList
-                    lsbDependencies.DisplayMember = "FullpathClassName"
+                    lsbDependencies.DisplayMember = "FullUmlPathName"
                     m_bEmpty = False
                 End If
             End If
