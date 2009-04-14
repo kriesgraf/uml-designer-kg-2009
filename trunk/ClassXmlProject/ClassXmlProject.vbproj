@@ -538,6 +538,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\dlgUpgradeProject.resx">
       <DependentUpon>dlgUpgradeProject.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\dlgXmlNodeProperties.resx">
       <DependentUpon>dlgXmlNodeProperties.vb</DependentUpon>
@@ -620,6 +621,7 @@
     <None Include="Resources\CutToolStripMenuItem.Image.bmp" />
     <None Include="Resources\PasteToolStripMenuItem.Image.bmp" />
     <None Include="Resources\RedoToolStripMenuItem.Image.bmp" />
+    <Content Include="xslt\Patch_V1_2ToV1_3.xsl" />
     <Content Include="xslt\combine.xsl" />
     <Content Include="xslt\cpp-types.xsl" />
     <Content Include="xslt\dox2prj.xsl" />
