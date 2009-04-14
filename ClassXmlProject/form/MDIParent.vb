@@ -60,9 +60,9 @@ Public Class MDIParent
 
     End Sub
 
-    Public Sub UpdateItemControls(ByVal xmLProject As XmlProjectView)
-        SaveToolStripButton.Enabled = xmLProject.Updated
-        strpStatusLabel.Text = "Language: " + xmLProject.Properties.Language
+    Public Sub UpdateItemControls(ByVal xmlProject As XmlProjectView, ByVal strNodeName As String)
+        SaveToolStripButton.Enabled = xmlProject.Updated
+        strpStatusLabel.Text = "Language: " + xmlProject.Properties.Language + " - Node: " + strNodeName
     End Sub
 
     Public Sub OpenMultipleFiles(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileOpen.Click, OpenToolStripButton.Click
