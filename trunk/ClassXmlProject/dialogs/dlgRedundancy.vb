@@ -1,7 +1,15 @@
 ﻿Imports System.Windows.Forms
 Imports System.Xml
+Imports System
+Imports Microsoft.VisualBasic
 
 Public Class dlgRedundancy
+
+    Public Enum EResult
+        RedundancyChanged
+        RedundancyIgnored
+        RedundancyIgnoredAll
+    End Enum
 
     Private m_xmlView As XmlRefRedundancyView = Nothing
 
@@ -11,53 +19,73 @@ Public Class dlgRedundancy
         End Set
     End Property
 
-    Public Property Document() As XmlComponent
-        Get
-            Return m_xmlView
-        End Get
+    Public WriteOnly Property Document() As XmlComponent
         Set(ByVal value As XmlComponent)
-            ' this line updates all values of XmlClassGlobalView object
-            m_xmlView.Node = value.Node
+            m_xmlView.ProjectNode = value
             ' get a useful tag that transmit generation language ID
             m_xmlView.Tag = value.Tag
         End Set
     End Property
 
-    Public WriteOnly Property Message() As String
-        Set(ByVal value As String)
-            lblMessage.Text = value
+    Public WriteOnly Property ListToCheck() As Boolean
+        Set(ByVal value As Boolean)
+            Me.Ignore_All.Enabled = value
         End Set
     End Property
 
-    Public Shared Function VerifyRedundancy(ByVal component As XmlComponent, ByVal strMessage1 As String, _
-                                            ByVal child As XmlNode, ByVal strMessage2 As String, _
-                                            Optional ByVal bDisplayEmptyList As Boolean = False) As Boolean
+    Public Shared Function VerifyRedundancy(ByVal projectNode As XmlComponent, ByVal strMessage1 As String, _
+                                            ByVal child As XmlNode, _
+                                            Optional ByVal bDisplayEmptyList As Boolean = False, _
+                                            Optional ByVal bListToCheck As Boolean = True) As EResult
         If bDisplayEmptyList = False Then
-            If XmlNodeListView.GetListReferences(component, Nothing) = False Then
-                Return False
+            If XmlNodeListView.GetListReferences(projectNode, child, Nothing) = False Then
+                Return EResult.RedundancyIgnored
             End If
         End If
         Dim fen As New dlgRedundancy
-        fen.Document = component
+        fen.Document = projectNode
         fen.Node = child
         fen.Text = strMessage1
-        fen.Message = strMessage2
-        fen.ShowDialog()
-        Return (CType(fen.Tag, Boolean))
+        fen.ListToCheck = bListToCheck
+
+        Select Case fen.ShowDialog()
+            Case System.Windows.Forms.DialogResult.Ignore
+                Return EResult.RedundancyIgnoredAll
+
+            Case System.Windows.Forms.DialogResult.OK
+                If CType(fen.Tag, Boolean) Then
+                    Return EResult.RedundancyChanged
+                End If
+        End Select
+
+        Return EResult.RedundancyIgnored
     End Function
 
-
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
-        If m_xmlView.UpdateValues(lsbRedundantClasses) Then
-            Me.Tag = True
-        End If
-        Me.DialogResult = DialogResult.OK
-        Me.Close()
+        Try
+            If m_xmlView.UpdateValues(lsbRedundantClasses, lsbRemainClasses) Then
+                Me.Tag = True
+            End If
+            Me.DialogResult = DialogResult.OK
+            Me.Close()
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+            Me.Tag = False
+            Me.DialogResult = System.Windows.Forms.DialogResult.Abort
+            Me.Close()
+        End Try
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        Me.Tag = m_xmlView.Updated
+        Me.Tag = False
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.Close()
+    End Sub
+
+    Private Sub Ignore_All_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Ignore_All.Click
+        Me.Tag = False
+        Me.DialogResult = System.Windows.Forms.DialogResult.Ignore
         Me.Close()
     End Sub
 
@@ -71,6 +99,28 @@ Public Class dlgRedundancy
     End Sub
 
     Private Sub dlgRedundancy_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        m_xmlView.LoadNodes(lsbRedundantClasses)
+        Try
+            If m_xmlView.LoadNodes(lsbRedundantClasses) Then
+                lblMessage.Text = "'" + XmlProjectTools.GetName(m_xmlView.Node) + "' found several times!"
+            Else
+                lblMessage.Text = "..."
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Private Sub lsbRedundantClasses_MouseClick(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles lsbRedundantClasses.MouseClick
+        Dim index As Integer = lsbRedundantClasses.IndexFromPoint(e.X, e.Y)
+        If index > -1 Then
+            With CType(lsbRedundantClasses.Items(index), XmlNodeListView)
+                If lsbRedundantClasses.SelectedIndices().Contains(index) Then
+                    .CheckedView = True
+                Else
+                    .CheckedView = False
+                End If
+            End With
+            m_xmlView.UpdateRemainingList(lsbRedundantClasses, lsbRemainClasses)
+        End If
     End Sub
 End Class

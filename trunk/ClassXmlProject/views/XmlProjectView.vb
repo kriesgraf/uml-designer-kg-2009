@@ -50,7 +50,7 @@ Public Class XmlProjectView
 
     Public ReadOnly Property Filename() As String
         Get
-            Return m_strFilename
+            Return My.Computer.FileSystem.GetName(m_strFilename)
         End Get
     End Property
 
@@ -118,7 +118,7 @@ Public Class XmlProjectView
 
     Public Function SaveAs(ByVal strFilename As String) As Boolean
         Try
-            m_xmlProperties.Name = GetProjectName(strFilename)
+            'm_xmlProperties.Name = GetProjectName(strFilename) ' No more save project name as filename !
 
             If CopyDocTypeDeclarationFile(GetProjectPath(strFilename)) = False Then
                 Return False
@@ -131,7 +131,7 @@ Public Class XmlProjectView
             m_xmlDocument.LoadXml(strXML)
             ' After load, document reference change and old nodes must be updated
             m_xmlProperties.Node = m_xmlDocument.LastChild
-            m_xmlProperties.Name = GetProjectName(strFilename)
+            'm_xmlProperties.Name = GetProjectName(strFilename) don't rename any more the project when "save as".
             m_strFilename = strFilename
             Save()
 
@@ -246,8 +246,7 @@ Public Class XmlProjectView
 
             If dlgSaveFile.ShowDialog() = DialogResult.OK Then
 
-                Dim FileName As String = dlgSaveFile.FileName
-                UpdateCurrentImportFolder(FileName, dlgSaveFile.InitialDirectory)
+                UpdateCurrentImportFolder(dlgSaveFile.FileName, dlgSaveFile.InitialDirectory)
 
                 Dim eLang As ELanguage = CType(Me.Properties.GenerationLanguage, ELanguage)
                 Dim strFullPackage As String
@@ -301,10 +300,9 @@ Public Class XmlProjectView
 
             If dlgOpenFile.ShowDialog() = DialogResult.OK Then
 
-                Dim FileName As String = dlgOpenFile.FileName
-                UpdateCurrentImportFolder(FileName, dlgOpenFile.InitialDirectory)
+                UpdateCurrentImportFolder(dlgOpenFile.FileName, dlgOpenFile.InitialDirectory)
 
-                bResult = UmlNodesManager.ImportNodes(form, component, FileName, m_xmlReferenceNodeCounter, bUpdateOnly)
+                bResult = UmlNodesManager.ImportNodes(form, component, dlgOpenFile.FileName, m_xmlReferenceNodeCounter, bUpdateOnly)
                 If bResult Then
                     m_Control.Binding.ResetBindings(True)
                 End If
@@ -336,19 +334,19 @@ Public Class XmlProjectView
 
             If dlgSaveFile.ShowDialog() = DialogResult.OK Then
 
-                Dim FileName As String = dlgSaveFile.FileName
-                If FileName.EndsWith(".ximp") = False Then
-                    FileName += ".ximp"
+                strFilename = dlgSaveFile.FileName
+                If strFilename.EndsWith(".ximp") = False Then
+                    strFilename += ".ximp"
                 End If
 
-                UpdateCurrentImportFolder(FileName, dlgSaveFile.InitialDirectory)
+                UpdateCurrentImportFolder(strFilename, dlgSaveFile.InitialDirectory)
 
                 Dim eLang As ELanguage = CType(Me.Properties.GenerationLanguage, ELanguage)
 
                 Select Case node.Name
                     Case "root"
                         strFullPackage = GetName(node)
-                        ExportPackageReferences(fen, node, FileName, strFullPackage, eLang)
+                        ExportPackageReferences(fen, node, strFilename, strFullPackage, eLang)
 
                     Case "package"
                         strFullPackage = GetFullpathPackage(node, eLang)
@@ -357,7 +355,7 @@ Public Class XmlProjectView
                             MsgBox("Import members will not be exported", vbExclamation)
                         End If
                         If SelectNodes(node, "descendant::class[@visibility='package']").Count > 0 Then
-                            ExportPackageReferences(fen, node, FileName, strFullPackage, eLang)
+                            ExportPackageReferences(fen, node, strFilename, strFullPackage, eLang)
                         Else
                             MsgBox("Class " + GetName(node) + " has no class members with package visibility", vbExclamation)
                         End If
@@ -366,7 +364,7 @@ Public Class XmlProjectView
                         strFullPackage = GetFullpathPackage(node, eLang)
 
                         If GetNodeString(node, "@visibility") = "package" Then
-                            ExportClassReferences(fen, node, FileName, strFullPackage, eLang)
+                            ExportClassReferences(fen, node, strFilename, strFullPackage, eLang)
                         Else
                             MsgBox("Class " + GetName(node) + " has not a package visibility", vbExclamation)
                         End If
@@ -375,7 +373,7 @@ Public Class XmlProjectView
 
                         If GetNodeString(node.ParentNode, "@visibility") = "package" Then
                             If GetNodeString(node, "variable/@range") = "public" Then
-                                ExportTypedefReferences(fen, node, FileName, strFullPackage)
+                                ExportTypedefReferences(fen, node, strFilename, strFullPackage)
                             Else
                                 MsgBox("Typedef " + GetName(node) + " is not public", vbExclamation)
                             End If
@@ -385,7 +383,7 @@ Public Class XmlProjectView
 
                     Case "import"
                         If node.HasChildNodes = True Then
-                            ReExport(fen, node.LastChild, FileName, GetAttributeValue(node, "param"))
+                            ReExport(fen, node.LastChild, strFilename, GetAttributeValue(node, "param"))
                         Else
                             MsgBox("Import " + GetName(node) + ", nothing to export", MsgBoxStyle.Exclamation)
                         End If
@@ -484,10 +482,10 @@ Public Class XmlProjectView
         Return False
     End Function
 
-    Public Function RemoveRedundantReference(ByVal import As XmlComposite, ByVal reference As XmlComponent) As Boolean
-        If import IsNot Nothing And reference IsNot Nothing Then
-            Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(import.Node, "import")
-            xmlcpnt.Tag = import.Tag
+    Public Function RemoveRedundantReference(ByVal parent As XmlComposite, ByVal reference As XmlComponent) As Boolean
+        If parent IsNot Nothing And reference IsNot Nothing Then
+            Dim xmlcpnt As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(parent.Node)
+            xmlcpnt.Tag = parent.Tag
             If xmlcpnt.RemoveRedundant(reference) Then
                 m_Control.Binding.ResetBindings(True)
                 Me.Updated = True
@@ -680,10 +678,10 @@ Public Class XmlProjectView
     End Function
 
     Private Sub UpdateCurrentImportFolder(ByVal strFullpathFilename As String, ByVal strDefault As String)
-        Dim i As Integer = InStr(Filename, Path.DirectorySeparatorChar.ToString)
+        Dim i As Integer = InStr(strFullpathFilename, Path.DirectorySeparatorChar.ToString)
 
         If i > 0 Then
-            My.Settings.ImportFolder = Path.GetFileName(Filename)
+            My.Settings.ImportFolder = Path.GetDirectoryName(strFullpathFilename)
         Else
             My.Settings.ImportFolder = strDefault
         End If

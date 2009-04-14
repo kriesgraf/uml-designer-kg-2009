@@ -159,5 +159,12 @@ Public Class dlgPackage
             m_xmlView.Updated = True
         End If
     End Sub
+
+    Private Sub mnuRedundancies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuRedundancies.Click
+
+        If m_xmlView.RemoveRedundant(CType(gridClasses.SelectedItem, XmlComponent)) Then
+            gridClasses.Binding.ResetBindings(True)
+        End If
+    End Sub
 #End Region
 End Class

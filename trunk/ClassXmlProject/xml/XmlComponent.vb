@@ -543,6 +543,11 @@ Public Class XmlComponent
         Return bResult
     End Function
 
+    Protected Friend Overridable Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
+        Throw New Exception("Method 'RemoveRedundant' is not overridden in class '" + Me.ToString + "'")
+    End Function
+
+
     Protected Friend Function RemoveSingleNode(ByVal xpath As String) As Boolean
         Dim bResult As Boolean = False
         Dim xmlRemovedNode As XmlNode

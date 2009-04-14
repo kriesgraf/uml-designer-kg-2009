@@ -56,6 +56,7 @@ Partial Class dlgPackage
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
         Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.mnuRedundancies = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -226,9 +227,9 @@ Partial Class dlgPackage
         '
         'mnuClass
         '
-        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuDelete})
+        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
         Me.mnuClass.Name = "mnuClass"
-        Me.mnuClass.Size = New System.Drawing.Size(189, 270)
+        Me.mnuClass.Size = New System.Drawing.Size(189, 292)
         '
         'mnuAdd
         '
@@ -397,6 +398,13 @@ Partial Class dlgPackage
         Me.gridClasses.TabIndex = 1
         Me.ToolTip1.SetToolTip(Me.gridClasses, "Click right to update grid")
         '
+        'mnuRedundancies
+        '
+        Me.mnuRedundancies.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
+        Me.mnuRedundancies.Name = "mnuRedundancies"
+        Me.mnuRedundancies.Size = New System.Drawing.Size(188, 22)
+        Me.mnuRedundancies.Text = "Remove redundancy..."
+        '
         'dlgPackage
         '
         Me.AcceptButton = Me.OK_Button
@@ -460,5 +468,6 @@ Partial Class dlgPackage
     Friend WithEvents mnuAddImport As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuDependencies As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents mnuRedundancies As System.Windows.Forms.ToolStripMenuItem
 
 End Class

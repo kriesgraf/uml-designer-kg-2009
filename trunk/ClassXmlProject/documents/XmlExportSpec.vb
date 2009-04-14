@@ -48,6 +48,21 @@ Public Class XmlExportSpec
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 
+    Public Function SearchRedundancies(ByVal projectNode As XmlComponent, ByVal strName As String) As Boolean
+        Dim child As XmlNode
+
+        For Each child In SelectNodes("reference | interface")
+            Select Case dlgRedundancy.VerifyRedundancy(projectNode, "Find redundancies in file '" + strName + "' with project...", child)
+                Case dlgRedundancy.EResult.RedundancyIgnoredAll
+                    Exit For
+
+                Case Else
+                    ' Ok, Ignore
+            End Select
+        Next child
+        Return True
+    End Function
+
 #End Region
 
 #Region "Protected friend methods"
@@ -132,7 +147,8 @@ Public Class XmlExportSpec
         Return bResult
     End Function
 
-    Protected Friend Function LoadImport(ByVal form As Form, ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
+    Protected Friend Function LoadImport(ByVal form As Form, ByVal projectNode As XmlComponent, _
+                                         ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
         Dim bResult As Boolean = False
         Try
             ' the following call to Validate succeeds.
@@ -172,9 +188,9 @@ Public Class XmlExportSpec
         Dim child As XmlNode
         Dim strID As String
 
-        If Node Is Nothing Then Exit Sub
+        If Me.Node Is Nothing Then Exit Sub
 
-        For Each child In SelectNodes("descendant::reference | descendant::interface")
+        For Each child In SelectNodes("reference | interface")
             strID = m_xmlReferenceNodeCounter.GetNewClassId()
             ChangeID(child, Me.Node, strID)
             SetID(child, strID)

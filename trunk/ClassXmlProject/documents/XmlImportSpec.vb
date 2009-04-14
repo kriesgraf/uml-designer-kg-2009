@@ -236,6 +236,23 @@ Public Class XmlImportSpec
 
 #Region "Protected Friends methods"
 
+    Protected Friend Overrides Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            If component IsNot Nothing Then
+                If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node, True, False) _
+                    = dlgRedundancy.EResult.RedundancyChanged _
+                Then
+                    Me.Updated = True
+                    bResult = True
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
     Protected Friend Function ChildExportNode() As XmlExportSpec
         If m_xmlInline IsNot Nothing Then
             Throw New Exception("Can't get 'export' node when 'inline' is active")
@@ -363,7 +380,7 @@ Public Class XmlImportSpec
 
                 Dim myList As New ArrayList
 
-                If export.LoadImport(form, strFilename, bDoxygenTagFile) Then
+                If export.LoadImport(form, Me, strFilename, bDoxygenTagFile) Then
                     export.LoadChildrenList()
                     For Each xmlcpnt As XmlComponent In export.ChildrenList
                         xmlcpnt.Tag = export.Tag
@@ -392,7 +409,7 @@ Public Class XmlImportSpec
                         SortNodeList(myList)
 
                         observer.Minimum = 0
-                        observer.Maximum = myList.Count
+                        observer.Maximum = myList.Count + 1
 
                         If bAskReplace = False _
                         Then
@@ -402,7 +419,7 @@ Public Class XmlImportSpec
                                 Me.ChildExportNode.ReplaceReference(element)
                                 observer.Increment(1)
                             Next
-                        ElseIf ShowNodeList(myList, "Select references/interfaces to merge", "Locked, because reference is used by an interface property or method") _
+                        ElseIf ShowNodeList(myList, "Select references/interfaces to replace", "Locked, because reference is used by an interface property or method") _
                         Then
                             observer.ProgressBarVisible = True
                             bResult = True
@@ -414,6 +431,10 @@ Public Class XmlImportSpec
                                 observer.Increment(1)
                             Next
                         End If
+
+                        Me.ChildExportNode.SearchRedundancies(Me, My.Computer.FileSystem.GetName(strFilename))
+                        observer.Increment(1)
+                        bResult = True
                     End If
                 End If
             End If
@@ -433,7 +454,7 @@ Public Class XmlImportSpec
             Dim bImportOk As Boolean = True
 
             observer.Minimum = 0
-            observer.Maximum = 3
+            observer.Maximum = 4
             observer.ProgressBarVisible = True
 
             If m_xmlExport Is Nothing Then
@@ -449,10 +470,13 @@ Public Class XmlImportSpec
 
                 Me.ChildExportNode.NodeCounter = m_xmlReferenceNodeCounter
 
-                If Me.ChildExportNode.LoadImport(form, strFilename, bDoxygenTagFile) Then    ' Clone node at this step
+                If Me.ChildExportNode.LoadImport(form, Me, strFilename, bDoxygenTagFile) Then    ' Clone node at this step
                     observer.Increment(1)
 
                     Me.AppendComponent(Me.ChildExportNode, observer)                             ' And append now
+                    observer.Increment(1)
+
+                    Me.ChildExportNode.SearchRedundancies(Me, My.Computer.FileSystem.GetName(strFilename))
                     observer.Increment(1)
 
                     bResult = True

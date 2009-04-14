@@ -183,7 +183,7 @@ Public Class dlgImport
     End Sub
 
     Private Sub RemoveRedundant_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RemoveRedundant.Click
-        Dim bImportRemoved As Boolean = m_xmlView.RemoveRedundant(lsbReferences)
+        Dim bImportRemoved As Boolean = m_xmlView.RemoveRedundantReference(lsbReferences)
         If bImportRemoved Then
             Me.Tag = True
             Me.DialogResult = DialogResult.OK
