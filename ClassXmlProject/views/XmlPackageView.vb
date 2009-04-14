@@ -3,6 +3,7 @@ Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.XmlNodeListView
 
 Public Class XmlPackageView
     Inherits XmlPackageSpec
@@ -44,6 +45,22 @@ Public Class XmlPackageView
             Throw ex
         End Try
     End Sub
+
+    Public Function SearchDependencies(ByVal component As XmlComponent) As Boolean
+        Try
+            If component Is Nothing Then Return False
+
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(component, bIsEmpty) _
+            Then
+                Me.Updated = True
+                Return True
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
+    End Function
 
     Public Sub InitBindingName(ByVal dataControl As Control)
         Try
@@ -150,13 +167,13 @@ Public Class XmlPackageView
 
                 Case "package", "import"
                     ' Search children from removed node
-                    If xmlcpnt.SelectNodes(dlgDependencies.GetQuery(xmlcpnt)).Count > 0 Then
+                    If xmlcpnt.SelectNodes(GetQueryListDependencies(xmlcpnt)).Count > 0 Then
                         MsgBox("This element is not empty", MsgBoxStyle.Exclamation, xmlcpnt.Name)
                         Return False
                     End If
 
                 Case Else
-                    If SelectNodes(dlgDependencies.GetQuery(xmlcpnt)).Count > 0 Then
+                    If SelectNodes(GetQueryListDependencies(xmlcpnt)).Count > 0 Then
 
                         If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
                                   vbCrLf + "Do you want to proceed", _
@@ -164,7 +181,11 @@ Public Class XmlPackageView
                                     xmlcpnt.Name) = MsgBoxResult.Yes _
                         Then
                             Dim bIsEmpty As Boolean = False
-                            bResult = dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Name)
+
+                            If dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Name) Then
+                                bResult = True
+                            End If
+
                             If bIsEmpty = False Then
                                 Return bResult
                             End If

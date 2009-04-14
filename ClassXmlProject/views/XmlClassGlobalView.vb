@@ -101,6 +101,22 @@ Public Class XmlClassGlobalView
         End If
     End Sub
 
+    Public Function SearchDependencies(ByVal component As XmlComponent) As Boolean
+        Try
+            If component Is Nothing Then Return False
+
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(component, bIsEmpty) _
+            Then
+                Me.Updated = True
+                Return True
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
+    End Function
+
     Public Sub InitBindingName(ByVal dataControl As Control)
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
@@ -306,7 +322,7 @@ Public Class XmlClassGlobalView
 
             If removeNode.NodeName = "typedef" Then
 
-                If SelectNodes(dlgDependencies.GetQuery(removeNode)).Count > 0 Then
+                If SelectNodes(XmlNodeListView.GetQueryListDependencies(removeNode)).Count > 0 Then
 
                     If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
                               vbCrLf + "Do you want to proceed", _
@@ -314,7 +330,11 @@ Public Class XmlClassGlobalView
                                 xmlcpnt.Name) = MsgBoxResult.Yes _
                     Then
                         Dim bIsEmpty As Boolean = False
-                        bResult = dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Name)
+
+                        If dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Name) Then
+                            bResult = True
+                        End If
+
                         If bIsEmpty = False Then
                             Return bResult
                         End If

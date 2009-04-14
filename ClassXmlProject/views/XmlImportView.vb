@@ -69,6 +69,22 @@ Public Class XmlImportView
         m_xmlBindingsList.UpdateValues()
     End Sub
 
+    Public Function SearchDependencies(ByVal component As XmlComponent) As Boolean
+        Try
+            If component Is Nothing Then Return False
+
+            Dim bIsEmpty As Boolean = False
+            If dlgDependencies.ShowDependencies(component, bIsEmpty) _
+            Then
+                Me.Updated = True
+                Return True
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
+    End Function
+
     Public Function CreateForm(ByVal document As XmlComponent) As System.Windows.Forms.Form Implements InterfViewForm.CreateForm
         Dim frmResult As New dlgImport
         CType(frmResult, InterfFormDocument).Document = document
@@ -118,7 +134,7 @@ Public Class XmlImportView
             SortNodeList(listNode)
 
             listbox.DataSource = listNode
-            listbox.DisplayMember = "FullpathClassName"
+            listbox.DisplayMember = cstFullpathClassName
         Catch ex As Exception
             Throw ex
         End Try
@@ -215,7 +231,7 @@ Public Class XmlImportView
         Try
             Select Case removeNode.NodeName
                 Case "reference", "interface"
-                    If SelectNodes(dlgDependencies.GetQuery(removeNode)).Count > 0 Then
+                    If SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 Then
 
                         If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
                                   vbCrLf + "Do you want to proceed", _
@@ -223,7 +239,11 @@ Public Class XmlImportView
                                     removeNode.Name) = MsgBoxResult.Yes _
                         Then
                             Dim bIsEmpty As Boolean = False
-                            bResult = dlgDependencies.ShowDependencies(removeNode, bIsEmpty, "Remove references to " + removeNode.Name)
+
+                            If dlgDependencies.ShowDependencies(removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
+                                bResult = True
+                            End If
+
                             If bIsEmpty = False Then
                                 Return bResult
                             End If

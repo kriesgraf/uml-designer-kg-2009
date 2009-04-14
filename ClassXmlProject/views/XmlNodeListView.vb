@@ -13,6 +13,8 @@ Public Class XmlNodeListView
     Private m_bChecked As Boolean = False
 
     Public Const cstNullElement As String = "0"
+    Public Const cstFullUmlPathName As String = "FullUmlPathName"
+    Public Const cstFullpathClassName As String = "FullpathClassName"
 
     Public Enum EComboList
         Type_index = -1
@@ -75,7 +77,17 @@ Public Class XmlNodeListView
 
     Public ReadOnly Property FullUmlPathName() As String
         Get
-            Return Me.Name + " (" + GetFullUmlPath(Me.Node.ParentNode) + ")"
+            Dim name As String = "."
+            Select Case Me.NodeName
+                Case "relationship"
+                    name = """" + GetAttribute("action") + """"
+                Case "param"
+                    name = """argument"" " + Me.Name
+                Case Else
+                    name = Me.Name
+            End Select
+
+            Return name + " (" + GetFullUmlPath(Me.Node.ParentNode) + ")"
         End Get
     End Property
 
@@ -181,7 +193,7 @@ Public Class XmlNodeListView
 
             With dataControl
                 .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
+                .DisplayMember = cstFullpathClassName
                 .ValueMember = "Id"
                 .DataSource = myList
             End With
@@ -198,7 +210,7 @@ Public Class XmlNodeListView
 
             With control
                 .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = "FullpathClassName"
+                .DisplayMember = cstFullpathClassName
                 .ValueMember = "Id"
                 .DataSource = myList
             End With
@@ -222,10 +234,25 @@ Public Class XmlNodeListView
         'Debug.Print("xPath=" + xpath)
 
         While iterator.MoveNext
-            Dim node As XmlNode = CType(iterator.Current, XmlNode)
-            Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(node)
+            Dim nodeXml As XmlNode = CType(iterator.Current, XmlNode)
+            Dim xmlcpnt As XmlNodeListView = Nothing
+            Select Case nodeXml.Name
+                Case "list", "array"
+                    xmlcpnt = New XmlNodeListView(nodeXml.ParentNode.ParentNode)
+
+                Case "variable", "inherited", "dependency", "type", "father", "child"
+                    If nodeXml.ParentNode.Name = "return" _
+                    Then
+                        xmlcpnt = New XmlNodeListView(nodeXml.ParentNode.ParentNode)
+                    Else
+                        xmlcpnt = New XmlNodeListView(nodeXml.ParentNode)
+                    End If
+
+                Case Else
+                    xmlcpnt = New XmlNodeListView(nodeXml)
+            End Select
             xmlcpnt.Tag = document.Tag
-            'Debug.Print("(" + node.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
+            'Debug.Print("(" + nodeXml.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
             myList.Add(xmlcpnt)
         End While
     End Sub
@@ -353,12 +380,71 @@ Public Class XmlNodeListView
             .Text = title
             .LockedMessage = lockedMessage
             .NodeList = myList
-            .DisplayMember = "FullpathClassName"
+            .DisplayMember = cstFullpathClassName
             If .ShowDialog = DialogResult.OK Then
                 Return True
             End If
         End With
         Return False
+    End Function
+
+    Public Shared Function GetQueryListDependencies(ByVal component As XmlComponent) As String
+        Dim strNodeName As String
+        Dim strQuery As String = Nothing
+
+        strNodeName = component.NodeName
+
+        Select Case strNodeName
+            Case "property", "method"
+                Dim strID As String = component.GetAttribute("id", "parent::class | parent::interface")
+                strQuery = "//class[" + strNodeName + "[@overrides='" + strID + "']]"
+                Return strQuery
+
+            Case "package", "import"
+                strQuery = "descendant::import | class | package | descendant::reference | descendant::interface"
+
+            Case "typedef"
+                Dim strID As String = component.GetAttribute("id")
+                Dim strClassID As String = component.GetAttribute("id", "parent::class")
+                strQuery = "//*[@*[.='" + strID + "' and name()!='id'] and not(ancestor::class[@id='" + strClassID + "'])]"
+                If component.GetNode("descendant::enumvalue") IsNot Nothing Then
+                    Dim strEnumIDs As String = ""
+                    For Each child As XmlNode In component.SelectNodes("descendant::enumvalue")
+                        strEnumIDs += XmlProjectTools.GetID(child) + ";"
+                    Next
+                    strQuery += " | //*[@valref and contains('" + strEnumIDs + "',concat(@valref,';'))]"
+                    strQuery += " | //*[@sizeref and contains('" + strEnumIDs + "',concat(@sizeref,';'))]"
+                End If
+
+            Case "reference"
+                Dim strID As String = component.GetAttribute("id")
+                strQuery = "//*[@*[.='" + strID + "' and name()!='id']]"
+                If component.GetNode("enumvalue") IsNot Nothing Then
+                    Dim strEnumIDs As String = ""
+                    For Each child As XmlNode In component.SelectNodes("enumvalue")
+                        strEnumIDs += XmlProjectTools.GetID(child) + ";"
+                    Next
+                    strQuery += " | //*[@valref and contains('" + strEnumIDs + "',concat(@valref,';'))]"
+                    strQuery += " | //*[@sizeref and contains('" + strEnumIDs + "',concat(@sizeref,';'))]"
+                End If
+
+            Case "class"
+                Dim strID As String = component.GetAttribute("id")
+                strQuery = "//*[@*[.='" + strID + "' and name()!='id' and name()!='overrides']" + _
+                           " and not(ancestor::class[@id='" + strID + "']) and not(ancestor::interface[@id='" + strID + "'])]"
+
+                For Each child As XmlNode In component.SelectNodes("typedef")
+                    Dim xmlcpnt As XmlComponent = New XmlComponent(child)
+                    strQuery += " | " + GetQueryListDependencies(xmlcpnt)
+                Next
+
+            Case Else
+                Dim strID As String = component.GetAttribute("id")
+                strQuery = "//*[@*[.='" + strID + "' and name()!='id' and name()!='overrides']" + _
+                           " and not(ancestor::class[@id='" + strID + "']) and not(ancestor::interface[@id='" + strID + "'])]"
+        End Select
+        Debug.Print(strQuery)
+        Return strQuery
     End Function
 
     Public Shared Function GetListReferences(ByVal parent As XmlComponent, ByVal child As XmlNode, ByRef listResult As ArrayList) As Boolean
@@ -409,7 +495,7 @@ Public Class XmlNodeListView
             If current Is Nothing Then Return ""
 
             Select Case current.Name
-                Case "package", "class", "import"
+                Case "package", "class", "import", "typedef", "interface"
                     Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
 
                 Case "export"
@@ -419,8 +505,29 @@ Public Class XmlNodeListView
 
                     Return GetFullUmlPath(current.ParentNode)
 
-                Case Else
+                Case "enumvalue"
+                    If current.ParentNode IsNot Nothing Then
+                        If current.ParentNode.Name = "reference" Then
+                            Return +GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+                        Else
+                            Return +GetFullUmlPath(current.ParentNode.ParentNode) + "/" + GetName(current)
+                        End If
+                    End If
+
                     Return "/" + GetName(current)
+
+                Case "root"
+                    Return "/" + GetName(current)
+
+                Case "method"
+                    If GetName(current) Is Nothing Then
+                        Return GetFullUmlPath(current.ParentNode) + "/#method"
+                    Else
+                        Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+                    End If
+
+                Case Else
+                    Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
             End Select
         Catch ex As Exception
             Throw ex
