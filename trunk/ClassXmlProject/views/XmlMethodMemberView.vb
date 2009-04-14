@@ -106,7 +106,7 @@ Public Class XmlMethodMemberView
 
         ElseIf TestNode("type") Then
 
-            m_xmlAdapter = New XmlTypeVarSpec(GetNode("type"))
+            m_xmlAdapter = MyBase.CreateDocument(GetNode("type"))
             m_xmlAdapter.Tag = Me.Tag
         Else
             m_xmlAdapter = Nothing
