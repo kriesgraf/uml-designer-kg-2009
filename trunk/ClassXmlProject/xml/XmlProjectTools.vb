@@ -1389,7 +1389,12 @@ Public Class XmlProjectTools
                         strResult = "Relationship (" + GetAttributeValue(current, "action") + ")"
 
                     Case "enumvalue"
-                        current = current.SelectSingleNode("ancestor::typedef")
+                        If current.SelectSingleNode("ancestor::typedef") Is Nothing _
+                        Then
+                            current = current.SelectSingleNode("parent::reference")
+                        Else
+                            current = current.SelectSingleNode("ancestor::typedef")
+                        End If
                         strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
 
                     Case "list"
@@ -1404,7 +1409,7 @@ Public Class XmlProjectTools
                                 strResult = GetFullpathDescription(current, eTag)
                         End Select
 
-                    Case "type"
+                    Case "type", "variable"
                         current = current.ParentNode
 
                         Select Case current.Name
@@ -1443,13 +1448,13 @@ Public Class XmlProjectTools
 
                         current = current.SelectSingleNode("ancestor::import")
 
-                        If eTag <> ELanguage.Language_CplusPlus Then
-                            strTempo = GetAttributeValue(current, "param")
-                            If strTempo IsNot Nothing _
-                            Then
-                                strResult = strTempo + strSeparator + strResult
-                            End If
+                        '                        If eTag <> ELanguage.Language_CplusPlus Then
+                        strTempo = GetAttributeValue(current, "param")
+                        If strTempo IsNot Nothing _
+                        Then
+                            strResult = strTempo + strSeparator + strResult
                         End If
+                        '                        End If
 
                     Case "model"
                         strResult = "Model " + GetName(current)
