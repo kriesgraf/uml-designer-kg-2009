@@ -111,9 +111,11 @@
           <xsl:copy-of select="@class"/>
         </xsl:otherwise>
       </xsl:choose>
+      <xsl:copy-of select="@external"/>
       <xsl:copy-of select="@package"/>
       <xsl:copy-of select="@container"/>
       <xsl:apply-templates select="collaboration"/>
+      <xsl:apply-templates select="enumvalue"/>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->

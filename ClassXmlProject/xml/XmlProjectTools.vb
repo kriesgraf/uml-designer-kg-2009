@@ -32,7 +32,7 @@ Public Class XmlProjectTools
     Private Const cstTag2ImportStyle As String = "tag2imp.xsl"
     Private Const cstDoxygen2ProjectStyle As String = "dox2prj.xsl"
     Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
-    Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xptch"
+    Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xsl"
 
     Public Enum EResult
         Completed
@@ -1648,6 +1648,27 @@ Public Class XmlProjectTools
         Return bResult
     End Function
 
+    Public Shared Sub ExtractExternalReferences(ByVal parent As XmlNode, ByVal export As XmlNode)
+        Dim list As XmlNodeList = SelectNodes(export, "reference[@external='yes']")
+
+        If list.Count > 0 Then
+            Dim export2 As XmlNode = CreateNode(parent, "import")
+            AddAttributeValue(export2, "name", "External" + export2.GetHashCode().ToString)
+            AddAttributeValue(export2, "visibility", "package")
+
+            parent.InsertBefore(export2, export.ParentNode)
+
+            export2 = CreateAppendNode(export2, "export")
+            AddAttributeValue(export2, "name", "External")
+
+            For Each child As XmlNode In list
+                ' Append node without cloning it, induce moving node.
+                export2.AppendChild(child)
+                AddAttributeValue(child, "external", "no")
+            Next
+        End If
+    End Sub
+
     Public Shared Sub LoadTreeInherited(ByVal parent As XmlNode, ByVal list As List(Of String))
         Try
             Dim iteration As Integer = 0
@@ -1657,6 +1678,10 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
+
+    Public Shared Function CreateNode(ByVal doc As XmlDocument, ByVal strElement As String) As XmlNode
+        Return doc.CreateElement(strElement)
+    End Function
 
     Public Shared Function CreateNode(ByVal treeNode As XmlNode, ByVal strElement As String) As XmlNode
         Return treeNode.OwnerDocument.CreateElement(strElement)
