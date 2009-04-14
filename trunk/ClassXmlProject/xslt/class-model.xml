@@ -145,6 +145,7 @@
 <!ATTLIST reference
           %id;
           type (class|typedef|exception) #REQUIRED
+          external (yes | no) "no"
           package NMTOKEN #IMPLIED
           class NMTOKEN #IMPLIED
           container CDATA #IMPLIED
