@@ -172,7 +172,6 @@ Public Class frmProject
             Then
                 ' We call project by its form name at beginning
                 m_xmlProject.Updated = True
-                Me.Text = m_xmlProject.Name
                 mnuFileSave.Enabled = False
             End If
 
@@ -190,9 +189,9 @@ Public Class frmProject
 
                 If .IsNew Then
                     RefreshProjectView(lvwProjectMembers.Binding.Parent)
+                    RefreshUpdatedPath(True)
                     mnuProjectProperties_Click(Me, Nothing)
                 Else
-                    Me.Text = .Name
                     lvwProjectMembers.SelectItem(0)
                     If lvwProjectMembers.SelectedItem IsNot Nothing _
                     Then
@@ -200,12 +199,12 @@ Public Class frmProject
                     Else
                         RefreshProjectView(lvwProjectMembers.Binding.Parent)
                     End If
+                    RefreshUpdatedPath(True)
                 End If
 
                 .UpdateMenuClass(lvwProjectMembers.Binding.Parent, AddClassTypedef, AddClassConstructor)
             End With
 
-            RefreshUpdatedPath(True)
             RefreshButtonsListView()
 
         Catch ex As Exception
