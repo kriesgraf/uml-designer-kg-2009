@@ -688,7 +688,7 @@ Public Class XmlComponent
         ' To be overrided if necessary
     End Sub
 
-    Public Overridable Sub NotifyRemove(ByVal node As XmlNode)
+    Public Overridable Sub NotifyRemove(ByVal nodeXml As XmlNode)
         ' To be overrided if necessary
     End Sub
 

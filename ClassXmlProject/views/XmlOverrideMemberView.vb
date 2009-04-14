@@ -127,8 +127,8 @@ Public Class XmlOverrideMemberView
         End Get
     End Property
 
-    Public Sub New(ByVal node As XmlNode)
-        MyBase.New(node)
+    Public Sub New(ByVal nodeXml As XmlNode)
+        MyBase.New(nodeXml)
     End Sub
 
     Public Overrides Function Equals(ByVal obj As Object) As Boolean
