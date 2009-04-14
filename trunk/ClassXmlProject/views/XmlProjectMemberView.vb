@@ -4,6 +4,7 @@ Imports System.Windows.Forms
 Imports System.Xml
 Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.XmlNodeListView
 Imports Microsoft.VisualBasic
 
 Public Class XmlProjectMemberView
@@ -205,8 +206,8 @@ Public Class XmlProjectMemberView
 
 #Region "Public methods"
 
-    Public Sub New(Optional ByVal node As XmlNode = Nothing)
-        MyBase.New(node)
+    Public Sub New(Optional ByVal nodeXml As XmlNode = Nothing)
+        MyBase.New(nodeXml)
     End Sub
 
     Public Sub UpdateObject() Implements InterfObject.Update
@@ -447,7 +448,7 @@ Public Class XmlProjectMemberView
 
                 Case "typedef", "class", "reference", "interface"
                     ' Search link from parent node
-                    If SelectNodes(dlgDependencies.GetQuery(xmlcpnt)).Count > 0 Then
+                    If SelectNodes(GetQueryListDependencies(xmlcpnt)).Count > 0 Then
 
                         If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
                               vbCrLf + "Do you want to proceed ?", _
@@ -455,7 +456,11 @@ Public Class XmlProjectMemberView
                             xmlcpnt.Label(0)) = MsgBoxResult.Yes _
                         Then
                             Dim bIsEmpty As Boolean = False
-                            bResult = dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Label(0))
+
+                            If dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Label(0)) Then
+                                bResult = True
+                            End If
+
                             If bIsEmpty = False Then
                                 Return bResult
                             End If
@@ -466,7 +471,7 @@ Public Class XmlProjectMemberView
 
                 Case "package", "import"
                     ' Search children from removed node
-                    If xmlcpnt.SelectNodes(dlgDependencies.GetQuery(xmlcpnt)).Count > 0 Then
+                    If xmlcpnt.SelectNodes(GetQueryListDependencies(xmlcpnt)).Count > 0 Then
                         MsgBox("This element is not empty", MsgBoxStyle.Exclamation, xmlcpnt.Label(0))
                         Return False
                     End If
