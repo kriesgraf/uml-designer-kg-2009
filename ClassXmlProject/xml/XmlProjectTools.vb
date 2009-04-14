@@ -1607,7 +1607,7 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Public Shared Function ChangeID(ByVal nodeReference As XmlNode, ByVal source As XmlNode, ByVal szNewID As String) As Boolean
+    Public Shared Function ChangeID(ByVal nodeReference As XmlNode, ByVal treeNode As XmlNode, ByVal szNewID As String) As Boolean
         Dim bResult As Boolean = False
         Dim list As XmlNodeList
         Dim attrib As XmlNode
@@ -1616,7 +1616,7 @@ Public Class XmlProjectTools
         Dim strQuery As String
         If strOldID.StartsWith("class") Or strOldID.StartsWith("relation") Then
             strQuery = "//@idref[.='" + strOldID + "']"
-            list = source.SelectNodes(strQuery)
+            list = treeNode.SelectNodes(strQuery)
             For Each attrib In list
                 'Debug.Print(attrib.OuterXml)
                 attrib.Value = szNewID
@@ -1624,7 +1624,7 @@ Public Class XmlProjectTools
             Next attrib
         Else
             strQuery = "//@valref[.='" + strOldID + "']"
-            list = source.SelectNodes(strQuery)
+            list = treeNode.SelectNodes(strQuery)
             For Each attrib In list
                 'Debug.Print(attrib.OuterXml)
                 attrib.Value = szNewID
@@ -1632,7 +1632,7 @@ Public Class XmlProjectTools
             Next attrib
 
             strQuery = "//@sizeref[.='" + strOldID + "']"
-            list = source.SelectNodes(strQuery)
+            list = treeNode.SelectNodes(strQuery)
             For Each attrib In list
                 'Debug.Print(attrib.OuterXml)
                 attrib.Value = szNewID

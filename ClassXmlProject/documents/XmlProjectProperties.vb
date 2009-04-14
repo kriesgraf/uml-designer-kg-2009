@@ -2,6 +2,7 @@
 Imports System.Windows.Forms
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 Imports System.ComponentModel
 Imports System.Xml
 
@@ -115,6 +116,25 @@ Public Class XmlProjectProperties
             Throw ex
         End Try
     End Sub
+
+    Protected Friend Overrides Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
+        If component IsNot Nothing Then
+            Select Case component.NodeName
+                Case "class"
+                    If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node, True, False) _
+                        = dlgRedundancy.EResult.RedundancyChanged _
+                    Then
+                        Me.Updated = True
+                        Return True
+                    End If
+
+                Case Else
+                    MsgBox("This node contains children !", MsgBoxStyle.Exclamation)
+                    Return False
+            End Select
+        End If
+        Return False
+    End Function
 
     Protected Friend Overrides Function AppendNode(ByVal child As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
         Dim before As XmlNode = Nothing

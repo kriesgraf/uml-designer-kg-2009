@@ -3,6 +3,7 @@ Imports System.IO
 Imports System.Xml
 Imports System.Windows.Forms
 Imports System.Collections
+Imports ClassXmlProject.XmlNodeListView
 Imports ClassXmlProject.XmlProjectTools
 Imports Microsoft.VisualBasic
 
@@ -113,19 +114,9 @@ Public Class XmlImportView
     Public Sub InitBindingListReferences(ByVal listbox As ListBox, Optional ByVal bClear As Boolean = False)
         Try
             Dim listNode As New ArrayList
-            Dim iterator As IEnumerator = SelectNodes("descendant::reference | descendant::interface").GetEnumerator
-            iterator.Reset()
-            While iterator.MoveNext
-                Dim xmlNode As XmlNode = TryCast(iterator.Current, XmlNode)
-                ' the listbox support heterogeneous data source
-                Dim xmlcpnt As XmlComponent = m_xmlNodeManager.CreateView(xmlNode, xmlNode.Name, Me.Document)
-                xmlcpnt.Tag = Me.Tag
-                listNode.Add(xmlcpnt)
-            End While
-            If bClear Then
-                listbox.DataSource = Nothing
-                listbox.Items.Clear()
-            End If
+            AddNodeList(Me, listNode, "descendant::reference | descendant::interface")
+            SortNodeList(listNode)
+
             listbox.DataSource = listNode
             listbox.DisplayMember = "FullpathClassName"
         Catch ex As Exception
@@ -175,19 +166,7 @@ Public Class XmlImportView
         Return bResult
     End Function
 
-    Protected Friend Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
-        Dim bResult As Boolean = False
-        Try
-            If component IsNot Nothing Then
-                dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node, component.Name + " is redundant with:", True)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return bResult
-    End Function
-
-    Public Function RemoveRedundant(ByVal list As ListBox) As Boolean
+    Public Function RemoveRedundantReference(ByVal list As ListBox) As Boolean
         Dim bResult As Boolean = False
         Try
             If RemoveRedundant(TryCast(list.SelectedItem, XmlComponent)) Then
@@ -280,6 +259,7 @@ Public Class XmlImportView
         Dim bResult As Boolean = False
         Try
             If RemoveComponent(Me.ChildExportNode) Then
+                list.DataSource = Nothing
                 list.Items.Clear()
                 Me.Updated = True
                 bResult = True
@@ -342,7 +322,13 @@ Public Class XmlImportView
         Dim bResult As Boolean = False
         Try
             Dim dlgOpenFile As New OpenFileDialog
-            If My.Settings.CurrentFolder = "." + Path.DirectorySeparatorChar.ToString Then
+            If eMode = EImportMode.MergeReferences _
+                And SelectNodes("descendant::reference|descendant::interface").Count = 0 _
+            Then
+                MsgBox("Import is empty, use quite 'replace' or 'confirm' command!", MsgBoxStyle.Exclamation)
+                Return False
+
+            ElseIf My.Settings.CurrentFolder = "." + Path.DirectorySeparatorChar.ToString Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
                 dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder

@@ -71,12 +71,16 @@ Public Class frmProject
         End If
 
         If m_xmlProject.Updated Then
-            Me.Text = lvwProjectMembers.Path + " *"
+            Me.Text = m_xmlProject.Filename + " - " + lvwProjectMembers.Path + " *"
         Else
-            Me.Text = lvwProjectMembers.Path
+            Me.Text = m_xmlProject.Filename + " - " + lvwProjectMembers.Path
+        End If
+        Dim strNodeName As String = m_xmlProject.Name
+        If lvwProjectMembers.SelectedItem IsNot Nothing Then
+            strNodeName = CType(lvwProjectMembers.SelectedItem, XmlProjectMemberView).Label(0)
         End If
 
-        Me.Mainframe.UpdateItemControls(m_xmlProject)
+        Me.Mainframe.UpdateItemControls(m_xmlProject, strNodeName)
     End Sub
 
     Private Sub RefreshProjectView(ByVal component As Object)
@@ -147,7 +151,7 @@ Public Class frmProject
         mnuEditPaste.Enabled = XmlComponent.Clipboard.CanPaste
         btnPaste.Enabled = mnuEditPaste.Enabled
 
-        Me.Mainframe.UpdateItemControls(m_xmlProject)
+        RefreshUpdatedPath(False)
     End Sub
 
     Private Sub frmProject_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -168,7 +172,7 @@ Public Class frmProject
             Then
                 ' We call project by its form name at beginning
                 m_xmlProject.Updated = True
-                m_xmlProject.Name = Me.Text
+                Me.Text = m_xmlProject.Name
                 mnuFileSave.Enabled = False
             End If
 
@@ -216,7 +220,7 @@ Public Class frmProject
                 If m_xmlProject.Updated Then
 
                     m_xmlProject.Updated = False
-                    Me.Mainframe.UpdateItemControls(m_xmlProject)
+                    RefreshUpdatedPath(False)
 
                     If MsgBox("Would you want to save updates ?", vbYesNo + vbDefaultButton1 + vbQuestion, Me.Text) = vbYes Then
                         If SaveAs() = False Then
@@ -242,7 +246,7 @@ Public Class frmProject
                 Else
                     m_xmlProject.Updated = False
                 End If
-                Me.Mainframe.UpdateItemControls(m_xmlProject)
+                RefreshUpdatedPath(False)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -269,6 +273,7 @@ Public Class frmProject
 
     Private Sub lvwProjectMembers_EmptyZoneClick(ByVal sender As DataListView, ByVal e As System.EventArgs) Handles lvwProjectMembers.EmptyZoneClick
         RefreshProjectView(lvwProjectMembers.Binding.Parent)
+        RefreshUpdatedPath(False)
     End Sub
 
     Private Sub lvwProjectMembers_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles lvwProjectMembers.SelectedIndexChanged
@@ -279,6 +284,8 @@ Public Class frmProject
             Else
                 RefreshProjectView(lvwProjectMembers.Binding.Parent)
             End If
+            RefreshUpdatedPath(False)
+
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -472,7 +479,10 @@ Public Class frmProject
         End Try
     End Sub
 
-    Private Sub mnuFindRedundant_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles FindRedundant.Click
+    Private Sub mnuFindRedundant_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles mnuProjectRedundancies.Click, _
+                    mnuPackageRedundancies.Click, _
+                    FindRedundant.Click
         Try
             With lvwProjectMembers
                 If m_xmlProject.RemoveRedundantReference(.Binding.Parent, CType(.SelectedItem, XmlComponent)) Then

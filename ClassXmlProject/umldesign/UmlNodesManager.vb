@@ -58,22 +58,19 @@ Public Class UmlNodesManager
 
             Dim list As XmlNodeList
 
-            ' Remove redundant imported references
-            list = import.SelectNodes("//import/export/*")
-            Dim strName As String
+            ' Remove redundant imported references and classes
+            list = import.SelectNodes("//import/export/* | //class")
 
             For Each child In list
-                strName = GetName(child.ParentNode.ParentNode)
-                dlgRedundancy.VerifyRedundancy(component, "Find redundancies in import " + strName + "...", child, GetName(child) + " is redundant with:")
-            Next child
-            observer.Increment(1)
+                ' Cross control between component (Project node) and import (external file)
+                Select Case dlgRedundancy.VerifyRedundancy(component, "Find redundancies in file '" + _
+                                                           My.Computer.FileSystem.GetName(strFilename) + "' with project ...", child)
+                    Case dlgRedundancy.EResult.RedundancyIgnoredAll
+                        Exit For
 
-            ' Remove redundant references in current project with imported classes
-            list = component.SelectNodes("//import/export/*")
-
-            For Each child In list
-                strName = GetName(child.ParentNode.ParentNode)
-                dlgRedundancy.VerifyRedundancy(import, "Find redundancies in import " + strName + "...", child, GetName(child) + " is redundant with:")
+                    Case Else
+                        ' Ok, Ignore
+                End Select
             Next child
             observer.Increment(1)
 
@@ -439,12 +436,6 @@ Public Class UmlNodesManager
                     Dim iContainer = node.SelectNodes("model").Count
                     strXML += " container='" + CStr(iContainer) + "' id='" + GetID(node) + "'/>"
 
-                    Dim list As XmlNodeList = SelectNodes(node, "typedef[variable/@range='public']")
-
-                    For Each typedef As XmlNode In list
-                        strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
-                    Next typedef
-
                 Case Else
                     strXML += "<interface name='" + GetName(node) + "'"
                     If strImplementation <> "abstract" Then
@@ -455,21 +446,28 @@ Public Class UmlNodesManager
                     If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
                     strXML += " id='" + GetID(node) + "'>"
 
-                    Dim list As New ArrayList
+                    Dim myList As New ArrayList
 
                     Dim iteration As Integer = 0
                     Dim eImplementation As EImplementation = ConvertDtdToEnumImpl(strImplementation)
-                    SelectInheritedProperties(iteration, eImplementation, node, list)
+                    SelectInheritedProperties(iteration, eImplementation, node, myList)
 
                     iteration = 0
-                    SelectInheritedMethods(iteration, eImplementation, node, list)
+                    SelectInheritedMethods(iteration, eImplementation, node, myList)
 
-                    For Each member As XmlOverrideMemberView In list
+                    For Each member As XmlOverrideMemberView In myList
                         ExportElementClassMember(strXML, member)
                     Next
 
                     strXML += vbCrLf + "</interface>"
             End Select
+
+            Dim list As XmlNodeList = SelectNodes(node, "typedef[variable/@range='public']")
+
+            For Each typedef As XmlNode In list
+                strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
+            Next typedef
+
         Catch ex As Exception
             Throw ex
         End Try

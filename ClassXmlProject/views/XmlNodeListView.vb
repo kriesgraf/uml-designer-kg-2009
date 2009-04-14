@@ -2,6 +2,7 @@
 Imports System.Xml
 Imports System.Collections
 Imports System.Windows.Forms
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlNodeListView
@@ -360,19 +361,25 @@ Public Class XmlNodeListView
         Return False
     End Function
 
-    Public Shared Function GetListReferences(ByVal component As XmlComponent, ByRef listResult As ArrayList) As Boolean
+    Public Shared Function GetListReferences(ByVal parent As XmlComponent, ByVal child As XmlNode, ByRef listResult As ArrayList) As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim strName As String = component.Name
-            Dim strID As String = GetID(component.Node)
-            Dim strQuery As String = "//*[@name='" + strName + "' and @id!='" + strID + "']"
+            Dim elang As ELanguage = CType(parent.Tag, ELanguage)
+            Dim separator As String = GetSeparator(elang)
+            Dim strName As String = GetName(child)
+            If InStr(strName, separator) > 0 Then
+                Dim blocks As String() = strName.Split(separator)
+                strName = blocks(blocks.Length - 1)
+            End If
+            Dim strID As String = GetID(child)
+            Dim strQuery As String = "//*[contains(@name,'" + strName + "') and @id!='" + strID + "']"
 
             If listResult Is Nothing Then
-                Dim listNode As XmlNodeList = component.SelectNodes(strQuery)
+                Dim listNode As XmlNodeList = parent.SelectNodes(strQuery)
                 Return (listNode.Count > 0)
             End If
 
-            AddNodeList(component, listResult, strQuery)
+            AddNodeList(parent, listResult, strQuery)
             Return (listResult.Count > 0)
 
         Catch ex As Exception
@@ -399,12 +406,18 @@ Public Class XmlNodeListView
 
     Private Shared Function GetFullUmlPath(ByVal current As XmlNode) As String
         Try
+            If current Is Nothing Then Return ""
+
             Select Case current.Name
                 Case "package", "class", "import"
                     Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
 
                 Case "export"
-                    Return GetFullUmlPath(current.ParentNode.ParentNode) + "/" + GetName(current)
+                    If current.ParentNode Is Nothing Then
+                        Return "/" + GetName(current)
+                    End If
+
+                    Return GetFullUmlPath(current.ParentNode)
 
                 Case Else
                     Return "/" + GetName(current)
