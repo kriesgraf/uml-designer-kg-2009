@@ -76,14 +76,14 @@ Public Class XmlEnumSpec
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
 
         Dim strPrefix As String = ""
-        Dim node As XmlNode = GetNode("ancestor::typedef/@id")
-        If node Is Nothing Then
-            node = GetNode("ancestor::property/@num-id")
-            strPrefix = node.Value + "_"
-            node = GetNode("ancestor::class/@id")
-            strPrefix = AfterStr(node.Value, "class") + "_" + strPrefix
+        Dim nodeXml As XmlNode = GetNode("ancestor::typedef/@id")
+        If nodeXml Is Nothing Then
+            nodeXml = GetNode("ancestor::property/@num-id")
+            strPrefix = nodeXml.Value + "_"
+            nodeXml = GetNode("ancestor::class/@id")
+            strPrefix = AfterStr(nodeXml.Value, "class") + "_" + strPrefix
         Else
-            strPrefix += AfterStr(node.Value, "class") + "_"
+            strPrefix += AfterStr(nodeXml.Value, "class") + "_"
         End If
         strPrefix = "enum" + strPrefix
 
