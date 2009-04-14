@@ -20,6 +20,8 @@ End Enum
 
 Public Class UmlNodesManager
 
+    Public Const cstXmlFileHeader As String = "<?xml version='1.0' encoding='iso-8859-1'?>"
+
 #If _APP_UML = "1" Then
 
     Public Shared Function ImportNodes(ByVal form As Form, _
@@ -61,10 +63,13 @@ Public Class UmlNodesManager
             ' Remove redundant imported references and classes
             list = import.SelectNodes("//import/export/* | //class")
 
+            Dim name As String = My.Computer.FileSystem.GetName(strFilename)
+
             For Each child In list
                 ' Cross control between component (Project node) and import (external file)
-                Select Case dlgRedundancy.VerifyRedundancy(component, "Find redundancies in file '" + _
-                                                           My.Computer.FileSystem.GetName(strFilename) + "' with project ...", child)
+                Select Case dlgRedundancy.VerifyRedundancy(component, _
+                                                           "Find redundancies in file '" + name + "' with project ...", _
+                                                           child, name, False, True)
                     Case dlgRedundancy.EResult.RedundancyIgnoredAll
                         Exit For
 
@@ -120,7 +125,7 @@ Public Class UmlNodesManager
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
 
-            strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
+            strXML = cstXmlFileHeader
             strXML += GetDtdDeclaration("root")
 
             strXML += vbCrLf + "<root name='" + strFullpathPackage + "'>"
@@ -186,7 +191,7 @@ Public Class UmlNodesManager
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
 
-            strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
+            strXML = cstXmlFileHeader
             strXML += GetDtdDeclaration("export")
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>" + vbCrLf
             strXML += vbCrLf + ExportElementClass(observer, node, "")    ' Increment observer
@@ -209,6 +214,50 @@ Public Class UmlNodesManager
         End Try
     End Sub
 
+    Public Shared Sub ExportRootReferences(ByVal fen As Form, ByVal node As XmlNode, ByVal strFilename As String, _
+                                              ByVal eLang As ELanguage)
+        Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+        Dim strFullpathPackage As String = ""
+        Try
+            Dim source As New XmlDocument
+            Dim strXML As String
+            Dim index As Integer = 1
+            Dim strPath As String = GetProjectPath(strFilename)
+
+            fen.Cursor = Cursors.WaitCursor
+            observer.ProgressBarVisible = True
+            observer.Minimum = 0
+            observer.Maximum = 5 + node.SelectNodes("descendant::package | descendant::class").Count
+
+            If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
+            observer.Increment(1)
+
+            strXML = cstXmlFileHeader
+            strXML += GetDtdDeclaration("export")
+
+            strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + GetName(node) + "'>" + vbCrLf
+            strXML += vbCrLf + ExportElementPackage(observer, node, "", eLang, True)    ' Increment observer
+            strXML += vbCrLf + "</export>"
+
+            source.LoadXml(strXML)
+            observer.Increment(1)
+
+            LinkUnreferencedNodes(source, node, eLang)
+            observer.Increment(1)
+
+            source.Save(strFilename)
+            observer.Increment(1)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            fen.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
+    End Sub
+
+
     Public Shared Sub ExportPackageReferences(ByVal fen As Form, ByVal node As XmlNode, ByVal strFilename As String, _
                                               ByVal strFullpathPackage As String, ByVal eLang As ELanguage)
         Dim oldCursor As Cursor = fen.Cursor
@@ -228,7 +277,7 @@ Public Class UmlNodesManager
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
 
-            strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
+            strXML = cstXmlFileHeader
             strXML += GetDtdDeclaration("export")
 
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>" + vbCrLf
@@ -270,7 +319,7 @@ Public Class UmlNodesManager
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
 
-            strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
+            strXML = cstXmlFileHeader
             strXML += GetDtdDeclaration("export")
 
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>"
@@ -312,7 +361,7 @@ Public Class UmlNodesManager
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
 
-            strXML = "<?xml version='1.0' encoding='iso-8859-1'?>"
+            strXML = cstXmlFileHeader
             strXML += GetDtdDeclaration("export")
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>"
 
@@ -392,23 +441,26 @@ Public Class UmlNodesManager
     End Function
 
     Private Shared Function ExportElementPackage(ByVal observer As InterfProgression, ByVal node As XmlNode, ByVal strCurrentPackage As String, _
-                                              ByVal eLang As ELanguage) As String
+                                              ByVal eLang As ELanguage, Optional ByVal bRoot As Boolean = False) As String
         Dim strXML As String = ""
         Try
             observer.Increment(1)
 
-            If strCurrentPackage = "" Then
-                strCurrentPackage = GetName(node)
-            Else
-                strCurrentPackage += GetSeparator(eLang) + GetName(node)
-            End If
-            For Each current As XmlNode In node.SelectNodes("class | package")
-                If current.Name = "class" Then
-                    strXML += vbCrLf + ExportElementClass(observer, current, strCurrentPackage)
+            If bRoot = False Then
+                If strCurrentPackage <> "" Then
+                    strCurrentPackage += GetSeparator(eLang) + GetName(node)
                 Else
-                    strXML += vbCrLf + ExportElementPackage(observer, current, strCurrentPackage, eLang)
+                    strCurrentPackage = GetName(node)
                 End If
-            Next current
+            End If
+
+                For Each current As XmlNode In node.SelectNodes("class | package")
+                    If current.Name = "class" Then
+                        strXML += vbCrLf + ExportElementClass(observer, current, strCurrentPackage)
+                    Else
+                        strXML += vbCrLf + ExportElementPackage(observer, current, strCurrentPackage, eLang)
+                    End If
+                Next current
         Catch ex As Exception
             Throw ex
         End Try
@@ -482,7 +534,16 @@ Public Class UmlNodesManager
 
             If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
 
-            strXML += " type='typedef' container='0' id='" + GetID(typedef) + "'/>"
+            strXML += " type='typedef' container='0' id='" + GetID(typedef) + "'"
+            If GetNode(typedef, "descendant::enumvalue") Is Nothing Then
+                strXML += "/>"
+            Else
+                strXML += ">"
+                For Each child As XmlNode In SelectNodes(typedef, "descendant::enumvalue")
+                    strXML += vbCrLf + child.OuterXml
+                Next
+                strXML += vbCrLf + "</reference>"
+            End If
         Catch ex As Exception
             Throw ex
         End Try
@@ -557,10 +618,11 @@ Public Class UmlNodesManager
             source.DocumentElement.AppendChild(child)
         End If
 
-        LinkUnreferencedNodes(source, treeNode, eLang)
+        LinkUnreferencedNodes(source, treeNode, eLang, "no")
     End Sub
 
-    Private Shared Sub LinkUnreferencedNodes(ByVal source As XmlDocument, ByVal treeNode As XmlNode, ByVal eLang As ELanguage)
+    Private Shared Sub LinkUnreferencedNodes(ByVal source As XmlDocument, ByVal treeNode As XmlNode, _
+                                             ByVal eLang As ELanguage, Optional ByVal strExternal As String = "yes")
         Dim listID As New SortedList
         Dim child As XmlNode
         Dim unref As XmlNode
@@ -570,11 +632,12 @@ Public Class UmlNodesManager
         Dim strID As String
         Dim strPackage As String
 
-        export = GetNode(source, "descendant::export")
+        ' We add unreferenced IDs to first import
+        export = GetNode(source, "//export")
 
-        ' On remplace les ID des valeurs énumérés qui décrivent la taille d'un tableau 
-        ' par leur descripteur texte (name), ça générera du code erroné, mais les références sont 
-        ' épargnés et le projet reste lisible
+        ' We replace the ID of the enum values that describe the size of a table 
+        ' by their text descriptor (name), it will generate the wrong code, but the references are 
+        ' lost but the project remains readable
         For Each child In SelectNodes(source, "//*[@sizeref and not(@sizeref=//*/@id)]")
             strID = GetIDREF(child, "sizeref")
             unref = SelectNodeStringId(treeNode, strID)
@@ -582,9 +645,6 @@ Public Class UmlNodesManager
             AddAttributeValue(child, "size", GetName(unref))
         Next child
 
-        ' On remplace les ID des valeurs énumérés qui décrivent les valeurs par défaut de propriété et d'argument 
-        ' par leur descripteur texte (name), ça générera du code erroné, mais les références sont 
-        ' épargnés et le projet reste lisible
         For Each child In SelectNodes(source, "//*[@valref and not(@valref=//*/@id)]")
             strID = GetIDREF(child, "valref")
             unref = SelectNodeStringId(treeNode, strID)
@@ -592,7 +652,7 @@ Public Class UmlNodesManager
             AddAttributeValue(child, "value", GetName(unref))
         Next child
 
-        ' On place les ID dans une collection pour supprimer les redondances
+        ' ID are placed in a collection to remove redundancy
         For Each child In SelectNodes(source, "//*[@idref and not(@idref=//*/@id)]")
             strID = GetIDREF(child)
             If listID.Contains(strID) = False Then
@@ -602,8 +662,8 @@ Public Class UmlNodesManager
 
         For Each dico As DictionaryEntry In listID
 
-            ' On récupère le vrai noeud de l'arbre original
-            ' pour pouvoir nommer la référence dans le fichier d'export
+            ' We recover the real node of the original tree 
+            ' To rename the reference in the export file
             unref = SelectNodeStringId(treeNode, dico.Value.ToString)
             reference = CreateAppendNode(export, "reference")
 
@@ -635,6 +695,7 @@ Public Class UmlNodesManager
                         strPackage = GetPackage(unref)
                 End Select
                 If strPackage <> "" Then AddAttributeValue(reference, "package", strPackage)
+                AddAttributeValue(reference, "external", strExternal)
                 AddAttributeValue(reference, "id", GetID(unref))
                 AddAttributeValue(reference, "type", strType)
                 If strType = "typedef" Then AddAttributeValue(reference, "class", GetName(unref.ParentNode))
@@ -734,7 +795,11 @@ Public Class UmlNodesManager
 
             For Each child In listID
                 szOldID = GetID(child)
-                szID = GetID(child.ParentNode.ParentNode)
+                If child.ParentNode.Name <> "reference" Then
+                    szID = GetID(child.ParentNode.ParentNode)
+                Else
+                    szID = GetID(child.ParentNode)
+                End If
                 szID = szID.Substring(Len("class"))
                 szID = "enum" + szID + "_" + GetName(child)
                 AddAttributeValue(child, "id", szID)
