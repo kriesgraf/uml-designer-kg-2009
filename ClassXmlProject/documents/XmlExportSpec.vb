@@ -194,6 +194,15 @@ Public Class XmlExportSpec
             strID = m_xmlReferenceNodeCounter.GetNewClassId()
             ChangeID(child, Me.Node, strID)
             SetID(child, strID)
+
+            Dim pos As Integer = 0
+            Dim strEnumID As String
+            For Each enumvalue As XmlNode In child.SelectNodes("enumvalue")
+                pos += 1
+                strEnumID = "enum" + XmlNodeCounter.AfterStr(strID, "class") + "_" + pos.ToString
+                ChangeID(enumvalue, Me.Node, strEnumID)
+                SetID(enumvalue, strEnumID)
+            Next enumvalue
         Next child
     End Sub
 
