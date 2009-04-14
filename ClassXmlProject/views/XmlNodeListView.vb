@@ -77,17 +77,20 @@ Public Class XmlNodeListView
 
     Public ReadOnly Property FullUmlPathName() As String
         Get
-            Dim name As String = "."
-            Select Case Me.NodeName
-                Case "relationship"
-                    name = """" + GetAttribute("action") + """"
-                Case "param"
-                    name = """argument"" " + Me.Name
-                Case Else
-                    name = Me.Name
-            End Select
-
-            Return name + " (" + GetFullUmlPath(Me.Node.ParentNode) + ")"
+            If m_strName = "" Then
+                Dim name As String = "."
+                Select Case Me.NodeName
+                    Case "relationship"
+                        name = """" + GetAttribute("action") + """"
+                    Case "param"
+                        name = """argument"" " + Me.Name
+                    Case Else
+                        name = Me.Name
+                End Select
+                Return Name + " (" + GetFullUmlPath(Me.Node.ParentNode) + ")"
+            Else
+                Return m_strName
+            End If
         End Get
     End Property
 
@@ -458,7 +461,7 @@ Public Class XmlNodeListView
                 strName = blocks(blocks.Length - 1)
             End If
             Dim strID As String = GetID(child)
-            Dim strQuery As String = "//*[contains(@name,'" + strName + "') and @id!='" + strID + "']"
+            Dim strQuery As String = "//*[(@name='" + strName + "' or contains(@name,'" + separator + strName + "')) and @id!='" + strID + "']"
 
             If listResult Is Nothing Then
                 Dim listNode As XmlNodeList = parent.SelectNodes(strQuery)
