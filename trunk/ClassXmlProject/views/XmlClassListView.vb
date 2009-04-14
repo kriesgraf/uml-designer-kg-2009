@@ -102,8 +102,8 @@ Public Class XmlClassListView
         'Debug.Print("xPath=" + xpath)
 
         While iterator.MoveNext
-            Dim node As XmlNode = CType(iterator.Current, XmlNode)
-            Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(node)
+            Dim nodeXml As XmlNode = CType(iterator.Current, XmlNode)
+            Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(nodeXml)
             xmlcpnt.Tag = document.Tag
             'Debug.Print("(" + node.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
             myList.Add(xmlcpnt)

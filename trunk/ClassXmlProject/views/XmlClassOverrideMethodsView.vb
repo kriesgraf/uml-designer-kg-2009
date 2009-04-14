@@ -26,8 +26,8 @@ Public Class XmlClassOverrideMethodsView
             listbox.DataSource = m_listArray
             listbox.SelectionMode = SelectionMode.MultiSimple
             Dim i As Integer = 0
-            For Each node As XmlOverrideMemberView In m_listArray
-                If node.CheckedView Then
+            For Each nodeXml As XmlOverrideMemberView In m_listArray
+                If nodeXml.CheckedView Then
                     listbox.SetSelected(i, True)
                 End If
                 i += 1
@@ -174,7 +174,7 @@ Public Class XmlClassOverrideMethodsView
 
     End Sub
 
-    Public Sub New(Optional ByVal node As XmlNode = Nothing)
-        MyBase.New(node)
+    Public Sub New(Optional ByVal nodeXml As XmlNode = Nothing)
+        MyBase.New(nodeXml)
     End Sub
 End Class
