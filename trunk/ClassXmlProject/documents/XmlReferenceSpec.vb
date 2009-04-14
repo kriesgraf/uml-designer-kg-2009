@@ -81,6 +81,23 @@ Public Class XmlReferenceSpec
         MyBase.New(xmlNode)
     End Sub
 
+    Protected Friend Overrides Function AppendNode(ByVal child As System.Xml.XmlNode, Optional ByVal observer As Object = Nothing) As System.Xml.XmlNode
+        Dim before As XmlNode = Nothing
+        Select Case child.Name
+            Case "collaboration"
+                before = GetNode("enumvalue")
+
+            Case "enumvalue"
+                ' Ignore
+        End Select
+
+        If before Is Nothing Then
+            Return Me.Node.AppendChild(child)
+        Else
+            Return Me.Node.InsertBefore(child, before)
+        End If
+    End Function
+
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
         Try
             MyBase.SetDefaultValues(bCreateNodeNow)

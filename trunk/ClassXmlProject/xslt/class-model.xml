@@ -141,7 +141,7 @@
           source CDATA #IMPLIED
           name CDATA #IMPLIED>
 
-<!ELEMENT reference (collaboration*) >
+<!ELEMENT reference (collaboration*|enumvalue*) >
 <!ATTLIST reference
           %id;
           type (class|typedef|exception) #REQUIRED

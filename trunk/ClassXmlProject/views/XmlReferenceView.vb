@@ -69,9 +69,15 @@ Public Class XmlReferenceView
         Try
             combo.DropDownStyle = ComboBoxStyle.DropDownList
             combo.Sorted = True
-            combo.Items.AddRange(New Object() {"class", "typedef", "exception"})
 
-            m_xmlBindingsList.AddBinding(combo, Me, "Kind", "SelectedItem")
+            If Me.GetNode("enumvalue") IsNot Nothing Then
+                combo.Items.Add("enumeration")
+                combo.Enabled = False
+                combo.SelectedItem = "enumeration"
+            Else
+                combo.Items.AddRange(New Object() {"class", "typedef", "exception"})
+                m_xmlBindingsList.AddBinding(combo, Me, "Kind", "SelectedItem")
+            End If
 
         Catch ex As Exception
             Throw ex
