@@ -706,12 +706,7 @@ Public Class XmlComponent
     Public Property Updated() As Boolean
 
         Get
-            Dim bResult As Boolean = m_bUpdated
-#If DEBUG Then
-#Else
-            m_bUpdated = False
-#End If
-            Return bResult
+            Return m_bUpdated
         End Get
         Set(ByVal value As Boolean)
             m_bUpdated = value
