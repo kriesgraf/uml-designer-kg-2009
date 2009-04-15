@@ -930,76 +930,6 @@ Public Class XmlProjectTools
         Return strResult
     End Function
 
-    Public Shared Function GetNodeRefCount(ByVal node As XmlNode, ByRef strList As String, ByVal eTag As ELanguage) As Integer
-        Dim iResult As Integer = -1
-        Try
-            Dim list As XmlNodeList
-            Dim child As XmlNode
-            Dim parent As XmlNode
-            Dim strQuery As String
-
-            iResult = 0
-            strQuery = "//*[@idref='" + GetID(node) + "' or @index-idref='" + GetID(node) + "']"
-            list = SelectNodes(node, strQuery)
-
-            For Each child In list
-                Select Case child.Name
-                    Case "father"
-                        strList = strList + vbCrLf + GetFatherRelation(child)
-                        iResult = iResult + 1
-
-                    Case "child"
-                        strList = strList + vbCrLf + GetChildRelation(child)
-                        iResult = iResult + 1
-
-                    Case "dependency"
-                        parent = GetNode(child, "parent::class")
-                        strList = strList + vbCrLf + "Dependency '" + GetAttributeValue(child, "action") + "' with " + GetFullpathDescription(parent, eTag)
-                        iResult = iResult + 1
-
-                    Case "inherited"
-                        parent = GetNode(child, "parent::class")
-                        strList = strList + vbCrLf + "Customize by " + GetFullpathDescription(parent, eTag)
-                        iResult = iResult + 1
-
-                    Case "list"
-                        parent = child.ParentNode
-                        If GetID(node) = GetAttributeValue(child, "index-idref") Then
-                            strList = strList + vbCrLf + "Used as index in container "
-                        Else
-                            strList = strList + vbCrLf + "Used as container in "
-                        End If
-                        Select Case parent.Name
-                            Case "type"
-                                strList = strList + GetTypeRelation(parent, eTag)
-                            Case "child"
-                                strList = strList + GetChildRelation(parent)
-                            Case "father"
-                                strList = strList + GetFatherRelation(parent)
-                        End Select
-
-                        iResult = iResult + 1
-
-                    Case "type"
-                        strList = strList + vbCrLf + "Used as type in " + GetTypeRelation(child, eTag)
-                        iResult = iResult + 1
-
-                    Case "element"
-                        strList = strList + vbCrLf + "Used as type in " + GetTypeRelation(child.ParentNode, eTag) + ", attribute '" + GetName(child) + "'"
-                        iResult = iResult + 1
-
-                    Case Else
-                        strList = strList + vbCrLf + "Referenced by node '" + child.Name + "' (" + GetName(child) + ")"
-                        iResult = iResult + 1
-
-                End Select
-            Next child
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return iResult
-    End Function
-
     Public Shared Function GetFather(ByVal node As XmlNode) As XmlNode
         Try
             Return GetNode(node, "father")
@@ -1814,6 +1744,83 @@ Public Class XmlProjectTools
         Return bResult
     End Function
 
+    Public Shared Function GetTypeRelation(ByVal node As XmlNode, ByVal eTag As ELanguage) As String
+        Dim strResult As String = Nothing
+        Try
+            Dim parent As XmlNode
+            Dim method As XmlNode
+            Dim strSeparator As String = "::"
+            If eTag <> ELanguage.Language_CplusPlus Then
+                strSeparator = "."
+            End If
+
+            parent = node.ParentNode
+            Select Case parent.Name
+                Case "param"
+
+                    method = parent.ParentNode
+                    Dim classNode As XmlNode = method.ParentNode
+
+                    If GetName(method) = "" Then
+                        strResult = GetFullpathDescription(classNode, eTag) + strSeparator + "<Constructor>, argument " + GetName(method)
+                    Else
+                        strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", argument " + GetName(parent)
+                    End If
+
+                Case "return"
+
+                    method = parent.ParentNode
+                    Dim classNode As XmlNode = method.ParentNode
+                    strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", return value"
+
+                Case "property"
+
+                    strResult = GetFullpathDescription(GetNode(parent, "ancestor::class"), eTag) + strSeparator + GetName(parent)
+
+                Case Else
+
+                    strResult = GetFullpathDescription(parent, eTag)
+
+            End Select
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strResult
+    End Function
+
+    Public Shared Function GetFatherRelation(ByVal father As XmlNode) As String
+        Dim strResult As String = Nothing
+        Try
+            Dim parent As XmlNode
+            Dim sibbling As XmlNode
+
+            parent = father.ParentNode
+            sibbling = SelectNodeId(GetNode(parent, "child"))
+            strResult = "Relation '" + GetAttributeValue(parent, "action") + "' to " + GetName(sibbling)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strResult
+    End Function
+
+    Public Shared Function GetChildRelation(ByVal father As XmlNode) As String
+        Dim strResult As String = Nothing
+        Try
+            Dim parent As XmlNode
+            Dim sibbling As XmlNode
+
+            parent = father.ParentNode
+            sibbling = SelectNodeId(GetFather(parent))
+            strResult = "Relation '" + GetAttributeValue(parent, "action") + "' to " + GetName(sibbling)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strResult
+    End Function
+
 #End Region
 
 #Region "Private shared methods"
@@ -2159,83 +2166,6 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
-
-    Private Shared Function GetFatherRelation(ByVal father As XmlNode) As String
-        Dim strResult As String = Nothing
-        Try
-            Dim parent As XmlNode
-            Dim sibbling As XmlNode
-
-            parent = father.ParentNode
-            sibbling = SelectNodeId(GetNode(parent, "child"))
-            strResult = "Relation '" + GetAttributeValue(parent, "action") + "' to " + GetName(sibbling)
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return strResult
-    End Function
-
-    Private Shared Function GetChildRelation(ByVal father As XmlNode) As String
-        Dim strResult As String = Nothing
-        Try
-            Dim parent As XmlNode
-            Dim sibbling As XmlNode
-
-            parent = father.ParentNode
-            sibbling = SelectNodeId(GetFather(parent))
-            strResult = "Relation '" + GetAttributeValue(parent, "action") + "' to " + GetName(sibbling)
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return strResult
-    End Function
-
-    Private Shared Function GetTypeRelation(ByVal node As XmlNode, ByVal eTag As ELanguage) As String
-        Dim strResult As String = Nothing
-        Try
-            Dim parent As XmlNode
-            Dim method As XmlNode
-            Dim strSeparator As String = "::"
-            If eTag <> ELanguage.Language_CplusPlus Then
-                strSeparator = "."
-            End If
-
-            parent = node.ParentNode
-            Select Case parent.Name
-                Case "param"
-
-                    method = parent.ParentNode
-                    Dim classNode As XmlNode = method.ParentNode
-
-                    If GetName(method) = "" Then
-                        strResult = GetFullpathDescription(classNode, eTag) + strSeparator + "<Constructor>, argument " + GetName(method)
-                    Else
-                        strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", argument " + GetName(parent)
-                    End If
-
-                Case "return"
-
-                    method = parent.ParentNode
-                    Dim classNode As XmlNode = method.ParentNode
-                    strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", return value"
-
-                Case "property"
-
-                    strResult = GetFullpathDescription(GetNode(parent, "ancestor::class"), eTag) + strSeparator + GetName(parent)
-
-                Case Else
-
-                    strResult = GetFullpathDescription(parent, eTag)
-
-            End Select
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return strResult
-    End Function
 
 #End Region
 End Class

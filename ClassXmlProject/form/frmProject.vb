@@ -498,7 +498,8 @@ Public Class frmProject
     Private Sub mnuRemoveAll_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RemoveAll.Click
         Try
             If m_xmlProject.RemoveAllReferences(lvwProjectMembers.Binding.Parent) _
-                Then
+            Then
+                RefreshProjectView(lvwProjectMembers.Binding.Parent)
                 RefreshUpdatedPath(False)
             End If
         Catch ex As Exception
