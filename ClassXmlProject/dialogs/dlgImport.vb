@@ -206,9 +206,8 @@ Public Class dlgImport
         End If
     End Sub
 
-    Private Sub mnuPaste_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuCopy.Click
-        m_xmlView.PasteReference(lsbReferences)
-        mnuPaste.Enabled = False
+    Private Sub mnuPaste_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuPaste.Click
+        mnuPaste.Enabled = Not (m_xmlView.PasteReference(lsbReferences))
     End Sub
 
     Private Sub mnuImportParameters_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuImportParameters.Click

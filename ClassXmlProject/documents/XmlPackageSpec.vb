@@ -162,18 +162,23 @@ Public Class XmlPackageSpec
         End If
     End Function
 
-    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal bParam As Boolean = False)
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _
+                                                    Optional ByVal eRename As ENameReplacement = ENameReplacement.NewName, _
+                                                    Optional ByVal bSetIdrefChildren As Boolean = False)
         Id = xmlRefNodeCounter.GetNewPackageId()
-        If bParam = False Then
-            Name = "New_" + Id
-        Else
-            Name = Name + "_" + Id
-            Me.LoadChildrenList()
+        Select Case eRename
+            Case ENameReplacement.NewName
+                Name = "New_" + Me.Id
+            Case ENameReplacement.AddCopyName
+                ' Name is set by caller
+                Name = Name + "_" + Me.Id
+        End Select
 
-            For Each component As XmlComponent In Me.ChildrenList
-                component.SetIdReference(xmlRefNodeCounter, bParam)
-            Next
-        End If
+        Me.LoadChildrenList()
+
+        For Each child As XmlComponent In Me.ChildrenList
+            child.SetIdReference(xmlRefNodeCounter, ENameReplacement.NoReplacement, bSetIdrefChildren)
+        Next
     End Sub
 End Class
 

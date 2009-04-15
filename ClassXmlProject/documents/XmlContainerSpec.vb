@@ -40,11 +40,22 @@ Public Class XmlContainerSpec
         End Try
     End Sub
 
-    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal bParam As Boolean = False)
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _
+                                                    Optional ByVal eRename As ENameReplacement = ENameReplacement.NewName, _
+                                                    Optional ByVal bSetIdrefChildren As Boolean = False)
         If xmlRefNodeCounter Is Nothing Then
             Throw New Exception("Argument 'xmlRefNodeCounter' is null")
         End If
 
-        Id = xmlRefNodeCounter.GetNewClassId()
+        Me.Id = xmlRefNodeCounter.GetNewClassId()
+        Dim strId As String = XmlNodeCounter.AfterStr(Me.Id, "class")
+
+        Select Case eRename
+            Case ENameReplacement.NewName
+                Name = "New_container_" + strId
+            Case ENameReplacement.AddCopyName
+                ' Name is set by caller
+                Name = Name + "_" + strId
+        End Select
     End Sub
 End Class

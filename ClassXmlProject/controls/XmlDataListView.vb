@@ -2,6 +2,7 @@
 Imports System.Windows.Forms
 Imports System.Drawing
 Imports System.Collections
+Imports Microsoft.VisualBasic
 
 Public Class XmlDataListView
     Inherits DataListView
@@ -142,11 +143,13 @@ Public Class XmlDataListView
     Public Function DuplicateSelectedItem(Optional ByVal bAskRefresh As Boolean = True) As Boolean
         Dim bChanged As Boolean = False
         Try
-            Dim component As XmlComponent = Nothing
+
             If Me.SelectedItem IsNot Nothing Then
-                component = CType(Me.SelectedItem, XmlComponent)
+                Dim component As XmlComponent = CType(Me.SelectedItem, XmlComponent)
                 If m_xmlBinding.DuplicateOrPasteItem(component) Then
                     bChanged = True
+                Else
+                    MsgBox("Sorry can't dupplicate node '" + component.NodeName + " ' !", MsgBoxStyle.Exclamation)
                 End If
             End If
         Catch ex As Exception

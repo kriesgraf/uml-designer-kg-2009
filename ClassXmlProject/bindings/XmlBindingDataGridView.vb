@@ -301,23 +301,36 @@ Public Class XmlBindingDataGridView
         Return False
     End Function
 
-    Public Function DuplicateOrPasteItem(ByVal component As XmlComponent, Optional ByVal bDuplicate As Boolean = True) As Boolean
+    Public Function DuplicateOrPasteItem(ByVal component As XmlComponent, _
+                                         Optional ByVal bDuplicate As Boolean = True, _
+                                         Optional ByVal bImportData As Boolean = false) As Boolean
         Try
             If m_xmlParentNode Is Nothing Then
                 Throw New Exception("m_xmlParentNode property is null")
             Else
                 Dim xmlComponent As XmlComponent = component
 
-                If bDuplicate Then
+                If bDuplicate And bImportData = False _
+                Then
                     xmlComponent = m_xmlParentNode.DuplicateComponent(component)
+
+                ElseIf bImportData _
+                Then
+                    xmlComponent = m_xmlParentNode.ImportDocument(component)
                 End If
 
                 If xmlComponent IsNot Nothing Then
                     xmlComponent.Tag = m_xmlParentNode.Tag
 
-                    If bDuplicate Then
+                    If bDuplicate And bImportData = False _
+                    Then
                         xmlComponent.Name = component.Name + "_copy"
-                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
+                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, xmlComponent.ENameReplacement.AddCopyName)
+
+                    ElseIf bImportData _
+                    Then
+                        xmlComponent.Name = component.Name + "_imported"
+                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, xmlComponent.ENameReplacement.AddCopyName)
                     End If
 
                     ' Append a node not duplicated cause move node to new location.
@@ -379,12 +392,17 @@ Public Class XmlBindingDataGridView
             Else
                 ' Get back from the specific clipboard shared by all projects
                 Dim bCopy As Boolean
-                Dim component As XmlComponent = XmlComponent.Clipboard.GetData(bCopy)
-
-                If m_xmlParentNode.CanPasteItem(component) _
+                Dim bImportData As Boolean = XmlComponent.Clipboard.CheckData(m_xmlParentNode, bCopy)  ' Check if data comme from other document
+                Dim component = XmlComponent.Clipboard.Data
+                If bCopy = False And bImportData _
                 Then
+                    MsgBox("Sorry, can't cut object from one project and paste to another!", MsgBoxStyle.Exclamation)
+
+                ElseIf m_xmlParentNode.CanPasteItem(XmlComponent.Clipboard.Data) _
+                Then
+                    component = XmlComponent.Clipboard.GetData(bCopy)   ' method "Get" remove node from clipboard
                     ' Refresh is done in method "DuplicateItem"
-                    If DuplicateOrPasteItem(component, bCopy) Then
+                    If DuplicateOrPasteItem(component, bCopy, bImportData) Then
                         bResult = True
                     Else
                         MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)

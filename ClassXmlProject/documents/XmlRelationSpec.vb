@@ -155,7 +155,9 @@ Public Class XmlRelationSpec
         End Try
     End Sub
 
-    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal bParam As Boolean = False)
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _
+                                                    Optional ByVal eRename As ENameReplacement = ENameReplacement.NewName, _
+                                                    Optional ByVal bSetIdrefChildren As Boolean = False)
         If xmlRefNodeCounter Is Nothing Then
             Throw New Exception("Argument 'xmlRefNodeCounter' is null")
         End If

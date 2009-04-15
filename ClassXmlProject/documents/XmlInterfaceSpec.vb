@@ -151,13 +151,31 @@ Public Class XmlInterfaceSpec
         End Try
     End Sub
 
-    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal bParam As Boolean = False)
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _
+                                                    Optional ByVal eRename As ENameReplacement = ENameReplacement.NewName, _
+                                                    Optional ByVal bSetIdrefChildren As Boolean = False)
         If xmlRefNodeCounter Is Nothing Then
             Throw New Exception("Argument 'xmlRefNodeCounter' is null")
         End If
 
-        Id = xmlRefNodeCounter.GetNewClassId()
-        Name = "New_interface_" + Id
+        Me.Id = xmlRefNodeCounter.GetNewClassId()
+        Dim strID As String = XmlNodeCounter.AfterStr(Me.Id, "class")
+
+        Select Case eRename
+            Case ENameReplacement.NewName
+                Name = "New_interface_" + strID
+            Case ENameReplacement.AddCopyName
+                ' Name is set by caller
+                Name = Name + "_" + strID
+        End Select
+
+        ' Use this option only to paste interface from another project
+        If bSetIdrefChildren Then
+            ' Change idref for attributes: type/@idref or list/@idref and list/@index-ref
+            For Each unref As XmlNode In Me.SelectNodes("descendant::*/@idref")
+                unref.Value = Me.Id       ' We change to this arbitray ID to avoid error. We let user to change it himself
+            Next
+        End If
     End Sub
 
 End Class
