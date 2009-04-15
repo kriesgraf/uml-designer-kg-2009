@@ -65,10 +65,21 @@ Public Class XmlComponent
             End Get
         End Property
 
+        Public ReadOnly Property Data() As XmlComponent
+            Get
+                Return m_xmlComponent
+            End Get
+        End Property
+
         Public Sub SetData(ByVal component As Object, Optional ByVal bCopy As Boolean = True)
             m_bCopy = bCopy
             m_xmlComponent = TryCast(component, XmlComponent)
         End Sub
+
+        Public Function CheckData(ByVal check As XmlComponent, ByRef bCopy As Boolean) As Boolean
+            bCopy = m_bCopy
+            Return (check.Document IsNot m_xmlComponent.Document)
+        End Function
 
         Public Function GetData(ByRef bCopy As Boolean) As XmlComponent
             bCopy = m_bCopy
@@ -78,6 +89,12 @@ Public Class XmlComponent
             Return xmlResult
         End Function
     End Class
+
+    Protected Friend Enum ENameReplacement
+        NewName
+        AddCopyName
+        NoReplacement
+    End Enum
 
 #End Region
 
@@ -725,6 +742,29 @@ Public Class XmlComponent
         Return xmlResult
     End Function
 
+    Public Function ImportDocument(ByVal component As XmlComponent, Optional ByVal docXml As XmlDocument = Nothing) As XmlComponent
+        Dim xmlResult As XmlComponent = Nothing
+        Try
+            Dim clone As XmlNode = Nothing
+
+            If docXml IsNot Nothing _
+            Then
+                clone = docXml.ImportNode(component.Node, True)
+
+            ElseIf Me.Document IsNot Nothing _
+            Then
+                clone = Me.Document.ImportNode(component.Node, True)
+            Else
+                Throw New Exception("Document property is not initialize to process node duplication")
+            End If
+            xmlResult = XmlNodeManager.GetInstance().CreateDocument(clone)
+
+        Catch ex As Exception
+            Throw (ex)
+        End Try
+        Return xmlResult
+    End Function
+
     Protected Overloads Function CreateDocument(ByVal strNodeName As String, Optional ByVal docXml As XmlDocument = Nothing, Optional ByVal bLoadChildren As Boolean = False) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
         Try
@@ -751,7 +791,9 @@ Public Class XmlComponent
         ' To be overrided if necessary
     End Sub
 
-    Protected Friend Overridable Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal bParam As Boolean = False)
+    Protected Friend Overridable Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _
+                                                    Optional ByVal eRename As ENameReplacement = ENameReplacement.NewName, _
+                                                    Optional ByVal bSetIdrefChildren As Boolean = False)
         ' To be overrided if necessary
     End Sub
 

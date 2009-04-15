@@ -338,24 +338,40 @@ Public Class XmlClassSpec
 
 #Region "Protected methods"
 
-    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal bParam As Boolean = False)
-        Id = xmlRefNodeCounter.GetNewClassId()
-        If bParam = False Then
-            Name = "New_" + Id
-        Else
-            ' Name is set by caller
-            Name = Name + "_" + Id
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _
+                                                    Optional ByVal eRename As ENameReplacement = ENameReplacement.NewName, _
+                                                    Optional ByVal bSetIdrefChildren As Boolean = False)
+        Try
+            If xmlRefNodeCounter Is Nothing Then
+                Throw New Exception("Argument 'xmlRefNodeCounter' is null")
+            End If
 
-            For Each child As XmlNode In SelectNodes("typedef")
-                Dim strId As String = xmlRefNodeCounter.GetNewClassId()
-                SetID(child, strId)
+            Me.Id = xmlRefNodeCounter.GetNewClassId()
+            Select Case eRename
+                Case ENameReplacement.NewName
+                    Name = "New_" + Me.Id
+                Case ENameReplacement.AddCopyName
+                    ' Name is set by caller
+                    Name = Name + "_" + Me.Id
+            End Select
 
-                For Each enumvalue As XmlNode In XmlProjectTools.SelectNodes(child, "descendant::enumvalue")
-                    Dim strId2 As String = GetID(enumvalue)
-                    SetID(enumvalue, "enum" + XmlNodeCounter.AfterStr(strId, "class") + "_" + XmlNodeCounter.AfterStr(strId2, "_"))
+            If bSetIdrefChildren Then
+                Me.RemoveAllNodes("collaboration")
+                For Each element As XmlNode In Me.SelectNodes("inherited | dependency")
+                    If Me.GetElementById(GetIDREF(element)) Is Nothing Then
+                        RemoveNode(element)
+                    End If
                 Next
+            End If
+
+            Me.LoadChildrenList("typedef")
+
+            For Each child As XmlComponent In Me.ChildrenList
+                child.SetIdReference(xmlRefNodeCounter, ENameReplacement.NoReplacement, bSetIdrefChildren)
             Next
-        End If
+        Catch ex As Exception
+            Throw ex
+        End Try
     End Sub
 
     Protected Friend Overrides Function AppendNode(ByVal child As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode

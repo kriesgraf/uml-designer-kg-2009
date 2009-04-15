@@ -206,9 +206,13 @@ Public Class XmlImportView
         Try
             ' Get back from the specific clipboard shared by all projects
             Dim bCopy As Boolean
-            Dim component As XmlComponent = XmlComponent.Clipboard.GetData(bCopy)
+            Dim bImportData As Boolean = XmlComponent.Clipboard.CheckData(Me, bCopy)  ' Check if data comme from other document
+            Dim component = XmlComponent.Clipboard.Data
+            If bCopy = False And bImportData _
+            Then
+                MsgBox("Sorry, can't cut object from one project and paste to another!", MsgBoxStyle.Exclamation)
 
-            If Me.ChildExportNode.CanPasteItem(component) _
+            ElseIf Me.ChildExportNode.CanPasteItem(XmlComponent.Clipboard.Data) _
             Then
                 If PasteOrDuplicate(component, bCopy) Then
                     InitBindingListReferences(list, True)
@@ -374,24 +378,39 @@ Public Class XmlImportView
         Return bResult
     End Function
 
-    Private Function PasteOrDuplicate(ByVal component As XmlComponent, Optional ByVal bDuplicate As Boolean = True) As Boolean
+    Private Function PasteOrDuplicate(ByVal component As XmlComponent, _
+                                      Optional ByVal bDuplicate As Boolean = True, _
+                                      Optional ByVal bImportData As Boolean = False) As Boolean
         Dim bResult As Boolean = False
         Try
             Dim xmlComponent As XmlComponent = component
 
-            If bDuplicate Then
+            If bDuplicate And bImportData = False _
+                Then
                 xmlComponent = Me.DuplicateComponent(component)
+
+            ElseIf bImportData _
+            Then
+                xmlComponent = Me.ImportDocument(component)
             End If
 
             If xmlComponent IsNot Nothing Then
                 xmlComponent.Tag = Me.Tag
-                xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, True)
+                xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, ENameReplacement.AddCopyName)
 
-                If bDuplicate Then
+                If bDuplicate And bImportData = False _
+                    Then
                     xmlComponent.Name = component.Name + "_copy"
-                    If Me.ChildExportNode.AppendComponent(xmlComponent) IsNot Nothing Then
-                        bResult = True
-                    End If
+                    xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, ENameReplacement.AddCopyName)
+
+                ElseIf bImportData _
+                Then
+                    xmlComponent.Name = component.Name + "_imported"
+                    xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, ENameReplacement.AddCopyName, True)
+                End If
+
+                If Me.ChildExportNode.AppendComponent(xmlComponent) IsNot Nothing Then
+                    bResult = True
                 End If
             End If
         Catch ex As Exception
