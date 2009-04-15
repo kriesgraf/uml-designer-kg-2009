@@ -168,7 +168,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel4, 2)
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65.38461!))
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.61538!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 187.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 188.0!))
         Me.TableLayoutPanel4.Controls.Add(Me.lblVisibility, 1, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.cmbVisibility, 2, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.chkInterface, 0, 0)
@@ -184,7 +184,7 @@ Partial Class dlgImport
         '
         Me.lblVisibility.AutoSize = True
         Me.lblVisibility.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblVisibility.Location = New System.Drawing.Point(114, 0)
+        Me.lblVisibility.Location = New System.Drawing.Point(113, 0)
         Me.lblVisibility.Name = "lblVisibility"
         Me.lblVisibility.Size = New System.Drawing.Size(52, 23)
         Me.lblVisibility.TabIndex = 2
@@ -195,9 +195,9 @@ Partial Class dlgImport
         '
         Me.cmbVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbVisibility.FormattingEnabled = True
-        Me.cmbVisibility.Location = New System.Drawing.Point(172, 3)
+        Me.cmbVisibility.Location = New System.Drawing.Point(171, 3)
         Me.cmbVisibility.Name = "cmbVisibility"
-        Me.cmbVisibility.Size = New System.Drawing.Size(182, 21)
+        Me.cmbVisibility.Size = New System.Drawing.Size(183, 21)
         Me.cmbVisibility.TabIndex = 5
         '
         'chkInterface
@@ -206,7 +206,7 @@ Partial Class dlgImport
         Me.chkInterface.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chkInterface.Location = New System.Drawing.Point(3, 3)
         Me.chkInterface.Name = "chkInterface"
-        Me.chkInterface.Size = New System.Drawing.Size(105, 17)
+        Me.chkInterface.Size = New System.Drawing.Size(104, 17)
         Me.chkInterface.TabIndex = 6
         Me.chkInterface.Text = "Interface declaration"
         Me.chkInterface.UseVisualStyleBackColor = True
@@ -244,10 +244,10 @@ Partial Class dlgImport
         '
         'pgbLoadImport
         '
-        Me.pgbLoadImport.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.pgbLoadImport.Location = New System.Drawing.Point(3, 7)
+        Me.pgbLoadImport.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.pgbLoadImport.Location = New System.Drawing.Point(3, 23)
         Me.pgbLoadImport.Name = "pgbLoadImport"
-        Me.pgbLoadImport.Size = New System.Drawing.Size(175, 22)
+        Me.pgbLoadImport.Size = New System.Drawing.Size(175, 10)
         Me.pgbLoadImport.TabIndex = 1
         Me.pgbLoadImport.Visible = False
         '
@@ -281,7 +281,7 @@ Partial Class dlgImport
         '
         Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator5, Me.EditReference, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.mnuImportParameters, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
         Me.mnuEditReference.Name = "ContextMenuStrip1"
-        Me.mnuEditReference.Size = New System.Drawing.Size(189, 298)
+        Me.mnuEditReference.Size = New System.Drawing.Size(189, 320)
         '
         'NewReference
         '
