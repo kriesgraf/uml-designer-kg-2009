@@ -74,7 +74,7 @@ Public Class XmlRefRedundancyView
     Public Function LoadNodes(ByVal listbox As ListBox) As Boolean
         Try
             Dim listResult As New ArrayList
-            If XmlNodeListView.GetListReferences(m_xmlProjectNode, Me.Node, listResult) _
+            If XmlNodeListView.GetListRedundancies(m_xmlProjectNode, Me.Node, listResult) _
             Then
                 ' We add current redundant node to propose user to choose wide list
                 Dim xmlcpnt As XmlNodeListView = Nothing
