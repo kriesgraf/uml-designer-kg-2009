@@ -138,12 +138,17 @@ Public Class XmlImportSpec
             Return Nothing
 
         ElseIf document.NodeName = "export" Then
-            Me.Parameter = CType(document, XmlExportSpec).Source
-            Me.Name = CType(document, XmlExportSpec).Name
             Return MyBase.AppendComponent(document, observer)
         Else
             Return ChildExportNode().AppendComponent(document, observer)
         End If
+    End Function
+
+    Protected Friend Overrides Function AppendNode(ByVal nodeXml As System.Xml.XmlNode, Optional ByVal observer As Object = Nothing) As System.Xml.XmlNode
+        If nodeXml.Name = "export" Then
+            Return MyBase.AppendNode(nodeXml, observer)
+        End If
+        Return ChildExportNode().AppendNode(nodeXml, observer)
     End Function
 
     Public Overrides Function InsertComponent(ByVal document As XmlComponent, ByVal before As XmlComponent) As XmlNode
@@ -161,7 +166,14 @@ Public Class XmlImportSpec
     End Sub
 
     Public Function CanDropItem(ByVal child As XmlComponent, Optional ByVal bCheckOnly As Boolean = True) As Boolean
-        Return (Me.Parameter = child.GetAttribute("param"))
+        Select Case child.NodeName
+            Case "class"
+                Return True
+
+            Case Else
+                Return (Me.Parameter = child.GetAttribute("param"))
+        End Select
+        Return False
     End Function
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
@@ -175,6 +187,32 @@ Public Class XmlImportSpec
                 Return RemoveImport()
         End Select
         Return False
+    End Function
+
+    Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim import As XmlImportSpec = CreateDocument("import")
+            import.Name = "MovedUp" + import.GetHashCode().ToString
+
+            Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
+
+            If parent.AppendComponent(import) IsNot Nothing Then
+                If import.AppendComponent(child) IsNot Nothing Then
+                    MsgBox("Moved into a new 'import' node named '" + import.Name + "'.", MsgBoxStyle.Information, "'Move up' command")
+                    bResult = True
+                Else
+                    MsgBox("Failed to moved up node '" + child.Name + "' !", MsgBoxStyle.Information, "'Move up' command")
+                End If
+
+            Else
+                MsgBox("Failed to moved up up node '" + child.Name + "' !", MsgBoxStyle.Information, "'Move up' command")
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
     End Function
 
 #End Region
@@ -287,6 +325,11 @@ Public Class XmlImportSpec
                 Case Else
                     bResult = MergeFileReferences(form, Filename.FullName, True, bDoxygenTagFile)
             End Select
+
+            If bResult Then
+                Me.Parameter = ChildExportNode.Source
+                Me.Name = ChildExportNode.Name
+            End If
         Catch ex As Exception
             Throw ex
         End Try

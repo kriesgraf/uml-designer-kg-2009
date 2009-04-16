@@ -38,11 +38,13 @@ Public Class XmlComposite
 
 #Region "Public functions"
 
-    Public Function DropAppendComponent(ByVal child As XmlComponent) As Boolean
+    Public Overridable Function DropAppendComponent(ByVal child As XmlComponent) As Boolean
         Try
+            ' Notionally, child will be removed from first location by command Append
+            ' But is some case, "AppendComponent" moved only children and not current, 
+            ' also, we must remove current node manually
             XmlProjectTools.RemoveNode(child.Node)
-            AppendComponent(child)
-            Return True
+            Return (AppendComponent(child) IsNot Nothing)
 
         Catch ex As Exception
             Throw ex
