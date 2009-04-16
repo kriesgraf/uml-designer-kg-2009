@@ -215,4 +215,8 @@ Public Class dlgImport
         m_xmlView.Updated = True
     End Sub
 #End Region
+
+    Private Sub txtParam_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtParam.Validated
+        m_xmlView.InitBindingListReferences(lsbReferences, True)
+    End Sub
 End Class
