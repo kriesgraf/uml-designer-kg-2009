@@ -36,13 +36,13 @@ Public Class dlgAlertException
         If m_Exception.InnerException IsNot Nothing Then
             MsgBox(m_Exception.InnerException.Message + vbCrLf + vbCrLf + m_Exception.InnerException.StackTrace, MsgBoxStyle.Critical, TypeName(m_Exception))
         Else
-            MsgBox("No inner exception", MsgBoxStyle.Exclamation)
+            MsgBox("No inner exception", MsgBoxStyle.Exclamation, "Inner exception")
         End If
     End Sub
 
     Private Sub lblMessage_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lblMessage.Click
         Clipboard.SetText(m_Exception.ToString)
-        MsgBox("Message copied in clipboard", MsgBoxStyle.Information)
+        MsgBox("Message copied in clipboard", MsgBoxStyle.Information, "Clipboard")
     End Sub
 End Class
 

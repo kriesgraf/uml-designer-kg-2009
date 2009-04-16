@@ -72,7 +72,7 @@ Public Class dlgRelationParent
         Try
             If m_xmlView.CheckOption() Then
                 If MsgBox("This operation is irreversible, would you want to continue ?" _
-                          , cstMsgYesNoExclamation) _
+                          , cstMsgYesNoExclamation, "Array conversion") _
                                 = MsgBoxResult.No _
                 Then
                     m_xmlView.CancelOption()

@@ -135,7 +135,7 @@ Public Class dlgRelation
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
-        If MsgBox("This relation will be deleted, please confirm ?", cstMsgYesNoQuestion) _
+        If MsgBox("This relation will be deleted, please confirm ?", cstMsgYesNoQuestion, "'Delete' command") _
             = MsgBoxResult.Yes Then
             If m_xmlView.RemoveMe() Then
                 Me.Tag = True

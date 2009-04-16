@@ -313,7 +313,7 @@ Public Class XmlClassSpec
         Select nodeXml.NodeName
             Case "dependency"
                 If GetFirstClassId(Me, Me.Id).Length = 0 Then
-                    MsgBox("Sorry but only one class declared yet!", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry but only one class declared yet!", MsgBoxStyle.Exclamation, "'Add' command")
                     Return False
                 End If
 
@@ -456,7 +456,7 @@ Public Class XmlClassSpec
             For Each model As XmlNode In list
                 If CheckModel(GetID(model)) IsNot Nothing _
                 Then
-                    If bAlertUser Then MsgBox("At least one model parameter is in use.", MsgBoxStyle.Exclamation)
+                    If bAlertUser Then MsgBox("At least one model parameter is in use.", MsgBoxStyle.Exclamation, "Model parameter dependencies")
                     Return False
                 End If
             Next

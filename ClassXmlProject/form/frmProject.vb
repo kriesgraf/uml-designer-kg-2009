@@ -116,7 +116,7 @@ Public Class frmProject
 
             Dim strFilename As String = m_xmlProject.Name
             If XmlProjectTools.GetValidFilename(strFilename) Then
-                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename)
+                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "'Save as' command")
             End If
             dlgSaveFile.FileName = strFilename
 
@@ -137,7 +137,7 @@ Public Class frmProject
         MsgBox("The document view uses Internet Explorer application to display project info." + _
                 vbCrLf + "But your IE version is not compatible with this command, also we invite you to use the mouse wheel." + _
                 vbCrLf + vbCrLf + "To zoom out with mouse whell:" + vbCrLf + "Please click inside document view, press the key 'Ctrl' and hold down while rotate the wheel.", _
-                MsgBoxStyle.Critical)
+                MsgBoxStyle.Critical, "'Zoom' commands")
 
         btnZoomIn.Enabled = False
         btnZoomOut.Enabled = False

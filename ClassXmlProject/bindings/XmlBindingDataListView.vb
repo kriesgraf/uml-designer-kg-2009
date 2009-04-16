@@ -103,7 +103,7 @@ Public Class XmlBindingDataListView
     End Function
 
     Public Sub UpdatePath()
-        m_strPath = m_xmlStack(0).Name
+        m_strPath = "/" + m_xmlStack(0).Name
         For i As Integer = 1 To m_xmlStack.Count - 1
             m_strPath = m_strPath + "/" + m_xmlStack(i).Name
         Next i
@@ -343,7 +343,7 @@ Public Class XmlBindingDataListView
                 Dim component = XmlComponent.Clipboard.Data
                 If bCopy = False And bImportData _
                 Then
-                    MsgBox("Sorry, can't cut object from one project and paste to another!", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry, can't cut object from one project and paste to another!", MsgBoxStyle.Exclamation, "'Cut/paste' command")
 
                 ElseIf m_xmlParentNode.CanPasteItem(XmlComponent.Clipboard.Data) _
                 Then
@@ -352,10 +352,10 @@ Public Class XmlBindingDataListView
                     If DuplicateOrPasteItem(component, bCopy, bImportData) Then
                         bResult = True
                     Else
-                        MsgBox("Sorry can't paste '" + component.NodeName + "' !", MsgBoxStyle.Exclamation)
+                        MsgBox("Sorry can't paste '" + component.NodeName + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
                     End If
                 Else
-                    MsgBox("Sorry can't paste node '" + component.NodeName + "' !", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry can't paste node '" + component.NodeName + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
                 End If
             End If
         Catch ex As Exception

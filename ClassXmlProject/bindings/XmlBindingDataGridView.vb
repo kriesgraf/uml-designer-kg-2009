@@ -396,7 +396,7 @@ Public Class XmlBindingDataGridView
                 Dim component = XmlComponent.Clipboard.Data
                 If bCopy = False And bImportData _
                 Then
-                    MsgBox("Sorry, can't cut object from one project and paste to another!", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry, can't cut object from one project and paste to another!", MsgBoxStyle.Exclamation, "'Paste' command")
 
                 ElseIf m_xmlParentNode.CanPasteItem(XmlComponent.Clipboard.Data) _
                 Then
@@ -405,10 +405,10 @@ Public Class XmlBindingDataGridView
                     If DuplicateOrPasteItem(component, bCopy, bImportData) Then
                         bResult = True
                     Else
-                        MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
+                        MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
                     End If
                 Else
-                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
                 End If
             End If
         Catch ex As Exception
@@ -420,7 +420,7 @@ Public Class XmlBindingDataGridView
     Private Sub m_BindingSource_DataError(ByVal sender As Object, ByVal e As System.Windows.Forms.BindingManagerDataErrorEventArgs) Handles m_BindingSource.DataError
         If m_bRaiseDataError Then
             If MsgBox(e.Exception.ToString + vbCrLf + vbCrLf + "Please press Cancel if you have notice the reason of this error.", _
-                      cstMsgOkCancelCritical) _
+                      cstMsgOkCancelCritical, "Data error") _
                         = MsgBoxResult.Cancel Then
 
                 m_bRaiseDataError = False

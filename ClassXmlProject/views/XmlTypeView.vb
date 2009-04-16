@@ -38,7 +38,7 @@ Public Class XmlTypeView
     Public Function ConfirmCancel(ByRef bOk As Boolean) As Boolean
         If MyBase.IsEnumWrong Then
             If MsgBox("Enumeration will be destroyed. Do you want to continue ?", _
-                      cstMsgOkCancelCritical) = MsgBoxResult.Ok _
+                      cstMsgOkCancelCritical, "Simple type conversion") = MsgBoxResult.Ok _
             Then
                 MyBase.Kind = EKindDeclaration.EK_SimpleType
                 bOk = True
@@ -52,11 +52,6 @@ Public Class XmlTypeView
 
     Public Function UpdateValues() As Boolean
         Try
-            If MyBase.Kind = EKindDeclaration.EK_Enumeration Then
-                If MyBase.CheckEnumeration() = False Then
-                    Return False
-                End If
-            End If
             m_xmlBindingsList.UpdateValues()
             m_xmlComboTypedef.Update()
             If m_ArrayRadioButtons.Item(0).Checked Then

@@ -190,7 +190,7 @@ Public Class XmlImportView
                 Me.Updated = True
                 If Me.GetNode("descendant::reference | descendant::interface") Is Nothing Then
                     If MsgBox("Do you want to remove the import " + Me.Name + " too ?", _
-                              cstMsgYesNoQuestion) _
+                              cstMsgYesNoQuestion, "'Remove' command") _
                               = MsgBoxResult.Yes Then
                         bResult = Me.RemoveMe()
                     End If
@@ -210,7 +210,7 @@ Public Class XmlImportView
             Dim component = XmlComponent.Clipboard.Data
             If bCopy = False And bImportData _
             Then
-                MsgBox("Sorry, can't cut object from one project and paste to another!", MsgBoxStyle.Exclamation)
+                MsgBox("Sorry, can't cut object from one project and paste to another!", MsgBoxStyle.Exclamation, "'Paste' command")
 
             ElseIf Me.ChildExportNode.CanPasteItem(XmlComponent.Clipboard.Data) _
             Then
@@ -219,10 +219,10 @@ Public Class XmlImportView
                     Me.Updated = True
                     Return True
                 Else
-                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
                 End If
             Else
-                MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
+                MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
             End If
         Catch ex As Exception
             Throw ex
@@ -315,7 +315,7 @@ Public Class XmlImportView
                     InitBindingListReferences(list, True)
                     Me.Updated = True
                 Else
-                    MsgBox("Sorry can't duplicate " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry can't duplicate " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Duplicate' command")
                 End If
             End If
         Catch ex As Exception
@@ -349,7 +349,7 @@ Public Class XmlImportView
             If eMode = EImportMode.MergeReferences _
                 And SelectNodes("descendant::reference|descendant::interface").Count = 0 _
             Then
-                MsgBox("Import is empty, use quite 'replace' or 'confirm' command!", MsgBoxStyle.Exclamation)
+                MsgBox("Import is empty, use quite 'replace' or 'confirm' command!", MsgBoxStyle.Exclamation, "'Import' command")
                 Return False
 
             ElseIf My.Settings.CurrentFolder = "." + Path.DirectorySeparatorChar.ToString Then

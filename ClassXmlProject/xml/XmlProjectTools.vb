@@ -176,7 +176,7 @@ Public Class XmlProjectTools
 
             Case EDtdFileExist.SourceNotFound
                 MsgBox("The resource " + GetDtdResource() + " is missing. " + _
-                       vbCrLf + "Please retry installation to replace missing files. ")
+                       vbCrLf + "Please retry installation to replace missing files. ", MsgBoxStyle.Critical, "DTD resources")
                 Return False
 
             Case EDtdFileExist.Equal
@@ -187,7 +187,7 @@ Public Class XmlProjectTools
                 Select Case MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more recent than application resource. " + vbCrLf + _
                            "Maybe this project would corrupt application process. " + vbCrLf + _
                            "Please confirm overwriting this file (Yes), open this project as it is (No), don't open this project (Cancel).", _
-                           cstMsgYesNoCancelExclamation)
+                           cstMsgYesNoCancelExclamation, strSourceFolder)
 
                     Case MsgBoxResult.Yes
                         ' Copy file below
@@ -204,7 +204,7 @@ Public Class XmlProjectTools
                           "An application resource file will be copy in this folder to replace it. " + vbCrLf + _
                        "Maybe this project would be incompatible with this resource file and  would corrupt application process." + vbCrLf + _
                        "Maybe you should apply a patch to upgrade this project and remove this warning." + vbCrLf + _
-                       "Please confirm replace.", cstMsgYesNoExclamation) _
+                       "Please confirm replace.", cstMsgYesNoExclamation, strSourceFolder) _
                        = MsgBoxResult.No _
                 Then
                     Return False
@@ -217,7 +217,7 @@ Public Class XmlProjectTools
                     "is more older than application resource. " + vbCrLf + _
                     "Maybe oldest version projects remain in this folder, overwrite this file would corrupt these projects." + vbCrLf + _
                     "If you confirm this operation, you would have to apply a patch to each project in this folder." + vbCrLf + _
-                    "Also, we recommend you to move manually this project file in an other folder and press Cancel now. !") _
+                    "Also, we recommend you to move manually this project file in an other folder and press Cancel now. !", strSourceFolder) _
                     = System.Windows.Forms.DialogResult.Cancel _
                 Then
                     Return False
@@ -241,7 +241,7 @@ Public Class XmlProjectTools
 
             Case EDtdFileExist.SourceNotFound
                 MsgBox("The resource " + GetDtdResource() + " is missing. " + _
-                       vbCrLf + "Please retry installation to replace missing files. ")
+                       vbCrLf + "Please retry installation to replace missing files. ", MsgBoxStyle.Critical, "DTD resources")
                 Return False
 
             Case EDtdFileExist.Equal
@@ -250,7 +250,7 @@ Public Class XmlProjectTools
             Case EDtdFileExist.MoreRecent
                 If MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more recent than application resource. " + vbCrLf + _
                        "Maybe this import would corrupt current project. Please confirm importation.", _
-                       cstMsgYesNoExclamation) = MsgBoxResult.No _
+                       cstMsgYesNoExclamation, strSourceFolder) = MsgBoxResult.No _
                 Then
                     Return False
                 End If
@@ -259,7 +259,7 @@ Public Class XmlProjectTools
                 If MsgBox("Can't find File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + _
                           "An application resource file will be copy in this folder to replace it. " + vbCrLf + _
                        "Maybe this import would be incompatible with this resource file. Please confirm replace.", _
-                       cstMsgYesNoExclamation) = MsgBoxResult.No _
+                       cstMsgYesNoExclamation, strSourceFolder) = MsgBoxResult.No _
                 Then
                     Return False
                 Else
@@ -269,7 +269,7 @@ Public Class XmlProjectTools
             Case EDtdFileExist.Older
                 If MsgBox("File '" + GetDestinationDtdFile(strSourceFolder) + vbCrLf + " is more older than application resource. " + vbCrLf + _
                        "Maybe this import would corrupt current project. Please confirm importation.", _
-                       cstMsgYesNoExclamation) = MsgBoxResult.No _
+                       cstMsgYesNoExclamation, strSourceFolder) = MsgBoxResult.No _
                 Then
                     Return False
                 End If
@@ -291,7 +291,7 @@ Public Class XmlProjectTools
 
                 Case EDtdFileExist.SourceNotFound
                     MsgBox("The resource " + GetDtdResource() + " is missing. " + _
-                           vbCrLf + "Please retry installation to replace missing files. ", MsgBoxStyle.Critical)
+                           vbCrLf + "Please retry installation to replace missing files. ", MsgBoxStyle.Critical, "DTD resources")
                     Return False
 
                 Case EDtdFileExist.NotFound
@@ -306,7 +306,7 @@ Public Class XmlProjectTools
 
                     ElseIf MsgBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more recent than application resource." + vbCrLf + _
                               "Please confirm overwrite this file ?", _
-                               cstMsgOkCancelCritical) _
+                               cstMsgOkCancelCritical, strDestinationFolder) _
                                 = MsgBoxResult.Ok _
                     Then
                         CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
@@ -642,7 +642,7 @@ Public Class XmlProjectTools
                 End Using
 
                 form.Cursor = oldCursor
-                MsgBox("Please find result of conversion in file:" + vbCrLf + strNewFile, MsgBoxStyle.Exclamation)
+                MsgBox("Please find result of conversion in file:" + vbCrLf + strNewFile, MsgBoxStyle.Exclamation, "File converted")
                 Return True
             End If
 
@@ -779,7 +779,7 @@ Public Class XmlProjectTools
                     bDtdError = False
                     form.Cursor = oldCursor
                     eResult = XmlProjectTools.EResult.Converted
-                    MsgBox("Conversion completed!", MsgBoxStyle.Exclamation)
+                    MsgBox("Conversion completed!", MsgBoxStyle.Exclamation, "File converted")
                 End If
 
             Catch ex As Exception
@@ -832,7 +832,7 @@ Public Class XmlProjectTools
         Try
             Dim strQuery As String = "//property[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
             If parentNode.SelectNodes(strQuery).Count > 0 Then
-                MsgBox("Sorry but this property is overrided", MsgBoxStyle.Critical)
+                MsgBox("Sorry but this property is overrided", MsgBoxStyle.Critical, "'Remove' command")
                 bResult = False
             End If
         Catch ex As Exception
@@ -846,7 +846,7 @@ Public Class XmlProjectTools
         Try
             Dim strQuery As String = "//method[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
             If parentNode.SelectNodes(strQuery).Count > 0 Then
-                MsgBox("Sorry but this method is overrided", MsgBoxStyle.Critical)
+                MsgBox("Sorry but this method is overrided", MsgBoxStyle.Critical, "'Remove' command")
                 bResult = False
             End If
         Catch ex As Exception
@@ -1622,7 +1622,7 @@ Public Class XmlProjectTools
         Try
             iteration += 1
             If iteration > cstMaxCircularReferences Then
-                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical)
+                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical, "Circular references")
                 Return
             End If
             ' We add "final" methods to be sure to avoid adding method from "root" node
@@ -1668,7 +1668,7 @@ Public Class XmlProjectTools
         Try
             iteration += 1
             If iteration > cstMaxCircularReferences Then
-                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical)
+                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical, "Circular references")
                 Return
             End If
             For Each child As XmlNode In SelectNodes(node, "property[@overridable='yes' or @overrides!='']")

@@ -181,7 +181,7 @@ Public Class dlgProperty
 
         If m_xmlView.CheckOption() Then
             If MsgBox("This operation is irreversible, would you want to continue ?" _
-                      , cstMsgYesNoExclamation) _
+                      , cstMsgYesNoExclamation, "Array conversion") _
                             = MsgBoxResult.No _
             Then
                 m_xmlView.CancelOption()
@@ -200,7 +200,7 @@ Public Class dlgProperty
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnDelete.Click
-        If MsgBox(m_xmlView.Name + " will be deleted, please confirm ?", cstMsgYesNoQuestion) _
+        If MsgBox(m_xmlView.Name + " will be deleted, please confirm ?", cstMsgYesNoQuestion, "'Delete' command") _
             = MsgBoxResult.Yes Then
             If m_xmlView.RemoveMe() Then
                 Me.Tag = True

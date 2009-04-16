@@ -197,7 +197,7 @@ Public Class XmlPackageView
 
             Dim strName As String = xmlcpnt.Name
             If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
-                       cstMsgYesNoQuestion) = MsgBoxResult.Yes _
+                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
             Then
                 Dim strNodeName As String = removeNode.NodeName
                 If MyBase.RemoveComponent(removeNode) Then

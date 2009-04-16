@@ -89,7 +89,7 @@ Public Class dlgConstructor
         If chkCopy.Checked = True Then
             If m_xmlView.CheckCopyConstructor() = False Then
                 If MsgBox("This operation is irreversible, would you want to continue ?" _
-                          , cstMsgYesNoExclamation) _
+                          , cstMsgYesNoExclamation, "'Copy' constructor") _
                                 = MsgBoxResult.No _
                 Then
                     chkCopy.Checked = False
@@ -102,7 +102,7 @@ Public Class dlgConstructor
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
-        If MsgBox("This constructor will be deleted, please confirm ?", cstMsgYesNoQuestion) _
+        If MsgBox("This constructor will be deleted, please confirm ?", cstMsgYesNoQuestion, "'Delete' command") _
             = MsgBoxResult.Yes Then
             If m_xmlView.RemoveMe() Then
                 Me.Tag = True

@@ -220,7 +220,7 @@ Public Class XmlProjectView
 
             If bExtractReferences Then
                 If MsgBox("Nodes will be exported and current converted as imports. Do you confirm ?", _
-                          cstMsgYesNoQuestion) _
+                          cstMsgYesNoQuestion, "'Export' command") _
                           = MsgBoxResult.No _
                 Then
                     Return False
@@ -238,7 +238,7 @@ Public Class XmlProjectView
 
             Dim strFilename As String = GetName(nodeXml)
             If XmlProjectTools.GetValidFilename(strFilename) Then
-                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename)
+                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "Rename file")
             End If
             dlgSaveFile.FileName = strFilename
             dlgSaveFile.Filter = "UML project (*.xprj)|*.xprj"
@@ -253,7 +253,7 @@ Public Class XmlProjectView
 
                 Select Case nodeXml.Name
                     Case "root"
-                        MsgBox("Needless to export a whole project", MsgBoxStyle.Exclamation)
+                        MsgBox("Needless to export a whole project", MsgBoxStyle.Exclamation, "'Export' command")
 
                     Case "package"
                         strFullPackage = GetFullpathPackage(nodeXml, eLang)
@@ -271,7 +271,7 @@ Public Class XmlProjectView
                         End If
 
                     Case Else
-                        MsgBox("Can't export this node", MsgBoxStyle.Exclamation)
+                        MsgBox("Can't export this node", MsgBoxStyle.Exclamation, "'Export' command")
                 End Select
             End If
             ' Set flat Updated to prevent to close project without saving
@@ -327,7 +327,7 @@ Public Class XmlProjectView
 
             Dim strFilename As String = GetName(nodeXml)
             If XmlProjectTools.GetValidFilename(strFilename) Then
-                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename)
+                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "Rename file")
             End If
             dlgSaveFile.FileName = strFilename
             dlgSaveFile.Filter = "Package references (*.ximp)|*.ximp"
@@ -351,12 +351,12 @@ Public Class XmlProjectView
                         strFullPackage = GetFullpathPackage(nodeXml, eLang)
 
                         If SelectNodes(nodeXml, "descendant::import").Count > 0 Then
-                            MsgBox("Import members will not be exported", vbExclamation)
+                            MsgBox("Import members will not be exported", vbExclamation, "'Export' command")
                         End If
                         If SelectNodes(nodeXml, "descendant::class[@visibility='package']").Count > 0 Then
                             ExportPackageReferences(fen, nodeXml, strFilename, strFullPackage, eLang)
                         Else
-                            MsgBox("Class " + GetName(nodeXml) + " has no class members with package visibility", vbExclamation)
+                            MsgBox("Class " + GetName(nodeXml) + " has no class members with package visibility", vbExclamation, "'Export' command")
                         End If
 
                     Case "class"
@@ -365,7 +365,7 @@ Public Class XmlProjectView
                         If GetNodeString(nodeXml, "@visibility") = "package" Then
                             ExportClassReferences(fen, nodeXml, strFilename, strFullPackage, eLang)
                         Else
-                            MsgBox("Class " + GetName(nodeXml) + " has not a package visibility", vbExclamation)
+                            MsgBox("Class " + GetName(nodeXml) + " has not a package visibility", vbExclamation, "'Export' command")
                         End If
                     Case "typedef"
                         strFullPackage = GetFullpathPackage(nodeXml.ParentNode, eLang)
@@ -374,17 +374,17 @@ Public Class XmlProjectView
                             If GetNodeString(nodeXml, "variable/@range") = "public" Then
                                 ExportTypedefReferences(fen, nodeXml, strFilename, strFullPackage)
                             Else
-                                MsgBox("Typedef " + GetName(nodeXml) + " is not public", vbExclamation)
+                                MsgBox("Typedef " + GetName(nodeXml) + " is not public", vbExclamation, "'Export' command")
                             End If
                         Else
-                            MsgBox("Class " + GetName(nodeXml.ParentNode) + " has not a package visibility", vbExclamation)
+                            MsgBox("Class " + GetName(nodeXml.ParentNode) + " has not a package visibility", vbExclamation, "'Export' command")
                         End If
 
                     Case "import"
                         If nodeXml.HasChildNodes = True Then
                             ReExport(fen, nodeXml.LastChild, strFilename, GetAttributeValue(nodeXml, "param"))
                         Else
-                            MsgBox("Import " + GetName(nodeXml) + ", nothing to export", MsgBoxStyle.Exclamation)
+                            MsgBox("Import " + GetName(nodeXml) + ", nothing to export", MsgBoxStyle.Exclamation, "'Export' command")
                         End If
                 End Select
             End If
@@ -548,7 +548,7 @@ Public Class XmlProjectView
                 m_Control.Binding.ResetBindings(True)
                 Return True
             Else
-                MsgBox("No properties to override!", MsgBoxStyle.Exclamation)
+                MsgBox("No properties to override!", MsgBoxStyle.Exclamation, "'Override' command")
             End If
         End If
         Return False
@@ -564,7 +564,7 @@ Public Class XmlProjectView
                 m_Control.Binding.ResetBindings(True)
                 Return True
             Else
-                MsgBox("No methods to override!", MsgBoxStyle.Exclamation)
+                MsgBox("No methods to override!", MsgBoxStyle.Exclamation, "'Override' command")
             End If
         End If
         Return False

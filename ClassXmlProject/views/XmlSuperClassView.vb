@@ -40,7 +40,7 @@ Public Class XmlSuperClassView
                 If xmlview.Implementation <> EImplementation.Interf Then
                     iInherited += 1
                     If iInherited > 1 Then
-                        MsgBox("Classes '" + strClassName + "' and '" + xmlview.Name + "' are incompatible, can extend only one class.", MsgBoxStyle.Critical)
+                        MsgBox("Classes '" + strClassName + "' and '" + xmlview.Name + "' are incompatible, can extend only one class.", MsgBoxStyle.Critical, "Inherited classes")
                         Return False
                     End If
                     strClassName = xmlview.Name

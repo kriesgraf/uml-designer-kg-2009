@@ -913,7 +913,7 @@ Public Class UmlNodesManager
                     If reg.IsMatch(strType) = False _
                     Then
                         If bAlertOk Then
-                            MsgBox("Sorry but, doesn't describe a C++ implemented template", MsgBoxStyle.Exclamation)
+                            MsgBox("Sorry but, doesn't describe a C++ implemented template", MsgBoxStyle.Exclamation, "Convert Doxygen file index")
                         End If
 
                         bResult = False

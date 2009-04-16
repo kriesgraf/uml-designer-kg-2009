@@ -397,12 +397,12 @@ Public Class UmlCodeGenerator
             If My.Computer.FileSystem.FileExists(My.Settings.DiffTool) = False Then
                 Dim fen As Form = New dlgDiffTool
                 If fen.ShowDialog() = System.Windows.Forms.DialogResult.Cancel Then
-                    MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical)
+                    MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical, "Compare and merge tool")
                     Exit Sub
                 End If
             End If
             If My.Computer.FileSystem.FileExists(My.Settings.DiffTool) = False Then
-                MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical)
+                MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical, "Compare and merge tool")
                 Exit Sub
             End If
             proc.StartInfo.FileName = My.Settings.DiffTool

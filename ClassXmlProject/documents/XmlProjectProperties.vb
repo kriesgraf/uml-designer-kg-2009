@@ -129,7 +129,7 @@ Public Class XmlProjectProperties
                     End If
 
                 Case Else
-                    MsgBox("This node contains children !", MsgBoxStyle.Exclamation)
+                    MsgBox("This node contains children !", MsgBoxStyle.Exclamation, "'Search dependencies' command")
                     Return False
             End Select
         End If

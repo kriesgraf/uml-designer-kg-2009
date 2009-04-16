@@ -48,7 +48,7 @@ Public Class VbCodeMerger
                 MoveFile(strTempFilename, strFinalPath)
             else
                 MsgBox("Automatic merge tool has not found find code to add or update in module '"+strFilename+"'" + _
-                       vbcrlf+vbCrLf+"We invite you to look at temporary & hidden folder '"+strTempPath+"'.",MsgBoxStyle.Critical)
+                       vbcrlf+vbCrLf+"We invite you to look at temporary & hidden folder '"+strTempPath+"'.",MsgBoxStyle.Critical,"Automatic merge tool")
             End If
             ' Remove temporay files, except VB generated one
             RemoveFile(strSource)

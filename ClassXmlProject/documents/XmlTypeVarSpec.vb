@@ -406,30 +406,6 @@ Public Class XmlTypeVarSpec
         End Try
     End Sub
 
-    Protected Friend Function CheckEnumeration() As Boolean
-        Dim strList As String = ""
-
-        LoadChildrenList()
-
-        For Each xmlcpnt As XmlEnumSpec In MyBase.ChildrenList
-            If xmlcpnt.CheckName() = False _
-            Then
-                MsgBox("Name '" + xmlcpnt.Name + "'not allowed, please rename it", MsgBoxStyle.Exclamation)
-                m_bEnumWrong = True
-                Return False
-
-            ElseIf strList.Contains(xmlcpnt.Name + ";") _
-            Then
-                MsgBox("Name '" + xmlcpnt.Name + "'is duplicated, please rename it", MsgBoxStyle.Exclamation)
-                m_bEnumWrong = True
-                Return False
-            End If
-            strList = strList + xmlcpnt.Name + ";"
-        Next
-        m_bEnumWrong = False
-        Return True
-    End Function
-
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
         Try
             Dim nodeXml As XmlNode

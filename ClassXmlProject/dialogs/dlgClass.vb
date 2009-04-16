@@ -119,7 +119,7 @@ Public Class dlgClass
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
-        If MsgBox(m_xmlView.Name + " will be deleted, please confirm ?", cstMsgYesNoQuestion) _
+        If MsgBox(m_xmlView.Name + " will be deleted, please confirm ?", cstMsgYesNoQuestion, "'Delete' command") _
             = MsgBoxResult.Yes Then
             If m_xmlView.RemoveMe() Then
                 Me.Tag = True
@@ -232,7 +232,7 @@ Public Class dlgClass
             gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
         Else
-            MsgBox("No properties to override!", MsgBoxStyle.Exclamation)
+            MsgBox("No properties to override!", MsgBoxStyle.Exclamation, "'Override' command")
         End If
     End Sub
 
@@ -242,7 +242,7 @@ Public Class dlgClass
             gridMembers.Binding.ResetBindings(True)
             m_xmlView.Updated = True
         Else
-            MsgBox("No methods to override!", MsgBoxStyle.Exclamation)
+            MsgBox("No methods to override!", MsgBoxStyle.Exclamation, "'Override' command")
         End If
     End Sub
 

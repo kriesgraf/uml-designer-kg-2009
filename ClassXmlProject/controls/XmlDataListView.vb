@@ -149,7 +149,7 @@ Public Class XmlDataListView
                 If m_xmlBinding.DuplicateOrPasteItem(component) Then
                     bChanged = True
                 Else
-                    MsgBox("Sorry can't dupplicate node '" + component.NodeName + " ' !", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry can't duplicate node '" + component.NodeName + " ' !", MsgBoxStyle.Exclamation, "'Duplicate' command")
                 End If
             End If
         Catch ex As Exception

@@ -371,7 +371,7 @@ Public Class XmlImportSpec
             Dim bImportOk As Boolean = True
 
             If m_xmlExport Is Nothing Then
-                MsgBox("Import empty, please use command 'Replace' !", MsgBoxStyle.Exclamation)
+                MsgBox("Import empty, please use command 'Replace' !", MsgBoxStyle.Exclamation, "'Merge' command")
             Else
                 Dim export As XmlExportSpec = New XmlExportSpec()   ' We don't use base method MyBase.CreateDocument, because don't want to create an XmlNode instance
                 export.Document = Me.Document
