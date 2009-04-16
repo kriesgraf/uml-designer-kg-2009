@@ -114,7 +114,7 @@ Public Class XmlDataGridView
             Dim component As XmlComponent = CType(Me.SelectedItem, XmlComponent)
             If component IsNot Nothing Then
                 If m_xmlBinding.DuplicateOrPasteItem(component) = False Then
-                    MsgBox("Sorry can't duplicate " + component.NodeName + " '" + component.Name + "'!", MsgBoxStyle.Exclamation, "'Duplicate' command")
+                    MsgBox("Sorry can't duplicate node '" + component.NodeName + "'!", MsgBoxStyle.Exclamation, "'Duplicate' command")
                 End If
             End If
         Catch ex As Exception
