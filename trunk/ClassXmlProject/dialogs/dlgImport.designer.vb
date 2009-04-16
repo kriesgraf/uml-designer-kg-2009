@@ -60,6 +60,7 @@ Partial Class dlgImport
         Me.RemoveAll = New System.Windows.Forms.ToolStripMenuItem
         Me.txtInterface = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.mnuRenamePackage = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
@@ -168,7 +169,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel4, 2)
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65.38461!))
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.61538!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 188.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 189.0!))
         Me.TableLayoutPanel4.Controls.Add(Me.lblVisibility, 1, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.cmbVisibility, 2, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.chkInterface, 0, 0)
@@ -184,7 +185,7 @@ Partial Class dlgImport
         '
         Me.lblVisibility.AutoSize = True
         Me.lblVisibility.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblVisibility.Location = New System.Drawing.Point(113, 0)
+        Me.lblVisibility.Location = New System.Drawing.Point(112, 0)
         Me.lblVisibility.Name = "lblVisibility"
         Me.lblVisibility.Size = New System.Drawing.Size(52, 23)
         Me.lblVisibility.TabIndex = 2
@@ -195,9 +196,9 @@ Partial Class dlgImport
         '
         Me.cmbVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbVisibility.FormattingEnabled = True
-        Me.cmbVisibility.Location = New System.Drawing.Point(171, 3)
+        Me.cmbVisibility.Location = New System.Drawing.Point(170, 3)
         Me.cmbVisibility.Name = "cmbVisibility"
-        Me.cmbVisibility.Size = New System.Drawing.Size(183, 21)
+        Me.cmbVisibility.Size = New System.Drawing.Size(184, 21)
         Me.cmbVisibility.TabIndex = 5
         '
         'chkInterface
@@ -206,7 +207,7 @@ Partial Class dlgImport
         Me.chkInterface.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chkInterface.Location = New System.Drawing.Point(3, 3)
         Me.chkInterface.Name = "chkInterface"
-        Me.chkInterface.Size = New System.Drawing.Size(104, 17)
+        Me.chkInterface.Size = New System.Drawing.Size(103, 17)
         Me.chkInterface.TabIndex = 6
         Me.chkInterface.Text = "Interface declaration"
         Me.chkInterface.UseVisualStyleBackColor = True
@@ -279,9 +280,9 @@ Partial Class dlgImport
         '
         'mnuEditReference
         '
-        Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator5, Me.EditReference, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.mnuImportParameters, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
+        Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator5, Me.EditReference, Me.mnuRenamePackage, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.mnuImportParameters, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
         Me.mnuEditReference.Name = "ContextMenuStrip1"
-        Me.mnuEditReference.Size = New System.Drawing.Size(189, 320)
+        Me.mnuEditReference.Size = New System.Drawing.Size(189, 342)
         '
         'NewReference
         '
@@ -428,6 +429,12 @@ Partial Class dlgImport
         Me.txtInterface.Size = New System.Drawing.Size(181, 173)
         Me.txtInterface.TabIndex = 2
         '
+        'mnuRenamePackage
+        '
+        Me.mnuRenamePackage.Name = "mnuRenamePackage"
+        Me.mnuRenamePackage.Size = New System.Drawing.Size(188, 22)
+        Me.mnuRenamePackage.Text = "Rename package..."
+        '
         'dlgImport
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -495,5 +502,6 @@ Partial Class dlgImport
     Friend WithEvents mnuImportParameters As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents TableLayoutPanel5 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents pgbLoadImport As System.Windows.Forms.ProgressBar
+    Friend WithEvents mnuRenamePackage As System.Windows.Forms.ToolStripMenuItem
 
 End Class

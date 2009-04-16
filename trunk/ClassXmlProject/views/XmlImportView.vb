@@ -142,6 +142,7 @@ Public Class XmlImportView
 
             listbox.DataSource = listNode
             listbox.DisplayMember = cstFullpathClassName
+            listbox.SelectionMode = SelectionMode.MultiExtended
         Catch ex As Exception
             Throw ex
         End Try
@@ -161,6 +162,29 @@ Public Class XmlImportView
             Throw ex
         End Try
     End Sub
+
+    Public Function RenamePackage(ByVal list As ListBox) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim fen As New dlgRenameNode
+            fen.Title = "Rename package"
+            fen.Label = "Enter new package label"
+
+            If fen.ShowDialog() = DialogResult.OK Then
+                For Each element As XmlComponent In list.SelectedItems
+                    XmlProjectTools.AddAttributeValue(element.Node, "package", fen.Result)
+                    bResult = True
+                Next
+            End If
+
+            If bResult Then
+                InitBindingListReferences(list, True)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
 
     Public Overloads Function AddReferences(ByVal form As Form, ByVal eMode As EImportMode) As Boolean
         Dim bResult As Boolean = False
