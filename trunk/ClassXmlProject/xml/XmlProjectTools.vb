@@ -1297,7 +1297,9 @@ Public Class XmlProjectTools
         Return strResult
     End Function
 
-    Public Shared Function GetFullpathDescription(ByVal current As XmlNode, ByVal eTag As ELanguage) As String
+    Public Shared Function GetFullpathDescription(ByVal current As XmlNode, ByVal eTag As ELanguage, _
+                                                    Optional ByVal strCurrentPath As String = "") As String
+
         Dim strResult As String = ""
         Try
             Dim strSeparator As String
@@ -1378,13 +1380,14 @@ Public Class XmlProjectTools
 
                         current = current.SelectSingleNode("ancestor::import")
 
-                        '                        If eTag <> ELanguage.Language_CplusPlus Then
                         strTempo = GetAttributeValue(current, "param")
-                        If strTempo IsNot Nothing _
+                        If strCurrentPath <> "" _
+                        Then
+                            strResult = strCurrentPath + strSeparator + strResult
+                        ElseIf strTempo IsNot Nothing _
                         Then
                             strResult = strTempo + strSeparator + strResult
                         End If
-                        '                        End If
 
                     Case "model"
                         strResult = "Model " + GetName(current)

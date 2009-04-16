@@ -11,6 +11,7 @@ Public Class XmlNodeListView
     Private m_bInfo As Boolean = False
     Private m_bLocked As Boolean = False
     Private m_bChecked As Boolean = False
+    Private m_xmlComponent As XmlComponent = Nothing
 
     Public Const cstNullElement As String = "0"
     Public Const cstFullUmlPathName As String = "FullUmlPathName"
@@ -87,7 +88,7 @@ Public Class XmlNodeListView
                     Case Else
                         name = Me.Name
                 End Select
-                Return Name + " (" + GetFullUmlPath(Me.Node.ParentNode) + ")"
+                Return name + " (" + GetFullUmlPath(Me.Node.ParentNode) + ")"
             Else
                 Return m_strName
             End If
@@ -98,7 +99,15 @@ Public Class XmlNodeListView
         Get
             If m_strName = "" Then
                 Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
-                Dim strResult As String = GetFullpathDescription(Me.Node, eLang)
+                Dim strResult As String = Me.Name
+
+                Dim parent As XmlImportView = TryCast(m_xmlComponent, XmlImportView)
+                If parent IsNot Nothing _
+                Then
+                    strResult = GetFullpathDescription(Me.Node, eLang, parent.CurrentParameter)
+                Else
+                    strResult = GetFullpathDescription(Me.Node, eLang)
+                End If
                 If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
                 Return strResult
             End If
@@ -130,8 +139,9 @@ Public Class XmlNodeListView
         m_strName = _strName
     End Sub
 
-    Public Sub New(ByVal nodeXml As XmlNode)
+    Public Sub New(ByVal nodeXml As XmlNode, Optional ByVal refobj As XmlComponent = Nothing)
         MyBase.New(nodeXml)
+        m_xmlComponent = refobj
     End Sub
 
     Public Shared Sub InitContainerCombo(ByVal document As XmlComponent, ByVal dataControl As ComboBox, _
@@ -222,15 +232,18 @@ Public Class XmlNodeListView
         End Try
     End Sub
 
-    Public Shared Function AddComponentList(ByVal component As XmlComponent, ByRef myList As ArrayList) As XmlNodeListView
-        Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(component.Node)
+    Public Shared Function AddComponentList(ByVal component As XmlComponent, _
+                                            ByRef myList As ArrayList, Optional ByVal refobj As XmlComponent = Nothing) As XmlNodeListView
+        Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(component.Node, refobj)
         xmlcpnt.Tag = component.Tag
         'Debug.Print("(" + component.Node.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
         myList.Add(xmlcpnt)
         Return xmlcpnt
     End Function
 
-    Public Shared Sub AddNodeList(ByVal document As XmlComponent, ByRef myList As ArrayList, ByVal xpath As String)
+    Public Shared Sub AddNodeList(ByVal document As XmlComponent, ByRef myList As ArrayList, _
+                                  ByVal xpath As String, Optional ByVal refobj As XmlComponent = Nothing)
+
         Dim iterator As IEnumerator = document.SelectNodes(xpath).GetEnumerator
         iterator.Reset()
 
@@ -241,18 +254,18 @@ Public Class XmlNodeListView
             Dim xmlcpnt As XmlNodeListView = Nothing
             Select Case nodeXml.Name
                 Case "list", "array"
-                    xmlcpnt = New XmlNodeListView(nodeXml.ParentNode.ParentNode)
+                    xmlcpnt = New XmlNodeListView(nodeXml.ParentNode.ParentNode, refobj)
 
                 Case "variable", "inherited", "dependency", "type", "father", "child"
                     If nodeXml.ParentNode.Name = "return" _
                     Then
-                        xmlcpnt = New XmlNodeListView(nodeXml.ParentNode.ParentNode)
+                        xmlcpnt = New XmlNodeListView(nodeXml.ParentNode.ParentNode, refobj)
                     Else
-                        xmlcpnt = New XmlNodeListView(nodeXml.ParentNode)
+                        xmlcpnt = New XmlNodeListView(nodeXml.ParentNode, refobj)
                     End If
 
                 Case Else
-                    xmlcpnt = New XmlNodeListView(nodeXml)
+                    xmlcpnt = New XmlNodeListView(nodeXml, refobj)
             End Select
             xmlcpnt.Tag = document.Tag
             'Debug.Print("(" + nodeXml.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
@@ -450,7 +463,7 @@ Public Class XmlNodeListView
         Return strQuery
     End Function
 
-    Public Shared Function GetListReferences(ByVal parent As XmlComponent, ByVal child As XmlNode, ByRef listResult As ArrayList) As Boolean
+    Public Shared Function GetListRedundancies(ByVal parent As XmlComponent, ByVal child As XmlNode, ByRef listResult As ArrayList) As Boolean
         Dim bResult As Boolean = False
         Try
             Dim elang As ELanguage = CType(parent.Tag, ELanguage)

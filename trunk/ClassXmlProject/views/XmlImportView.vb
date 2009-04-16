@@ -13,7 +13,7 @@ Public Class XmlImportView
 
 #Region "Class declarations"
 
-    Private m_txtInterface As TextBox
+    Private m_txtInterface, m_txtParam As TextBox
     Private m_chkInterface As CheckBox
     Private m_bClassInterface As Boolean
     Private m_xmlBindingsList As XmlBindingsList
@@ -45,6 +45,12 @@ Public Class XmlImportView
         Set(ByVal value As Boolean)
             m_bClassInterface = value
         End Set
+    End Property
+
+    Public ReadOnly Property CurrentParameter() As String
+        Get
+            Return m_txtParam.Text.Trim()
+        End Get
     End Property
 #End Region
 
@@ -99,8 +105,9 @@ Public Class XmlImportView
         End Try
     End Sub
 
-    Public Sub InitBindingFullpathName(ByVal dataControl As Control)
+    Public Sub InitBindingFullpathName(ByVal dataControl As TextBox)
         Try
+            m_txtParam = dataControl
             m_xmlBindingsList.AddBinding(dataControl, Me, "Parameter")
         Catch ex As Exception
             Throw ex
@@ -130,7 +137,7 @@ Public Class XmlImportView
     Public Sub InitBindingListReferences(ByVal listbox As ListBox, Optional ByVal bClear As Boolean = False)
         Try
             Dim listNode As New ArrayList
-            AddNodeList(Me, listNode, "descendant::reference | descendant::interface")
+            AddNodeList(Me, listNode, "descendant::reference | descendant::interface", Me)
             SortNodeList(listNode)
 
             listbox.DataSource = listNode
@@ -219,10 +226,10 @@ Public Class XmlImportView
                     Me.Updated = True
                     Return True
                 Else
-                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
+                    MsgBox("Sorry can't paste node '" + component.NodeName + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
                 End If
             Else
-                MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
+                MsgBox("Sorry can't paste node '" + component.NodeName + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
             End If
         Catch ex As Exception
             Throw ex
@@ -315,7 +322,7 @@ Public Class XmlImportView
                     InitBindingListReferences(list, True)
                     Me.Updated = True
                 Else
-                    MsgBox("Sorry can't duplicate " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Duplicate' command")
+                    MsgBox("Sorry can't duplicate node '" + component.NodeName + "' !", MsgBoxStyle.Exclamation, "'Duplicate' command")
                 End If
             End If
         Catch ex As Exception
