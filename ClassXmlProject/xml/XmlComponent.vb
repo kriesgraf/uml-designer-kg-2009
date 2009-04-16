@@ -477,26 +477,29 @@ Public Class XmlComponent
     End Function
 
     Protected Function CreateElement(ByVal name As String) As XmlNode
+        If Me.Document Is Nothing Then
+            Throw New Exception("Document property is not initialize to process element creation in component " + Me.ToString())
+        End If
         Return Me.Document.CreateNode(XmlNodeType.Element, name, "")
     End Function
 
     Protected Friend Overridable Function CreateNode(ByVal name As String) As XmlNode
         If Me.Document Is Nothing Then
-            Throw New Exception("Property m_xmlDocument is null in component " + Me.ToString())
+            Throw New Exception("Document property is not initialize to process node creation in component " + Me.ToString())
         End If
         Return CreateElement(name)
     End Function
 
     Protected Friend Overridable Function CreateTextNode(ByVal Text As String) As XmlText
         If Me.Document Is Nothing Then
-            Throw New Exception("Property m_xmlDocument is null in component " + Me.ToString())
+            Throw New Exception("Document property is not initialize to process text node creation in component " + Me.ToString())
         End If
         Return Me.Document.CreateTextNode(Text)
     End Function
 
     Protected Friend Overridable Function CreateAttribute(ByVal name As String) As XmlAttribute
         If Me.Document Is Nothing Then
-            Throw New Exception("Property m_xmlDocument is null in component " + Me.ToString())
+            Throw New Exception("Document property is not initialize to process atribute creation in component " + Me.ToString())
         End If
         Return Me.Document.CreateAttribute(name)
     End Function
@@ -755,7 +758,7 @@ Public Class XmlComponent
             Then
                 clone = Me.Document.ImportNode(component.Node, True)
             Else
-                Throw New Exception("Document property is not initialize to process node duplication")
+                Throw New Exception("Document property is not initialize to process node duplication in component " + Me.ToString())
             End If
             xmlResult = XmlNodeManager.GetInstance().CreateDocument(clone)
 
@@ -768,7 +771,16 @@ Public Class XmlComponent
     Protected Overloads Function CreateDocument(ByVal strNodeName As String, Optional ByVal docXml As XmlDocument = Nothing, Optional ByVal bLoadChildren As Boolean = False) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
         Try
-            xmlResult = XmlNodeManager.GetInstance().CreateDocument(strNodeName, docXml, bLoadChildren)
+            Dim source As XmlDocument = docXml
+            If source Is Nothing Then
+                If Me.Document Is Nothing Then
+                    Throw New Exception("Document property is not initialize to process '" + strNodeName + "' component creation in component " + Me.ToString())
+                Else
+                    source = Me.Document
+                End If
+            End If
+
+            xmlResult = XmlNodeManager.GetInstance().CreateDocument(strNodeName, source, bLoadChildren)
         Catch ex As Exception
             Throw (ex)
         End Try
