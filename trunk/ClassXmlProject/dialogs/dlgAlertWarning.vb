@@ -4,7 +4,7 @@ Imports Microsoft.VisualBasic
 Public Class dlgAlertWarning
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         If Me.chkConfirm.Checked = False Then
-            MsgBox("Have you read the warning message and check to agree operation ?", MsgBoxStyle.Exclamation)
+            MsgBox("Have you read the warning message and check to agree operation ?", MsgBoxStyle.Exclamation, "Warning")
         Else
             Me.DialogResult = DialogResult.OK
             Me.Close()

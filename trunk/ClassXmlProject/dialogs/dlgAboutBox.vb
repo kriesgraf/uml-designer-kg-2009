@@ -49,6 +49,6 @@ Public NotInheritable Class dlgAboutBox
 
     Private Sub TextBoxDescription_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TextBoxDescription.Click
         Clipboard.SetText(m_strMessage)
-        MsgBox("Message copied in clipboard", MsgBoxStyle.Information)
+        MsgBox("Message copied in clipboard", MsgBoxStyle.Information, "Clipboard")
     End Sub
 End Class

@@ -45,9 +45,9 @@ Public Class dlgDependencies
                 Case "import", "package"
                     If component.SelectNodes(GetQueryListDependencies(component)).Count > 0 _
                     Then
-                        MsgBox("No search at this level!", MsgBoxStyle.Exclamation)
+                        MsgBox("No search at this level!", MsgBoxStyle.Exclamation, "'Dependencies' command")
                     Else
-                        MsgBox("Element empty!", MsgBoxStyle.Information)
+                        MsgBox("Element empty!", MsgBoxStyle.Information, "'Dependencies' command")
                     End If
                     Return False
             End Select

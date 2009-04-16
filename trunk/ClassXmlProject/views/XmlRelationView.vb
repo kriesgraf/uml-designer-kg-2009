@@ -388,7 +388,7 @@ Public Class XmlRelationView
         Try
             If CheckCardinal(xmlParent, cmbCardinal) Then
                 If MsgBox("This operation will remove accessors or container implementation, would you want to continue ?" _
-                          , cstMsgYesNoExclamation) _
+                          , cstMsgYesNoExclamation, "Cardinal") _
                                 = MsgBoxResult.No _
                 Then
                     CancelCardinal(xmlParent, cmbCardinal)

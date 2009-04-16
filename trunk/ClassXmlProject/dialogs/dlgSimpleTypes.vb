@@ -82,7 +82,7 @@ Public Class dlgSimpleTypes
 
     Private Sub DeleteToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteToolStripMenuItem.Click
         Dim row As DataGridViewRow = grdSimpleTypeList.SelectedRows(0)
-        If MsgBox("Please confirm delete '" + row.Cells(0).Value.ToString + "'", cstMsgYesNoQuestion) _
+        If MsgBox("Please confirm delete '" + row.Cells(0).Value.ToString + "'", cstMsgYesNoQuestion, "'Delete' command") _
                  = MsgBoxResult.Yes _
         Then
             grdSimpleTypeList.Rows.Remove(row)

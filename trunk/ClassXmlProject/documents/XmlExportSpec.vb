@@ -117,7 +117,7 @@ Public Class XmlExportSpec
                 If count > 0 Then
                     MsgBox("Reference/Interface " + GetName(child) + " is used by " + CStr(count) + " element(s):" + vbCrLf + strList _
                            + vbCrLf + vbCrLf + "We invite you to apply command 'Search dependencies' on node '" + GetName(child) + "'" + vbCrLf _
-                           + "or use command 'Merge references' on same import file.", vbExclamation)
+                           + "or use command 'Merge references' on same import file.", vbExclamation, "'Remove all' command")
                     bResult = False
                     Exit For
                 End If

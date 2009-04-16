@@ -58,7 +58,7 @@ Public Class XmlDataGridView
             Dim component As XmlComponent = Nothing
 
             If Me.RowCount - Me.SelectedRows.Count - 1 < iRemainRow Then
-                MsgBox(CStr(iRemainRow) + " row(s) must remain in the list", MsgBoxStyle.Critical)
+                MsgBox(CStr(iRemainRow) + " row(s) must remain in the list", MsgBoxStyle.Critical, "'Delete' command")
                 Exit Sub
             End If
 
@@ -114,7 +114,7 @@ Public Class XmlDataGridView
             Dim component As XmlComponent = CType(Me.SelectedItem, XmlComponent)
             If component IsNot Nothing Then
                 If m_xmlBinding.DuplicateOrPasteItem(component) = False Then
-                    MsgBox("Sorry can't dupplicate " + component.NodeName + " '" + component.Name + "'!", MsgBoxStyle.Exclamation)
+                    MsgBox("Sorry can't duplicate " + component.NodeName + " '" + component.Name + "'!", MsgBoxStyle.Exclamation, "'Duplicate' command")
                 End If
             End If
         Catch ex As Exception
@@ -183,7 +183,7 @@ Public Class XmlDataGridView
     Private Sub XmlDataGridView_DataError(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewDataErrorEventArgs) Handles Me.DataError
         If m_bRaiseDataError Then
             If MsgBox(e.Exception.ToString + vbCrLf + vbCrLf + "Please press Cancel if you have notice the reason of this error.", _
-                      cstMsgOkCancelCritical) _
+                      cstMsgOkCancelCritical, "Data error") _
                         = MsgBoxResult.Cancel Then
 
                 m_bRaiseDataError = False

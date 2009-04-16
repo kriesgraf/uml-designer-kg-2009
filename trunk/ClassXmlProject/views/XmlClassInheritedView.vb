@@ -67,7 +67,7 @@ Public Class XmlClassInheritedView
         End Select
         If bResult = False Then
             MsgBox("Inherited class '" + Me.Name + "' is not compatible with current class implementation '" _
-                   + ConvertEnumImplToView(m_xmlClassView.CurrentClassImpl) + "'", MsgBoxStyle.Critical)
+                   + ConvertEnumImplToView(m_xmlClassView.CurrentClassImpl) + "'", MsgBoxStyle.Critical, "Inherited class")
         End If
     End Sub
 

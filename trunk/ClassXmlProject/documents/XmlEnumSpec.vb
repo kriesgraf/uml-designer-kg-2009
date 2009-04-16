@@ -90,8 +90,4 @@ Public Class XmlEnumSpec
         Me.Id = GenerateNumericId(Me.Node.ParentNode, "enumvalue", strPrefix, "id")
         Me.Name = cstInitialName + AfterStr(Me.Id, strPrefix)
     End Sub
-
-    Protected Friend Function CheckName() As Boolean
-        Return (Me.Name <> cstInitialName)
-    End Function
 End Class

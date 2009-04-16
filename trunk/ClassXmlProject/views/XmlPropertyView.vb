@@ -56,7 +56,7 @@ Public Class XmlPropertyView
         Then
             If CType(cmbGet.SelectedItem, String) = "no" And CType(cmbSet.SelectedItem, String) = "no" _
             Then
-                MsgBox("Please choose an 'Attribute range' or a getter and/or setter", MsgBoxStyle.Critical)
+                MsgBox("Please choose an 'Attribute range' or a getter and/or setter", MsgBoxStyle.Critical, "Property parameters")
                 Return False
             End If
         End If
