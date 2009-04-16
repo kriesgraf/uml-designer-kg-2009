@@ -219,4 +219,8 @@ Public Class dlgImport
     Private Sub txtParam_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtParam.Validated
         m_xmlView.InitBindingListReferences(lsbReferences, True)
     End Sub
+
+    Private Sub mnuRenamePackage_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuRenamePackage.Click
+        m_xmlView.RenamePackage(lsbReferences)
+    End Sub
 End Class

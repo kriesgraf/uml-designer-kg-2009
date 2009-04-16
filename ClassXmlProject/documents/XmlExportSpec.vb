@@ -75,7 +75,9 @@ Public Class XmlExportSpec
             Select Case nodeXml.Name
                 Case "reference", "interface"
                     Return Me.Node.AppendChild(nodeXml)
+
                 Case Else
+                    ' replace export node children only
                     Dim list As XmlNodeList = nodeXml.SelectNodes("descendant::reference | descendant::interface")
                     If interf IsNot Nothing Then
                         interf.Minimum = 0

@@ -242,6 +242,12 @@
     <Compile Include="dialogs\dlgRelationParent.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="dialogs\dlgRenameNode.Designer.vb">
+      <DependentUpon>dlgRenameNode.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgRenameNode.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="dialogs\dlgSimpleTypes.Designer.vb">
       <DependentUpon>dlgSimpleTypes.vb</DependentUpon>
     </Compile>
@@ -514,6 +520,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\dlgRelationParent.resx">
       <DependentUpon>dlgRelationParent.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgRenameNode.resx">
+      <DependentUpon>dlgRenameNode.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\dlgSimpleTypes.resx">
