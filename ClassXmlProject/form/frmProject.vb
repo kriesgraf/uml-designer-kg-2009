@@ -434,7 +434,9 @@ Public Class frmProject
         End Try
     End Sub
 
-    Private Sub mnuPackageMoveUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuPackageMoveUp.Click
+    Private Sub mnuPackageMoveUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+                Handles mnuPackageMoveUp.Click, _
+                mnuImportMoveUp.Click
         Try
             With lvwProjectMembers
                 If m_xmlProject.MoveUpNode(CType(.Binding.Parent, XmlProjectMemberView), CType(.SelectedItem, XmlComponent)) Then

@@ -121,7 +121,10 @@ Public Class XmlBindingDataListView
         Debug.Print("XmlBindingDataListView.CanDropItem")
         Dim interf As InterfListViewNotifier = TryCast(parent.Tag, InterfListViewNotifier)
         If interf IsNot Nothing Then
-            Return interf.CanDropItem(TryCast(child.Tag, XmlComponent))
+            Dim component As XmlComponent = TryCast(child.Tag, XmlComponent)
+            If interf.CanDropItem(component) Then
+                Return True
+            End If
         End If
         Return False
     End Function
@@ -130,10 +133,13 @@ Public Class XmlBindingDataListView
         Debug.Print("XmlBindingDataListView.DropItem")
         Dim interf As InterfListViewNotifier = TryCast(parent.Tag, InterfListViewNotifier)
         If interf IsNot Nothing Then
-            If interf.CanDropItem(TryCast(child.Tag, XmlComponent), False) Then
+            Dim component As XmlComponent = TryCast(child.Tag, XmlComponent)
+            If interf.CanDropItem(component, False) Then
                 m_xmlRootNode.Updated = True
                 ResetBindings(True)
                 Return True
+            Else
+                MsgBox("Sorry can't drop node '" + component.NodeName + "'!", MsgBoxStyle.Exclamation, "'Drop' command")
             End If
         End If
         Return False

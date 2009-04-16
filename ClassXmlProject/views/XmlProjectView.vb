@@ -513,7 +513,7 @@ Public Class XmlProjectView
     Public Function MoveUpNode(ByVal parent As XmlProjectMemberView, ByVal child As XmlComponent) As Boolean
         If parent IsNot Nothing And child IsNot Nothing Then
             Select Case child.NodeName
-                Case "package", "class", "import"
+                Case "package", "class", "import", "reference", "interface"
                     If parent.MoveUpComponent(child) Then
                         m_Control.Binding.ResetBindings(True)
                         Me.Updated = True

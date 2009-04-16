@@ -292,10 +292,13 @@ Public Class XmlBindingDataGridView
     Public Function CanDropItem(ByVal before As Object, ByVal component As Object) As Boolean
         Dim interf As InterfGridViewNotifier = TryCast(before, InterfGridViewNotifier)
         If interf IsNot Nothing Then
-            If interf.CanDropItem(CType(component, XmlComponent)) Then
+            Dim xmlcpnt As XmlComponent = CType(component, XmlComponent)
+            If interf.CanDropItem(xmlcpnt) Then
                 m_xmlParentNode.Updated = True
                 ResetBindings(True)
                 Return True
+            Else
+                MsgBox("Sorry can't drop node '" + xmlcpnt.NodeName + "'!", MsgBoxStyle.Exclamation, "'Drop' command")
             End If
         End If
         Return False
@@ -405,10 +408,10 @@ Public Class XmlBindingDataGridView
                     If DuplicateOrPasteItem(component, bCopy, bImportData) Then
                         bResult = True
                     Else
-                        MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
+                        MsgBox("Sorry can't paste node '" + component.NodeName + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
                     End If
                 Else
-                    MsgBox("Sorry can't paste " + component.NodeName + " '" + component.Name + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
+                    MsgBox("Sorry can't paste node '" + component.NodeName + "' !", MsgBoxStyle.Exclamation, "'Paste' command")
                 End If
             End If
         Catch ex As Exception

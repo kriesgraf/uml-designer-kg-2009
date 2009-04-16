@@ -4,6 +4,7 @@ Imports System.Windows.Forms
 Imports System.Xml
 Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.UmlNodesManager
 Imports ClassXmlProject.XmlNodeListView
 Imports Microsoft.VisualBasic
 
@@ -241,17 +242,43 @@ Public Class XmlProjectMemberView
         Select Case Me.NodeName
             Case "relationship"
                 bResult = False
+
             Case "class"
                 bResult = False
+
             Case "import"
                 Dim xmlcpnt As XmlImportSpec = CreateDocument(Me.Node)
                 xmlcpnt.Tag = Me.Tag
                 bResult = xmlcpnt.CanDropItem(child)
         End Select
         If bResult And bCheckOnly = False Then
-            DropAppendComponent(child)
+            bResult = DropAppendComponent(child)
         End If
         Return bResult
+    End Function
+
+    Public Overrides Function DropAppendComponent(ByVal child As XmlComponent) As Boolean
+        Dim parent As XmlComposite = CType(CreateDocument(Me.Node), XmlComposite)
+        Select Case parent.NodeName
+            Case "import"
+                Select Case child.NodeName
+                    Case "class"
+                        If MsgBox("This operation is irreversible, would you want to continue ?" _
+                                  , cstMsgYesNoExclamation, "Convert class as reference/interface node") _
+                                        = MsgBoxResult.Yes _
+                        Then
+                            Return ExportClassAndRemove(parent, child)
+                        End If
+
+                    Case Else
+                        Return parent.DropAppendComponent(child)
+                End Select
+
+            Case "package"
+                Return parent.DropAppendComponent(child)
+        End Select
+
+        Return False
     End Function
 
     Public Overrides Function CanPasteItem(ByVal child As XmlComponent) As Boolean
@@ -495,16 +522,22 @@ Public Class XmlProjectMemberView
 
     Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
         Try
-            Me.Node.RemoveChild(child.Node)
-            Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
-            parent.Tag = Me.Tag
+            'Not necessary to remove node, command Append will do it for us
+            Dim member As XmlComposite = CreateDocument(Me.Node)
+            Select Case member.NodeName
+                Case "import"
+                    Return CType(member, XmlImportSpec).MoveUpComponent(child)
 
-            parent.AppendComponent(child)
-            Return True
+                Case Else
+                    Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
+                    parent.Tag = Me.Tag
+                    Return (parent.AppendComponent(child) IsNot Nothing)
+            End Select
 
         Catch ex As Exception
             Throw ex
         End Try
+        Return False
     End Function
 
     Protected Friend Overrides Function RemoveMe() As Boolean
@@ -575,6 +608,15 @@ Public Class XmlProjectMemberView
                 End If
         End Select
         Return iResult
+    End Function
+
+    Public Function ExportClassAndRemove(ByVal parent As XmlComponent, ByVal child As XmlComponent) As Boolean
+        Dim strPackage As String = GetFullpathPackage(child.Node, Me.Tag)
+        Dim fragment As XmlDocumentFragment = Me.Document.CreateDocumentFragment()
+        fragment.InnerXml = ExportElementClass(child.Node, strPackage)
+        parent.AppendNode(fragment.FirstChild)
+        child.RemoveMe()
+        Return True
     End Function
 #End Region
 End Class

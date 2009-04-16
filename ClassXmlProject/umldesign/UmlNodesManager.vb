@@ -194,8 +194,9 @@ Public Class UmlNodesManager
             strXML = cstXmlFileHeader
             strXML += GetDtdDeclaration("export")
             strXML += vbCrLf + "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>" + vbCrLf
-            strXML += vbCrLf + ExportElementClass(observer, node, "")    ' Increment observer
+            strXML += vbCrLf + ExportElementClass(node, "")
             strXML += vbCrLf + "</export>"
+            observer.Increment(1)
 
             source.LoadXml(strXML)
             observer.Increment(1)
@@ -256,7 +257,6 @@ Public Class UmlNodesManager
             observer.ProgressBarVisible = False
         End Try
     End Sub
-
 
     Public Shared Sub ExportPackageReferences(ByVal fen As Form, ByVal node As XmlNode, ByVal strFilename As String, _
                                               ByVal strFullpathPackage As String, ByVal eLang As ELanguage)
@@ -409,7 +409,9 @@ Public Class UmlNodesManager
             Select Case node.Name
                 Case "class"
                     observer.Maximum = 2
-                    strXML += vbCrLf + ExportElementClass(observer, node, "")
+                    strXML += vbCrLf + ExportElementClass(node, "")
+                    observer.Increment(1)
+
                 Case "package"
                     observer.Maximum = 1 + node.SelectNodes("descendant::package | descendant::class").Count
                     strXML += vbCrLf + ExportElementPackage(observer, node, "", eLang)
@@ -455,71 +457,13 @@ Public Class UmlNodesManager
             End If
 
                 For Each current As XmlNode In node.SelectNodes("class | package")
-                    If current.Name = "class" Then
-                        strXML += vbCrLf + ExportElementClass(observer, current, strCurrentPackage)
-                    Else
-                        strXML += vbCrLf + ExportElementPackage(observer, current, strCurrentPackage, eLang)
-                    End If
+                If current.Name = "class" Then
+                    strXML += vbCrLf + ExportElementClass(current, strCurrentPackage)
+                    observer.Increment(1)
+                Else
+                    strXML += vbCrLf + ExportElementPackage(observer, current, strCurrentPackage, eLang)
+                End If
                 Next current
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return strXML
-    End Function
-
-    Private Shared Function ExportElementClass(ByVal observer As InterfProgression, ByVal node As XmlNode, ByVal strCurrentPackage As String) As String
-
-        Dim strXML As String = ""
-
-        Try
-            observer.Increment(1)
-
-            Dim strImplementation As String = GetAttributeValue(node, "implementation")
-            Dim strName As String = GetName(node)
-
-            Debug.Print("Name:=" + strName + " - " + strImplementation)
-
-            Select Case strImplementation
-                Case "simple", "final", "exception", "container"
-                    strXML += "<reference name='" + GetName(node) + "' type='class'"
-
-                    If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
-
-                    Dim iContainer = node.SelectNodes("model").Count
-                    strXML += " container='" + CStr(iContainer) + "' id='" + GetID(node) + "'/>"
-
-                Case Else
-                    strXML += "<interface name='" + GetName(node) + "'"
-                    If strImplementation <> "abstract" Then
-                        strXML += " root='yes'"
-                    Else
-                        strXML += " root='no'"
-                    End If
-                    If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
-                    strXML += " id='" + GetID(node) + "'>"
-
-                    Dim myList As New ArrayList
-
-                    Dim iteration As Integer = 0
-                    Dim eImplementation As EImplementation = ConvertDtdToEnumImpl(strImplementation)
-                    SelectInheritedProperties(iteration, eImplementation, node, myList)
-
-                    iteration = 0
-                    SelectInheritedMethods(iteration, eImplementation, node, myList)
-
-                    For Each member As XmlOverrideMemberView In myList
-                        ExportElementClassMember(strXML, member)
-                    Next
-
-                    strXML += vbCrLf + "</interface>"
-            End Select
-
-            Dim list As XmlNodeList = SelectNodes(node, "typedef[variable/@range='public']")
-
-            For Each typedef As XmlNode In list
-                strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
-            Next typedef
-
         Catch ex As Exception
             Throw ex
         End Try
@@ -822,6 +766,123 @@ Public Class UmlNodesManager
         End Try
     End Sub
 
+    Public Shared Function ExportElementClass(ByVal node As XmlNode, ByVal strCurrentPackage As String) As String
+
+        Dim strXML As String = ""
+
+        Try
+            Dim strImplementation As String = GetAttributeValue(node, "implementation")
+            Dim strName As String = GetName(node)
+
+            Debug.Print("Name:=" + strName + " - " + strImplementation)
+
+            Select Case strImplementation
+                Case "simple", "final", "exception", "container"
+                    strXML += "<reference name='" + GetName(node) + "' type='class'"
+
+                    If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
+
+                    Dim iContainer = node.SelectNodes("model").Count
+                    strXML += " container='" + CStr(iContainer) + "' id='" + GetID(node) + "'/>"
+
+                Case Else
+                    strXML += "<interface name='" + GetName(node) + "'"
+                    If strImplementation <> "abstract" Then
+                        strXML += " root='yes'"
+                    Else
+                        strXML += " root='no'"
+                    End If
+                    If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
+                    strXML += " id='" + GetID(node) + "'>"
+
+                    Dim myList As New ArrayList
+
+                    Dim iteration As Integer = 0
+                    Dim eImplementation As EImplementation = ConvertDtdToEnumImpl(strImplementation)
+                    SelectInheritedProperties(iteration, eImplementation, node, myList)
+
+                    iteration = 0
+                    SelectInheritedMethods(iteration, eImplementation, node, myList)
+
+                    For Each member As XmlOverrideMemberView In myList
+                        ExportElementClassMember(strXML, member)
+                    Next
+
+                    strXML += vbCrLf + "</interface>"
+            End Select
+
+            Dim list As XmlNodeList = SelectNodes(node, "typedef[variable/@range='public']")
+
+            For Each typedef As XmlNode In list
+                strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
+            Next typedef
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strXML
+    End Function
+
+    Public Shared Function ComputeRelativePath(ByVal strRootPath As String, _
+                                               ByVal strCurrentPath As String) As String
+
+        Dim strRelative As String = strCurrentPath
+        Try
+            If strCurrentPath.StartsWith(strRootPath) Then
+                strRelative = strCurrentPath.Substring(strRootPath.Length)
+                If strRelative.StartsWith(Path.DirectorySeparatorChar.ToString) Then
+                    strRelative = strRelative.Substring(1)
+                End If
+            Else
+                Dim strDisk As String = ""
+                Dim i As Integer = InStr(strRootPath, Path.VolumeSeparatorChar)
+                If i > 0 Then
+                    strDisk = Left(strRootPath, i - 1)
+                Else
+                    i = InStr(strRootPath, "\\")    ' TODO: convet to special constant
+                    If i > 0 Then
+                        strDisk = Left(strRootPath, InStr(i + 2, strRootPath, Path.DirectorySeparatorChar) - 1)
+                    End If
+                End If
+                If Left(strCurrentPath, strDisk.Length) = strDisk _
+                Then
+                    strRelative = GetRelativePath(strRootPath.Substring(strDisk.Length), strCurrentPath.Substring(strDisk.Length))
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strRelative
+    End Function
+
+    Public Shared Function GetRelativePath(ByVal strRoot As String, ByVal strFinal As String) As String
+
+        Dim reg As New RegularExpressions.Regex("\" + Path.DirectorySeparatorChar, RegularExpressions.RegexOptions.Compiled)
+        Dim splitRoot As String() = reg.Split(strRoot)
+        Dim splitFinal As String() = reg.Split(strFinal)
+        Dim result As String = ""
+        Dim indexF As Integer = 0
+        ' First seek path difference
+        While indexF < splitRoot.Length And indexF < splitFinal.Length
+            If splitFinal(indexF) <> splitRoot(indexF) Then
+                Exit While
+            End If
+            indexF += 1
+        End While
+        ' Complete path with ".."
+        Dim indexR As Integer = indexF
+        While indexR < splitRoot.Length
+            result += ".." + Path.DirectorySeparatorChar
+            indexR += 1
+        End While
+        ' Complete final path
+        While indexF < splitFinal.Length
+            result += splitFinal(indexF) + Path.DirectorySeparatorChar
+            indexF += 1
+        End While
+        Return result
+    End Function
+
     Private Shared Sub RenumberElement(ByRef node As XmlNode, ByVal index As Integer, ByVal Prefix As String)
         Try
             Dim szOldID As String = GetID(node)
@@ -1079,66 +1140,6 @@ Public Class UmlNodesManager
             Throw ex
         End Try
         Return strResult
-    End Function
-
-    Public Shared Function ComputeRelativePath(ByVal strRootPath As String, _
-                                               ByVal strCurrentPath As String) As String
-
-        Dim strRelative As String = strCurrentPath
-        Try
-            If strCurrentPath.StartsWith(strRootPath) Then
-                strRelative = strCurrentPath.Substring(strRootPath.Length)
-                If strRelative.StartsWith(Path.DirectorySeparatorChar.ToString) Then
-                    strRelative = strRelative.Substring(1)
-                End If
-            Else
-                Dim strDisk As String = ""
-                Dim i As Integer = InStr(strRootPath, Path.VolumeSeparatorChar)
-                If i > 0 Then
-                    strDisk = Left(strRootPath, i - 1)
-                Else
-                    i = InStr(strRootPath, "\\")    ' TODO: convet to special constant
-                    If i > 0 Then
-                        strDisk = Left(strRootPath, InStr(i + 2, strRootPath, Path.DirectorySeparatorChar) - 1)
-                    End If
-                End If
-                If Left(strCurrentPath, strDisk.Length) = strDisk _
-                Then
-                    strRelative = GetRelativePath(strRootPath.Substring(strDisk.Length), strCurrentPath.Substring(strDisk.Length))
-                End If
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return strRelative
-    End Function
-
-    Public Shared Function GetRelativePath(ByVal strRoot As String, ByVal strFinal As String) As String
-
-        Dim reg As New RegularExpressions.Regex("\" + Path.DirectorySeparatorChar, RegularExpressions.RegexOptions.Compiled)
-        Dim splitRoot As String() = reg.Split(strRoot)
-        Dim splitFinal As String() = reg.Split(strFinal)
-        Dim result As String = ""
-        Dim indexF As Integer = 0
-        ' First seek path difference
-        While indexF < splitRoot.Length And indexF < splitFinal.Length
-            If splitFinal(indexF) <> splitRoot(indexF) Then
-                Exit While
-            End If
-            indexF += 1
-        End While
-        ' Complete path with ".."
-        Dim indexR As Integer = indexF
-        While indexR < splitRoot.Length
-            result += ".." + Path.DirectorySeparatorChar
-            indexR += 1
-        End While
-        ' Complete final path
-        While indexF < splitFinal.Length
-            result += splitFinal(indexF) + Path.DirectorySeparatorChar
-            indexF += 1
-        End While
-        Return result
     End Function
 
 End Class
