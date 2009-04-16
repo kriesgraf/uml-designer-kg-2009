@@ -45,7 +45,7 @@ Public Class dlgRedundancy
                                             Optional ByVal bDisplayEmptyList As Boolean = True, _
                                             Optional ByVal bListToCheck As Boolean = False) As EResult
         If bDisplayEmptyList = False Then
-            If XmlNodeListView.GetListReferences(projectNode, child, Nothing) = False Then
+            If XmlNodeListView.GetListRedundancies(projectNode, child, Nothing) = False Then
                 Return EResult.RedundancyIgnored
             End If
         End If
