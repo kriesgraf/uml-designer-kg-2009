@@ -34,6 +34,11 @@ Public Class XmlProjectTools
     Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
     Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xsl"
 
+    Public Shared regVariableName As Regex = New Regex("^[a-zA-Z_][a-zA-Z0-9_]{0,}$")
+    Public Shared regVbAndJavaPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\.){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
+    Public Shared regCppPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\:\:){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
+    Public Shared regCppHeader As Regex = New Regex("^([a-zA-Z0-9_]{1,}(\/|\\)){0,}[a-zA-Z0-9_]{1,}(|\.h|\.hpp)$")
+
     Public Enum EResult
         Completed
         Failed
@@ -1709,6 +1714,111 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
+
+    Public Shared Function IsInvalidProjectName(ByRef name As TextBox, ByVal provider As ErrorProvider, ByVal eLang As ELanguage) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim strErrorMsg As String = "No error"
+
+            If eLang = ELanguage.Language_Vbasic _
+            Then
+                If regVbAndJavaPackage.IsMatch(name.Text) = False _
+                Then
+                    strErrorMsg = "Must contains characters compliant with project name"
+                    bResult = True
+                End If
+
+            ElseIf eLang = ELanguage.Language_Java _
+            Then
+                bResult = False
+
+            ElseIf regCppPackage.IsMatch(name.Text) = False _
+            Then
+                strErrorMsg = "Must contains characters compliant with project name"
+                bResult = True
+            End If
+
+            If bResult = True Then
+                name.Select(0, name.Text.Length)
+                ' Set the ErrorProvider error with the text to display. 
+                provider.SetError(name, strErrorMsg)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Shared Function IsInvalidPackageName(ByRef name As TextBox, ByVal provider As ErrorProvider, ByVal eLang As ELanguage) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim strErrorMsg As String = "No error"
+
+            If eLang = ELanguage.Language_Vbasic _
+            Then
+                If regVbAndJavaPackage.IsMatch(name.Text) = False _
+                Then
+                    strErrorMsg = "Must contains characters compliant with namespace:" + vbCrLf + _
+                                  "name1.name2.name3"
+                    bResult = True
+                End If
+
+            ElseIf eLang = ELanguage.Language_Java _
+            Then
+                If regVbAndJavaPackage.IsMatch(name.Text) = False _
+                Then
+                    strErrorMsg = "Must contains characters compliant with package name:" + vbCrLf + _
+                                  "name1.name2.name3"
+                    bResult = True
+                End If
+
+            ElseIf regCppHeader.IsMatch(name.Text) = True _
+            Then
+                bResult = False
+
+            ElseIf regCppPackage.IsMatch(name.Text) = False _
+            Then
+                strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
+                              "name1::name2::name3" + vbCrLf + _
+                              "name.h or name.hpp" + vbCrLf + _
+                              "include/name1/name2.h  or include\name1\name2.h"
+                bResult = True
+            End If
+
+            If bResult = True Then
+                name.Select(0, name.Text.Length)
+                ' Set the ErrorProvider error with the text to display. 
+                provider.SetError(name, strErrorMsg)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Shared Function IsInvalidVariableName(ByRef name As TextBox, ByVal provider As ErrorProvider) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            If name.Text.Length = 0 _
+            Then
+                bResult = True
+
+            ElseIf regVariableName.IsMatch(name.Text) = False _
+            Then
+                bResult = True
+            End If
+
+            If bResult = True Then
+                name.Select(0, name.Text.Length)
+
+                ' Set the ErrorProvider error with the text to display. 
+                provider.SetError(name, "Must contains characters compliant with variable, function, or class name")
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
 
     Public Shared Function GetValidFilename(ByRef filename As String) As Boolean
         Dim bResult As Boolean = False
