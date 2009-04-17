@@ -19,33 +19,38 @@ Partial Class dlgTypedef
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
-        Me.OK_Button = New System.Windows.Forms.Button
+        Me.btnDelete = New System.Windows.Forms.Button
         Me.Cancel_Button = New System.Windows.Forms.Button
+        Me.OK_Button = New System.Windows.Forms.Button
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
         Me.txtBrief = New System.Windows.Forms.TextBox
-        Me.txtName = New System.Windows.Forms.TextBox
         Me.cmdType = New System.Windows.Forms.Button
+        Me.txtName = New System.Windows.Forms.TextBox
         Me.cmbRange = New System.Windows.Forms.ComboBox
         Me.Label3 = New System.Windows.Forms.Label
         Me.Label4 = New System.Windows.Forms.Label
-        Me.btnDelete = New System.Windows.Forms.Button
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
         '
-        Me.TableLayoutPanel1.ColumnCount = 3
+        Me.TableLayoutPanel1.CausesValidation = False
+        Me.TableLayoutPanel1.ColumnCount = 4
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 79.78436!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.21563!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 73.0!))
-        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
-        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.81279!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 61.18721!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 87.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 3, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 2, 0)
         Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 123)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
@@ -54,24 +59,35 @@ Partial Class dlgTypedef
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(445, 29)
         Me.TableLayoutPanel1.TabIndex = 0
         '
-        'OK_Button
+        'btnDelete
         '
-        Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(300, 3)
-        Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(67, 23)
-        Me.OK_Button.TabIndex = 0
-        Me.OK_Button.Text = "OK"
+        Me.btnDelete.CausesValidation = False
+        Me.btnDelete.Location = New System.Drawing.Point(3, 3)
+        Me.btnDelete.Name = "btnDelete"
+        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
+        Me.btnDelete.TabIndex = 2
+        Me.btnDelete.Text = "Delete"
+        Me.btnDelete.UseVisualStyleBackColor = True
         '
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(374, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(373, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
         Me.Cancel_Button.Text = "Cancel"
+        '
+        'OK_Button
+        '
+        Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.OK_Button.Location = New System.Drawing.Point(292, 3)
+        Me.OK_Button.Name = "OK_Button"
+        Me.OK_Button.Size = New System.Drawing.Size(67, 23)
+        Me.OK_Button.TabIndex = 0
+        Me.OK_Button.Text = "OK"
         '
         'TableLayoutPanel3
         '
@@ -81,8 +97,8 @@ Partial Class dlgTypedef
         Me.TableLayoutPanel3.Controls.Add(Me.Label2, 0, 2)
         Me.TableLayoutPanel3.Controls.Add(Me.Label1, 0, 1)
         Me.TableLayoutPanel3.Controls.Add(Me.txtBrief, 1, 2)
-        Me.TableLayoutPanel3.Controls.Add(Me.txtName, 1, 1)
         Me.TableLayoutPanel3.Controls.Add(Me.cmdType, 1, 0)
+        Me.TableLayoutPanel3.Controls.Add(Me.txtName, 1, 1)
         Me.TableLayoutPanel3.Controls.Add(Me.cmbRange, 1, 3)
         Me.TableLayoutPanel3.Controls.Add(Me.Label3, 0, 3)
         Me.TableLayoutPanel3.Controls.Add(Me.Label4, 0, 0)
@@ -130,16 +146,9 @@ Partial Class dlgTypedef
         Me.txtBrief.Size = New System.Drawing.Size(355, 20)
         Me.txtBrief.TabIndex = 4
         '
-        'txtName
-        '
-        Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtName.Location = New System.Drawing.Point(93, 33)
-        Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(355, 20)
-        Me.txtName.TabIndex = 2
-        '
         'cmdType
         '
+        Me.cmdType.CausesValidation = False
         Me.cmdType.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmdType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.cmdType.Location = New System.Drawing.Point(93, 3)
@@ -148,6 +157,14 @@ Partial Class dlgTypedef
         Me.cmdType.TabIndex = 5
         Me.cmdType.Text = "<Type>"
         Me.cmdType.UseVisualStyleBackColor = True
+        '
+        'txtName
+        '
+        Me.txtName.Dock = System.Windows.Forms.DockStyle.Left
+        Me.txtName.Location = New System.Drawing.Point(93, 33)
+        Me.txtName.Name = "txtName"
+        Me.txtName.Size = New System.Drawing.Size(319, 20)
+        Me.txtName.TabIndex = 2
         '
         'cmbRange
         '
@@ -179,14 +196,9 @@ Partial Class dlgTypedef
         Me.Label4.Text = "Type:"
         Me.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'btnDelete
+        'errorProvider
         '
-        Me.btnDelete.Location = New System.Drawing.Point(3, 3)
-        Me.btnDelete.Name = "btnDelete"
-        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
-        Me.btnDelete.TabIndex = 2
-        Me.btnDelete.Text = "Delete"
-        Me.btnDelete.UseVisualStyleBackColor = True
+        Me.errorProvider.ContainerControl = Me
         '
         'dlgTypedef
         '
@@ -206,6 +218,7 @@ Partial Class dlgTypedef
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel3.ResumeLayout(False)
         Me.TableLayoutPanel3.PerformLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -222,5 +235,6 @@ Partial Class dlgTypedef
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents btnDelete As System.Windows.Forms.Button
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

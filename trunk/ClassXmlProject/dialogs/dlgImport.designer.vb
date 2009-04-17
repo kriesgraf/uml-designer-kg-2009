@@ -42,6 +42,7 @@ Partial Class dlgImport
         Me.NewInterface = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
         Me.EditReference = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuRenamePackage = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuCopy = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPaste = New System.Windows.Forms.ToolStripMenuItem
@@ -60,7 +61,7 @@ Partial Class dlgImport
         Me.RemoveAll = New System.Windows.Forms.ToolStripMenuItem
         Me.txtInterface = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuRenamePackage = New System.Windows.Forms.ToolStripMenuItem
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
@@ -68,11 +69,13 @@ Partial Class dlgImport
         Me.TableLayoutPanel5.SuspendLayout()
         Me.tblDeclaration.SuspendLayout()
         Me.mnuEditReference.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
         '
         Me.TableLayoutPanel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 2
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -97,6 +100,7 @@ Partial Class dlgImport
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
@@ -159,8 +163,9 @@ Partial Class dlgImport
         '
         Me.txtParam.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtParam.Location = New System.Drawing.Point(102, 30)
+        Me.txtParam.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtParam.Name = "txtParam"
-        Me.txtParam.Size = New System.Drawing.Size(258, 20)
+        Me.txtParam.Size = New System.Drawing.Size(241, 20)
         Me.txtParam.TabIndex = 4
         '
         'TableLayoutPanel4
@@ -169,7 +174,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel4, 2)
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65.38461!))
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.61538!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 189.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 192.0!))
         Me.TableLayoutPanel4.Controls.Add(Me.lblVisibility, 1, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.cmbVisibility, 2, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.chkInterface, 0, 0)
@@ -185,9 +190,9 @@ Partial Class dlgImport
         '
         Me.lblVisibility.AutoSize = True
         Me.lblVisibility.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblVisibility.Location = New System.Drawing.Point(112, 0)
+        Me.lblVisibility.Location = New System.Drawing.Point(110, 0)
         Me.lblVisibility.Name = "lblVisibility"
-        Me.lblVisibility.Size = New System.Drawing.Size(52, 23)
+        Me.lblVisibility.Size = New System.Drawing.Size(51, 23)
         Me.lblVisibility.TabIndex = 2
         Me.lblVisibility.Text = "Visibility:"
         Me.lblVisibility.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -196,9 +201,9 @@ Partial Class dlgImport
         '
         Me.cmbVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbVisibility.FormattingEnabled = True
-        Me.cmbVisibility.Location = New System.Drawing.Point(170, 3)
+        Me.cmbVisibility.Location = New System.Drawing.Point(167, 3)
         Me.cmbVisibility.Name = "cmbVisibility"
-        Me.cmbVisibility.Size = New System.Drawing.Size(184, 21)
+        Me.cmbVisibility.Size = New System.Drawing.Size(187, 21)
         Me.cmbVisibility.TabIndex = 5
         '
         'chkInterface
@@ -207,7 +212,7 @@ Partial Class dlgImport
         Me.chkInterface.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chkInterface.Location = New System.Drawing.Point(3, 3)
         Me.chkInterface.Name = "chkInterface"
-        Me.chkInterface.Size = New System.Drawing.Size(103, 17)
+        Me.chkInterface.Size = New System.Drawing.Size(101, 17)
         Me.chkInterface.TabIndex = 6
         Me.chkInterface.Text = "Interface declaration"
         Me.chkInterface.UseVisualStyleBackColor = True
@@ -282,7 +287,7 @@ Partial Class dlgImport
         '
         Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator5, Me.EditReference, Me.mnuRenamePackage, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.mnuImportParameters, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
         Me.mnuEditReference.Name = "ContextMenuStrip1"
-        Me.mnuEditReference.Size = New System.Drawing.Size(189, 342)
+        Me.mnuEditReference.Size = New System.Drawing.Size(189, 320)
         '
         'NewReference
         '
@@ -313,6 +318,12 @@ Partial Class dlgImport
         Me.EditReference.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
         Me.EditReference.Size = New System.Drawing.Size(188, 22)
         Me.EditReference.Text = "Edit..."
+        '
+        'mnuRenamePackage
+        '
+        Me.mnuRenamePackage.Name = "mnuRenamePackage"
+        Me.mnuRenamePackage.Size = New System.Drawing.Size(188, 22)
+        Me.mnuRenamePackage.Text = "Rename package..."
         '
         'ToolStripSeparator3
         '
@@ -429,11 +440,9 @@ Partial Class dlgImport
         Me.txtInterface.Size = New System.Drawing.Size(181, 173)
         Me.txtInterface.TabIndex = 2
         '
-        'mnuRenamePackage
+        'errorProvider
         '
-        Me.mnuRenamePackage.Name = "mnuRenamePackage"
-        Me.mnuRenamePackage.Size = New System.Drawing.Size(188, 22)
-        Me.mnuRenamePackage.Text = "Rename package..."
+        Me.errorProvider.ContainerControl = Me
         '
         'dlgImport
         '
@@ -459,6 +468,7 @@ Partial Class dlgImport
         Me.tblDeclaration.ResumeLayout(False)
         Me.tblDeclaration.PerformLayout()
         Me.mnuEditReference.ResumeLayout(False)
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -503,5 +513,6 @@ Partial Class dlgImport
     Friend WithEvents TableLayoutPanel5 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents pgbLoadImport As System.Windows.Forms.ProgressBar
     Friend WithEvents mnuRenamePackage As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

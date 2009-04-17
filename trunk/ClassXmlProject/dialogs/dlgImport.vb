@@ -1,5 +1,6 @@
 Imports System
 Imports System.Windows.Forms
+Imports ClassXmlProject.XmlProjectTools
 
 Public Class dlgImport
     Implements InterfFormDocument
@@ -135,6 +136,7 @@ Public Class dlgImport
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+        txtParam.CausesValidation = False
         Me.Tag = m_xmlView.Updated
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
@@ -222,5 +224,15 @@ Public Class dlgImport
 
     Private Sub mnuRenamePackage_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuRenamePackage.Click
         m_xmlView.RenamePackage(lsbReferences)
+    End Sub
+
+    Private Sub txtPackage_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) _
+            Handles txtParam.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtPackage_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
+            Handles txtParam.Validating
+        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.Tag)
     End Sub
 End Class

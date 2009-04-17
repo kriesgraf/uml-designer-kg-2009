@@ -101,6 +101,7 @@ Partial Class dlgClass
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel
         Me.chkPartial = New System.Windows.Forms.CheckBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel3.SuspendLayout()
         Me.SplitContainer2.Panel1.SuspendLayout()
         Me.SplitContainer2.Panel2.SuspendLayout()
@@ -131,6 +132,7 @@ Partial Class dlgClass
         Me.mnuMembers.SuspendLayout()
         Me.TableLayoutPanel5.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel3
@@ -188,8 +190,9 @@ Partial Class dlgClass
         '
         Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtName.Location = New System.Drawing.Point(94, 3)
+        Me.txtName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(357, 20)
+        Me.txtName.Size = New System.Drawing.Size(340, 20)
         Me.txtName.TabIndex = 2
         '
         'SplitContainer2
@@ -513,17 +516,18 @@ Partial Class dlgClass
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(246, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(241, 3)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(66, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(65, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(353, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(349, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -531,10 +535,11 @@ Partial Class dlgClass
         '
         'TableLayoutPanel1
         '
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.90058!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.09941!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 140.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 147.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -548,6 +553,7 @@ Partial Class dlgClass
         '
         'btnDelete
         '
+        Me.btnDelete.CausesValidation = False
         Me.btnDelete.Location = New System.Drawing.Point(3, 3)
         Me.btnDelete.Name = "btnDelete"
         Me.btnDelete.Size = New System.Drawing.Size(67, 23)
@@ -944,6 +950,10 @@ Partial Class dlgClass
         Me.chkPartial.Text = "Partial"
         Me.chkPartial.UseVisualStyleBackColor = True
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
         'dlgClass
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -993,6 +1003,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel5.PerformLayout()
         Me.FlowLayoutPanel1.ResumeLayout(False)
         Me.FlowLayoutPanel1.PerformLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1077,5 +1088,6 @@ Partial Class dlgClass
     Friend WithEvents SplitContainer3 As System.Windows.Forms.SplitContainer
     Friend WithEvents TableLayoutPanel2 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents SplitContainer4 As System.Windows.Forms.SplitContainer
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

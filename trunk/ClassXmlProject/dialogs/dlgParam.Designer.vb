@@ -22,6 +22,7 @@ Partial Class dlgParam
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
         Me.Cancel_Button = New System.Windows.Forms.Button
         Me.OK_Button = New System.Windows.Forms.Button
@@ -33,17 +34,20 @@ Partial Class dlgParam
         Me.Label3 = New System.Windows.Forms.Label
         Me.txtName = New System.Windows.Forms.TextBox
         Me.txtComment = New System.Windows.Forms.TextBox
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
         '
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel2.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80.87431!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.12568!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 77.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -58,8 +62,9 @@ Partial Class dlgParam
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(369, 6)
+        Me.Cancel_Button.Location = New System.Drawing.Point(367, 6)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -68,7 +73,7 @@ Partial Class dlgParam
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(298, 6)
+        Me.OK_Button.Location = New System.Drawing.Point(294, 6)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(62, 23)
         Me.OK_Button.TabIndex = 0
@@ -77,6 +82,7 @@ Partial Class dlgParam
         'btnDelete
         '
         Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.CausesValidation = False
         Me.btnDelete.Location = New System.Drawing.Point(3, 6)
         Me.btnDelete.Name = "btnDelete"
         Me.btnDelete.Size = New System.Drawing.Size(67, 23)
@@ -155,8 +161,9 @@ Partial Class dlgParam
         '
         Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtName.Location = New System.Drawing.Point(117, 3)
+        Me.txtName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(328, 20)
+        Me.txtName.Size = New System.Drawing.Size(311, 20)
         Me.txtName.TabIndex = 5
         '
         'txtComment
@@ -166,6 +173,10 @@ Partial Class dlgParam
         Me.txtComment.Name = "txtComment"
         Me.txtComment.Size = New System.Drawing.Size(328, 20)
         Me.txtComment.TabIndex = 6
+        '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
         '
         'dlgParam
         '
@@ -185,6 +196,7 @@ Partial Class dlgParam
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel2.ResumeLayout(False)
         Me.TableLayoutPanel2.PerformLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -199,5 +211,6 @@ Partial Class dlgParam
     Friend WithEvents txtName As System.Windows.Forms.TextBox
     Friend WithEvents txtComment As System.Windows.Forms.TextBox
     Friend WithEvents btnDelete As System.Windows.Forms.Button
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

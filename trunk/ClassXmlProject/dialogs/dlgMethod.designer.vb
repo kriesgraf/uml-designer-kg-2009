@@ -40,7 +40,6 @@ Partial Class dlgMethod
         Me.chkInline = New System.Windows.Forms.CheckBox
         Me.lblBehaviour = New System.Windows.Forms.Label
         Me.cmbBehaviour = New System.Windows.Forms.ComboBox
-        Me.grdParams = New ClassXmlProject.XmlDataGridView
         Me.mnuMembers = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.mnuAddParam = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuAddException = New System.Windows.Forms.ToolStripMenuItem
@@ -63,13 +62,16 @@ Partial Class dlgMethod
         Me.btnDelete = New System.Windows.Forms.Button
         Me.txtComment = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
+        Me.grdParams = New ClassXmlProject.XmlDataGridView
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         Me.FlowLayoutPanel2.SuspendLayout()
-        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuMembers.SuspendLayout()
         Me.FlowLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Label2
@@ -153,6 +155,7 @@ Partial Class dlgMethod
         '
         'btnType
         '
+        Me.btnType.CausesValidation = False
         Me.btnType.Dock = System.Windows.Forms.DockStyle.Fill
         Me.btnType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnType.Location = New System.Drawing.Point(102, 3)
@@ -304,21 +307,6 @@ Partial Class dlgMethod
         Me.cmbBehaviour.Size = New System.Drawing.Size(97, 21)
         Me.cmbBehaviour.TabIndex = 15
         '
-        'grdParams
-        '
-        Me.grdParams.AllowDrop = True
-        Me.grdParams.ColumnDragStart = 0
-        Me.grdParams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.TableLayoutPanel3.SetColumnSpan(Me.grdParams, 2)
-        Me.grdParams.ContextMenuStrip = Me.mnuMembers
-        Me.grdParams.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdParams.Location = New System.Drawing.Point(3, 281)
-        Me.grdParams.Name = "grdParams"
-        Me.grdParams.Size = New System.Drawing.Size(600, 204)
-        Me.grdParams.TabIndex = 15
-        Me.grdParams.Tag = "param"
-        Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
-        '
         'mnuMembers
         '
         Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuAddException, Me.mnuEditParam, Me.ToolStripSeparator1, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator2, Me.mnuDelete})
@@ -420,6 +408,7 @@ Partial Class dlgMethod
         'txtName
         '
         Me.txtName.Location = New System.Drawing.Point(3, 3)
+        Me.txtName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtName.Name = "txtName"
         Me.txtName.Size = New System.Drawing.Size(123, 20)
         Me.txtName.TabIndex = 2
@@ -429,7 +418,7 @@ Partial Class dlgMethod
         Me.chkOperator.AutoSize = True
         Me.chkOperator.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
         Me.chkOperator.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.chkOperator.Location = New System.Drawing.Point(132, 3)
+        Me.chkOperator.Location = New System.Drawing.Point(149, 3)
         Me.chkOperator.Name = "chkOperator"
         Me.chkOperator.Size = New System.Drawing.Size(67, 20)
         Me.chkOperator.TabIndex = 3
@@ -439,18 +428,19 @@ Partial Class dlgMethod
         '
         'txtOperator
         '
-        Me.txtOperator.Location = New System.Drawing.Point(205, 3)
+        Me.txtOperator.Location = New System.Drawing.Point(222, 3)
         Me.txtOperator.Name = "txtOperator"
         Me.txtOperator.Size = New System.Drawing.Size(119, 20)
         Me.txtOperator.TabIndex = 4
         '
         'TableLayoutPanel1
         '
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.55682!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.44318!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 94.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 101.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -465,7 +455,8 @@ Partial Class dlgMethod
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.Location = New System.Drawing.Point(519, 6)
+        Me.Cancel_Button.CausesValidation = False
+        Me.Cancel_Button.Location = New System.Drawing.Point(515, 6)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -474,7 +465,7 @@ Partial Class dlgMethod
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(415, 6)
+        Me.OK_Button.Location = New System.Drawing.Point(409, 6)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 0
@@ -483,6 +474,7 @@ Partial Class dlgMethod
         'btnDelete
         '
         Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.CausesValidation = False
         Me.btnDelete.Location = New System.Drawing.Point(3, 6)
         Me.btnDelete.Name = "btnDelete"
         Me.btnDelete.Size = New System.Drawing.Size(67, 23)
@@ -498,6 +490,25 @@ Partial Class dlgMethod
         Me.txtComment.Name = "txtComment"
         Me.txtComment.Size = New System.Drawing.Size(501, 91)
         Me.txtComment.TabIndex = 18
+        '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
+        'grdParams
+        '
+        Me.grdParams.AllowDrop = True
+        Me.grdParams.ColumnDragStart = 0
+        Me.grdParams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.TableLayoutPanel3.SetColumnSpan(Me.grdParams, 2)
+        Me.grdParams.ContextMenuStrip = Me.mnuMembers
+        Me.grdParams.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdParams.Location = New System.Drawing.Point(3, 281)
+        Me.grdParams.Name = "grdParams"
+        Me.grdParams.Size = New System.Drawing.Size(600, 204)
+        Me.grdParams.TabIndex = 15
+        Me.grdParams.Tag = "param"
+        Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
         '
         'dlgMethod
         '
@@ -516,11 +527,12 @@ Partial Class dlgMethod
         Me.FlowLayoutPanel1.PerformLayout()
         Me.FlowLayoutPanel2.ResumeLayout(False)
         Me.FlowLayoutPanel2.PerformLayout()
-        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuMembers.ResumeLayout(False)
         Me.FlowLayoutPanel3.ResumeLayout(False)
         Me.FlowLayoutPanel3.PerformLayout()
         Me.TableLayoutPanel1.ResumeLayout(False)
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -567,5 +579,6 @@ Partial Class dlgMethod
     Friend WithEvents mnuProperties As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuDelete As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

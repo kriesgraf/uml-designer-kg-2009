@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Forms
 Imports System.Text
 Imports System
+Imports ClassXmlProject.XmlProjectTools
 
 Public Class dlgProjectProperties
     Implements InterfFormDocument
@@ -16,6 +17,7 @@ Public Class dlgProjectProperties
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+        txtName.CausesValidation = False
         Me.Tag = m_xmlView.Updated
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
@@ -95,5 +97,13 @@ Public Class dlgProjectProperties
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
+    End Sub
+
+    Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) Handles txtName.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
+        e.Cancel = IsInvalidProjectName(sender, Me.errorProvider, Me.cmbLanguage.SelectedIndex)
     End Sub
 End Class

@@ -22,6 +22,7 @@ Partial Class dlgProjectProperties
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
         Me.OK_Button = New System.Windows.Forms.Button
         Me.Cancel_Button = New System.Windows.Forms.Button
@@ -40,13 +41,16 @@ Partial Class dlgProjectProperties
         Me.btnPath = New System.Windows.Forms.Button
         Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog
         Me.txtPath = New System.Windows.Forms.TextBox
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
         '
         Me.TableLayoutPanel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 2
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -71,6 +75,7 @@ Partial Class dlgProjectProperties
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
@@ -145,8 +150,9 @@ Partial Class dlgProjectProperties
         '
         Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtName.Location = New System.Drawing.Point(93, 3)
+        Me.txtName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(347, 20)
+        Me.txtName.Size = New System.Drawing.Size(330, 20)
         Me.txtName.TabIndex = 3
         '
         'txtDetails
@@ -238,6 +244,10 @@ Partial Class dlgProjectProperties
         Me.txtPath.TabIndex = 2
         Me.txtPath.Visible = False
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
         'dlgProjectProperties
         '
         Me.AcceptButton = Me.OK_Button
@@ -258,6 +268,7 @@ Partial Class dlgProjectProperties
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel2.ResumeLayout(False)
         Me.TableLayoutPanel2.PerformLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -280,5 +291,6 @@ Partial Class dlgProjectProperties
     Friend WithEvents FolderBrowserDialog1 As System.Windows.Forms.FolderBrowserDialog
     Friend WithEvents lblPath As System.Windows.Forms.Label
     Friend WithEvents txtPath As System.Windows.Forms.TextBox
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

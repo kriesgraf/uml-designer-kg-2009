@@ -48,12 +48,14 @@ Partial Class dlgStructure
         Me.mnuProperties = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuDeleteElement = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
         Me.TableLayoutPanel1.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         CType(Me.grdElements, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuElements.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ToolStripSeparator1
@@ -71,11 +73,12 @@ Partial Class dlgStructure
         '
         'TableLayoutPanel1
         '
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.94931!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.05069!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 87.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -90,8 +93,9 @@ Partial Class dlgStructure
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(434, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(432, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -100,7 +104,7 @@ Partial Class dlgStructure
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(357, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(353, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(66, 23)
         Me.OK_Button.TabIndex = 0
@@ -108,6 +112,7 @@ Partial Class dlgStructure
         '
         'btnDelete
         '
+        Me.btnDelete.CausesValidation = False
         Me.btnDelete.Location = New System.Drawing.Point(3, 3)
         Me.btnDelete.Name = "btnDelete"
         Me.btnDelete.Size = New System.Drawing.Size(67, 23)
@@ -180,10 +185,10 @@ Partial Class dlgStructure
         '
         'txtName
         '
-        Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtName.Dock = System.Windows.Forms.DockStyle.Left
         Me.txtName.Location = New System.Drawing.Point(69, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(444, 20)
+        Me.txtName.Size = New System.Drawing.Size(389, 20)
         Me.txtName.TabIndex = 4
         '
         'txtBrief
@@ -289,6 +294,10 @@ Partial Class dlgStructure
         Me.mnuDeleteElement.Size = New System.Drawing.Size(168, 22)
         Me.mnuDeleteElement.Text = "Delete"
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
         'dlgStructure
         '
         Me.AcceptButton = Me.OK_Button
@@ -311,6 +320,7 @@ Partial Class dlgStructure
         Me.TableLayoutPanel3.PerformLayout()
         CType(Me.grdElements, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuElements.ResumeLayout(False)
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -338,5 +348,6 @@ Partial Class dlgStructure
     Friend WithEvents mnuDuplicate As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuCopy As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuPaste As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

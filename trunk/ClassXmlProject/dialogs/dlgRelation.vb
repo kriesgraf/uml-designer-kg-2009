@@ -103,6 +103,8 @@ Public Class dlgRelation
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+        txtFatherName.CausesValidation = False
+        txtChildName.CausesValidation = False
         Me.Tag = m_xmlView.Updated
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
@@ -153,5 +155,15 @@ Public Class dlgRelation
     Private Sub cmbFatherLevel_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbFatherLevel.SelectedIndexChanged
         If m_bInit Then Exit Sub
         btnFatherType.Text = m_xmlView.FatherType
+    End Sub
+
+    Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) _
+            Handles txtFatherName.Validated, txtChildName.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
+            Handles txtFatherName.Validating, txtChildName.Validating
+        e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
     End Sub
 End Class

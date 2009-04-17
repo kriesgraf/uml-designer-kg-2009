@@ -257,5 +257,13 @@ Public Class dlgClass
     Private Sub PasteMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PasteMember.Click
         PasteMember.Enabled = Not (gridMembers.PasteItem())
     End Sub
+
+    Private Sub txtName_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtName.Validated
+        Me.errorProvider.SetError(txtName, "")
+    End Sub
+
+    Private Sub txtName_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
+        e.Cancel = IsInvalidVariableName(txtName, errorProvider)
+    End Sub
 #End Region
 End Class
