@@ -78,4 +78,12 @@ Public Class dlgParam
             End If
         End If
     End Sub
+
+    Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) Handles txtName.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
+        e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+    End Sub
 End Class

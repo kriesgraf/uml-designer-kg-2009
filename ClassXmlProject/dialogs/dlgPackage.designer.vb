@@ -51,12 +51,14 @@ Partial Class dlgPackage
         Me.mnuImportNodes = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuUpdateNodes = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuRedundancies = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
         Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuRedundancies = New System.Windows.Forms.ToolStripMenuItem
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
+        Me.btnDelete = New System.Windows.Forms.Button
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -66,28 +68,34 @@ Partial Class dlgPackage
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
         CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
         '
-        Me.TableLayoutPanel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.TableLayoutPanel1.ColumnCount = 2
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
-        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(599, 479)
+        Me.TableLayoutPanel1.CausesValidation = False
+        Me.TableLayoutPanel1.ColumnCount = 4
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.98141!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55.01859!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86.0!))
+        Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 3, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 2, 0)
+        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 479)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(146, 27)
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(742, 27)
         Me.TableLayoutPanel1.TabIndex = 0
         '
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(665, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 21)
         Me.Cancel_Button.TabIndex = 1
@@ -96,7 +104,7 @@ Partial Class dlgPackage
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(3, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(580, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 21)
         Me.OK_Button.TabIndex = 0
@@ -116,10 +124,10 @@ Partial Class dlgPackage
         '
         'txtName
         '
-        Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtName.Dock = System.Windows.Forms.DockStyle.Left
         Me.txtName.Location = New System.Drawing.Point(93, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(646, 20)
+        Me.txtName.Size = New System.Drawing.Size(492, 20)
         Me.txtName.TabIndex = 2
         '
         'Label2
@@ -229,7 +237,7 @@ Partial Class dlgPackage
         '
         Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
         Me.mnuClass.Name = "mnuClass"
-        Me.mnuClass.Size = New System.Drawing.Size(189, 292)
+        Me.mnuClass.Size = New System.Drawing.Size(189, 270)
         '
         'mnuAdd
         '
@@ -346,6 +354,13 @@ Partial Class dlgPackage
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
         Me.ToolStripSeparator1.Size = New System.Drawing.Size(185, 6)
         '
+        'mnuRedundancies
+        '
+        Me.mnuRedundancies.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
+        Me.mnuRedundancies.Name = "mnuRedundancies"
+        Me.mnuRedundancies.Size = New System.Drawing.Size(188, 22)
+        Me.mnuRedundancies.Text = "Remove redundancy..."
+        '
         'mnuDelete
         '
         Me.mnuDelete.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
@@ -398,12 +413,20 @@ Partial Class dlgPackage
         Me.gridClasses.TabIndex = 1
         Me.ToolTip1.SetToolTip(Me.gridClasses, "Click right to update grid")
         '
-        'mnuRedundancies
+        'errorProvider
         '
-        Me.mnuRedundancies.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
-        Me.mnuRedundancies.Name = "mnuRedundancies"
-        Me.mnuRedundancies.Size = New System.Drawing.Size(188, 22)
-        Me.mnuRedundancies.Text = "Remove redundancy..."
+        Me.errorProvider.ContainerControl = Me
+        '
+        'btnDelete
+        '
+        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.CausesValidation = False
+        Me.btnDelete.Location = New System.Drawing.Point(3, 3)
+        Me.btnDelete.Name = "btnDelete"
+        Me.btnDelete.Size = New System.Drawing.Size(67, 21)
+        Me.btnDelete.TabIndex = 3
+        Me.btnDelete.Text = "Delete"
+        Me.btnDelete.UseVisualStyleBackColor = True
         '
         'dlgPackage
         '
@@ -429,6 +452,7 @@ Partial Class dlgPackage
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         Me.SplitContainer1.ResumeLayout(False)
         CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -469,5 +493,7 @@ Partial Class dlgPackage
     Friend WithEvents mnuDependencies As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuRedundancies As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
+    Friend WithEvents btnDelete As System.Windows.Forms.Button
 
 End Class

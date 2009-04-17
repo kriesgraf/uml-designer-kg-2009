@@ -22,9 +22,11 @@ Partial Class dlgContainer
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
-        Me.OK_Button = New System.Windows.Forms.Button
         Me.Cancel_Button = New System.Windows.Forms.Button
+        Me.OK_Button = New System.Windows.Forms.Button
+        Me.btnDelete = New System.Windows.Forms.Button
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
         Me.Label1 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
@@ -52,7 +54,7 @@ Partial Class dlgContainer
         Me.chkIterator = New System.Windows.Forms.CheckBox
         Me.lblIndexLevel = New System.Windows.Forms.Label
         Me.cmbIndexLevel = New System.Windows.Forms.ComboBox
-        Me.btnDelete = New System.Windows.Forms.Button
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.flpRange.SuspendLayout()
@@ -60,15 +62,17 @@ Partial Class dlgContainer
         Me.flpContainer.SuspendLayout()
         Me.FlowLayoutPanel4.SuspendLayout()
         Me.flpIndexLevel.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
         '
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel2.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80.20834!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.79167!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 72.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 77.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -80,24 +84,36 @@ Partial Class dlgContainer
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(457, 34)
         Me.TableLayoutPanel1.TabIndex = 0
         '
+        'Cancel_Button
+        '
+        Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
+        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.Cancel_Button.Location = New System.Drawing.Point(384, 5)
+        Me.Cancel_Button.Name = "Cancel_Button"
+        Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
+        Me.Cancel_Button.TabIndex = 1
+        Me.Cancel_Button.Text = "Cancel"
+        '
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(312, 5)
+        Me.OK_Button.Location = New System.Drawing.Point(308, 5)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
-        'Cancel_Button
+        'btnDelete
         '
-        Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(387, 5)
-        Me.Cancel_Button.Name = "Cancel_Button"
-        Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
-        Me.Cancel_Button.TabIndex = 1
-        Me.Cancel_Button.Text = "Cancel"
+        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.CausesValidation = False
+        Me.btnDelete.Location = New System.Drawing.Point(3, 5)
+        Me.btnDelete.Name = "btnDelete"
+        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
+        Me.btnDelete.TabIndex = 2
+        Me.btnDelete.Text = "Delete"
+        Me.btnDelete.UseVisualStyleBackColor = True
         '
         'TableLayoutPanel2
         '
@@ -171,8 +187,9 @@ Partial Class dlgContainer
         '
         Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtName.Location = New System.Drawing.Point(88, 3)
+        Me.txtName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(372, 20)
+        Me.txtName.Size = New System.Drawing.Size(355, 20)
         Me.txtName.TabIndex = 4
         '
         'txtBrief
@@ -395,15 +412,9 @@ Partial Class dlgContainer
         Me.cmbIndexLevel.Size = New System.Drawing.Size(97, 21)
         Me.cmbIndexLevel.TabIndex = 2
         '
-        'btnDelete
+        'errorProvider
         '
-        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.btnDelete.Location = New System.Drawing.Point(3, 5)
-        Me.btnDelete.Name = "btnDelete"
-        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
-        Me.btnDelete.TabIndex = 2
-        Me.btnDelete.Text = "Delete"
-        Me.btnDelete.UseVisualStyleBackColor = True
+        Me.errorProvider.ContainerControl = Me
         '
         'dlgContainer
         '
@@ -433,6 +444,7 @@ Partial Class dlgContainer
         Me.FlowLayoutPanel4.PerformLayout()
         Me.flpIndexLevel.ResumeLayout(False)
         Me.flpIndexLevel.PerformLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -467,5 +479,6 @@ Partial Class dlgContainer
     Friend WithEvents lblIndexLevel As System.Windows.Forms.Label
     Friend WithEvents cmbIndexLevel As System.Windows.Forms.ComboBox
     Friend WithEvents btnDelete As System.Windows.Forms.Button
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

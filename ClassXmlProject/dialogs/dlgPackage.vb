@@ -1,5 +1,7 @@
 Imports System
 Imports System.Windows.Forms
+Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class dlgPackage
     Implements InterfFormDocument
@@ -45,6 +47,7 @@ Public Class dlgPackage
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+        txtName.CausesValidation = False
         Me.Tag = m_xmlView.Updated
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
@@ -165,5 +168,24 @@ Public Class dlgPackage
             gridClasses.Binding.ResetBindings(True)
         End If
     End Sub
+
+    Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) Handles txtName.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
+        e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+    End Sub
 #End Region
+
+    Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
+        If MsgBox(m_xmlView.Name + " will be deleted, please confirm ?", cstMsgYesNoQuestion, "'Delete' command") _
+            = MsgBoxResult.Yes Then
+            If m_xmlView.RemoveMe() Then
+                Me.Tag = True
+                Me.DialogResult = DialogResult.OK
+                Me.Close()
+            End If
+        End If
+    End Sub
 End Class

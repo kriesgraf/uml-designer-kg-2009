@@ -46,10 +46,13 @@ Partial Class dlgInterface
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.DeleteMember = New System.Windows.Forms.ToolStripMenuItem
         Me.chkRoot = New System.Windows.Forms.CheckBox
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
+        Me.btnDelete = New System.Windows.Forms.Button
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuMembers.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'lblName
@@ -67,16 +70,18 @@ Partial Class dlgInterface
         '
         Me.txtName.Dock = System.Windows.Forms.DockStyle.Top
         Me.txtName.Location = New System.Drawing.Point(54, 3)
+        Me.txtName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(208, 20)
+        Me.txtName.Size = New System.Drawing.Size(191, 20)
         Me.txtName.TabIndex = 4
         '
         'txtPackage
         '
         Me.txtPackage.Dock = System.Windows.Forms.DockStyle.Top
         Me.txtPackage.Location = New System.Drawing.Point(328, 3)
+        Me.txtPackage.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtPackage.Name = "txtPackage"
-        Me.txtPackage.Size = New System.Drawing.Size(209, 20)
+        Me.txtPackage.Size = New System.Drawing.Size(192, 20)
         Me.txtPackage.TabIndex = 9
         '
         'Label1
@@ -93,8 +98,9 @@ Partial Class dlgInterface
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(458, 5)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -103,7 +109,7 @@ Partial Class dlgInterface
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(3, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(367, 5)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 0
@@ -111,17 +117,22 @@ Partial Class dlgInterface
         '
         'TableLayoutPanel1
         '
-        Me.TableLayoutPanel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.TableLayoutPanel1.ColumnCount = 2
+        Me.TableLayoutPanel1.CausesValidation = False
+        Me.TableLayoutPanel1.ColumnCount = 4
+        Me.TableLayoutPanel2.SetColumnSpan(Me.TableLayoutPanel1, 4)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
-        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(391, 206)
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 98.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 84.0!))
+        Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 3, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 2, 0)
+        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 201)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(146, 29)
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(534, 34)
         Me.TableLayoutPanel1.TabIndex = 0
         '
         'TableLayoutPanel2
@@ -135,9 +146,9 @@ Partial Class dlgInterface
         Me.TableLayoutPanel2.Controls.Add(Me.Label1, 2, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.lblName, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.txtName, 1, 0)
-        Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 3, 3)
         Me.TableLayoutPanel2.Controls.Add(Me.gridMembers, 1, 2)
         Me.TableLayoutPanel2.Controls.Add(Me.chkRoot, 1, 1)
+        Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 0, 3)
         Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
@@ -165,7 +176,7 @@ Partial Class dlgInterface
         '
         Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddProperty, Me.AddMethod, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuMemberDependencies, Me.ToolStripSeparator2, Me.DeleteMember})
         Me.mnuMembers.Name = "mnuMembers"
-        Me.mnuMembers.Size = New System.Drawing.Size(227, 242)
+        Me.mnuMembers.Size = New System.Drawing.Size(227, 220)
         '
         'AddProperty
         '
@@ -263,6 +274,20 @@ Partial Class dlgInterface
         Me.chkRoot.Text = "Root class"
         Me.chkRoot.UseVisualStyleBackColor = True
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
+        'btnDelete
+        '
+        Me.btnDelete.CausesValidation = False
+        Me.btnDelete.Location = New System.Drawing.Point(3, 3)
+        Me.btnDelete.Name = "btnDelete"
+        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
+        Me.btnDelete.TabIndex = 3
+        Me.btnDelete.Text = "Delete"
+        Me.btnDelete.UseVisualStyleBackColor = True
+        '
         'dlgInterface
         '
         Me.AcceptButton = Me.OK_Button
@@ -280,6 +305,7 @@ Partial Class dlgInterface
         Me.TableLayoutPanel2.PerformLayout()
         CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuMembers.ResumeLayout(False)
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -306,5 +332,7 @@ Partial Class dlgInterface
     Friend WithEvents DeleteMember As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents gridMembers As ClassXmlProject.XmlDataGridView
     Friend WithEvents chkRoot As System.Windows.Forms.CheckBox
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
+    Friend WithEvents btnDelete As System.Windows.Forms.Button
 
 End Class

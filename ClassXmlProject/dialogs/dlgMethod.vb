@@ -1,4 +1,5 @@
 Imports System
+Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
 Imports Microsoft.VisualBasic
@@ -7,6 +8,9 @@ Public Class dlgMethod
     Implements InterfFormDocument
     Implements InterfFormClass
 
+    Private Shared regOperator As New Regex("^(IsFalse|IsTrue|Not|" + _
+                                            "\+|\+\+|\-|\-\-|\*|\/|\\|\&|\&\&|\||\|\||\%|\^|\>\>|\<\<|\=|\!|\!\=|\<\>|\>|\>\=|\<|\<\=|" + _
+                                            "And|Like|Mod|Or|Xor|CType)$")
 
     Private m_xmlView As XmlMethodView
     Private m_eCurrentClassImplementation As EImplementation = EImplementation.Unknown
@@ -91,6 +95,7 @@ Public Class dlgMethod
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+        txtName.CausesValidation = False
         Me.Tag = m_xmlView.Updated
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
@@ -182,6 +187,38 @@ Public Class dlgMethod
 
     Private Sub mnuDuplicate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDuplicate.Click
         grdParams.DuplicateSelectedItem()
+    End Sub
+
+    Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) Handles txtName.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
+        e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+    End Sub
+
+    Private Sub txtOperator_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) Handles txtOperator.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtOperator_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtOperator.Validating
+        If regOperator.IsMatch(sender.Text) = False _
+        Then
+            If CType(m_xmlView.Tag, ELanguage) = ELanguage.Language_Vbasic _
+            Then
+                Dim errorMsg As String = "Unary: +, -, IsFalse, IsTrue, Not" + vbCrLf _
+                                        + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
+                                        + "Conversion:  CType"
+
+                Me.errorProvider.SetError(sender, errorMsg)
+            Else
+                Dim errorMsg As String = "+, ++, --, -, !, *, /, >>, <<, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
+
+                Me.errorProvider.SetError(sender, errorMsg)
+            End If
+
+            e.Cancel = True
+        End If
     End Sub
 End Class
 

@@ -1,5 +1,7 @@
 ﻿Imports System
 Imports System.Windows.Forms
+Imports ClassXmlProject.XmlProjectTools
+Imports Microsoft.VisualBasic
 
 Public Class dlgInterface
     Implements InterfFormDocument
@@ -32,6 +34,8 @@ Public Class dlgInterface
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
+        txtName.CausesValidation = False
+        txtPackage.CausesValidation = False
         Me.Tag = m_xmlView.Updated
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Close()
@@ -106,5 +110,36 @@ Public Class dlgInterface
 
     Private Sub GridRowValuesChanged(ByVal sender As Object) Handles gridMembers.RowValuesChanged
         ' TODO: for future use
+    End Sub
+
+    Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) _
+            Handles txtName.Validated, txtPackage.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
+    Handles txtName.Validating, txtPackage.Validating
+        e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+    End Sub
+
+    Private Sub txtPackage_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) _
+            Handles txtPackage.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub txtPackage_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
+            Handles txtPackage.Validating
+        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.Tag)
+    End Sub
+
+    Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
+        If MsgBox(m_xmlView.Name + " will be deleted, please confirm ?", cstMsgYesNoQuestion, "'Delete' command") _
+            = MsgBoxResult.Yes Then
+            If m_xmlView.RemoveMe() Then
+                Me.Tag = True
+                Me.DialogResult = DialogResult.OK
+                Me.Close()
+            End If
+        End If
     End Sub
 End Class

@@ -22,6 +22,7 @@ Partial Class dlgRelation
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container
         Me.tabButtons = New System.Windows.Forms.TableLayoutPanel
         Me.Cancel_Button = New System.Windows.Forms.Button
         Me.OK_Button = New System.Windows.Forms.Button
@@ -75,6 +76,7 @@ Partial Class dlgRelation
         Me.chkGetChild = New System.Windows.Forms.CheckBox
         Me.chkSetChild = New System.Windows.Forms.CheckBox
         Me.tabMain = New System.Windows.Forms.TableLayoutPanel
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.tabButtons.SuspendLayout()
         Me.tabRelationship.SuspendLayout()
         Me.flytAction.SuspendLayout()
@@ -89,14 +91,16 @@ Partial Class dlgRelation
         Me.FlowLayoutPanel4.SuspendLayout()
         Me.FlowLayoutPanel6.SuspendLayout()
         Me.tabMain.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'tabButtons
         '
+        Me.tabButtons.CausesValidation = False
         Me.tabButtons.ColumnCount = 3
         Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 87.0!))
         Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.0!))
-        Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 95.0!))
+        Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 99.0!))
         Me.tabButtons.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.tabButtons.Controls.Add(Me.OK_Button, 1, 0)
         Me.tabButtons.Controls.Add(Me.btnDelete, 0, 0)
@@ -111,8 +115,9 @@ Partial Class dlgRelation
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(586, 5)
+        Me.Cancel_Button.Location = New System.Drawing.Point(584, 5)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -121,7 +126,7 @@ Partial Class dlgRelation
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(502, 5)
+        Me.OK_Button.Location = New System.Drawing.Point(498, 5)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(66, 23)
         Me.OK_Button.TabIndex = 0
@@ -130,6 +135,7 @@ Partial Class dlgRelation
         'btnDelete
         '
         Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.CausesValidation = False
         Me.btnDelete.Location = New System.Drawing.Point(3, 5)
         Me.btnDelete.Name = "btnDelete"
         Me.btnDelete.Size = New System.Drawing.Size(67, 23)
@@ -322,8 +328,9 @@ Partial Class dlgRelation
         '
         Me.txtFatherName.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtFatherName.Location = New System.Drawing.Point(63, 3)
+        Me.txtFatherName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtFatherName.Name = "txtFatherName"
-        Me.txtFatherName.Size = New System.Drawing.Size(256, 20)
+        Me.txtFatherName.Size = New System.Drawing.Size(239, 20)
         Me.txtFatherName.TabIndex = 4
         '
         'cmbFatherClass
@@ -532,8 +539,9 @@ Partial Class dlgRelation
         '
         Me.txtChildName.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtChildName.Location = New System.Drawing.Point(63, 3)
+        Me.txtChildName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtChildName.Name = "txtChildName"
-        Me.txtChildName.Size = New System.Drawing.Size(256, 20)
+        Me.txtChildName.Size = New System.Drawing.Size(239, 20)
         Me.txtChildName.TabIndex = 13
         '
         'lblChildCardinal
@@ -711,6 +719,10 @@ Partial Class dlgRelation
         Me.tabMain.Size = New System.Drawing.Size(674, 289)
         Me.tabMain.TabIndex = 2
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
         'dlgRelation
         '
         Me.AcceptButton = Me.OK_Button
@@ -748,6 +760,7 @@ Partial Class dlgRelation
         Me.FlowLayoutPanel6.ResumeLayout(False)
         Me.FlowLayoutPanel6.PerformLayout()
         Me.tabMain.ResumeLayout(False)
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -804,5 +817,6 @@ Partial Class dlgRelation
     Friend WithEvents chkGetChild As System.Windows.Forms.CheckBox
     Friend WithEvents chkSetChild As System.Windows.Forms.CheckBox
     Friend WithEvents btnDelete As System.Windows.Forms.Button
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class
