@@ -168,6 +168,7 @@ Public Class XmlImportView
         Try
             Dim fen As New dlgRenameNode
             fen.Title = "Rename package"
+            fen.Tag = Me.Tag
             fen.Label = "Enter new package label"
 
             If fen.ShowDialog() = DialogResult.OK Then
