@@ -14,7 +14,7 @@ Public Class XmlClassRelationView
 
     Public ReadOnly Property ClassName() As String
         Get
-            Return MyBase.RelationParent.FullpathClassName
+            Return MyBase.RelationParent.FullpathTypeDescription
         End Get
     End Property
 
@@ -28,8 +28,8 @@ Public Class XmlClassRelationView
     Public Sub InitControl(ByVal control As System.Windows.Forms.Control) Implements InterfViewControl.InitControl
         Try
             Dim data As XmlDataGridView = CType(control, XmlDataGridView)
-            Dim size As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.AllCells
-            Dim size2 As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.Fill
+            Dim size As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.Fill
+            Dim size2 As DataGridViewAutoSizeColumnMode = DataGridViewAutoSizeColumnMode.AllCells
 
             With data
                 .Columns.Clear()
@@ -45,10 +45,19 @@ Public Class XmlClassRelationView
 
             Dim col1 As DataGridViewColumn = New DataGridViewTextBoxColumn
             With col1
-                .AutoSizeMode = size
+                .AutoSizeMode = size2
                 .DataPropertyName = "Name"
                 .HeaderText = "Name"
                 .Name = "ControlName_Name"
+            End With
+            data.Columns.Add(col1)
+
+            col1 = New DataGridViewTextBoxColumn
+            With col1
+                .AutoSizeMode = size
+                .DataPropertyName = "ClassName"
+                .HeaderText = "Class"
+                .Name = "ControlName_Class"
             End With
             data.Columns.Add(col1)
 
@@ -59,15 +68,6 @@ Public Class XmlClassRelationView
                 .HeaderText = "Type"
                 .Name = "ControlName_Type"
                 .ReadOnly = True
-            End With
-            data.Columns.Add(col1)
-
-            col1 = New DataGridViewTextBoxColumn
-            With col1
-                .AutoSizeMode = size
-                .DataPropertyName = "ClassName"
-                .HeaderText = "Class"
-                .Name = "ControlName_Class"
             End With
             data.Columns.Add(col1)
 
@@ -128,14 +128,10 @@ Public Class XmlClassRelationView
     End Property
 
     Public Function CanDropItem(ByVal component As XmlComponent) As Boolean Implements InterfGridViewNotifier.CanDropItem
-        If component.NodeName = "collaboration" Then
-            Me.DropInsertComponent(component)
-            Return True
-        End If
         Return False
     End Function
 
     Public Function CanDragItem() As Boolean Implements InterfGridViewNotifier.CanDragItem
-        Return True
+        Return False
     End Function
 End Class
