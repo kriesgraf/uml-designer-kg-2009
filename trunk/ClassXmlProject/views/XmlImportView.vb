@@ -370,6 +370,19 @@ Public Class XmlImportView
             MsgExceptionBox(ex)
         End Try
     End Sub
+
+    Public Sub MoveUpReference(ByVal list As ListBox)
+        Try
+            If list.SelectedItem IsNot Nothing Then
+                If MoveUpComponent(CType(list.SelectedItem, XmlComponent)) Then
+                    InitBindingListReferences(list, True)
+                    Me.Updated = True
+                End If
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
 #End Region
 
 #Region "Private methods"
