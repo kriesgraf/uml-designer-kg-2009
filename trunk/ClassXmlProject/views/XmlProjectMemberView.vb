@@ -2,6 +2,7 @@
 Imports System.Drawing
 Imports System.Windows.Forms
 Imports System.Xml
+Imports System.IO
 Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlNodesManager
@@ -544,6 +545,37 @@ Public Class XmlProjectMemberView
             Throw ex
         End Try
         Return False
+    End Function
+
+    Public Function ImportReferences(ByVal fen As Form, ByVal fileName As String) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim import As XmlImportSpec = Nothing
+
+            Select Case Me.NodeName
+                Case "root"
+                    Dim root As XmlProjectProperties = CreateDocument(Me.Node)
+                    import = CreateDocument("import")
+                    root.AppendComponent(import)
+
+                Case "package"
+                    Dim package As XmlPackageSpec = CreateDocument(Me.Node)
+                    import = CreateDocument("import")
+                    package.AppendComponent(import)
+            End Select
+
+            If import IsNot Nothing Then
+                import.NodeCounter = m_xmlReferenceNodeCounter
+                Dim FileInfo As FileInfo = My.Computer.FileSystem.GetFileInfo(fileName)
+                If import.LoadDocument(fen, FileInfo) Then
+                    ExtractExternalReferences(Me.Node, import.ChildExportNode.Node)
+                    bResult = True
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
     End Function
 
     Protected Friend Overrides Function RemoveMe() As Boolean
