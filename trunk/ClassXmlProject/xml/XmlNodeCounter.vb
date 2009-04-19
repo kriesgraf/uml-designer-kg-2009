@@ -87,7 +87,9 @@ Public Class XmlNodeCounter
             End If
 
             strID = AfterStr(strID, m_strPrefix)
-            If CInt(strID) <> 0 Then
+            If IsNumeric(strID) = False Then
+                Exit Sub
+            ElseIf CInt(strID) <> 0 Then
                 m_CountDeletedList.Add(CInt(strID), strID)
             End If
         Catch ex As Exception
@@ -108,6 +110,7 @@ Public Class XmlNodeCounter
 
         Dim child As XmlNode
         Dim node As XmlNode
+        Dim tempo As String
         Dim Id As Integer
         Dim iResult As Integer
 
@@ -121,7 +124,12 @@ Public Class XmlNodeCounter
                     Throw New Exception("In Node: " + child.OuterXml + vbCrLf + vbCrLf + "Attribute 'id' does not start with prefix '" + m_strPrefix + "'")
                 End If
 
-                Id = CInt(AfterStr(strID, m_strPrefix))
+                tempo = AfterStr(strID, m_strPrefix)
+                If IsNumeric(tempo) Then
+                    Id = CInt(tempo)
+                Else
+                    Id = 0
+                End If
 
                 If Id > iResult Then
                     iResult = Id
