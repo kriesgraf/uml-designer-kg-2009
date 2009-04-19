@@ -7,6 +7,7 @@ Public Class dlgConstructor
     Implements InterfFormDocument
 
     Private m_xmlView As XmlConstructorView
+    Private m_bInvalideCell As Boolean = False
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
@@ -36,9 +37,11 @@ Public Class dlgConstructor
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Close()
+        If m_bInvalideCell = False Then
+            Me.Tag = m_xmlView.Updated
+            Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+            Me.Close()
+        End If
     End Sub
 
     Public Sub New()
@@ -112,6 +115,15 @@ Public Class dlgConstructor
         End If
     End Sub
 
+    Private Sub grdParams_CellValidated(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles grdParams.CellValidated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub grdParams_CellValidating(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles grdParams.CellValidating
+        e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider)
+        m_bInvalideCell = e.Cancel
+    End Sub
+
     Private Sub grdParams_RowValuesChanged(ByVal sender As Object) Handles grdParams.RowValuesChanged
         ' TODO: for future use
     End Sub
@@ -126,5 +138,13 @@ Public Class dlgConstructor
 
     Private Sub mnuDuplicate_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuDuplicate.Click
         grdParams.DuplicateSelectedItem()
+    End Sub
+
+    Private Sub grdParams_CellValidating(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles grdParams.CellValidating
+
+    End Sub
+
+    Private Sub grdParams_CellValidated(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles grdParams.CellValidated
+
     End Sub
 End Class

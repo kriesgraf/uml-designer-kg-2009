@@ -12,6 +12,7 @@ Public Class dlgClass
 
     Private m_toolTip As ToolTip
     Private m_xmlView As XmlClassGlobalView = Nothing
+    Private m_bInvalideCell As Boolean = False
 
 #End Region
 
@@ -94,6 +95,7 @@ Public Class dlgClass
             End With
 
             PasteMember.Enabled = XmlComponent.Clipboard.CanPaste
+            Me.WindowState = FormWindowState.Maximized
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -113,9 +115,11 @@ Public Class dlgClass
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Close()
+        If m_bInvalideCell = False Then
+            Me.Tag = m_xmlView.Updated
+            Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+            Me.Close()
+        End If
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
@@ -194,27 +198,48 @@ Public Class dlgClass
     Private Sub mnuInheritsProperties_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles InheritsProperties.Click
         dlgXmlNodeProperties.DisplayProperties(gridInherited.SelectedItem)
         m_xmlView.Updated = True
+        gridMembers.Binding.ResetBindings(False)
     End Sub
 
     Private Sub mnuDependencyProperties_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles DependencyProperties.Click
         dlgXmlNodeProperties.DisplayProperties(gridDependencies.SelectedItem)
+        gridMembers.Binding.ResetBindings(False)
         m_xmlView.Updated = True
     End Sub
 
     Private Sub mnuMemberProperties_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles MemberProperties.Click
         dlgXmlNodeProperties.DisplayProperties(CType(gridMembers.SelectedItem, XmlComponent))
         m_xmlView.Updated = True
+        gridMembers.Binding.ResetBindings(False)
     End Sub
 
     Private Sub mnuRelationProperties_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles RelationProperties.Click
         dlgXmlNodeProperties.DisplayProperties(gridRelations.SelectedItem)
         m_xmlView.Updated = True
+        gridMembers.Binding.ResetBindings(False)
     End Sub
 
     Private Sub mnuMemberDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMemberDependencies.Click
         If m_xmlView.SearchDependencies(CType(gridMembers.SelectedItem, XmlComponent)) Then
             gridMembers.Binding.ResetBindings(True)
         End If
+    End Sub
+
+    Private Sub Grids_CellValidated(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) _
+            Handles gridMembers.CellValidated, gridRelations.CellValidated
+
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub Grids_CellValidating(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) _
+            Handles gridMembers.CellValidating, gridRelations.CellValidating
+
+        If sender.Name = "gridMembers" Then
+            e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider)
+        Else
+            e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider, ErrorIconAlignment.TopRight)
+        End If
+        m_bInvalideCell = e.Cancel
     End Sub
 
     Private Sub GridRowValuesChanged(ByVal sender As Object) _

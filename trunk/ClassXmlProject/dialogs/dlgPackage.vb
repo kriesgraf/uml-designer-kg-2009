@@ -9,6 +9,7 @@ Public Class dlgPackage
 
     Private m_xmlView As XmlPackageView
     Private m_strProjectFolder As String
+    Private m_bInvalideCell As Boolean = False
 
     Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
         Set(ByVal value As XmlReferenceNodeCounter)
@@ -47,10 +48,12 @@ Public Class dlgPackage
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        txtName.CausesValidation = False
-        Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Close()
+        If m_bInvalideCell = False Then
+            txtName.CausesValidation = False
+            Me.Tag = m_xmlView.Updated
+            Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+            Me.Close()
+        End If
     End Sub
 
     Private Sub dlgPackage_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -121,6 +124,15 @@ Public Class dlgPackage
         End Try
     End Sub
 
+    Private Sub gridClasses_CellValidated(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles gridClasses.CellValidated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub gridClasses_CellValidating(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles gridClasses.CellValidating
+        e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider)
+        m_bInvalideCell = e.Cancel
+    End Sub
+
     Private Sub gridClasses_RowValuesChanged(ByVal sender As Object) Handles gridClasses.RowValuesChanged
         ' TODO: for future use
     End Sub
@@ -176,7 +188,6 @@ Public Class dlgPackage
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
         e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
     End Sub
-#End Region
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
         If MsgBox(m_xmlView.Name + " will be deleted, please confirm ?", cstMsgYesNoQuestion, "'Delete' command") _
@@ -188,4 +199,5 @@ Public Class dlgPackage
             End If
         End If
     End Sub
+#End Region
 End Class

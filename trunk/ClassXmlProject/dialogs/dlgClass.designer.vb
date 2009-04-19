@@ -102,6 +102,7 @@ Partial Class dlgClass
         Me.chkPartial = New System.Windows.Forms.CheckBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
+        Me.TableLayoutPanel10 = New System.Windows.Forms.TableLayoutPanel
         Me.TableLayoutPanel3.SuspendLayout()
         Me.SplitContainer2.Panel1.SuspendLayout()
         Me.SplitContainer2.Panel2.SuspendLayout()
@@ -133,6 +134,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel5.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TableLayoutPanel10.SuspendLayout()
         Me.SuspendLayout()
         '
         'TableLayoutPanel3
@@ -152,7 +154,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(454, 736)
+        Me.TableLayoutPanel3.Size = New System.Drawing.Size(387, 520)
         Me.TableLayoutPanel3.TabIndex = 0
         '
         'Label2
@@ -183,16 +185,15 @@ Partial Class dlgClass
         Me.txtBrief.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtBrief.Location = New System.Drawing.Point(94, 33)
         Me.txtBrief.Name = "txtBrief"
-        Me.txtBrief.Size = New System.Drawing.Size(357, 20)
+        Me.txtBrief.Size = New System.Drawing.Size(290, 20)
         Me.txtBrief.TabIndex = 4
         '
         'txtName
         '
         Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtName.Location = New System.Drawing.Point(94, 3)
-        Me.txtName.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(340, 20)
+        Me.txtName.Size = New System.Drawing.Size(290, 20)
         Me.txtName.TabIndex = 2
         '
         'SplitContainer2
@@ -210,8 +211,8 @@ Partial Class dlgClass
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.SplitContainer4)
-        Me.SplitContainer2.Size = New System.Drawing.Size(448, 670)
-        Me.SplitContainer2.SplitterDistance = 324
+        Me.SplitContainer2.Size = New System.Drawing.Size(381, 454)
+        Me.SplitContainer2.SplitterDistance = 219
         Me.SplitContainer2.TabIndex = 5
         '
         'SplitContainer3
@@ -228,8 +229,8 @@ Partial Class dlgClass
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.TableLayoutPanel6)
-        Me.SplitContainer3.Size = New System.Drawing.Size(448, 324)
-        Me.SplitContainer3.SplitterDistance = 178
+        Me.SplitContainer3.Size = New System.Drawing.Size(381, 219)
+        Me.SplitContainer3.SplitterDistance = 83
         Me.SplitContainer3.TabIndex = 0
         '
         'TableLayoutPanel2
@@ -244,7 +245,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 1
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(448, 178)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(381, 83)
         Me.TableLayoutPanel2.TabIndex = 0
         '
         'Label3
@@ -265,7 +266,7 @@ Partial Class dlgClass
         Me.txtDetails.Multiline = True
         Me.txtDetails.Name = "txtDetails"
         Me.txtDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtDetails.Size = New System.Drawing.Size(354, 172)
+        Me.txtDetails.Size = New System.Drawing.Size(287, 77)
         Me.txtDetails.TabIndex = 6
         '
         'TableLayoutPanel6
@@ -280,7 +281,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel6.RowCount = 2
         Me.TableLayoutPanel6.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
         Me.TableLayoutPanel6.RowStyles.Add(New System.Windows.Forms.RowStyle)
-        Me.TableLayoutPanel6.Size = New System.Drawing.Size(448, 142)
+        Me.TableLayoutPanel6.Size = New System.Drawing.Size(381, 132)
         Me.TableLayoutPanel6.TabIndex = 3
         '
         'Label10
@@ -289,7 +290,7 @@ Partial Class dlgClass
         Me.Label10.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Label10.Location = New System.Drawing.Point(3, 0)
         Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(442, 30)
+        Me.Label10.Size = New System.Drawing.Size(375, 30)
         Me.Label10.TabIndex = 3
         Me.Label10.Text = "Inherited classes"
         Me.Label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -303,8 +304,9 @@ Partial Class dlgClass
         Me.gridInherited.ContextMenuStrip = Me.mnuInherited
         Me.gridInherited.Dock = System.Windows.Forms.DockStyle.Fill
         Me.gridInherited.Location = New System.Drawing.Point(3, 33)
+        Me.gridInherited.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.gridInherited.Name = "gridInherited"
-        Me.gridInherited.Size = New System.Drawing.Size(442, 125)
+        Me.gridInherited.Size = New System.Drawing.Size(358, 96)
         Me.gridInherited.TabIndex = 4
         Me.gridInherited.Tag = "inherited"
         Me.ToolTip1.SetToolTip(Me.gridInherited, "Click right to update grid")
@@ -355,8 +357,8 @@ Partial Class dlgClass
         'SplitContainer4.Panel2
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.TableLayoutPanel7)
-        Me.SplitContainer4.Size = New System.Drawing.Size(448, 342)
-        Me.SplitContainer4.SplitterDistance = 143
+        Me.SplitContainer4.Size = New System.Drawing.Size(381, 231)
+        Me.SplitContainer4.SplitterDistance = 96
         Me.SplitContainer4.TabIndex = 0
         '
         'TableLayoutPanel9
@@ -372,7 +374,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel9.RowCount = 2
         Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
         Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle)
-        Me.TableLayoutPanel9.Size = New System.Drawing.Size(448, 143)
+        Me.TableLayoutPanel9.Size = New System.Drawing.Size(381, 96)
         Me.TableLayoutPanel9.TabIndex = 5
         '
         'Label12
@@ -381,7 +383,7 @@ Partial Class dlgClass
         Me.Label12.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Label12.Location = New System.Drawing.Point(3, 0)
         Me.Label12.Name = "Label12"
-        Me.Label12.Size = New System.Drawing.Size(442, 30)
+        Me.Label12.Size = New System.Drawing.Size(375, 30)
         Me.Label12.TabIndex = 2
         Me.Label12.Text = "Relations"
         Me.Label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -394,8 +396,9 @@ Partial Class dlgClass
         Me.gridRelations.ContextMenuStrip = Me.mnuRelations
         Me.gridRelations.Dock = System.Windows.Forms.DockStyle.Fill
         Me.gridRelations.Location = New System.Drawing.Point(3, 33)
+        Me.gridRelations.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.gridRelations.Name = "gridRelations"
-        Me.gridRelations.Size = New System.Drawing.Size(442, 125)
+        Me.gridRelations.Size = New System.Drawing.Size(358, 60)
         Me.gridRelations.TabIndex = 3
         Me.gridRelations.Tag = "collaboration"
         Me.ToolTip1.SetToolTip(Me.gridRelations, "Click right to update grid")
@@ -451,7 +454,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel7.RowCount = 2
         Me.TableLayoutPanel7.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
         Me.TableLayoutPanel7.RowStyles.Add(New System.Windows.Forms.RowStyle)
-        Me.TableLayoutPanel7.Size = New System.Drawing.Size(448, 195)
+        Me.TableLayoutPanel7.Size = New System.Drawing.Size(381, 131)
         Me.TableLayoutPanel7.TabIndex = 4
         '
         'Label11
@@ -460,7 +463,7 @@ Partial Class dlgClass
         Me.Label11.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Label11.Location = New System.Drawing.Point(3, 0)
         Me.Label11.Name = "Label11"
-        Me.Label11.Size = New System.Drawing.Size(442, 30)
+        Me.Label11.Size = New System.Drawing.Size(375, 30)
         Me.Label11.TabIndex = 0
         Me.Label11.Text = "Class dependencies"
         Me.Label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -474,9 +477,10 @@ Partial Class dlgClass
         Me.gridDependencies.ContextMenuStrip = Me.mnuDependencies
         Me.gridDependencies.Dock = System.Windows.Forms.DockStyle.Fill
         Me.gridDependencies.Location = New System.Drawing.Point(3, 33)
+        Me.gridDependencies.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.gridDependencies.Name = "gridDependencies"
         Me.gridDependencies.RowHeadersWidth = 35
-        Me.gridDependencies.Size = New System.Drawing.Size(442, 159)
+        Me.gridDependencies.Size = New System.Drawing.Size(358, 95)
         Me.gridDependencies.TabIndex = 1
         Me.gridDependencies.Tag = "dependency"
         Me.ToolTip1.SetToolTip(Me.gridDependencies, "Click right to update grid")
@@ -516,9 +520,9 @@ Partial Class dlgClass
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(241, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(595, 3)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(65, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(58, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
@@ -526,8 +530,7 @@ Partial Class dlgClass
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(349, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(712, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -539,16 +542,16 @@ Partial Class dlgClass
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.90058!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.09941!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 147.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
-        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 704)
+        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 534)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(457, 29)
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(786, 29)
         Me.TableLayoutPanel1.TabIndex = 0
         '
         'btnDelete
@@ -564,7 +567,7 @@ Partial Class dlgClass
         'SplitContainer1
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer1.Location = New System.Drawing.Point(3, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         '
         'SplitContainer1.Panel1
@@ -575,25 +578,23 @@ Partial Class dlgClass
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.TableLayoutPanel4)
-        Me.SplitContainer1.Size = New System.Drawing.Size(921, 736)
-        Me.SplitContainer1.SplitterDistance = 454
+        Me.SplitContainer1.Size = New System.Drawing.Size(786, 520)
+        Me.SplitContainer1.SplitterDistance = 387
         Me.SplitContainer1.TabIndex = 9
         '
         'TableLayoutPanel4
         '
         Me.TableLayoutPanel4.ColumnCount = 1
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel4.Controls.Add(Me.TableLayoutPanel1, 0, 2)
         Me.TableLayoutPanel4.Controls.Add(Me.TableLayoutPanel8, 0, 1)
         Me.TableLayoutPanel4.Controls.Add(Me.TableLayoutPanel5, 0, 0)
         Me.TableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel4.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel4.Name = "TableLayoutPanel4"
-        Me.TableLayoutPanel4.RowCount = 3
+        Me.TableLayoutPanel4.RowCount = 2
         Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110.0!))
         Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35.0!))
-        Me.TableLayoutPanel4.Size = New System.Drawing.Size(463, 736)
+        Me.TableLayoutPanel4.Size = New System.Drawing.Size(395, 520)
         Me.TableLayoutPanel4.TabIndex = 1
         '
         'TableLayoutPanel8
@@ -610,7 +611,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel8.RowStyles.Add(New System.Windows.Forms.RowStyle)
         Me.TableLayoutPanel8.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
         Me.TableLayoutPanel8.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel8.Size = New System.Drawing.Size(457, 585)
+        Me.TableLayoutPanel8.Size = New System.Drawing.Size(389, 404)
         Me.TableLayoutPanel8.TabIndex = 2
         '
         'Label9
@@ -619,7 +620,7 @@ Partial Class dlgClass
         Me.Label9.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Label9.Location = New System.Drawing.Point(3, 0)
         Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(451, 30)
+        Me.Label9.Size = New System.Drawing.Size(383, 30)
         Me.Label9.TabIndex = 0
         Me.Label9.Text = "Class members"
         Me.Label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -632,10 +633,11 @@ Partial Class dlgClass
         Me.gridMembers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.gridMembers.ContextMenuStrip = Me.mnuMembers
         Me.gridMembers.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridMembers.Location = New System.Drawing.Point(3, 33)
+        Me.gridMembers.Location = New System.Drawing.Point(20, 33)
+        Me.gridMembers.Margin = New System.Windows.Forms.Padding(20, 3, 3, 3)
         Me.gridMembers.Name = "gridMembers"
         Me.gridMembers.RowHeadersWidth = 35
-        Me.gridMembers.Size = New System.Drawing.Size(451, 549)
+        Me.gridMembers.Size = New System.Drawing.Size(366, 368)
         Me.gridMembers.TabIndex = 1
         Me.gridMembers.Tag = ""
         Me.ToolTip1.SetToolTip(Me.gridMembers, "Click right to update grid")
@@ -825,7 +827,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
         Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
         Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel5.Size = New System.Drawing.Size(457, 104)
+        Me.TableLayoutPanel5.Size = New System.Drawing.Size(389, 104)
         Me.TableLayoutPanel5.TabIndex = 1
         '
         'lblConstructor
@@ -865,7 +867,7 @@ Partial Class dlgClass
         '
         Me.Label7.AutoSize = True
         Me.Label7.Dock = System.Windows.Forms.DockStyle.Right
-        Me.Label7.Location = New System.Drawing.Point(247, 0)
+        Me.Label7.Location = New System.Drawing.Point(213, 0)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(91, 30)
         Me.Label7.TabIndex = 3
@@ -876,7 +878,7 @@ Partial Class dlgClass
         '
         Me.lblImplementation.AutoSize = True
         Me.lblImplementation.Dock = System.Windows.Forms.DockStyle.Right
-        Me.lblImplementation.Location = New System.Drawing.Point(257, 30)
+        Me.lblImplementation.Location = New System.Drawing.Point(223, 30)
         Me.lblImplementation.Name = "lblImplementation"
         Me.lblImplementation.Size = New System.Drawing.Size(81, 30)
         Me.lblImplementation.TabIndex = 4
@@ -889,7 +891,7 @@ Partial Class dlgClass
         Me.cmbConstructor.FormattingEnabled = True
         Me.cmbConstructor.Location = New System.Drawing.Point(128, 3)
         Me.cmbConstructor.Name = "cmbConstructor"
-        Me.cmbConstructor.Size = New System.Drawing.Size(110, 21)
+        Me.cmbConstructor.Size = New System.Drawing.Size(76, 21)
         Me.cmbConstructor.TabIndex = 5
         '
         'cmbDestructor
@@ -898,7 +900,7 @@ Partial Class dlgClass
         Me.cmbDestructor.FormattingEnabled = True
         Me.cmbDestructor.Location = New System.Drawing.Point(128, 33)
         Me.cmbDestructor.Name = "cmbDestructor"
-        Me.cmbDestructor.Size = New System.Drawing.Size(110, 21)
+        Me.cmbDestructor.Size = New System.Drawing.Size(76, 21)
         Me.cmbDestructor.TabIndex = 6
         '
         'cmbModelInline
@@ -907,25 +909,25 @@ Partial Class dlgClass
         Me.cmbModelInline.FormattingEnabled = True
         Me.cmbModelInline.Location = New System.Drawing.Point(128, 63)
         Me.cmbModelInline.Name = "cmbModelInline"
-        Me.cmbModelInline.Size = New System.Drawing.Size(110, 21)
+        Me.cmbModelInline.Size = New System.Drawing.Size(76, 21)
         Me.cmbModelInline.TabIndex = 7
         '
         'cmbVisibility
         '
         Me.cmbVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbVisibility.FormattingEnabled = True
-        Me.cmbVisibility.Location = New System.Drawing.Point(344, 3)
+        Me.cmbVisibility.Location = New System.Drawing.Point(310, 3)
         Me.cmbVisibility.Name = "cmbVisibility"
-        Me.cmbVisibility.Size = New System.Drawing.Size(110, 21)
+        Me.cmbVisibility.Size = New System.Drawing.Size(76, 21)
         Me.cmbVisibility.TabIndex = 8
         '
         'cmbImplementation
         '
         Me.cmbImplementation.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbImplementation.FormattingEnabled = True
-        Me.cmbImplementation.Location = New System.Drawing.Point(344, 33)
+        Me.cmbImplementation.Location = New System.Drawing.Point(310, 33)
         Me.cmbImplementation.Name = "cmbImplementation"
-        Me.cmbImplementation.Size = New System.Drawing.Size(110, 21)
+        Me.cmbImplementation.Size = New System.Drawing.Size(76, 21)
         Me.cmbImplementation.TabIndex = 9
         '
         'FlowLayoutPanel1
@@ -933,9 +935,9 @@ Partial Class dlgClass
         Me.TableLayoutPanel5.SetColumnSpan(Me.FlowLayoutPanel1, 2)
         Me.FlowLayoutPanel1.Controls.Add(Me.chkPartial)
         Me.FlowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FlowLayoutPanel1.Location = New System.Drawing.Point(244, 63)
+        Me.FlowLayoutPanel1.Location = New System.Drawing.Point(210, 63)
         Me.FlowLayoutPanel1.Name = "FlowLayoutPanel1"
-        Me.FlowLayoutPanel1.Size = New System.Drawing.Size(210, 38)
+        Me.FlowLayoutPanel1.Size = New System.Drawing.Size(176, 38)
         Me.FlowLayoutPanel1.TabIndex = 10
         '
         'chkPartial
@@ -954,13 +956,27 @@ Partial Class dlgClass
         '
         Me.errorProvider.ContainerControl = Me
         '
+        'TableLayoutPanel10
+        '
+        Me.TableLayoutPanel10.ColumnCount = 1
+        Me.TableLayoutPanel10.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel10.Controls.Add(Me.TableLayoutPanel1, 0, 1)
+        Me.TableLayoutPanel10.Controls.Add(Me.SplitContainer1, 0, 0)
+        Me.TableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel10.Location = New System.Drawing.Point(0, 0)
+        Me.TableLayoutPanel10.Name = "TableLayoutPanel10"
+        Me.TableLayoutPanel10.RowCount = 2
+        Me.TableLayoutPanel10.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel10.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40.0!))
+        Me.TableLayoutPanel10.Size = New System.Drawing.Size(792, 566)
+        Me.TableLayoutPanel10.TabIndex = 10
+        '
         'dlgClass
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.CancelButton = Me.Cancel_Button
-        Me.ClientSize = New System.Drawing.Size(921, 736)
-        Me.Controls.Add(Me.SplitContainer1)
+        Me.ClientSize = New System.Drawing.Size(792, 566)
+        Me.Controls.Add(Me.TableLayoutPanel10)
         Me.MinimizeBox = False
         Me.Name = "dlgClass"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
@@ -1004,6 +1020,7 @@ Partial Class dlgClass
         Me.FlowLayoutPanel1.ResumeLayout(False)
         Me.FlowLayoutPanel1.PerformLayout()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TableLayoutPanel10.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -1089,5 +1106,6 @@ Partial Class dlgClass
     Friend WithEvents TableLayoutPanel2 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents SplitContainer4 As System.Windows.Forms.SplitContainer
     Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
+    Friend WithEvents TableLayoutPanel10 As System.Windows.Forms.TableLayoutPanel
 
 End Class

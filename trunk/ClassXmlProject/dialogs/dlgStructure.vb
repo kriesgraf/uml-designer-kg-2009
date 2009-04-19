@@ -6,7 +6,9 @@ Imports Microsoft.VisualBasic
 Public Class dlgStructure
     Implements InterfFormDocument
 
+    Private m_bInvalideCell As Boolean = False
     Private m_xmlView As XmlStructureView
+
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
@@ -35,10 +37,12 @@ Public Class dlgStructure
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        txtName.CausesValidation = False
-        Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Close()
+        If m_bInvalideCell = False Then
+            txtName.CausesValidation = False
+            Me.Tag = m_xmlView.Updated
+            Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+            Me.Close()
+        End If
     End Sub
 
     Private Sub dlgStructure_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -95,6 +99,15 @@ Public Class dlgStructure
                 Me.Close()
             End If
         End If
+    End Sub
+
+    Private Sub grdElements_CellValidated(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles grdElements.CellValidated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub grdElements_CellValidating(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles grdElements.CellValidating
+        e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider)
+        m_bInvalideCell = e.Cancel
     End Sub
 
     Private Sub grdElements_RowValuesChanged(ByVal sender As Object) Handles grdElements.RowValuesChanged

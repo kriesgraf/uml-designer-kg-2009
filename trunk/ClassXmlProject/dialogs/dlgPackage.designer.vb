@@ -21,6 +21,7 @@ Partial Class dlgPackage
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
+        Me.btnDelete = New System.Windows.Forms.Button
         Me.Cancel_Button = New System.Windows.Forms.Button
         Me.OK_Button = New System.Windows.Forms.Button
         Me.Label1 = New System.Windows.Forms.Label
@@ -55,10 +56,9 @@ Partial Class dlgPackage
         Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
-        Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.btnDelete = New System.Windows.Forms.Button
+        Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -67,8 +67,8 @@ Partial Class dlgPackage
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
@@ -78,7 +78,7 @@ Partial Class dlgPackage
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.98141!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55.01859!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82.0!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 3, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 2, 0)
@@ -90,12 +90,22 @@ Partial Class dlgPackage
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(742, 27)
         Me.TableLayoutPanel1.TabIndex = 0
         '
+        'btnDelete
+        '
+        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.CausesValidation = False
+        Me.btnDelete.Location = New System.Drawing.Point(3, 3)
+        Me.btnDelete.Name = "btnDelete"
+        Me.btnDelete.Size = New System.Drawing.Size(67, 21)
+        Me.btnDelete.TabIndex = 3
+        Me.btnDelete.Text = "Delete"
+        Me.btnDelete.UseVisualStyleBackColor = True
+        '
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(665, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(663, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 21)
         Me.Cancel_Button.TabIndex = 1
@@ -104,7 +114,8 @@ Partial Class dlgPackage
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(580, 3)
+        Me.OK_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.OK_Button.Location = New System.Drawing.Point(576, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 21)
         Me.OK_Button.TabIndex = 0
@@ -172,6 +183,7 @@ Partial Class dlgPackage
         '
         'TableLayoutPanel3
         '
+        Me.TableLayoutPanel3.CausesValidation = False
         Me.TableLayoutPanel3.ColumnCount = 2
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90.0!))
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
@@ -207,6 +219,7 @@ Partial Class dlgPackage
         '
         'FlowLayoutPanel1
         '
+        Me.FlowLayoutPanel1.CausesValidation = False
         Me.FlowLayoutPanel1.Controls.Add(Me.btnFolder)
         Me.FlowLayoutPanel1.Controls.Add(Me.txtFolder)
         Me.FlowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
@@ -217,6 +230,7 @@ Partial Class dlgPackage
         '
         'btnFolder
         '
+        Me.btnFolder.CausesValidation = False
         Me.btnFolder.Location = New System.Drawing.Point(3, 3)
         Me.btnFolder.Name = "btnFolder"
         Me.btnFolder.Size = New System.Drawing.Size(56, 21)
@@ -401,39 +415,27 @@ Partial Class dlgPackage
         Me.SplitContainer1.SplitterDistance = 194
         Me.SplitContainer1.TabIndex = 1
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
         'gridClasses
         '
         Me.gridClasses.ColumnDragStart = 0
         Me.gridClasses.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.gridClasses.ContextMenuStrip = Me.mnuClass
-        Me.gridClasses.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridClasses.Location = New System.Drawing.Point(0, 0)
+        Me.gridClasses.Dock = System.Windows.Forms.DockStyle.Right
+        Me.gridClasses.Location = New System.Drawing.Point(22, 0)
         Me.gridClasses.Name = "gridClasses"
-        Me.gridClasses.Size = New System.Drawing.Size(742, 272)
+        Me.gridClasses.Size = New System.Drawing.Size(720, 272)
         Me.gridClasses.TabIndex = 1
         Me.ToolTip1.SetToolTip(Me.gridClasses, "Click right to update grid")
-        '
-        'errorProvider
-        '
-        Me.errorProvider.ContainerControl = Me
-        '
-        'btnDelete
-        '
-        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.btnDelete.CausesValidation = False
-        Me.btnDelete.Location = New System.Drawing.Point(3, 3)
-        Me.btnDelete.Name = "btnDelete"
-        Me.btnDelete.Size = New System.Drawing.Size(67, 21)
-        Me.btnDelete.TabIndex = 3
-        Me.btnDelete.Text = "Delete"
-        Me.btnDelete.UseVisualStyleBackColor = True
         '
         'dlgPackage
         '
         Me.AcceptButton = Me.OK_Button
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.CancelButton = Me.Cancel_Button
         Me.ClientSize = New System.Drawing.Size(748, 509)
         Me.Controls.Add(Me.TableLayoutPanel2)
         Me.MinimizeBox = False
@@ -451,8 +453,8 @@ Partial Class dlgPackage
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

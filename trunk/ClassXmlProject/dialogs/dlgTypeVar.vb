@@ -1,5 +1,6 @@
 Imports System
 Imports System.Windows.Forms
+Imports ClassXmlProject.XmlProjectTools
 
 Public Class dlgTypeVar
     Implements InterfFormDocument
@@ -7,6 +8,7 @@ Public Class dlgTypeVar
     Private m_xmlView As XmlTypeView
     Private m_bValueEnabled As Boolean = True
     Private m_bLocked As Boolean = False
+    Private m_bInvalideCell As Boolean = False
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
@@ -34,16 +36,18 @@ Public Class dlgTypeVar
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        Dim bOk As Boolean = False
-        If m_xmlView.ConfirmCancel(bOk) Then
-            If bOk Then
-                Me.Tag = True
-                Me.DialogResult = DialogResult.OK
-            Else
-                Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
-                Me.Tag = m_xmlView.Updated
+        If m_bInvalideCell = False Then
+            Dim bOk As Boolean = False
+            If m_xmlView.ConfirmCancel(bOk) Then
+                If bOk Then
+                    Me.Tag = True
+                    Me.DialogResult = DialogResult.OK
+                Else
+                    Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+                    Me.Tag = m_xmlView.Updated
+                End If
+                Me.Close()
             End If
-            Me.Close()
         End If
     End Sub
 
@@ -155,6 +159,15 @@ Public Class dlgTypeVar
     Private Sub mnuEnumProperties_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuEnumProperties.Click
         dlgXmlNodeProperties.DisplayProperties(gridEnumeration.SelectedItem)
         m_xmlView.Updated = True
+    End Sub
+
+    Private Sub gridEnumeration_CellValidated(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles gridEnumeration.CellValidated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub gridEnumeration_CellValidating(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles gridEnumeration.CellValidating
+        e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider)
+        m_bInvalideCell = e.Cancel
     End Sub
 
     Private Sub gridEnumeration_RowValuesChanged(ByVal sender As Object) Handles gridEnumeration.RowValuesChanged

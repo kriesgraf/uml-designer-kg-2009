@@ -1715,14 +1715,15 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Public Shared Function IsInvalidProjectName(ByRef name As TextBox, ByVal provider As ErrorProvider, ByVal eLang As ELanguage) As Boolean
+    Public Shared Function IsInvalidProjectName(ByRef dataControl As TextBox, ByVal provider As ErrorProvider, ByVal eLang As ELanguage, _
+                                                Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
         Dim bResult As Boolean = False
         Try
             Dim strErrorMsg As String = "No error"
 
             If eLang = ELanguage.Language_Vbasic _
             Then
-                If regVbAndJavaPackage.IsMatch(name.Text) = False _
+                If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
                 Then
                     strErrorMsg = "Must contains characters compliant with project name"
                     bResult = True
@@ -1732,16 +1733,18 @@ Public Class XmlProjectTools
             Then
                 bResult = False
 
-            ElseIf regCppPackage.IsMatch(name.Text) = False _
+            ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
             Then
                 strErrorMsg = "Must contains characters compliant with project name"
                 bResult = True
             End If
 
             If bResult = True Then
-                name.Select(0, name.Text.Length)
-                ' Set the ErrorProvider error with the text to display. 
-                provider.SetError(name, strErrorMsg)
+                dataControl.Select(0, dataControl.Text.Length)
+
+                provider.SetIconPadding(dataControl, 0)
+                provider.SetIconAlignment(dataControl, eAlignment)
+                provider.SetError(dataControl, strErrorMsg)
             End If
         Catch ex As Exception
             Throw ex
@@ -1749,14 +1752,15 @@ Public Class XmlProjectTools
         Return bResult
     End Function
 
-    Public Shared Function IsInvalidPackageName(ByRef name As TextBox, ByVal provider As ErrorProvider, ByVal eLang As ELanguage) As Boolean
+    Public Shared Function IsInvalidPackageName(ByRef dataControl As TextBox, ByVal provider As ErrorProvider, ByVal eLang As ELanguage, _
+                                                Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
         Dim bResult As Boolean = False
         Try
             Dim strErrorMsg As String = "No error"
 
             If eLang = ELanguage.Language_Vbasic _
             Then
-                If regVbAndJavaPackage.IsMatch(name.Text) = False _
+                If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
                 Then
                     strErrorMsg = "Must contains characters compliant with namespace:" + vbCrLf + _
                                   "name1.name2.name3"
@@ -1765,18 +1769,18 @@ Public Class XmlProjectTools
 
             ElseIf eLang = ELanguage.Language_Java _
             Then
-                If regVbAndJavaPackage.IsMatch(name.Text) = False _
+                If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
                 Then
                     strErrorMsg = "Must contains characters compliant with package name:" + vbCrLf + _
                                   "name1.name2.name3"
                     bResult = True
                 End If
 
-            ElseIf regCppHeader.IsMatch(name.Text) = True _
+            ElseIf regCppHeader.IsMatch(dataControl.Text) = True _
             Then
                 bResult = False
 
-            ElseIf regCppPackage.IsMatch(name.Text) = False _
+            ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
             Then
                 strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
                               "name1::name2::name3" + vbCrLf + _
@@ -1786,9 +1790,11 @@ Public Class XmlProjectTools
             End If
 
             If bResult = True Then
-                name.Select(0, name.Text.Length)
-                ' Set the ErrorProvider error with the text to display. 
-                provider.SetError(name, strErrorMsg)
+                dataControl.Select(0, dataControl.Text.Length)
+
+                provider.SetIconPadding(dataControl, 0)
+                provider.SetIconAlignment(dataControl, eAlignment)
+                provider.SetError(dataControl, strErrorMsg)
             End If
         Catch ex As Exception
             Throw ex
@@ -1796,7 +1802,40 @@ Public Class XmlProjectTools
         Return bResult
     End Function
 
-    Public Shared Function IsInvalidVariableName(ByRef name As TextBox, ByVal provider As ErrorProvider) As Boolean
+    Public Shared Function IsInvalidVariableName(ByVal dataControl As XmlDataGridView, _
+                                                 ByVal e As DataGridViewCellValidatingEventArgs, _
+                                                 ByVal provider As ErrorProvider, _
+                                                 Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft, _
+                                                 Optional ByVal strDataPropertyName As String = "Name") As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim name As String = e.FormattedValue
+            If strDataPropertyName <> dataControl.Columns(e.ColumnIndex).DataPropertyName _
+            Then
+                bResult = False
+
+            ElseIf name.Length = 0 _
+            Then
+                bResult = True
+
+            ElseIf regVariableName.IsMatch(name) = False _
+            Then
+                bResult = True
+            End If
+
+            If bResult = True Then
+                provider.SetIconPadding(dataControl, 0)
+                provider.SetIconAlignment(dataControl, eAlignment)
+                provider.SetError(dataControl, "Must contains characters compliant with variable, function, or class name")
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Shared Function IsInvalidVariableName(ByRef name As TextBox, ByVal provider As ErrorProvider, _
+                                                 Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
         Dim bResult As Boolean = False
         Try
             If name.Text.Length = 0 _
@@ -1812,6 +1851,8 @@ Public Class XmlProjectTools
                 name.Select(0, name.Text.Length)
 
                 ' Set the ErrorProvider error with the text to display. 
+                provider.SetIconPadding(name, 0)
+                provider.SetIconAlignment(name, eAlignment)
                 provider.SetError(name, "Must contains characters compliant with variable, function, or class name")
             End If
         Catch ex As Exception

@@ -7,6 +7,7 @@ Public Class dlgInterface
     Implements InterfFormDocument
 
     Private m_xmlView As XmlInterfaceView
+    Private m_bInvalideCell As Boolean
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
@@ -34,11 +35,13 @@ Public Class dlgInterface
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        txtName.CausesValidation = False
-        txtPackage.CausesValidation = False
-        Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Close()
+        If m_bInvalideCell = False Then
+            txtName.CausesValidation = False
+            txtPackage.CausesValidation = False
+            Me.Tag = m_xmlView.Updated
+            Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+            Me.Close()
+        End If
     End Sub
 
     Public Sub New()
@@ -106,6 +109,19 @@ Public Class dlgInterface
 
     Private Sub mnuDeleteMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteMember.Click
         gridMembers.DeleteSelectedItems()
+    End Sub
+
+    Private Sub Grids_CellValidated(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) _
+            Handles gridMembers.CellValidated
+
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub Grids_CellValidating(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) _
+            Handles gridMembers.CellValidating
+
+        e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider)
+        m_bInvalideCell = e.Cancel
     End Sub
 
     Private Sub GridRowValuesChanged(ByVal sender As Object) Handles gridMembers.RowValuesChanged
