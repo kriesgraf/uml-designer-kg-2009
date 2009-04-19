@@ -140,7 +140,7 @@ Public Class XmlImportSpec
         ElseIf document.NodeName = "export" Then
             Return MyBase.AppendComponent(document, observer)
         Else
-            Return ChildExportNode().AppendComponent(document, observer)
+            Return ChildExportNode.AppendComponent(document, observer)
         End If
     End Function
 
@@ -148,11 +148,11 @@ Public Class XmlImportSpec
         If nodeXml.Name = "export" Then
             Return MyBase.AppendNode(nodeXml, observer)
         End If
-        Return ChildExportNode().AppendNode(nodeXml, observer)
+        Return ChildExportNode.AppendNode(nodeXml, observer)
     End Function
 
     Public Overrides Function InsertComponent(ByVal document As XmlComponent, ByVal before As XmlComponent) As XmlNode
-        Return ChildExportNode().InsertComponent(document, before)
+        Return ChildExportNode.InsertComponent(document, before)
     End Function
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
