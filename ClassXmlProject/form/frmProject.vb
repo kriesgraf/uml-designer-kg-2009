@@ -740,4 +740,12 @@ Public Class frmProject
         End If
     End Sub
 #End Region
+
+    Private Sub mnuProjectImportReferences_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles mnuProjectImportReferences.Click, mnuPackageImportReference.Click
+
+        If m_xmlProject.ImportReferences(Me.Mainframe, lvwProjectMembers.Binding.Parent) Then
+            RefreshUpdatedPath(True)
+        End If
+    End Sub
 End Class

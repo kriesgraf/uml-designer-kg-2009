@@ -313,6 +313,39 @@ Public Class XmlProjectView
         Return bResult
     End Function
 
+    Public Function ImportReferences(ByVal fen As Form, ByVal component As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim nodeXml As XmlNode = component.Node
+            Dim dlgOpenFile As New OpenFileDialog
+
+            If My.Settings.ImportFolder = m_strCurrentFolder Then
+                dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
+            Else
+                dlgOpenFile.InitialDirectory = My.Settings.ImportFolder
+            End If
+
+            dlgOpenFile.Title = "Select a package references file..."
+            dlgOpenFile.Filter = "Package references (*.ximp)|*.ximp|Doxygen TAG file (*.tag)|*.tag"
+
+            If dlgOpenFile.ShowDialog() = DialogResult.OK Then
+
+                UpdateCurrentImportFolder(dlgOpenFile.FileName, dlgOpenFile.InitialDirectory)
+
+                Dim member As XmlProjectMemberView = CType(component, XmlProjectMemberView)
+
+                bResult = member.ImportReferences(fen, dlgOpenFile.FileName)
+
+                If bResult Then
+                    m_Control.Binding.ResetBindings(True)
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
     Public Sub ExportReferences(ByVal fen As Form, ByVal component As XmlComponent)
         Try
             Dim nodeXml As XmlNode = component.Node
