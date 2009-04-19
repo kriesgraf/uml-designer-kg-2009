@@ -14,6 +14,7 @@ Public Class dlgMethod
 
     Private m_xmlView As XmlMethodView
     Private m_eCurrentClassImplementation As EImplementation = EImplementation.Unknown
+    Private m_bInvalideCell As Boolean = False
 
     'Private m_bInitProceed As Boolean = False
 
@@ -95,10 +96,12 @@ Public Class dlgMethod
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
-        txtName.CausesValidation = False
-        Me.Tag = m_xmlView.Updated
-        Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Close()
+        If m_bInvalideCell = False Then
+            txtName.CausesValidation = False
+            Me.Tag = m_xmlView.Updated
+            Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+            Me.Close()
+        End If
     End Sub
 
     Public Sub New()
@@ -173,6 +176,15 @@ Public Class dlgMethod
         End If
     End Sub
 
+    Private Sub grdParams_CellValidated(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles grdParams.CellValidated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub grdParams_CellValidating(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles grdParams.CellValidating
+        e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider)
+        m_bInvalideCell = e.Cancel
+    End Sub
+
     Private Sub grdParams_RowValuesChanged(ByVal sender As Object) Handles grdParams.RowValuesChanged
         ' TODO: for future use
     End Sub
@@ -194,7 +206,7 @@ Public Class dlgMethod
     End Sub
 
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
-        e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+        e.Cancel = IsInvalidVariableName(sender, Me.errorProvider, ErrorIconAlignment.BottomRight)
     End Sub
 
     Private Sub txtOperator_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) Handles txtOperator.Validated
@@ -219,6 +231,14 @@ Public Class dlgMethod
 
             e.Cancel = True
         End If
+    End Sub
+
+    Private Sub grdParams_CellValidating(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles grdParams.CellValidating
+
+    End Sub
+
+    Private Sub grdParams_CellValidated(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles grdParams.CellValidated
+
     End Sub
 End Class
 

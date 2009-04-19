@@ -216,7 +216,6 @@ Public Class dlgImport
         dlgXmlNodeProperties.DisplayProperties(lsbReferences.SelectedItem)
         m_xmlView.Updated = True
     End Sub
-#End Region
 
     Private Sub txtParam_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtParam.Validated
         m_xmlView.InitBindingListReferences(lsbReferences, True)
@@ -235,4 +234,9 @@ Public Class dlgImport
             Handles txtParam.Validating
         e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.Tag)
     End Sub
+
+    Private Sub mnuMoveUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMoveUp.Click
+        m_xmlView.MoveUpReference(lsbReferences)
+    End Sub
+#End Region
 End Class

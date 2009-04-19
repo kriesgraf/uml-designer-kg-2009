@@ -78,7 +78,7 @@ Partial Class dlgStructure
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.94931!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.05069!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 87.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -94,7 +94,6 @@ Partial Class dlgStructure
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(432, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
@@ -106,7 +105,7 @@ Partial Class dlgStructure
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.OK_Button.Location = New System.Drawing.Point(353, 3)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(66, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(65, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
@@ -232,9 +231,10 @@ Partial Class dlgStructure
         Me.TableLayoutPanel3.SetColumnSpan(Me.grdElements, 2)
         Me.grdElements.ContextMenuStrip = Me.mnuElements
         Me.grdElements.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdElements.Location = New System.Drawing.Point(3, 88)
+        Me.grdElements.Location = New System.Drawing.Point(20, 88)
+        Me.grdElements.Margin = New System.Windows.Forms.Padding(20, 3, 3, 3)
         Me.grdElements.Name = "grdElements"
-        Me.grdElements.Size = New System.Drawing.Size(510, 194)
+        Me.grdElements.Size = New System.Drawing.Size(493, 194)
         Me.grdElements.TabIndex = 6
         Me.grdElements.Tag = "element"
         Me.ToolTip1.SetToolTip(Me.grdElements, "Click right to update grid")
@@ -303,7 +303,6 @@ Partial Class dlgStructure
         Me.AcceptButton = Me.OK_Button
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.CancelButton = Me.Cancel_Button
         Me.ClientSize = New System.Drawing.Size(516, 320)
         Me.Controls.Add(Me.TableLayoutPanel3)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog

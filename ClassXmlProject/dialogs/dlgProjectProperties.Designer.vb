@@ -228,6 +228,7 @@ Partial Class dlgProjectProperties
         '
         'btnPath
         '
+        Me.btnPath.CausesValidation = False
         Me.btnPath.Dock = System.Windows.Forms.DockStyle.Fill
         Me.btnPath.Location = New System.Drawing.Point(3, 143)
         Me.btnPath.Name = "btnPath"

@@ -440,7 +440,7 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.55682!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.44318!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 101.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 103.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -456,7 +456,7 @@ Partial Class dlgMethod
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.Location = New System.Drawing.Point(515, 6)
+        Me.Cancel_Button.Location = New System.Drawing.Point(514, 6)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -465,7 +465,7 @@ Partial Class dlgMethod
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(409, 6)
+        Me.OK_Button.Location = New System.Drawing.Point(407, 6)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 0
@@ -503,9 +503,10 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.SetColumnSpan(Me.grdParams, 2)
         Me.grdParams.ContextMenuStrip = Me.mnuMembers
         Me.grdParams.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdParams.Location = New System.Drawing.Point(3, 281)
+        Me.grdParams.Location = New System.Drawing.Point(20, 281)
+        Me.grdParams.Margin = New System.Windows.Forms.Padding(20, 3, 3, 3)
         Me.grdParams.Name = "grdParams"
-        Me.grdParams.Size = New System.Drawing.Size(600, 204)
+        Me.grdParams.Size = New System.Drawing.Size(583, 204)
         Me.grdParams.TabIndex = 15
         Me.grdParams.Tag = "param"
         Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")

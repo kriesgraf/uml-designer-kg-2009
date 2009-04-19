@@ -100,7 +100,7 @@ Partial Class dlgRelation
         Me.tabButtons.ColumnCount = 3
         Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 87.0!))
         Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.0!))
-        Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 99.0!))
+        Me.tabButtons.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100.0!))
         Me.tabButtons.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.tabButtons.Controls.Add(Me.OK_Button, 1, 0)
         Me.tabButtons.Controls.Add(Me.btnDelete, 0, 0)
@@ -126,7 +126,7 @@ Partial Class dlgRelation
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(498, 5)
+        Me.OK_Button.Location = New System.Drawing.Point(497, 5)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(66, 23)
         Me.OK_Button.TabIndex = 0
@@ -146,6 +146,7 @@ Partial Class dlgRelation
         'tabRelationship
         '
         Me.tabRelationship.ColumnCount = 2
+        Me.tabRelationship.CausesValidation = False
         Me.tabRelationship.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.tabRelationship.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.tabRelationship.Controls.Add(Me.flytAction, 0, 0)
@@ -163,6 +164,7 @@ Partial Class dlgRelation
         'flytAction
         '
         Me.tabRelationship.SetColumnSpan(Me.flytAction, 2)
+        Me.flytAction.CausesValidation = False
         Me.flytAction.Controls.Add(Me.Label1)
         Me.flytAction.Controls.Add(Me.txtAction)
         Me.flytAction.Controls.Add(Me.Label2)
@@ -213,6 +215,7 @@ Partial Class dlgRelation
         '
         'grbxRelationFather
         '
+        Me.grbxRelationFather.CausesValidation = False
         Me.grbxRelationFather.Controls.Add(Me.tabGroupFather)
         Me.grbxRelationFather.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grbxRelationFather.Location = New System.Drawing.Point(3, 36)
@@ -225,6 +228,7 @@ Partial Class dlgRelation
         'tabGroupFather
         '
         Me.tabGroupFather.ColumnCount = 2
+        Me.tabGroupFather.CausesValidation = False
         Me.tabGroupFather.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60.0!))
         Me.tabGroupFather.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.tabGroupFather.Controls.Add(Me.lblAccessor, 0, 4)
@@ -346,6 +350,7 @@ Partial Class dlgRelation
         '
         'FlowLayoutPanel1
         '
+        Me.FlowLayoutPanel1.CausesValidation = False
         Me.FlowLayoutPanel1.Controls.Add(Me.cmbFatherCardinal)
         Me.FlowLayoutPanel1.Controls.Add(Me.lblFatherLevel)
         Me.FlowLayoutPanel1.Controls.Add(Me.cmbFatherLevel)
@@ -387,6 +392,7 @@ Partial Class dlgRelation
         '
         'FlowLayoutPanel2
         '
+        Me.FlowLayoutPanel2.CausesValidation = False
         Me.FlowLayoutPanel2.Controls.Add(Me.cmbFatherRange)
         Me.FlowLayoutPanel2.Controls.Add(Me.chkFatherMember)
         Me.FlowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
@@ -417,6 +423,7 @@ Partial Class dlgRelation
         '
         'btnFatherType
         '
+        Me.btnFatherType.CausesValidation = False
         Me.btnFatherType.Dock = System.Windows.Forms.DockStyle.Top
         Me.btnFatherType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnFatherType.Location = New System.Drawing.Point(63, 147)
@@ -428,6 +435,7 @@ Partial Class dlgRelation
         '
         'FlowLayoutPanel5
         '
+        Me.FlowLayoutPanel5.CausesValidation = False
         Me.FlowLayoutPanel5.Controls.Add(Me.chkGetFather)
         Me.FlowLayoutPanel5.Controls.Add(Me.chkSetFather)
         Me.FlowLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill
@@ -460,6 +468,7 @@ Partial Class dlgRelation
         '
         'grbxRelationChild
         '
+        Me.grbxRelationChild.CausesValidation = False
         Me.grbxRelationChild.Controls.Add(Me.tabGroupChild)
         Me.grbxRelationChild.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grbxRelationChild.Location = New System.Drawing.Point(337, 36)
@@ -472,6 +481,7 @@ Partial Class dlgRelation
         'tabGroupChild
         '
         Me.tabGroupChild.ColumnCount = 2
+        Me.tabGroupChild.CausesValidation = False
         Me.tabGroupChild.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60.0!))
         Me.tabGroupChild.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.tabGroupChild.Controls.Add(Me.Label14, 0, 4)
@@ -594,6 +604,7 @@ Partial Class dlgRelation
         '
         'FlowLayoutPanel3
         '
+        Me.FlowLayoutPanel3.CausesValidation = False
         Me.FlowLayoutPanel3.Controls.Add(Me.cmbChildRange)
         Me.FlowLayoutPanel3.Controls.Add(Me.chkChildMember)
         Me.FlowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
@@ -624,6 +635,7 @@ Partial Class dlgRelation
         '
         'FlowLayoutPanel4
         '
+        Me.FlowLayoutPanel4.CausesValidation = False
         Me.FlowLayoutPanel4.Controls.Add(Me.cmbChildCardinal)
         Me.FlowLayoutPanel4.Controls.Add(Me.lblChildLevel)
         Me.FlowLayoutPanel4.Controls.Add(Me.cmbChildLevel)
@@ -665,6 +677,7 @@ Partial Class dlgRelation
         '
         'btnChildType
         '
+        Me.btnChildType.CausesValidation = False
         Me.btnChildType.Dock = System.Windows.Forms.DockStyle.Top
         Me.btnChildType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnChildType.Location = New System.Drawing.Point(63, 147)
@@ -676,6 +689,7 @@ Partial Class dlgRelation
         '
         'FlowLayoutPanel6
         '
+        Me.FlowLayoutPanel6.CausesValidation = False
         Me.FlowLayoutPanel6.Controls.Add(Me.chkGetChild)
         Me.FlowLayoutPanel6.Controls.Add(Me.chkSetChild)
         Me.FlowLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill

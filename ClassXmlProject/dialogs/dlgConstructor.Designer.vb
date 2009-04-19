@@ -37,7 +37,6 @@ Partial Class dlgConstructor
         Me.chkInline = New System.Windows.Forms.CheckBox
         Me.cmbRange = New System.Windows.Forms.ComboBox
         Me.Label3 = New System.Windows.Forms.Label
-        Me.grdParams = New ClassXmlProject.XmlDataGridView
         Me.mnuParam = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.mnuAddParam = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditParam = New System.Windows.Forms.ToolStripMenuItem
@@ -49,15 +48,19 @@ Partial Class dlgConstructor
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
+        Me.grdParams = New ClassXmlProject.XmlDataGridView
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
-        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuParam.SuspendLayout()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
         '
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel2.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80.0!))
@@ -77,7 +80,7 @@ Partial Class dlgConstructor
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.Location = New System.Drawing.Point(562, 6)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
@@ -96,6 +99,7 @@ Partial Class dlgConstructor
         'btnDelete
         '
         Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.CausesValidation = False
         Me.btnDelete.Location = New System.Drawing.Point(3, 6)
         Me.btnDelete.Name = "btnDelete"
         Me.btnDelete.Size = New System.Drawing.Size(67, 23)
@@ -222,21 +226,6 @@ Partial Class dlgConstructor
         Me.Label3.Text = "Range:"
         Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'grdParams
-        '
-        Me.grdParams.AllowDrop = True
-        Me.grdParams.ColumnDragStart = 0
-        Me.grdParams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.TableLayoutPanel2.SetColumnSpan(Me.grdParams, 2)
-        Me.grdParams.ContextMenuStrip = Me.mnuParam
-        Me.grdParams.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdParams.Location = New System.Drawing.Point(3, 166)
-        Me.grdParams.Name = "grdParams"
-        Me.grdParams.Size = New System.Drawing.Size(641, 159)
-        Me.grdParams.TabIndex = 7
-        Me.grdParams.Tag = "param"
-        Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
-        '
         'mnuParam
         '
         Me.mnuParam.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuEditParam, Me.ToolStripSeparator2, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator1, Me.mnuDelete})
@@ -305,12 +294,31 @@ Partial Class dlgConstructor
         Me.mnuDelete.Size = New System.Drawing.Size(160, 22)
         Me.mnuDelete.Text = "Delete"
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
+        'grdParams
+        '
+        Me.grdParams.AllowDrop = True
+        Me.grdParams.ColumnDragStart = 0
+        Me.grdParams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.TableLayoutPanel2.SetColumnSpan(Me.grdParams, 2)
+        Me.grdParams.ContextMenuStrip = Me.mnuParam
+        Me.grdParams.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdParams.Location = New System.Drawing.Point(20, 166)
+        Me.grdParams.Margin = New System.Windows.Forms.Padding(20, 3, 3, 3)
+        Me.grdParams.Name = "grdParams"
+        Me.grdParams.Size = New System.Drawing.Size(624, 159)
+        Me.grdParams.TabIndex = 7
+        Me.grdParams.Tag = "param"
+        Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
+        '
         'dlgConstructor
         '
         Me.AcceptButton = Me.OK_Button
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.CancelButton = Me.Cancel_Button
         Me.ClientSize = New System.Drawing.Size(647, 369)
         Me.Controls.Add(Me.TableLayoutPanel2)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
@@ -325,8 +333,9 @@ Partial Class dlgConstructor
         Me.TableLayoutPanel2.PerformLayout()
         Me.FlowLayoutPanel1.ResumeLayout(False)
         Me.FlowLayoutPanel1.PerformLayout()
-        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuParam.ResumeLayout(False)
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -356,5 +365,6 @@ Partial Class dlgConstructor
     Friend WithEvents mnuPaste As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuDuplicate As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuProperties As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class
