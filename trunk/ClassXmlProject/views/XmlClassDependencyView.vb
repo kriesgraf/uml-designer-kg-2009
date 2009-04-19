@@ -2,6 +2,7 @@
 Imports System.Xml
 Imports System.Windows.Forms
 Imports ClassXmlProject.XmlClassListView
+Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlClassDependencyView
     Inherits XmlDependencySpec
@@ -28,21 +29,22 @@ Public Class XmlClassDependencyView
                 .AllowUserToOrderColumns = True
             End With
 
-#If _DBG_DEPENDENCY = "1" Then
-            col2 = New DataGridViewTextBoxColumn
-            With col2
-                .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-                .DataPropertyName = cstIdref
-                .HeaderText = cstIdref
-                .Name = "ControlName_" + cstIdref
-            End With
-            data.Columns.Add(col2)
-#Else
-            col1 = New DataGridViewComboBoxColumn
-            AddListComboBoxColumn(Me, cstIdref, "Name", col1)
-            col1.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-            data.Columns.Add(col1)
-#End If
+            If DEBUG_COMMANDS_ACTIVE = True Then
+                col2 = New DataGridViewTextBoxColumn
+                With col2
+                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                    .DataPropertyName = cstIdref
+                    .HeaderText = cstIdref
+                    .Name = "ControlName_" + cstIdref
+                End With
+                data.Columns.Add(col2)
+            Else
+                col1 = New DataGridViewComboBoxColumn
+                AddListComboBoxColumn(Me, cstIdref, "Name", col1)
+                col1.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                data.Columns.Add(col1)
+            End If
+
             If Me.Tag <> ELanguage.Language_Vbasic _
             Then
                 col1 = New DataGridViewComboBoxColumn
