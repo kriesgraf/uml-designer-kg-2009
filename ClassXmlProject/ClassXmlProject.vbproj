@@ -53,7 +53,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>ClassXmlProject.xml</DocumentationFile>
     <NoWarn>41999,42016</NoWarn>
-    <DefineConstants>_APP_UML = "1", _DBG_DEPENDENCY = "0"</DefineConstants>
+    <DefineConstants>_APP_UML = "1", _DBG_DEPENDENCY = "1"</DefineConstants>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <WarningsAsErrors>41998,42004,42020,42021,42022,42024,42026,42029,42030,42031,42099,42104,42105,42106,42107,42108,42109</WarningsAsErrors>
   </PropertyGroup>
@@ -65,7 +65,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>ClassXmlProject.xml</DocumentationFile>
     <NoWarn>41999,42016</NoWarn>
-    <DefineConstants>_APP_UML = "1", _DBG_DEPENDENCY = "0"</DefineConstants>
+    <DefineConstants>_APP_UML = "1", _DBG_DEPENDENCY = "1"</DefineConstants>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <WarningsAsErrors>41998,42004,42020,42021,42022,42024,42026,42029,42030,42031,42099,42104,42105,42106,42107,42108,42109</WarningsAsErrors>
   </PropertyGroup>
@@ -685,47 +685,47 @@
   <ItemGroup>
     <PublishFile Include="xslt\class-model.xml">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="xslt\language.xml">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="xslt\LanguageCplusPlus.xml">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="xslt\LanguageJava.xml">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="xslt\LanguageVbasic.xml">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
