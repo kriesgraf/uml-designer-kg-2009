@@ -150,6 +150,7 @@ Public Class XmlReferenceNodeCounter
             Dim child As XmlNode
             Dim Id As Integer
             Dim list As XmlNodeList
+            Dim tempo As String
 
             If prefix <> "" Then
                 list = node.SelectNodes(xpath + "[contains(@" + attribute + ",'" + prefix + "')]/@" + attribute + "")
@@ -163,7 +164,12 @@ Public Class XmlReferenceNodeCounter
                     If child.Value.StartsWith(prefix) = False Then
                         Throw New Exception("In Node: " + node.OuterXml + vbCrLf + vbCrLf + "One child node with attribute '" + attribute + "' does not start with prefix '" + prefix + "'")
                     End If
-                    Id = CInt(AfterStr(child.Value, prefix))
+                    tempo = AfterStr(child.Value, prefix)
+                    If IsNumeric(tempo) Then
+                        Id = CInt(tempo)
+                    Else
+                        Id = 0
+                    End If
 
                 ElseIf child.Value.StartsWith("CONST") = False _
                 Then

@@ -1056,15 +1056,26 @@ Public Class XmlProjectTools
     Public Shared Function GetNextClassId(ByVal node As XmlNode) As Integer
 
         Dim num_id As Integer
+        Dim tempo As String
         Dim list As XmlNodeList
         Dim child As XmlNode
 
-        GetNextClassId = CInt(XmlNodeCounter.AfterStr(GetNodeString(node, "@id"), "class"))
+        tempo = XmlNodeCounter.AfterStr(GetNodeString(node, "@id"), "class")
+        If IsNumeric(tempo) Then
+            GetNextClassId = CInt(tempo)
+        Else
+            GetNextClassId = 0
+        End If
+
         list = SelectNodes(node, "descendant::*/@id")
 
         For Each child In list
-
-            num_id = CInt(XmlNodeCounter.AfterStr(child.Value, "class"))
+            tempo = XmlNodeCounter.AfterStr(child.Value, "class")
+            If IsNumeric(tempo) Then
+                num_id = CInt(tempo)
+            Else
+                num_id = 0
+            End If
 
             If num_id > GetNextClassId Then
                 GetNextClassId = num_id
