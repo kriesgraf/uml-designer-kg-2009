@@ -106,11 +106,8 @@ Public Class dlgTypeVar
         m_xmlView = XmlNodeManager.GetInstance().CreateView(Nothing, "type")
     End Sub
 
-    Private Sub optType_0_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles optType_0.Click
-        TypeChange()
-    End Sub
-
-    Private Sub optType_1_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles optType_1.Click
+    Private Sub optType_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
+        Handles optType_0.Click, optType_1.Click
         TypeChange()
     End Sub
 
