@@ -114,7 +114,13 @@ Public Class XmlProjectMemberView
                 Case "typedef", "property"
                     Return New String() {MyBase.Name, MyBase.GetNodeString("comment"), MyBase.NodeName}
 
-                Case "class", "method"
+                Case "method"
+                    Dim xmlcpnt As XmlMethodSpec = New XmlMethodSpec(Me.Node)
+                    xmlcpnt.ChangeReferences()
+                    xmlcpnt.Tag = Me.Tag
+                    Return New String() {xmlcpnt.Name, xmlcpnt.Comment, MyBase.NodeName}
+
+                Case "class"
                     Return New String() {MyBase.Name, MyBase.GetAttribute("brief", "comment"), MyBase.NodeName}
             End Select
             Return New String() {MyBase.Name, MyBase.ToString, MyBase.NodeName}
