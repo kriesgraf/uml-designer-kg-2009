@@ -11,6 +11,7 @@ Public Class XmlDataGridView
     Private m_xmlBinding As XmlBindingDataGridView
     Private m_bRaiseDataError As Boolean
     Private m_iColumnDragStart As Integer = 0
+    Private m_keyDown As Keys
 
     Public Event RowValuesChanged(ByVal sender As Object)
 
@@ -193,7 +194,9 @@ Public Class XmlDataGridView
 
     Private Sub XmlDataGridView_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown
 
-        If e.Button = Windows.Forms.MouseButtons.Left _
+        Debug.Print("MouseDown:=" + e.Button.ToString + " - keyDown:=" + m_keyDown.ToString)
+
+        If e.Button = Windows.Forms.MouseButtons.Left And m_keyDown = Keys.ControlKey _
         Then
             Dim Index As Integer = Me.HitTest(e.X, e.Y).RowIndex
             Dim Col As Integer = Me.HitTest(e.X, e.Y).ColumnIndex
@@ -214,8 +217,10 @@ Public Class XmlDataGridView
         If e.KeyState = 9 Then
             e.Effect = DragDropEffects.Move
         Else
+            m_keyDown = Keys.None
             e.Effect = DragDropEffects.None
         End If
+        Debug.Print("DragOver:=" + e.Effect.ToString)
     End Sub
 
     Private Sub XmlDataGridView_DragDrop(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DragEventArgs) _
@@ -267,5 +272,15 @@ Public Class XmlDataGridView
     Private Sub XmlDataGridView_CellValueChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles Me.CellValueChanged
         m_xmlBinding.CellValueChanged(sender, e)
         RaiseEvent RowValuesChanged(Me)
+    End Sub
+
+    Private Sub XmlDataGridView_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyDown
+        Debug.Print("KeyDown:=" + e.KeyCode.ToString)
+        m_keyDown = e.KeyCode
+    End Sub
+
+    Private Sub XmlDataGridView_KeyUp(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyUp
+        Debug.Print("KeyUp:=" + e.KeyCode.ToString)
+        m_keyDown = Keys.None
     End Sub
 End Class
