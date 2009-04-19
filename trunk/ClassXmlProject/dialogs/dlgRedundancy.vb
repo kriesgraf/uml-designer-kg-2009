@@ -2,6 +2,7 @@
 Imports System.Xml
 Imports System
 Imports Microsoft.VisualBasic
+Imports ClassXmlProject.XmlNodeListView
 
 Public Class dlgRedundancy
 
@@ -12,6 +13,7 @@ Public Class dlgRedundancy
     End Enum
 
     Private m_xmlView As XmlRefRedundancyView = Nothing
+    Private m_strDisplayMember As String = Nothing
 
     Public WriteOnly Property Node() As XmlNode
         Set(ByVal value As XmlNode)
@@ -45,7 +47,7 @@ Public Class dlgRedundancy
                                             Optional ByVal bDisplayEmptyList As Boolean = True, _
                                             Optional ByVal bListToCheck As Boolean = False) As EResult
         If bDisplayEmptyList = False Then
-            If XmlNodeListView.GetListRedundancies(projectNode, child, Nothing) = False Then
+            If GetListRedundancies(projectNode, child, Nothing) = False Then
                 Return EResult.RedundancyIgnored
             End If
         End If
@@ -113,6 +115,9 @@ Public Class dlgRedundancy
             Else
                 lblMessage.Text = "..."
             End If
+
+            m_strDisplayMember = cstFullUmlPathName
+
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -128,7 +133,25 @@ Public Class dlgRedundancy
                     .CheckedView = False
                 End If
             End With
-            m_xmlView.UpdateRemainingList(lsbRedundantClasses, lsbRemainClasses)
+            m_xmlView.UpdateRemainingList(lsbRedundantClasses, lsbRemainClasses, m_strDisplayMember)
         End If
+    End Sub
+
+    Private Sub optDisplay_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+        Handles optDisplay_1.CheckedChanged, optDisplay_1.CheckedChanged, optDisplay_2.CheckedChanged
+
+        If optDisplay_0.Checked _
+        Then
+            m_strDisplayMember = cstFullUmlPathName
+
+        ElseIf optDisplay_1.Checked _
+        Then
+            m_strDisplayMember = cstFullpathClassName
+        Else
+            m_strDisplayMember = cstFullInfo
+        End If
+
+        m_xmlView.LoadNodes(lsbRedundantClasses, m_strDisplayMember, True)
+        m_xmlView.UpdateRemainingList(lsbRedundantClasses, lsbRemainClasses, m_strDisplayMember)
     End Sub
 End Class

@@ -16,6 +16,7 @@ Public Class XmlNodeListView
     Public Const cstNullElement As String = "0"
     Public Const cstFullUmlPathName As String = "FullUmlPathName"
     Public Const cstFullpathClassName As String = "FullpathClassName"
+    Public Const cstFullInfo As String = "FullInfo"
 
     Public Enum EComboList
         Type_index = -1
@@ -76,6 +77,25 @@ Public Class XmlNodeListView
         End Get
     End Property
 
+    Public ReadOnly Property FullInfo() As String
+        Get
+            If m_strName = "" Then
+                Dim name As String = "."
+                Select Case Me.NodeName
+                    Case "relationship"
+                        name = """" + GetAttribute("action") + """"
+                    Case "param"
+                        name = """argument"" " + Me.Name
+                    Case Else
+                        name = Me.Name
+                End Select
+                Return name + " (" + GetFullFullInfo() + ")"
+            Else
+                Return m_strName
+            End If
+        End Get
+    End Property
+
     Public ReadOnly Property FullUmlPathName() As String
         Get
             If m_strName = "" Then
@@ -88,7 +108,7 @@ Public Class XmlNodeListView
                     Case Else
                         name = Me.Name
                 End Select
-                Return name + " (" + GetFullUmlPath(Me.Node.ParentNode) + ")"
+                Return name + " (" + GetFullUmlPath(Me.Node) + ")"
             Else
                 Return m_strName
             End If
@@ -490,6 +510,57 @@ Public Class XmlNodeListView
         Return False
     End Function
 
+
+    Private Function GetFullFullInfo() As String
+        Try
+            Dim tempo As String
+            Dim child As XmlNode
+
+            Select Case Me.NodeName
+                Case "#document"
+                    Return ""
+
+                Case "package"
+                    tempo = ""
+                    For Each child In Me.SelectNodes("import | class | package")
+                        tempo += GetName(child) + ", "
+                    Next
+                    Return tempo
+
+                Case "class", "interface"
+                    tempo = ""
+                    For Each child In Me.SelectNodes("typedef | property | method")
+                        tempo += GetName(child) + ", "
+                    Next
+                    Return tempo
+
+                Case "import", "export"
+                    tempo = ""
+                    For Each child In Me.SelectNodes("descendant::reference | descendant::interface")
+                        tempo += GetName(child) + ", "
+                    Next
+                    Return tempo
+
+                Case "typedef"
+                    Dim component As XmlTypedefSpec = Me.CreateDocument(Me.Node)
+                    component.Tag = Me.Tag
+                    Return component.FullpathTypeDescription
+
+                Case "method"
+                    tempo = ""
+                    For Each child In Me.SelectNodes("property | method")
+                        tempo += GetName(child) + ", "
+                    Next
+                    Return tempo
+
+                Case Else
+                    Return Me.Name
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Private Shared Sub AddSimpleTypesList(ByVal myList As ArrayList, ByVal eTag As ELanguage)
         Try
             Dim doc As New XmlDocument
@@ -510,12 +581,41 @@ Public Class XmlNodeListView
         Try
             If current Is Nothing Then Return ""
 
+            Dim tempo, tempo2 As String
+
             Select Case current.Name
-                Case "package", "class", "import", "typedef", "interface"
+                Case "#document"
+                    Return ""
+
+                Case "package", "class", "import", "typedef"
                     Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
 
+                Case "interface"
+                    tempo = GetAttributeValue(current, "package")
+                    If tempo <> "" Then
+                        Return GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + GetName(current)
+                    End If
+                    Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+
+                Case "reference"
+                    tempo = GetAttributeValue(current, "package")
+                    If GetAttributeValue(current, "type") = "typedef" Then
+                        tempo2 = GetAttributeValue(current, "class") + "/" + GetName(current)
+                    Else
+                        tempo2 = GetName(current)
+                    End If
+                    If tempo <> "" Then
+                        Return GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + tempo2
+                    End If
+                    Return GetFullUmlPath(current.ParentNode) + "/" + tempo2
+
                 Case "export"
-                    If current.ParentNode Is Nothing Then
+                    If current.ParentNode Is Nothing _
+                    Then
+                        Return "/" + GetName(current)
+
+                    ElseIf current.ParentNode.Name = "#document" _
+                    Then
                         Return "/" + GetName(current)
                     End If
 

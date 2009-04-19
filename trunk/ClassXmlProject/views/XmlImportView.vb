@@ -408,14 +408,15 @@ Public Class XmlImportView
 
             If (dlgOpenFile.ShowDialog() = DialogResult.OK) _
             Then
-                Dim FileName As System.IO.FileInfo = My.Computer.FileSystem.GetFileInfo(dlgOpenFile.FileName)
-                LoadDocument(form, FileName, eMode)
+                Dim FileName As FileInfo = My.Computer.FileSystem.GetFileInfo(dlgOpenFile.FileName)
+                If LoadDocument(form, FileName, eMode) Then
 
-                ExtractExternalReferences(Me.Node.ParentNode, ChildExportNode().Node)
+                    ExtractExternalReferences(Me.Node.ParentNode, ChildExportNode.Node)
 
-                ' This class is used both in dlgImport and in frmProject
-                If m_xmlBindingsList IsNot Nothing Then m_xmlBindingsList.ResetValues()
-                bResult = True
+                    ' This class is used both in dlgImport and in frmProject
+                    If m_xmlBindingsList IsNot Nothing Then m_xmlBindingsList.ResetValues()
+                    bResult = True
+                End If
             End If
         Catch ex As Exception
             Throw ex
