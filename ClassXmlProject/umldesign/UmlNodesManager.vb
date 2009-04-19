@@ -186,7 +186,7 @@ Public Class UmlNodesManager
             fen.Cursor = Cursors.WaitCursor
             observer.ProgressBarVisible = True
             observer.Minimum = 0
-            observer.Maximum = 5
+            observer.Maximum = 6
 
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
@@ -202,6 +202,9 @@ Public Class UmlNodesManager
             observer.Increment(1)
 
             LinkUnreferencedNodes(source, node, eLang)
+            observer.Increment(1)
+
+            CheckExportedReferences(source)
             observer.Increment(1)
 
             source.Save(strFilename)
@@ -229,7 +232,7 @@ Public Class UmlNodesManager
             fen.Cursor = Cursors.WaitCursor
             observer.ProgressBarVisible = True
             observer.Minimum = 0
-            observer.Maximum = 5 + node.SelectNodes("descendant::package | descendant::class").Count
+            observer.Maximum = 6 + node.SelectNodes("descendant::package | descendant::class").Count
 
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
@@ -245,6 +248,9 @@ Public Class UmlNodesManager
             observer.Increment(1)
 
             LinkUnreferencedNodes(source, node, eLang)
+            observer.Increment(1)
+
+            CheckExportedReferences(source)
             observer.Increment(1)
 
             source.Save(strFilename)
@@ -272,7 +278,7 @@ Public Class UmlNodesManager
             fen.Cursor = Cursors.WaitCursor
             observer.ProgressBarVisible = True
             observer.Minimum = 0
-            observer.Maximum = 5 + node.SelectNodes("descendant::package | descendant::class").Count
+            observer.Maximum = 6 + node.SelectNodes("descendant::package | descendant::class").Count
 
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
@@ -288,6 +294,9 @@ Public Class UmlNodesManager
             observer.Increment(1)
 
             LinkUnreferencedNodes(source, node, eLang)
+            observer.Increment(1)
+
+            CheckExportedReferences(source)
             observer.Increment(1)
 
             source.Save(strFilename)
@@ -314,7 +323,7 @@ Public Class UmlNodesManager
             fen.Cursor = Cursors.WaitCursor
             observer.ProgressBarVisible = True
             observer.Minimum = 0
-            observer.Maximum = 4
+            observer.Maximum = 5
 
             If CopyDocTypeDeclarationFile(strPath) = False Then Exit Sub
             observer.Increment(1)
@@ -329,6 +338,9 @@ Public Class UmlNodesManager
 
             'Debug.Print(strXML)
             source.LoadXml(strXML)
+            observer.Increment(1)
+
+            CheckExportedReferences(source)
             observer.Increment(1)
 
             source.Save(strFilename)
@@ -440,6 +452,33 @@ Public Class UmlNodesManager
         fen.Filename = strFilename
         fen.ShowDialog()
         Return CType(fen.Tag, Boolean)
+    End Function
+
+    Private Shared Function CheckExportedReferences(ByVal source As XmlDocument) As Boolean
+        Dim bResult As Boolean = False
+        Try
+
+            Dim list As XmlNodeList = source.SelectNodes("//export/*")
+
+            Dim component As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(source.DocumentElement)
+
+            For Each child In list
+                ' Cross control between component (Project node) and import (external file)
+                Select Case dlgRedundancy.VerifyRedundancy(component, "Find redundancies in exported file...", child, "", False, True)
+                    Case dlgRedundancy.EResult.RedundancyIgnoredAll
+                        Exit For
+
+                    Case dlgRedundancy.EResult.RedundancyChanged
+                        bResult = True
+
+                    Case Else
+                        ' Ignore
+                End Select
+            Next child
+        Catch ex As Exception
+
+        End Try
+        Return bResult
     End Function
 
     Private Shared Function ExportElementPackage(ByVal observer As InterfProgression, ByVal node As XmlNode, ByVal strCurrentPackage As String, _

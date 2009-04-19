@@ -27,7 +27,8 @@ Public Class XmlRefRedundancyView
         End Set
     End Property
 
-    Public Function UpdateRemainingList(ByVal listRemoved As ListBox, ByVal listRemained As ListBox) As Boolean
+    Public Function UpdateRemainingList(ByVal listRemoved As ListBox, ByVal listRemained As ListBox, _
+                                        ByVal strDisplayMember As String) As Boolean
         Dim RemovedArray As ArrayList = listRemoved.DataSource
         Dim RemainedArray As New ArrayList
         Dim copy As XmlNodeListView
@@ -38,12 +39,20 @@ Public Class XmlRefRedundancyView
                 RemainedArray.Add(copy)
             End If
         Next
-        listRemained.DataSource = Nothing
-        listRemained.Items.Clear()
-        listRemained.SelectionMode = SelectionMode.One
-        listRemained.DisplayMember = "FullUmlPathName"
-        listRemained.ValueMember = "Id"
-        listRemained.DataSource = RemainedArray
+        If RemovedArray.Count = RemainedArray.Count Or RemainedArray.Count = 0 Then
+            listRemained.DataSource = Nothing
+            listRemained.Items.Clear()
+            listRemained.Items.Add("No replacement.")
+            listRemained.Enabled = False
+        Else
+            listRemained.Enabled = True
+            listRemained.DataSource = Nothing
+            listRemained.Items.Clear()
+            listRemained.SelectionMode = SelectionMode.One
+            listRemained.DisplayMember = strDisplayMember
+            listRemained.ValueMember = "Id"
+            listRemained.DataSource = RemainedArray
+        End If
     End Function
 
     Public Function UpdateValues(ByVal listRemoved As ListBox, ByVal listRemained As ListBox) As Boolean
@@ -71,7 +80,8 @@ Public Class XmlRefRedundancyView
         Return bResult
     End Function
 
-    Public Function LoadNodes(ByVal listbox As ListBox) As Boolean
+    Public Function LoadNodes(ByVal listbox As ListBox, Optional ByVal strDisplayMember As String = XmlNodeListView.cstFullUmlPathName, _
+                              Optional ByVal bClear As Boolean = False) As Boolean
         Try
             Dim listResult As New ArrayList
             If XmlNodeListView.GetListRedundancies(m_xmlProjectNode, Me.Node, listResult) _
@@ -91,7 +101,12 @@ Public Class XmlRefRedundancyView
                 XmlNodeListView.SortNodeList(listResult)
 
                 listbox.SelectionMode = SelectionMode.MultiSimple
-                listbox.DisplayMember = "FullUmlPathName"
+                If bClear Then
+                    listbox.DataSource = Nothing
+                    listbox.Items.Clear()
+                End If
+
+                listbox.DisplayMember = strDisplayMember
                 listbox.ValueMember = "Id"
                 listbox.DataSource = listResult
                 listbox.SetSelected(0, False)
