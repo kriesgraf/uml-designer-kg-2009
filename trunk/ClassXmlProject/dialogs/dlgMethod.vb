@@ -8,10 +8,6 @@ Public Class dlgMethod
     Implements InterfFormDocument
     Implements InterfFormClass
 
-    Private Shared regOperator As New Regex("^(IsFalse|IsTrue|Not|" + _
-                                            "\+|\+\+|\-|\-\-|\*|\/|\\|\&|\&\&|\||\|\||\%|\^|\>\>|\<\<|\=|\!|\!\=|\<\>|\>|\>\=|\<|\<\=|" + _
-                                            "And|Like|Mod|Or|Xor|CType)$")
-
     Private m_xmlView As XmlMethodView
     Private m_eCurrentClassImplementation As EImplementation = EImplementation.Unknown
     Private m_bInvalideCell As Boolean = False
@@ -214,31 +210,7 @@ Public Class dlgMethod
     End Sub
 
     Private Sub txtOperator_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtOperator.Validating
-        If regOperator.IsMatch(sender.Text) = False _
-        Then
-            If CType(m_xmlView.Tag, ELanguage) = ELanguage.Language_Vbasic _
-            Then
-                Dim errorMsg As String = "Unary: +, -, IsFalse, IsTrue, Not" + vbCrLf _
-                                        + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
-                                        + "Conversion:  CType"
-
-                Me.errorProvider.SetError(sender, errorMsg)
-            Else
-                Dim errorMsg As String = "+, ++, --, -, !, *, /, >>, <<, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
-
-                Me.errorProvider.SetError(sender, errorMsg)
-            End If
-
-            e.Cancel = True
-        End If
-    End Sub
-
-    Private Sub grdParams_CellValidating(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles grdParams.CellValidating
-
-    End Sub
-
-    Private Sub grdParams_CellValidated(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles grdParams.CellValidated
-
+        e.Cancel = IsInvalidOperator(sender, Me.errorProvider, CType(m_xmlView.Tag, ELanguage))
     End Sub
 End Class
 
