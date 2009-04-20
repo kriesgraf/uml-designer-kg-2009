@@ -484,6 +484,7 @@ Public Class frmProject
     Private Sub mnuFindRedundant_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
             Handles mnuProjectRedundancies.Click, _
                     mnuPackageRedundancies.Click, _
+                    mnuClassRedundancies.Click, _
                     FindRedundant.Click
         Try
             With lvwProjectMembers

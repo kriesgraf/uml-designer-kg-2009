@@ -60,10 +60,36 @@ Public Class XmlTypeVarSpec
                 If Me.Node IsNot Nothing Then
                     Select Case Kind
                         Case XmlTypeVarSpec.EKindDeclaration.EK_Union
-                            strResult = "union {" + GetAttribute("name", "element") + ",...}"
+                            strResult = "union {" + GetStructureName(True) + "}"
 
                         Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
-                            strResult = strResult + GetBeginStruct(CType(Me.Tag, ELanguage)) + GetAttribute("name", "element") + GetEndStruct(CType(Me.Tag, ELanguage))
+                            strResult = strResult + GetBeginStruct(CType(Me.Tag, ELanguage)) + GetStructureName(True) + GetEndStruct(CType(Me.Tag, ELanguage))
+
+                        Case XmlTypeVarSpec.EKindDeclaration.EK_Container
+                            strResult = GetContainer(GetTypeName())
+
+                        Case Else
+                            strResult = GetTypeName(True)
+                    End Select
+                End If
+            Catch ex As Exception
+                Throw ex
+            End Try
+            Return strResult
+        End Get
+    End Property
+
+    Public ReadOnly Property DetailedDescription() As String
+        Get
+            Dim strResult As String = ""
+            Try
+                If Me.Node IsNot Nothing Then
+                    Select Case Kind
+                        Case XmlTypeVarSpec.EKindDeclaration.EK_Union
+                            strResult = "union {" + GetStructureName() + "}"
+
+                        Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
+                            strResult = strResult + GetBeginStruct(CType(Me.Tag, ELanguage)) + GetStructureName() + GetEndStruct(CType(Me.Tag, ELanguage))
 
                         Case XmlTypeVarSpec.EKindDeclaration.EK_Container
                             strResult = GetContainer(GetTypeName())
@@ -528,7 +554,23 @@ Public Class XmlTypeVarSpec
         End Try
     End Sub
 
-    Private Function GetTypeName() As String
+    Private Function GetStructureName(Optional ByVal bAbreviated As Boolean = False) As String
+        Dim strResult As String = ""
+        If bAbreviated Then
+            strResult = GetAttribute("name", "element") + ",..."
+        Else
+            Dim list As XmlNodeList = SelectNodes("element")
+            For Each child As XmlNode In list
+                strResult += GetName(child)
+                If child IsNot list.Item(list.Count - 1) Then
+                    strResult += ", "
+                End If
+            Next
+        End If
+        Return strResult
+    End Function
+
+    Private Function GetTypeName(Optional ByVal bAbreviated As Boolean = False) As String
         Dim strResult As String = ""
         Try
             If Reference IsNot Nothing Then
@@ -538,8 +580,19 @@ Public Class XmlTypeVarSpec
             End If
 
             If strResult = "" Then
-                strResult = GetAttribute("name", "descendant::enumvalue")
-                strResult = GetBeginEnum(CType(Me.Tag, ELanguage)) + strResult + GetEndStruct(CType(Me.Tag, ELanguage))
+                strResult += GetBeginEnum(CType(Me.Tag, ELanguage))
+                If bAbreviated = False Then
+                    Dim list As XmlNodeList = SelectNodes("enumvalue")
+                    For Each child As XmlNode In list
+                        strResult += GetName(child)
+                        If child IsNot list.Item(list.Count - 1) Then
+                            strResult += ", "
+                        End If
+                    Next
+                Else
+                    strResult += GetAttribute("name", "enumvalue") + ",..."
+                End If
+                strResult += GetEndStruct(CType(Me.Tag, ELanguage))
             End If
 
             If Modifier Then

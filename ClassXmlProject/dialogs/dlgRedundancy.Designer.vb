@@ -95,6 +95,7 @@ Partial Class dlgRedundancy
         '
         Me.lsbRedundantClasses.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lsbRedundantClasses.FormattingEnabled = True
+        Me.lsbRedundantClasses.HorizontalScrollbar = True
         Me.lsbRedundantClasses.Location = New System.Drawing.Point(3, 103)
         Me.lsbRedundantClasses.Name = "lsbRedundantClasses"
         Me.lsbRedundantClasses.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple
@@ -137,6 +138,7 @@ Partial Class dlgRedundancy
         '
         Me.lsbRemainClasses.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lsbRemainClasses.FormattingEnabled = True
+        Me.lsbRemainClasses.HorizontalScrollbar = True
         Me.lsbRemainClasses.Location = New System.Drawing.Point(3, 239)
         Me.lsbRemainClasses.Name = "lsbRemainClasses"
         Me.lsbRemainClasses.Size = New System.Drawing.Size(508, 95)

@@ -25,7 +25,7 @@ Public Class XmlNodeListView
         Container_indexed = 2
     End Enum
 
-    Private m_strName As String
+    Private m_strName As String = ""
 
     Public Property Info() As Boolean
         Get
@@ -79,59 +79,49 @@ Public Class XmlNodeListView
 
     Public ReadOnly Property FullInfo() As String
         Get
-            If m_strName = "" Then
-                Dim name As String = "."
-                Select Case Me.NodeName
-                    Case "relationship"
-                        name = """" + GetAttribute("action") + """"
-                    Case "param"
-                        name = """argument"" " + Me.Name
-                    Case Else
-                        name = Me.Name
-                End Select
-                Return name + " (" + GetFullFullInfo() + ")"
-            Else
-                Return m_strName
-            End If
+            Dim name As String = "."
+            Select Case Me.NodeName
+                Case "relationship"
+                    name = """" + GetAttribute("action") + """"
+                Case "param"
+                    name = """argument"" " + Me.Name
+                Case Else
+                    name = Me.Name
+            End Select
+            Return name + " (" + GetFullFullInfo() + ")" + m_strName
         End Get
     End Property
 
     Public ReadOnly Property FullUmlPathName() As String
         Get
-            If m_strName = "" Then
-                Dim name As String = "."
-                Select Case Me.NodeName
-                    Case "relationship"
-                        name = """" + GetAttribute("action") + """"
-                    Case "param"
-                        name = """argument"" " + Me.Name
-                    Case Else
-                        name = Me.Name
-                End Select
-                Return name + " (" + GetFullUmlPath(Me.Node) + ")"
-            Else
-                Return m_strName
-            End If
+            Dim name As String = "."
+            Select Case Me.NodeName
+                Case "relationship"
+                    name = """" + GetAttribute("action") + """"
+                Case "param"
+                    name = """argument"" " + Me.Name
+                Case Else
+                    name = Me.Name
+            End Select
+            Return name + " (" + GetFullUmlPath(Me.Node) + ")" + m_strName
         End Get
     End Property
 
     Public ReadOnly Property FullpathClassName() As String
         Get
-            If m_strName = "" Then
-                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
-                Dim strResult As String = Me.Name
+            Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+            Dim strResult As String = Me.Name
 
-                Dim parent As XmlImportView = TryCast(m_xmlComponent, XmlImportView)
-                If parent IsNot Nothing _
-                Then
-                    strResult = GetFullpathDescription(Me.Node, eLang, parent.CurrentParameter)
-                Else
-                    strResult = GetFullpathDescription(Me.Node, eLang)
-                End If
-                If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
-                Return strResult
+            Dim parent As XmlImportView = TryCast(m_xmlComponent, XmlImportView)
+            If parent IsNot Nothing _
+            Then
+                strResult = GetFullpathDescription(Me.Node, eLang, parent.CurrentParameter)
+            Else
+                strResult = GetFullpathDescription(Me.Node, eLang)
             End If
-            Return m_strName
+            If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
+            strResult += m_strName
+            Return strResult
         End Get
     End Property
 
@@ -544,7 +534,7 @@ Public Class XmlNodeListView
                 Case "typedef"
                     Dim component As XmlTypedefSpec = Me.CreateDocument(Me.Node)
                     component.Tag = Me.Tag
-                    Return component.FullpathTypeDescription
+                    Return component.DetailedDescription
 
                 Case "method"
                     tempo = ""

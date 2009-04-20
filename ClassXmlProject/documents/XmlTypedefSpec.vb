@@ -16,6 +16,14 @@ Public Class XmlTypedefSpec
         End Get
     End Property
 
+    <CategoryAttribute("UML design"), _
+    DescriptionAttribute("Detailed type description")> _
+    Public ReadOnly Property DetailedDescription() As String
+        Get
+            Return Me.TypeVarDefinition.DetailedDescription
+        End Get
+    End Property
+
     <CategoryAttribute("XmlComponent"), _
     DescriptionAttribute("Type node")> _
     Public ReadOnly Property TypeVarDefinition() As XmlTypeVarSpec
