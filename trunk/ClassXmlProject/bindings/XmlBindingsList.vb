@@ -23,8 +23,8 @@ Public Class XmlBindingsList
 
         Catch ex As Exception
             Throw ex
-        Finally
-            m_BindingManager = Nothing
+            'Finally
+            '   m_BindingManager = Nothing
         End Try
     End Sub
 
@@ -90,5 +90,4 @@ Public Class XmlBindingsList
             dataControl.DataBindings.Remove(binding)
         End If
     End Sub
-
 End Class

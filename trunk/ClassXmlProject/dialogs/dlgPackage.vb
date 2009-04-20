@@ -71,10 +71,14 @@ Public Class dlgPackage
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
-        Me.DialogResult = DialogResult.OK
-        m_xmlView.UpdateValues()
-        Me.Tag = True
-        Me.Close()
+        Try
+            Me.DialogResult = DialogResult.OK
+            m_xmlView.UpdateValues()
+            Me.Tag = True
+            Me.Close()
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
