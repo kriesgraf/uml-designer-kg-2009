@@ -133,6 +133,7 @@ Partial Class dlgPackage
         Me.strpProgressBar.Name = "strpProgressBar"
         Me.strpProgressBar.Size = New System.Drawing.Size(121, 21)
         Me.strpProgressBar.TabIndex = 4
+        Me.strpProgressBar.Visible = False
         '
         'Label1
         '
@@ -264,7 +265,7 @@ Partial Class dlgPackage
         '
         Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportReferences, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.mnuExportNodes, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
         Me.mnuClass.Name = "mnuClass"
-        Me.mnuClass.Size = New System.Drawing.Size(189, 364)
+        Me.mnuClass.Size = New System.Drawing.Size(189, 342)
         '
         'mnuAdd
         '

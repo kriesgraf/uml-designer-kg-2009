@@ -7,6 +7,7 @@ Imports Microsoft.VisualBasic
 Public Class dlgClass
     Implements InterfFormDocument
     Implements InterfNodeCounter
+    Implements InterfProgression
 
 #Region "Class declarations"
 
@@ -17,6 +18,28 @@ Public Class dlgClass
 #End Region
 
 #Region "Public methods"
+
+    Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
+        Set(ByVal value As Integer)
+            Me.strpProgressBar.Maximum = value
+            Debug.Print("Maximum=" + value.ToString)
+        End Set
+    End Property
+
+    Public WriteOnly Property Minimum() As Integer Implements InterfProgression.Minimum
+        Set(ByVal value As Integer)
+            Me.strpProgressBar.Minimum = value
+            Me.strpProgressBar.Value = value
+            Debug.Print("Minimum=" + value.ToString)
+        End Set
+    End Property
+
+    Public WriteOnly Property ProgressBarVisible() As Boolean Implements InterfProgression.ProgressBarVisible
+        Set(ByVal value As Boolean)
+            Me.strpProgressBar.Visible = value
+            Application.DoEvents()  ' To ose time to dispatch event
+        End Set
+    End Property
 
     Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
         Set(ByVal value As XmlReferenceNodeCounter)
@@ -32,6 +55,13 @@ Public Class dlgClass
             m_xmlView.Tag = value.Tag
         End Set
     End Property
+
+    Public Sub Increment(ByVal value As Integer) Implements InterfProgression.Increment
+        Me.strpProgressBar.Increment(value)
+        Application.DoEvents()  ' To lose time to dispatch event
+        Debug.Print("Step=" + Me.strpProgressBar.Value.ToString)
+        System.Threading.Thread.Sleep(50)
+    End Sub
 
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
 
@@ -220,9 +250,13 @@ Public Class dlgClass
     End Sub
 
     Private Sub mnuMemberDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMemberDependencies.Click
-        If m_xmlView.SearchDependencies(CType(gridMembers.SelectedItem, XmlComponent)) Then
-            gridMembers.Binding.ResetBindings(True)
-        End If
+        Try
+            If m_xmlView.SearchDependencies(CType(gridMembers.SelectedItem, XmlComponent)) Then
+                gridMembers.Binding.ResetBindings(True)
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub Grids_CellValidated(ByVal sender As XmlDataGridView, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) _
@@ -292,11 +326,21 @@ Public Class dlgClass
     End Sub
 
     Private Sub RemoveRedundancies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RemoveRedundancies.Click
-        m_xmlView.RemoveRedundant(CType(gridMembers.SelectedItem, XmlComponent))
+        Try
+            m_xmlView.RemoveRedundant(CType(gridMembers.SelectedItem, XmlComponent))
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub mnuExportReferences_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuExportReferences.Click
+        Try
+            m_xmlView.ExportReferences(Me, CType(gridMembers.SelectedItem, XmlComponent))
 
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 #End Region
 End Class

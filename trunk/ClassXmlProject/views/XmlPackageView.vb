@@ -32,10 +32,12 @@ Public Class XmlPackageView
     End Function
 
     Public Sub LoadValues()
+        Debug.Print(Me.ToString + ".LoadValues")
         m_xmlBindingsList.Init()
     End Sub
 
     Public Sub UpdateValues()
+        Debug.Print(Me.ToString + ".UpdateValues")
         Try
             If m_chkFolder.Checked = False Then
                 m_txtFolder.Text = ""
