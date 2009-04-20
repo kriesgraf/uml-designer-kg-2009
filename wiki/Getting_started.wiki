@@ -29,13 +29,19 @@ The Edit command is always reachable with a mouse double-click, except in projec
  * An object without child elements: opens the associated editor window. 
  * An object with children: opens a sub-level in project list view.
 
+Grid view cell and list view label edition is always reachable with a long time mouse click.
+
+Sometimes, editing grid view cells with mouse click is disabled, recommend to use F2 key or press alphanumeric character keys.
+
 Only Copy/Cut/Paste commands are available in menu bar, all others are found in pop-up-menus.
 
 == Drag and drop ==
 
 The drag and drop command is available to reorder objects in list boxes and data grid views. But this command is not available when the order is unnecessary.
 
-This is available too in list views:
+This command is available in C++ language project for *typedef* declarations. To drag object: press key _Control_ and click left in typedef _Name_ cell, then hold down mouse and _Control_ key and drag object to its new location an drop it.
+
+This is available too in list views without pressing _Control_ key:
  * To move objects down below into a sub-package,
  * To merge imports that have the same full path name, including empty field.
 
