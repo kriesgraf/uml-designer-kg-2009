@@ -75,9 +75,9 @@ Public Class dlgRedundancy
         Try
             If m_xmlView.UpdateValues(lsbRedundantClasses, lsbRemainClasses) Then
                 Me.Tag = True
+                Me.DialogResult = DialogResult.OK
+                Me.Close()
             End If
-            Me.DialogResult = DialogResult.OK
-            Me.Close()
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -133,7 +133,7 @@ Public Class dlgRedundancy
                     .CheckedView = False
                 End If
             End With
-            m_xmlView.UpdateRemainingList(lsbRedundantClasses, lsbRemainClasses, m_strDisplayMember)
+            m_xmlView.UpdateRemainingList(lsbRedundantClasses, lsbRemainClasses, m_strDisplayMember, OK_Button)
         End If
     End Sub
 
@@ -152,6 +152,6 @@ Public Class dlgRedundancy
         End If
 
         m_xmlView.LoadNodes(lsbRedundantClasses, m_strDisplayMember, True)
-        m_xmlView.UpdateRemainingList(lsbRedundantClasses, lsbRemainClasses, m_strDisplayMember)
+        m_xmlView.UpdateRemainingList(lsbRedundantClasses, lsbRemainClasses, m_strDisplayMember, OK_Button)
     End Sub
 End Class

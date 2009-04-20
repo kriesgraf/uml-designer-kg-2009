@@ -39,6 +39,7 @@ Partial Class frmProject
         Me.ToolStripSeparator25 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProjectDependencies = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator20 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuProjectImportReferences = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuProjectExport = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator23 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProjectExportNodes = New System.Windows.Forms.ToolStripMenuItem
@@ -124,6 +125,7 @@ Partial Class frmProject
         Me.ToolStripSeparator26 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuPackageDependencies = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator21 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuPackageImportReference = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPackageExportReference = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator24 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuPackageExportNodes = New System.Windows.Forms.ToolStripMenuItem
@@ -174,8 +176,7 @@ Partial Class frmProject
         Me.DeleteReference = New System.Windows.Forms.ToolStripMenuItem
         Me.RemoveAll = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuProjectImportReferences = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuPackageImportReference = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuClassRedundancies = New System.Windows.Forms.ToolStripMenuItem
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
@@ -233,7 +234,7 @@ Partial Class frmProject
         '
         Me.mnuProjectList.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddImport, Me.mnuAddClass, Me.mnuAddPackage, Me.mnuAddRelationship, Me.ToolStripSeparator2, Me.mnuProjectEdit, Me.mnuEditProperties, Me.ToolStripSeparator8, Me.mnuProjectGenerate, Me.ToolStripSeparator25, Me.mnuProjectDependencies, Me.ToolStripSeparator20, Me.mnuProjectImportReferences, Me.mnuProjectExport, Me.ToolStripSeparator23, Me.mnuProjectExportNodes, Me.mnuProjectImportNodes, Me.mnuProjectUpdateNodes, Me.ToolStripSeparator16, Me.mnuProjectRedundancies, Me.mnuProjectDelete})
         Me.mnuProjectList.Name = "mnuEditList"
-        Me.mnuProjectList.Size = New System.Drawing.Size(189, 392)
+        Me.mnuProjectList.Size = New System.Drawing.Size(189, 370)
         '
         'mnuAddImport
         '
@@ -319,6 +320,13 @@ Partial Class frmProject
         '
         Me.ToolStripSeparator20.Name = "ToolStripSeparator20"
         Me.ToolStripSeparator20.Size = New System.Drawing.Size(185, 6)
+        '
+        'mnuProjectImportReferences
+        '
+        Me.mnuProjectImportReferences.Image = Global.ClassXmlProject.My.Resources.Resources.Back_2
+        Me.mnuProjectImportReferences.Name = "mnuProjectImportReferences"
+        Me.mnuProjectImportReferences.Size = New System.Drawing.Size(188, 22)
+        Me.mnuProjectImportReferences.Text = "Import references..."
         '
         'mnuProjectExport
         '
@@ -876,7 +884,7 @@ Partial Class frmProject
         '
         Me.mnuPackageList.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPackageAddImport, Me.mnuPackageAddClass, Me.mnuPackageAddPackage, Me.ToolStripSeparator10, Me.mnuPackageEdit, Me.mnuPackageMoveUp, Me.mnuPackageProperties, Me.ToolStripSeparator11, Me.mnuPackageGenerate, Me.ToolStripSeparator26, Me.mnuPackageDependencies, Me.ToolStripSeparator21, Me.mnuPackageImportReference, Me.mnuPackageExportReference, Me.ToolStripSeparator24, Me.mnuPackageExportNodes, Me.mnuPackageImportNodes, Me.mnuPackageUpdateNodes, Me.ToolStripSeparator17, Me.mnuPackageRedundancies, Me.mnuPackageDelete})
         Me.mnuPackageList.Name = "mnuEditList"
-        Me.mnuPackageList.Size = New System.Drawing.Size(189, 370)
+        Me.mnuPackageList.Size = New System.Drawing.Size(189, 392)
         '
         'mnuPackageAddImport
         '
@@ -961,6 +969,12 @@ Partial Class frmProject
         Me.ToolStripSeparator21.Name = "ToolStripSeparator21"
         Me.ToolStripSeparator21.Size = New System.Drawing.Size(185, 6)
         '
+        'mnuPackageImportReference
+        '
+        Me.mnuPackageImportReference.Name = "mnuPackageImportReference"
+        Me.mnuPackageImportReference.Size = New System.Drawing.Size(188, 22)
+        Me.mnuPackageImportReference.Text = "Import references..."
+        '
         'mnuPackageExportReference
         '
         Me.mnuPackageExportReference.Image = Global.ClassXmlProject.My.Resources.Resources.Forward_2
@@ -1030,9 +1044,9 @@ Partial Class frmProject
         '
         'mnuClassMembers
         '
-        Me.mnuClassMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddClassMember, Me.mnuClassMemberEdit, Me.mnuClassMemberProperties, Me.ToolStripSeparator12, Me.mnuOverrides, Me.ToolStripSeparator27, Me.mnuClassDependencies, Me.ToolStripSeparator22, Me.mnuClassMemberExport, Me.ToolStripSeparator19, Me.mnuClassDeleteMember})
+        Me.mnuClassMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddClassMember, Me.mnuClassMemberEdit, Me.mnuClassMemberProperties, Me.ToolStripSeparator12, Me.mnuOverrides, Me.ToolStripSeparator27, Me.mnuClassDependencies, Me.ToolStripSeparator22, Me.mnuClassMemberExport, Me.ToolStripSeparator19, Me.mnuClassRedundancies, Me.mnuClassDeleteMember})
         Me.mnuClassMembers.Name = "mnuMembers"
-        Me.mnuClassMembers.Size = New System.Drawing.Size(189, 182)
+        Me.mnuClassMembers.Size = New System.Drawing.Size(189, 204)
         '
         'mnuAddClassMember
         '
@@ -1301,18 +1315,12 @@ Partial Class frmProject
         Me.RemoveAll.Size = New System.Drawing.Size(201, 22)
         Me.RemoveAll.Text = "Remove all"
         '
-        'mnuProjectImportReferences
+        'mnuClassRedundancies
         '
-        Me.mnuProjectImportReferences.Image = Global.ClassXmlProject.My.Resources.Resources.Back_2
-        Me.mnuProjectImportReferences.Name = "mnuProjectImportReferences"
-        Me.mnuProjectImportReferences.Size = New System.Drawing.Size(188, 22)
-        Me.mnuProjectImportReferences.Text = "Import references..."
-        '
-        'mnuPackageImportReference
-        '
-        Me.mnuPackageImportReference.Name = "mnuPackageImportReference"
-        Me.mnuPackageImportReference.Size = New System.Drawing.Size(188, 22)
-        Me.mnuPackageImportReference.Text = "Import references..."
+        Me.mnuClassRedundancies.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
+        Me.mnuClassRedundancies.Name = "mnuClassRedundancies"
+        Me.mnuClassRedundancies.Size = New System.Drawing.Size(188, 22)
+        Me.mnuClassRedundancies.Text = "Remove redundancy..."
         '
         'frmProject
         '
@@ -1496,4 +1504,5 @@ Partial Class frmProject
     Friend WithEvents mnuImportMoveUp As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuProjectImportReferences As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuPackageImportReference As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuClassRedundancies As System.Windows.Forms.ToolStripMenuItem
 End Class

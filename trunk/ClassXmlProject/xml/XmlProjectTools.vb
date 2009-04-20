@@ -625,7 +625,7 @@ Public Class XmlProjectTools
             Dim dlgOpenFile As New OpenFileDialog
             dlgOpenFile.InitialDirectory = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             dlgOpenFile.Title = "Select a patch file..."
-            dlgOpenFile.Filter = "UML  patch (*.xptch)|*.xptch"
+            dlgOpenFile.Filter = "UML  patch (*.xptch)|*.xptch|XSL transformation patch (*.xsl*)|*.xsl*"
 
             If (dlgOpenFile.ShowDialog() = DialogResult.OK) _
             Then
@@ -1289,9 +1289,9 @@ Public Class XmlProjectTools
 
     Public Shared Function GetEndStruct(ByVal eTag As ELanguage) As String
         If eTag <> ELanguage.Language_CplusPlus Then
-            Return " ..."
+            Return " "
         Else
-            Return ", ...}"
+            Return "}"
         End If
     End Function
 

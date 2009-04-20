@@ -334,6 +334,27 @@ Public Class XmlClassSpec
         Return True
     End Function
 
+    Protected Friend Overrides Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            If component IsNot Nothing Then
+                If component.NodeName = "typedef" Then
+                    If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node) _
+                        = dlgRedundancy.EResult.RedundancyChanged _
+                    Then
+                        Me.Updated = True
+                        bResult = True
+                    End If
+                Else
+                    MsgBox("No redundancies check on this node!", MsgBoxStyle.Exclamation)
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
 #End Region
 
 #Region "Protected methods"
