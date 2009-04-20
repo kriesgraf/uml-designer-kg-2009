@@ -266,6 +266,7 @@ Public Class XmlProjectMemberView
 
     Public Overrides Function DropAppendComponent(ByVal child As XmlComponent) As Boolean
         Dim parent As XmlComposite = CType(CreateDocument(Me.Node), XmlComposite)
+        parent.Tag = Me.Tag
         Select Case parent.NodeName
             Case "import"
                 Select Case child.NodeName
@@ -531,6 +532,7 @@ Public Class XmlProjectMemberView
         Try
             'Not necessary to remove node, command Append will do it for us
             Dim member As XmlComposite = CreateDocument(Me.Node)
+            member.Tag = Me.Tag
             Select Case member.NodeName
                 Case "import"
                     Return CType(member, XmlImportSpec).MoveUpComponent(child)
@@ -556,11 +558,13 @@ Public Class XmlProjectMemberView
                 Case "root"
                     Dim root As XmlProjectProperties = CreateDocument(Me.Node)
                     import = CreateDocument("import")
+                    import.Tag = Me.Tag
                     root.AppendComponent(import)
 
                 Case "package"
                     Dim package As XmlPackageSpec = CreateDocument(Me.Node)
                     import = CreateDocument("import")
+                    import.Tag = Me.Tag
                     package.AppendComponent(import)
             End Select
 
