@@ -92,7 +92,7 @@ Public Class dlgReference
     End Sub
 
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
-            Handles txtName.Validating, txtPackage.Validating, txtParentClass.Validating
+            Handles txtName.Validating, txtParentClass.Validating
         e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
     End Sub
 
@@ -103,7 +103,7 @@ Public Class dlgReference
 
     Private Sub txtPackage_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
             Handles txtPackage.Validating
-        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.Tag)
+        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.Tag, True)
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
