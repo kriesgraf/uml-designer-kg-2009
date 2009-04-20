@@ -204,7 +204,7 @@
       <xsl:apply-templates select="dependency"/>
       <xsl:apply-templates select="collaboration"/>
       <xsl:apply-templates select="comment[1]"/>
-      <xsl:apply-templates select="import"/>
+      <xsl:apply-templates select="import[@param!='string' and @param!='sstream' and @param!='fstream']"/>
       <xsl:apply-templates select="typedef"/>
       <xsl:apply-templates select="property"/>
       <xsl:apply-templates select="method"/>
@@ -749,18 +749,18 @@
   <!-- ======================================================================= -->
   <xsl:template name="DescIdref">
     <xsl:choose>
-      <xsl:when test="not(@desc) and not(@idref)">
+      <xsl:when test="not(@desc) and not(@idref) and not(enumvalue)">
         <xsl:attribute name="desc">int16</xsl:attribute>
       </xsl:when>
       <xsl:when test="(@desc and string-length(@desc)=0) or (@idref and string-length(@idref)=0)">
         <xsl:attribute name="desc">int16</xsl:attribute>
       </xsl:when>
-      <xsl:otherwise>
+      <xsl:when test="not(enumvalue)">
         <xsl:copy-of select="@desc"/>
         <xsl:if test="@idref">
           <xsl:call-template name="IDREF"/>
         </xsl:if>
-      </xsl:otherwise>
+      </xsl:when>
     </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -776,6 +776,8 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
 
 
 
