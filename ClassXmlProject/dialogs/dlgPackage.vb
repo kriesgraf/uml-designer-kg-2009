@@ -6,10 +6,33 @@ Imports Microsoft.VisualBasic
 Public Class dlgPackage
     Implements InterfFormDocument
     Implements InterfNodeCounter
+    Implements InterfProgression
 
     Private m_xmlView As XmlPackageView
     Private m_strProjectFolder As String
     Private m_bInvalideCell As Boolean = False
+
+    Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
+        Set(ByVal value As Integer)
+            Me.strpProgressBar.Maximum = value
+            Debug.Print("Maximum=" + value.ToString)
+        End Set
+    End Property
+
+    Public WriteOnly Property Minimum() As Integer Implements InterfProgression.Minimum
+        Set(ByVal value As Integer)
+            Me.strpProgressBar.Minimum = value
+            Me.strpProgressBar.Value = value
+            Debug.Print("Minimum=" + value.ToString)
+        End Set
+    End Property
+
+    Public WriteOnly Property ProgressBarVisible() As Boolean Implements InterfProgression.ProgressBarVisible
+        Set(ByVal value As Boolean)
+            Me.strpProgressBar.Visible = value
+            Application.DoEvents()  ' To ose time to dispatch event
+        End Set
+    End Property
 
     Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
         Set(ByVal value As XmlReferenceNodeCounter)
@@ -32,6 +55,13 @@ Public Class dlgPackage
 
         ' Ajoutez une initialisation quelconque après l'appel InitializeComponent().
         m_xmlView = XmlNodeManager.GetInstance().CreateView(Nothing, "package")
+    End Sub
+
+    Public Sub Increment(ByVal value As Integer) Implements InterfProgression.Increment
+        Me.strpProgressBar.Increment(value)
+        Application.DoEvents()  ' To lose time to dispatch event
+        Debug.Print("Step=" + Me.strpProgressBar.Value.ToString)
+        System.Threading.Thread.Sleep(50)
     End Sub
 
 #Region "Private methods"
@@ -114,6 +144,15 @@ Public Class dlgPackage
         End If
     End Sub
 
+    Private Sub mnuExportNodes_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuExportNodes.Click
+        Try
+            m_xmlView.ExportNodes(Me, CType(gridClasses.SelectedItem, XmlComponent))
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
     Private Sub mnuImportNodes_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
                 Handles mnuImportNodes.Click, mnuUpdateNodes.Click
         Try
@@ -169,16 +208,22 @@ Public Class dlgPackage
     End Sub
 
     Private Sub mnuDependencies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuDependencies.Click
-        If m_xmlView.SearchDependencies(CType(gridClasses.SelectedItem, XmlComponent)) Then
-            gridClasses.Binding.ResetBindings(True)
-        End If
+        Try
+            m_xmlView.SearchDependencies(CType(gridClasses.SelectedItem, XmlComponent))
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub mnuRedundancies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuRedundancies.Click
-
-        If m_xmlView.RemoveRedundant(CType(gridClasses.SelectedItem, XmlComponent)) Then
-            gridClasses.Binding.ResetBindings(True)
-        End If
+        Try
+            If m_xmlView.RemoveRedundant(CType(gridClasses.SelectedItem, XmlComponent)) Then
+                gridClasses.Binding.ResetBindings(True)
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) Handles txtName.Validated
@@ -198,6 +243,24 @@ Public Class dlgPackage
                 Me.Close()
             End If
         End If
+    End Sub
+
+    Private Sub mnuImportReferences_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuImportReferences.Click
+        Try
+            m_xmlView.ImportReferences(Me)
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Private Sub mnuExportReferences_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuExportReferences.Click
+        Try
+            m_xmlView.ExportReferences(Me, CType(gridClasses.SelectedItem, XmlComponent))
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 #End Region
 End Class

@@ -4,6 +4,7 @@ Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.XmlNodeListView
+Imports ClassXmlProject.UmlNodesManager
 
 Public Class XmlPackageView
     Inherits XmlPackageSpec
@@ -53,6 +54,7 @@ Public Class XmlPackageView
             Dim bIsEmpty As Boolean = False
             If dlgDependencies.ShowDependencies(component, bIsEmpty) _
             Then
+                m_gridMembers.Binding.ResetBindings(True)
                 Me.Updated = True
                 Return True
             End If
@@ -119,6 +121,134 @@ Public Class XmlPackageView
             MsgExceptionBox(ex)
         End Try
     End Sub
+
+    Public Sub ExportReferences(ByVal fen As Form, ByVal component As XmlComponent)
+        Try
+            Dim dlgSaveFile As New SaveFileDialog
+            Dim strFullPackage As String
+
+            dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
+
+            Dim strFilename As String = component.Name
+            If XmlProjectTools.GetValidFilename(strFilename) Then
+                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "Rename file")
+            End If
+            dlgSaveFile.FileName = strFilename
+            dlgSaveFile.Filter = "Package references (*.ximp)|*.ximp"
+
+            If dlgSaveFile.ShowDialog() = DialogResult.OK Then
+
+                strFilename = dlgSaveFile.FileName
+                If strFilename.EndsWith(".ximp") = False Then
+                    strFilename += ".ximp"
+                End If
+
+                My.Settings.ImportFolder = Path.GetDirectoryName(strFilename)
+
+                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+
+                Select Case component.NodeName
+                    Case "package"
+                        strFullPackage = GetFullpathPackage(component.Node, eLang)
+
+                        If component.SelectNodes("descendant::import").Count > 0 Then
+                            MsgBox("Import members will not be exported", vbExclamation, "'Export' command")
+                        End If
+                        If component.SelectNodes("descendant::class[@visibility='package']").Count > 0 Then
+                            ExportPackageReferences(fen, component.Node, strFilename, strFullPackage, eLang)
+                        Else
+                            MsgBox("Class " + component.Name + " has no class members with package visibility", vbExclamation, "'Export' command")
+                        End If
+
+                    Case "class"
+                        strFullPackage = GetFullpathPackage(component.Node, eLang)
+
+                        If component.GetAttribute("visibility") = "package" Then
+                            ExportClassReferences(fen, component.Node, strFilename, strFullPackage, eLang)
+                        Else
+                            MsgBox("Class " + component.Name + " has not a package visibility", vbExclamation, "'Export' command")
+                        End If
+
+                    Case "import"
+                        If component.Node.HasChildNodes = True Then
+                            ReExport(fen, component.Node.LastChild, strFilename, component.GetAttribute("param"))
+                        Else
+                            MsgBox("Import " + component.Name + ", nothing to export", MsgBoxStyle.Exclamation, "'Export' command")
+                        End If
+                End Select
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
+    Public Function ImportReferences(ByVal fen As Form) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim dlgOpenFile As New OpenFileDialog
+
+            dlgOpenFile.InitialDirectory = My.Settings.ImportFolder
+            dlgOpenFile.Title = "Select a package references file..."
+            dlgOpenFile.Filter = "Package references (*.ximp)|*.ximp|Doxygen TAG file (*.tag)|*.tag"
+
+            If dlgOpenFile.ShowDialog() = DialogResult.OK Then
+
+                My.Settings.ImportFolder = Path.GetDirectoryName(dlgOpenFile.FileName)
+                bResult = LoadImport(fen, dlgOpenFile.FileName)
+
+                If bResult Then
+                    m_gridMembers.Binding.ResetBindings(True)
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Function ExportNodes(ByVal fen As Form, ByVal component As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+
+            Dim dlgSaveFile As New SaveFileDialog
+
+            dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
+
+            Dim strFilename As String = component.Name
+            If XmlProjectTools.GetValidFilename(strFilename) Then
+                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "Rename file")
+            End If
+            dlgSaveFile.FileName = strFilename
+            dlgSaveFile.Filter = "UML project (*.xprj)|*.xprj"
+
+
+            If dlgSaveFile.ShowDialog() = DialogResult.OK Then
+
+                My.Settings.ImportFolder = Path.GetDirectoryName(dlgSaveFile.FileName)
+
+                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+                Dim strFullPackage As String
+
+                Select Case component.NodeName
+                    Case "package"
+                        strFullPackage = GetFullpathPackage(component.Node, eLang)
+                        UmlNodesManager.ExportNodes(fen, component.Node, dlgSaveFile.FileName, strFullPackage, eLang)
+
+                    Case "class"
+                        strFullPackage = GetFullpathPackage(component.Node, eLang)
+                        UmlNodesManager.ExportNodes(fen, component.Node, dlgSaveFile.FileName, strFullPackage, eLang)
+
+                    Case Else
+                        MsgBox("Can't export this node", MsgBoxStyle.Exclamation, "'Export' command")
+                End Select
+            End If
+            ' Set flat Updated to prevent to close project without saving
+            If bResult Then Me.Updated = True
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
 
     Public Sub ImportNodes(ByVal form As Form, Optional ByVal bUpdateOnly As Boolean = False)
         Dim bResult As Boolean = False
@@ -209,6 +339,27 @@ Public Class XmlPackageView
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
+        End Try
+        Return bResult
+    End Function
+
+    Private Function LoadImport(ByVal fen As Form, ByVal fileName As String) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim import As XmlImportSpec = Nothing
+            import = CreateDocument("import")
+            Me.AppendComponent(import)
+
+            If import IsNot Nothing Then
+                import.NodeCounter = m_xmlReferenceNodeCounter
+                Dim FileInfo As FileInfo = My.Computer.FileSystem.GetFileInfo(fileName)
+                If import.LoadDocument(fen, FileInfo) Then
+                    ExtractExternalReferences(Me.Node, import.ChildExportNode.Node)
+                    bResult = True
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
         End Try
         Return bResult
     End Function

@@ -294,13 +294,9 @@ Public Class dlgClass
     Private Sub RemoveRedundancies_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RemoveRedundancies.Click
         m_xmlView.RemoveRedundant(CType(gridMembers.SelectedItem, XmlComponent))
     End Sub
+
+    Private Sub mnuExportReferences_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuExportReferences.Click
+
+    End Sub
 #End Region
-
-    Private Sub Grids_CellValidating(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles gridRelations.CellValidating, gridMembers.CellValidating
-
-    End Sub
-
-    Private Sub Grids_CellValidated(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles gridRelations.CellValidated, gridMembers.CellValidated
-
-    End Sub
 End Class

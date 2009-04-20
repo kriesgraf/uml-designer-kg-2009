@@ -1,7 +1,8 @@
 ﻿Imports System
 Imports System.Windows.Forms
 Imports System.Xml
-Imports ClassXmlProject.UmlCodeGenerator
+Imports System.IO
+Imports ClassXmlProject.UmlNodesManager
 Imports ClassXmlProject.XmlProjectTools
 Imports Microsoft.VisualBasic
 
@@ -381,6 +382,54 @@ Public Class XmlClassGlobalView
     Public Function MustCheckTemplate() As Boolean
         Return (CType(m_cmbImplementation.SelectedItem, String) = ConvertEnumImplToView(EImplementation.Container))
     End Function
+
+    Public Sub ExportReferences(ByVal fen As Form, ByVal component As XmlComponent)
+        Try
+            Dim dlgSaveFile As New SaveFileDialog
+            Dim strFullPackage As String
+
+            dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
+
+            Dim strFilename As String = component.Name
+            If XmlProjectTools.GetValidFilename(strFilename) Then
+                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "Rename file")
+            End If
+            dlgSaveFile.FileName = strFilename
+            dlgSaveFile.Filter = "Package references (*.ximp)|*.ximp"
+
+            If dlgSaveFile.ShowDialog() = DialogResult.OK Then
+
+                strFilename = dlgSaveFile.FileName
+                If strFilename.EndsWith(".ximp") = False Then
+                    strFilename += ".ximp"
+                End If
+
+                My.Settings.ImportFolder = Path.GetDirectoryName(strFilename)
+
+                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+
+                Select Case component.NodeName
+                    Case "typedef"
+                        strFullPackage = GetFullpathPackage(component.Node.ParentNode, eLang)
+
+                        If component.GetAttribute("visibility", "parent::class") = "package" Then
+                            If component.GetAttribute("range", "variable") = "public" Then
+                                ExportTypedefReferences(fen, component.Node, strFilename, strFullPackage)
+                            Else
+                                MsgBox("Typedef " + component.GetAttribute("name", "parent::class") + " is not public", vbExclamation, "'Export' command")
+                            End If
+                        Else
+                            MsgBox("Class " + component.GetAttribute("name", "parent::class") + " has not a package visibility", vbExclamation, "'Export' command")
+                        End If
+
+                    Case Else
+                        MsgBox("Can't export this node", MsgBoxStyle.Exclamation, "'Export references' command")
+                End Select
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
 
     Private Sub Implementation_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles m_cmbImplementation.SelectedIndexChanged
         If m_bInitProcessing Then Exit Sub

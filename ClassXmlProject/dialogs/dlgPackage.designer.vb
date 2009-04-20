@@ -24,6 +24,7 @@ Partial Class dlgPackage
         Me.btnDelete = New System.Windows.Forms.Button
         Me.Cancel_Button = New System.Windows.Forms.Button
         Me.OK_Button = New System.Windows.Forms.Button
+        Me.strpProgressBar = New System.Windows.Forms.ProgressBar
         Me.Label1 = New System.Windows.Forms.Label
         Me.txtName = New System.Windows.Forms.TextBox
         Me.Label2 = New System.Windows.Forms.Label
@@ -49,6 +50,10 @@ Partial Class dlgPackage
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuDependencies = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuImportReferences = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuExportReferences = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuExportNodes = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuImportNodes = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuUpdateNodes = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator
@@ -56,9 +61,9 @@ Partial Class dlgPackage
         Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
+        Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -67,26 +72,27 @@ Partial Class dlgPackage
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
         '
         Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 4
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.98141!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55.01859!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82.0!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 92.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 3, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 2, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.strpProgressBar, 1, 0)
         Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 479)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(742, 27)
         Me.TableLayoutPanel1.TabIndex = 0
         '
@@ -105,7 +111,7 @@ Partial Class dlgPackage
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.Location = New System.Drawing.Point(663, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(662, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 21)
         Me.Cancel_Button.TabIndex = 1
@@ -115,11 +121,18 @@ Partial Class dlgPackage
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.OK_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.OK_Button.Location = New System.Drawing.Point(576, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(575, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 21)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
+        '
+        'strpProgressBar
+        '
+        Me.strpProgressBar.Location = New System.Drawing.Point(93, 3)
+        Me.strpProgressBar.Name = "strpProgressBar"
+        Me.strpProgressBar.Size = New System.Drawing.Size(121, 21)
+        Me.strpProgressBar.TabIndex = 4
         '
         'Label1
         '
@@ -249,9 +262,9 @@ Partial Class dlgPackage
         '
         'mnuClass
         '
-        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
+        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportReferences, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.mnuExportNodes, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
         Me.mnuClass.Name = "mnuClass"
-        Me.mnuClass.Size = New System.Drawing.Size(189, 270)
+        Me.mnuClass.Size = New System.Drawing.Size(189, 364)
         '
         'mnuAdd
         '
@@ -347,6 +360,32 @@ Partial Class dlgPackage
         Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
         Me.ToolStripSeparator5.Size = New System.Drawing.Size(185, 6)
         '
+        'mnuImportReferences
+        '
+        Me.mnuImportReferences.Image = Global.ClassXmlProject.My.Resources.Resources.Back_2
+        Me.mnuImportReferences.Name = "mnuImportReferences"
+        Me.mnuImportReferences.Size = New System.Drawing.Size(188, 22)
+        Me.mnuImportReferences.Text = "Import references..."
+        '
+        'mnuExportReferences
+        '
+        Me.mnuExportReferences.Image = Global.ClassXmlProject.My.Resources.Resources.Forward_2
+        Me.mnuExportReferences.Name = "mnuExportReferences"
+        Me.mnuExportReferences.Size = New System.Drawing.Size(188, 22)
+        Me.mnuExportReferences.Text = "Export references..."
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(185, 6)
+        '
+        'mnuExportNodes
+        '
+        Me.mnuExportNodes.Image = Global.ClassXmlProject.My.Resources.Resources.Forward_2
+        Me.mnuExportNodes.Name = "mnuExportNodes"
+        Me.mnuExportNodes.Size = New System.Drawing.Size(188, 22)
+        Me.mnuExportNodes.Text = "Export nodes..."
+        '
         'mnuImportNodes
         '
         Me.mnuImportNodes.Image = Global.ClassXmlProject.My.Resources.Resources.Back_2
@@ -415,10 +454,6 @@ Partial Class dlgPackage
         Me.SplitContainer1.SplitterDistance = 194
         Me.SplitContainer1.TabIndex = 1
         '
-        'errorProvider
-        '
-        Me.errorProvider.ContainerControl = Me
-        '
         'gridClasses
         '
         Me.gridClasses.ColumnDragStart = 0
@@ -430,6 +465,10 @@ Partial Class dlgPackage
         Me.gridClasses.Size = New System.Drawing.Size(720, 272)
         Me.gridClasses.TabIndex = 1
         Me.ToolTip1.SetToolTip(Me.gridClasses, "Click right to update grid")
+        '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
         '
         'dlgPackage
         '
@@ -453,8 +492,8 @@ Partial Class dlgPackage
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -497,5 +536,10 @@ Partial Class dlgPackage
     Friend WithEvents mnuRedundancies As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
     Friend WithEvents btnDelete As System.Windows.Forms.Button
+    Friend WithEvents mnuImportReferences As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents strpProgressBar As System.Windows.Forms.ProgressBar
+    Friend WithEvents mnuExportReferences As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuExportNodes As System.Windows.Forms.ToolStripMenuItem
 
 End Class
