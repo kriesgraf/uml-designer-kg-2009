@@ -392,7 +392,7 @@ namespace <xsl:value-of select="parent::package/@name"/>
     </xsl:if>
   </xsl:template>
 <!-- ======================================================================= -->
-  <xsl:template match="typedef">
+  <xsl:template match="typedef" mode="Code">
     <xsl:apply-templates select="comment"/>
     <xsl:variable name="Type">
       <xsl:apply-templates select="type"/>
@@ -686,9 +686,11 @@ namespace <xsl:value-of select="parent::package/@name"/>
 
 
 
+
 <advancedProp name="bTinyTree" value="true"/><advancedProp name="bWarnings" value="true"/><advancedProp name="bUseDTD" value="false"/><advancedProp name="iErrorHandling" value="fatal"/></scenario></scenarios><MapperMetaTag><MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/><MapperBlockPosition></MapperBlockPosition><TemplateContext></TemplateContext><MapperFilter side="source"></MapperFilter></MapperMetaTag>
 </metaInformation>
 -->
+
 
 
 
