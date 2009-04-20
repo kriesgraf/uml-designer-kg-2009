@@ -39,7 +39,7 @@ Public Class XmlProjectTools
     Public Shared regCppPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\:\:){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
     Public Shared regCppHeader As Regex = New Regex("^([a-zA-Z0-9_]{1,}(\/|\\)){0,}[a-zA-Z0-9_]{1,}(|\.h|\.hpp)$")
     Private Shared regOperator As New Regex("^(IsFalse|IsTrue|Not|" + _
-                                            "\+|\+\+|\-|\-\-|\*|\/|\\|\&|\&\&|\||\|\||\%|\^|\>\>|\<\<|\=|\!|\!\=|\<\>|\>|\>\=|\<|\<\=|" + _
+                                            "\+|\+\+|\-|\-\-|\*|\/|\\|\&|\&\&|\||\|\||\%|\^|\>\>|\<\<|\=|\=\=|\!|\!\=|\<\>|\>|\>\=|\<|\<\=|" + _
                                             "And|Like|Mod|Or|Xor|CType)$")
 
 
@@ -1767,13 +1767,16 @@ Public Class XmlProjectTools
         Return bResult
     End Function
 
-    Public Shared Function IsInvalidPackageName(ByRef dataControl As TextBox, ByVal provider As ErrorProvider, ByVal eLang As ELanguage, _
+    Public Shared Function IsInvalidPackageName(ByRef dataControl As TextBox, ByVal provider As ErrorProvider, _
+                                                ByVal eLang As ELanguage, Optional ByVal bNoHeaderFile As Boolean = False, _
                                                 Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim strErrorMsg As String = "No error"
+            Dim strErrorMsg As String = ""
+            If dataControl.Text = "" Then
+                ' Ignore
 
-            If eLang = ELanguage.Language_Vbasic _
+            ElseIf eLang = ELanguage.Language_Vbasic _
             Then
                 If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
                 Then
@@ -1797,10 +1800,14 @@ Public Class XmlProjectTools
 
             ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
             Then
-                strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
-                              "name1::name2::name3" + vbCrLf + _
-                              "name.h or name.hpp" + vbCrLf + _
-                              "include/name1/name2.h  or include\name1\name2.h"
+                If bNoHeaderFile Then
+                    strErrorMsg = "Must contains characters compliant with namespace: name1::name2::name3"
+                Else
+                    strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
+                                  "name1::name2::name3" + vbCrLf + _
+                                  "name.h or name.hpp" + vbCrLf + _
+                                  "include/name1/name2.h  or include\name1\name2.h"
+                End If
                 bResult = True
             End If
 
@@ -1850,7 +1857,7 @@ Public Class XmlProjectTools
                                                 + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
                                                 + "Conversion:  CType"
                                 Else
-                                    strErrorMsg = "Please enter an operator: +, ++, --, -, !, *, /, >>, <<, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
+                                    strErrorMsg = "Please enter an operator: +, ++, --, -, !, *, /, >>, <<, ==, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
                                 End If
                                 bResult = True
                             End If
@@ -1906,7 +1913,7 @@ Public Class XmlProjectTools
 
                     provider.SetError(name, errorMsg)
                 Else
-                    Dim errorMsg As String = "+, ++, --, -, !, *, /, >>, <<, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
+                    Dim errorMsg As String = "+, ++, --, -, !, *, /, >>, <<, ==, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
 
                     provider.SetError(name, errorMsg)
                 End If
