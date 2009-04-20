@@ -32,6 +32,7 @@ Partial Class dlgClass
         Me.txtDetails = New System.Windows.Forms.TextBox
         Me.TableLayoutPanel6 = New System.Windows.Forms.TableLayoutPanel
         Me.Label10 = New System.Windows.Forms.Label
+        Me.gridInherited = New ClassXmlProject.XmlDataGridView
         Me.mnuInherited = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.AddSuperClass = New System.Windows.Forms.ToolStripMenuItem
         Me.InheritsProperties = New System.Windows.Forms.ToolStripMenuItem
@@ -40,6 +41,7 @@ Partial Class dlgClass
         Me.SplitContainer4 = New System.Windows.Forms.SplitContainer
         Me.TableLayoutPanel9 = New System.Windows.Forms.TableLayoutPanel
         Me.Label12 = New System.Windows.Forms.Label
+        Me.gridRelations = New ClassXmlProject.XmlDataGridView
         Me.mnuRelations = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.AddRelation = New System.Windows.Forms.ToolStripMenuItem
         Me.EditRelation = New System.Windows.Forms.ToolStripMenuItem
@@ -48,6 +50,7 @@ Partial Class dlgClass
         Me.DeleteRelation = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel7 = New System.Windows.Forms.TableLayoutPanel
         Me.Label11 = New System.Windows.Forms.Label
+        Me.gridDependencies = New ClassXmlProject.XmlDataGridView
         Me.mnuDependencies = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.AddDependency = New System.Windows.Forms.ToolStripMenuItem
         Me.DependencyProperties = New System.Windows.Forms.ToolStripMenuItem
@@ -61,6 +64,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel4 = New System.Windows.Forms.TableLayoutPanel
         Me.TableLayoutPanel8 = New System.Windows.Forms.TableLayoutPanel
         Me.Label9 = New System.Windows.Forms.Label
+        Me.gridMembers = New ClassXmlProject.XmlDataGridView
         Me.mnuMembers = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.AddMember = New System.Windows.Forms.ToolStripMenuItem
         Me.AddTypedef = New System.Windows.Forms.ToolStripMenuItem
@@ -81,6 +85,8 @@ Partial Class dlgClass
         Me.mnuOverrideMethods = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuMemberDependencies = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator8 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuExportReferences = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.RemoveRedundancies = New System.Windows.Forms.ToolStripMenuItem
         Me.DeleteMember = New System.Windows.Forms.ToolStripMenuItem
@@ -100,12 +106,7 @@ Partial Class dlgClass
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel10 = New System.Windows.Forms.TableLayoutPanel
-        Me.gridInherited = New ClassXmlProject.XmlDataGridView
-        Me.gridRelations = New ClassXmlProject.XmlDataGridView
-        Me.gridDependencies = New ClassXmlProject.XmlDataGridView
-        Me.gridMembers = New ClassXmlProject.XmlDataGridView
-        Me.mnuExportReferences = New System.Windows.Forms.ToolStripMenuItem
-        Me.ToolStripSeparator8 = New System.Windows.Forms.ToolStripSeparator
+        Me.strpProgressBar = New System.Windows.Forms.ProgressBar
         Me.TableLayoutPanel3.SuspendLayout()
         Me.SplitContainer2.Panel1.SuspendLayout()
         Me.SplitContainer2.Panel2.SuspendLayout()
@@ -115,13 +116,16 @@ Partial Class dlgClass
         Me.SplitContainer3.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.TableLayoutPanel6.SuspendLayout()
+        CType(Me.gridInherited, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuInherited.SuspendLayout()
         Me.SplitContainer4.Panel1.SuspendLayout()
         Me.SplitContainer4.Panel2.SuspendLayout()
         Me.SplitContainer4.SuspendLayout()
         Me.TableLayoutPanel9.SuspendLayout()
+        CType(Me.gridRelations, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuRelations.SuspendLayout()
         Me.TableLayoutPanel7.SuspendLayout()
+        CType(Me.gridDependencies, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuDependencies.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -129,15 +133,12 @@ Partial Class dlgClass
         Me.SplitContainer1.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
         Me.TableLayoutPanel8.SuspendLayout()
+        CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuMembers.SuspendLayout()
         Me.TableLayoutPanel5.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TableLayoutPanel10.SuspendLayout()
-        CType(Me.gridInherited, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.gridRelations, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.gridDependencies, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel3
@@ -298,6 +299,22 @@ Partial Class dlgClass
         Me.Label10.Text = "Inherited classes"
         Me.Label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'gridInherited
+        '
+        Me.gridInherited.AllowDrop = True
+        Me.gridInherited.AllowUserToAddRows = False
+        Me.gridInherited.ColumnDragStart = 0
+        Me.gridInherited.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.gridInherited.ContextMenuStrip = Me.mnuInherited
+        Me.gridInherited.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.gridInherited.Location = New System.Drawing.Point(3, 33)
+        Me.gridInherited.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
+        Me.gridInherited.Name = "gridInherited"
+        Me.gridInherited.Size = New System.Drawing.Size(358, 96)
+        Me.gridInherited.TabIndex = 4
+        Me.gridInherited.Tag = "inherited"
+        Me.ToolTip1.SetToolTip(Me.gridInherited, "Click right to update grid")
+        '
         'mnuInherited
         '
         Me.mnuInherited.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddSuperClass, Me.InheritsProperties, Me.ToolStripSeparator1, Me.DeleteSuperClass})
@@ -375,6 +392,21 @@ Partial Class dlgClass
         Me.Label12.Text = "Relations"
         Me.Label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'gridRelations
+        '
+        Me.gridRelations.AllowDrop = True
+        Me.gridRelations.ColumnDragStart = 0
+        Me.gridRelations.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.gridRelations.ContextMenuStrip = Me.mnuRelations
+        Me.gridRelations.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.gridRelations.Location = New System.Drawing.Point(3, 33)
+        Me.gridRelations.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
+        Me.gridRelations.Name = "gridRelations"
+        Me.gridRelations.Size = New System.Drawing.Size(358, 60)
+        Me.gridRelations.TabIndex = 3
+        Me.gridRelations.Tag = "collaboration"
+        Me.ToolTip1.SetToolTip(Me.gridRelations, "Click right to update grid")
+        '
         'mnuRelations
         '
         Me.mnuRelations.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddRelation, Me.EditRelation, Me.RelationProperties, Me.ToolStripSeparator4, Me.DeleteRelation})
@@ -440,6 +472,23 @@ Partial Class dlgClass
         Me.Label11.Text = "Class dependencies"
         Me.Label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'gridDependencies
+        '
+        Me.gridDependencies.AllowDrop = True
+        Me.gridDependencies.AllowUserToAddRows = False
+        Me.gridDependencies.ColumnDragStart = 0
+        Me.gridDependencies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.gridDependencies.ContextMenuStrip = Me.mnuDependencies
+        Me.gridDependencies.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.gridDependencies.Location = New System.Drawing.Point(3, 33)
+        Me.gridDependencies.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
+        Me.gridDependencies.Name = "gridDependencies"
+        Me.gridDependencies.RowHeadersWidth = 35
+        Me.gridDependencies.Size = New System.Drawing.Size(358, 95)
+        Me.gridDependencies.TabIndex = 1
+        Me.gridDependencies.Tag = "dependency"
+        Me.ToolTip1.SetToolTip(Me.gridDependencies, "Click right to update grid")
+        '
         'mnuDependencies
         '
         Me.mnuDependencies.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddDependency, Me.DependencyProperties, Me.ToolStripSeparator3, Me.DeleteDependency})
@@ -475,7 +524,7 @@ Partial Class dlgClass
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(588, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(625, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(58, 23)
         Me.OK_Button.TabIndex = 0
@@ -494,13 +543,15 @@ Partial Class dlgClass
         'TableLayoutPanel1
         '
         Me.TableLayoutPanel1.CausesValidation = False
-        Me.TableLayoutPanel1.ColumnCount = 3
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.90058!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.09941!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 87.0!))
-        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
-        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
+        Me.TableLayoutPanel1.ColumnCount = 4
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88.0!))
+        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 3, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.strpProgressBar, 1, 0)
         Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 534)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
@@ -580,11 +631,28 @@ Partial Class dlgClass
         Me.Label9.Text = "Class members"
         Me.Label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'gridMembers
+        '
+        Me.gridMembers.AllowDrop = True
+        Me.gridMembers.AllowUserToAddRows = False
+        Me.gridMembers.ColumnDragStart = 0
+        Me.gridMembers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.gridMembers.ContextMenuStrip = Me.mnuMembers
+        Me.gridMembers.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.gridMembers.Location = New System.Drawing.Point(20, 33)
+        Me.gridMembers.Margin = New System.Windows.Forms.Padding(20, 3, 3, 3)
+        Me.gridMembers.Name = "gridMembers"
+        Me.gridMembers.RowHeadersWidth = 35
+        Me.gridMembers.Size = New System.Drawing.Size(366, 368)
+        Me.gridMembers.TabIndex = 1
+        Me.gridMembers.Tag = ""
+        Me.ToolTip1.SetToolTip(Me.gridMembers, "Click right to update grid")
+        '
         'mnuMembers
         '
         Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddMember, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuOverrides, Me.ToolStripSeparator6, Me.mnuMemberDependencies, Me.ToolStripSeparator8, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.RemoveRedundancies, Me.DeleteMember})
         Me.mnuMembers.Name = "mnuMembers"
-        Me.mnuMembers.Size = New System.Drawing.Size(227, 298)
+        Me.mnuMembers.Size = New System.Drawing.Size(227, 276)
         '
         'AddMember
         '
@@ -727,6 +795,17 @@ Partial Class dlgClass
         Me.mnuMemberDependencies.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
         Me.mnuMemberDependencies.Size = New System.Drawing.Size(226, 22)
         Me.mnuMemberDependencies.Text = "Search dependencies..."
+        '
+        'ToolStripSeparator8
+        '
+        Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
+        Me.ToolStripSeparator8.Size = New System.Drawing.Size(223, 6)
+        '
+        'mnuExportReferences
+        '
+        Me.mnuExportReferences.Name = "mnuExportReferences"
+        Me.mnuExportReferences.Size = New System.Drawing.Size(226, 22)
+        Me.mnuExportReferences.Text = "Export references..."
         '
         'ToolStripSeparator2
         '
@@ -916,81 +995,13 @@ Partial Class dlgClass
         Me.TableLayoutPanel10.Size = New System.Drawing.Size(792, 566)
         Me.TableLayoutPanel10.TabIndex = 10
         '
-        'gridInherited
+        'strpProgressBar
         '
-        Me.gridInherited.AllowDrop = True
-        Me.gridInherited.AllowUserToAddRows = False
-        Me.gridInherited.ColumnDragStart = 0
-        Me.gridInherited.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.gridInherited.ContextMenuStrip = Me.mnuInherited
-        Me.gridInherited.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridInherited.Location = New System.Drawing.Point(3, 33)
-        Me.gridInherited.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
-        Me.gridInherited.Name = "gridInherited"
-        Me.gridInherited.Size = New System.Drawing.Size(358, 96)
-        Me.gridInherited.TabIndex = 4
-        Me.gridInherited.Tag = "inherited"
-        Me.ToolTip1.SetToolTip(Me.gridInherited, "Click right to update grid")
-        '
-        'gridRelations
-        '
-        Me.gridRelations.AllowDrop = True
-        Me.gridRelations.ColumnDragStart = 0
-        Me.gridRelations.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.gridRelations.ContextMenuStrip = Me.mnuRelations
-        Me.gridRelations.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridRelations.Location = New System.Drawing.Point(3, 33)
-        Me.gridRelations.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
-        Me.gridRelations.Name = "gridRelations"
-        Me.gridRelations.Size = New System.Drawing.Size(358, 60)
-        Me.gridRelations.TabIndex = 3
-        Me.gridRelations.Tag = "collaboration"
-        Me.ToolTip1.SetToolTip(Me.gridRelations, "Click right to update grid")
-        '
-        'gridDependencies
-        '
-        Me.gridDependencies.AllowDrop = True
-        Me.gridDependencies.AllowUserToAddRows = False
-        Me.gridDependencies.ColumnDragStart = 0
-        Me.gridDependencies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.gridDependencies.ContextMenuStrip = Me.mnuDependencies
-        Me.gridDependencies.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridDependencies.Location = New System.Drawing.Point(3, 33)
-        Me.gridDependencies.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
-        Me.gridDependencies.Name = "gridDependencies"
-        Me.gridDependencies.RowHeadersWidth = 35
-        Me.gridDependencies.Size = New System.Drawing.Size(358, 95)
-        Me.gridDependencies.TabIndex = 1
-        Me.gridDependencies.Tag = "dependency"
-        Me.ToolTip1.SetToolTip(Me.gridDependencies, "Click right to update grid")
-        '
-        'gridMembers
-        '
-        Me.gridMembers.AllowDrop = True
-        Me.gridMembers.AllowUserToAddRows = False
-        Me.gridMembers.ColumnDragStart = 0
-        Me.gridMembers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.gridMembers.ContextMenuStrip = Me.mnuMembers
-        Me.gridMembers.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridMembers.Location = New System.Drawing.Point(20, 33)
-        Me.gridMembers.Margin = New System.Windows.Forms.Padding(20, 3, 3, 3)
-        Me.gridMembers.Name = "gridMembers"
-        Me.gridMembers.RowHeadersWidth = 35
-        Me.gridMembers.Size = New System.Drawing.Size(366, 368)
-        Me.gridMembers.TabIndex = 1
-        Me.gridMembers.Tag = ""
-        Me.ToolTip1.SetToolTip(Me.gridMembers, "Click right to update grid")
-        '
-        'mnuExportReferences
-        '
-        Me.mnuExportReferences.Name = "mnuExportReferences"
-        Me.mnuExportReferences.Size = New System.Drawing.Size(226, 22)
-        Me.mnuExportReferences.Text = "Export references..."
-        '
-        'ToolStripSeparator8
-        '
-        Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
-        Me.ToolStripSeparator8.Size = New System.Drawing.Size(223, 6)
+        Me.strpProgressBar.Location = New System.Drawing.Point(91, 3)
+        Me.strpProgressBar.Name = "strpProgressBar"
+        Me.strpProgressBar.Size = New System.Drawing.Size(136, 21)
+        Me.strpProgressBar.TabIndex = 3
+        Me.strpProgressBar.Visible = False
         '
         'dlgClass
         '
@@ -1014,15 +1025,18 @@ Partial Class dlgClass
         Me.TableLayoutPanel2.PerformLayout()
         Me.TableLayoutPanel6.ResumeLayout(False)
         Me.TableLayoutPanel6.PerformLayout()
+        CType(Me.gridInherited, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuInherited.ResumeLayout(False)
         Me.SplitContainer4.Panel1.ResumeLayout(False)
         Me.SplitContainer4.Panel2.ResumeLayout(False)
         Me.SplitContainer4.ResumeLayout(False)
         Me.TableLayoutPanel9.ResumeLayout(False)
         Me.TableLayoutPanel9.PerformLayout()
+        CType(Me.gridRelations, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuRelations.ResumeLayout(False)
         Me.TableLayoutPanel7.ResumeLayout(False)
         Me.TableLayoutPanel7.PerformLayout()
+        CType(Me.gridDependencies, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuDependencies.ResumeLayout(False)
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
@@ -1031,6 +1045,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel4.ResumeLayout(False)
         Me.TableLayoutPanel8.ResumeLayout(False)
         Me.TableLayoutPanel8.PerformLayout()
+        CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuMembers.ResumeLayout(False)
         Me.TableLayoutPanel5.ResumeLayout(False)
         Me.TableLayoutPanel5.PerformLayout()
@@ -1038,10 +1053,6 @@ Partial Class dlgClass
         Me.FlowLayoutPanel1.PerformLayout()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TableLayoutPanel10.ResumeLayout(False)
-        CType(Me.gridInherited, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.gridRelations, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.gridDependencies, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1131,5 +1142,6 @@ Partial Class dlgClass
     Friend WithEvents RemoveRedundancies As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator8 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuExportReferences As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents strpProgressBar As System.Windows.Forms.ProgressBar
 
 End Class
