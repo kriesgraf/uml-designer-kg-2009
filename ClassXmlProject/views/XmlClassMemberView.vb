@@ -27,10 +27,12 @@ Public Class XmlClassMemberView
 
     Public Overrides Property Name() As String
         Get
+
             If MyBase.NodeName = "method" Then
-                If MyBase.Name = cstOperator _
+                Dim tempo As String = GetAttribute("operator")
+                If tempo IsNot Nothing _
                 Then
-                    Return GetAttribute("operator")
+                    Return tempo
 
                 ElseIf MyBase.Name = "#method" _
                 Then ' No name
@@ -44,10 +46,11 @@ Public Class XmlClassMemberView
             Return MyBase.Name
         End Get
         Set(ByVal value As String)
-            If MyBase.NodeName = "method" And MyBase.Name = cstOperator Then
-                SetAttribute("operator", value)
-            Else
+            If GetAttribute("operator") Is Nothing _
+            Then
                 MyBase.Name = value
+            Else
+                SetAttribute("operator", value)
             End If
         End Set
     End Property

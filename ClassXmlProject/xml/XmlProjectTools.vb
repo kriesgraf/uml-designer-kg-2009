@@ -38,6 +38,10 @@ Public Class XmlProjectTools
     Public Shared regVbAndJavaPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\.){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
     Public Shared regCppPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\:\:){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
     Public Shared regCppHeader As Regex = New Regex("^([a-zA-Z0-9_]{1,}(\/|\\)){0,}[a-zA-Z0-9_]{1,}(|\.h|\.hpp)$")
+    Private Shared regOperator As New Regex("^(IsFalse|IsTrue|Not|" + _
+                                            "\+|\+\+|\-|\-\-|\*|\/|\\|\&|\&\&|\||\|\||\%|\^|\>\>|\<\<|\=|\!|\!\=|\<\>|\>|\>\=|\<|\<\=|" + _
+                                            "And|Like|Mod|Or|Xor|CType)$")
+
 
     Public Enum EResult
         Completed
@@ -1820,24 +1824,92 @@ Public Class XmlProjectTools
                                                  Optional ByVal strDataPropertyName As String = "Name") As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim name As String = e.FormattedValue
+            Dim strErrorMsg As String = ""
+            Dim strFormattedValue As String = e.FormattedValue
             If strDataPropertyName <> dataControl.Columns(e.ColumnIndex).DataPropertyName _
             Then
                 bResult = False
 
-            ElseIf name.Length = 0 _
+            ElseIf strFormattedValue.Length = 0 _
             Then
                 bResult = True
 
-            ElseIf regVariableName.IsMatch(name) = False _
-            Then
-                bResult = True
+            Else
+                Dim component As XmlComponent = CType(dataControl.Rows(e.RowIndex).DataBoundItem, XmlComponent)
+                Dim eLang As ELanguage = CType(component.Tag, ELanguage)
+
+                Select Case component.NodeName
+                    Case "method"
+                        If component.GetAttribute("operator") IsNot Nothing Then
+                            If regOperator.IsMatch(strFormattedValue) = False _
+                            Then
+                                If eLang = ELanguage.Language_Vbasic _
+                                Then
+                                    strErrorMsg = "Please enter an operator: " _
+                                                + vbCrLf + "Unary: +, -, IsFalse, IsTrue, Not" + vbCrLf _
+                                                + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
+                                                + "Conversion:  CType"
+                                Else
+                                    strErrorMsg = "Please enter an operator: +, ++, --, -, !, *, /, >>, <<, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
+                                End If
+                                bResult = True
+                            End If
+                        ElseIf regVariableName.IsMatch(strFormattedValue) = False _
+                        Then
+                            strErrorMsg = "Must contains characters compliant with variable, function, or class name"
+                            bResult = True
+                        End If
+
+                    Case Else
+                        If regVariableName.IsMatch(strFormattedValue) = False _
+                        Then
+                            strErrorMsg = "Must contains characters compliant with variable, function, or class name"
+                            bResult = True
+                        End If
+                End Select
             End If
 
             If bResult = True Then
                 provider.SetIconPadding(dataControl, 0)
                 provider.SetIconAlignment(dataControl, eAlignment)
-                provider.SetError(dataControl, "Must contains characters compliant with variable, function, or class name")
+                provider.SetError(dataControl, strErrorMsg)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Shared Function IsInvalidOperator(ByRef name As TextBox, ByVal provider As ErrorProvider, _
+                                             ByVal eLang As ELanguage, _
+                                             Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            If name.Text.Length = 0 _
+            Then
+                bResult = True
+
+            ElseIf regOperator.IsMatch(name.Text) = False _
+            Then
+                bResult = True
+            End If
+
+            If bResult = True Then
+                name.Select(0, name.Text.Length)
+
+                ' Set the ErrorProvider error with the text to display. 
+                If eLang = ELanguage.Language_Vbasic _
+                Then
+                    Dim errorMsg As String = "Unary: +, -, IsFalse, IsTrue, Not" + vbCrLf _
+                                            + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
+                                            + "Conversion:  CType"
+
+                    provider.SetError(name, errorMsg)
+                Else
+                    Dim errorMsg As String = "+, ++, --, -, !, *, /, >>, <<, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
+
+                    provider.SetError(name, errorMsg)
+                End If
             End If
         Catch ex As Exception
             Throw ex
