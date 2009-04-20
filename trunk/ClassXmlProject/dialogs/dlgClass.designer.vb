@@ -82,6 +82,7 @@ Partial Class dlgClass
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuMemberDependencies = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
+        Me.RemoveRedundancies = New System.Windows.Forms.ToolStripMenuItem
         Me.DeleteMember = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel5 = New System.Windows.Forms.TableLayoutPanel
         Me.lblConstructor = New System.Windows.Forms.Label
@@ -99,11 +100,12 @@ Partial Class dlgClass
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel10 = New System.Windows.Forms.TableLayoutPanel
-        Me.RemoveRedundancies = New System.Windows.Forms.ToolStripMenuItem
         Me.gridInherited = New ClassXmlProject.XmlDataGridView
         Me.gridRelations = New ClassXmlProject.XmlDataGridView
         Me.gridDependencies = New ClassXmlProject.XmlDataGridView
         Me.gridMembers = New ClassXmlProject.XmlDataGridView
+        Me.mnuExportReferences = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator8 = New System.Windows.Forms.ToolStripSeparator
         Me.TableLayoutPanel3.SuspendLayout()
         Me.SplitContainer2.Panel1.SuspendLayout()
         Me.SplitContainer2.Panel2.SuspendLayout()
@@ -473,7 +475,7 @@ Partial Class dlgClass
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(591, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(588, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(58, 23)
         Me.OK_Button.TabIndex = 0
@@ -483,7 +485,7 @@ Partial Class dlgClass
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.Location = New System.Drawing.Point(710, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(708, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -495,7 +497,7 @@ Partial Class dlgClass
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.90058!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.09941!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 84.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 87.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -580,9 +582,9 @@ Partial Class dlgClass
         '
         'mnuMembers
         '
-        Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddMember, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuOverrides, Me.ToolStripSeparator6, Me.mnuMemberDependencies, Me.ToolStripSeparator2, Me.RemoveRedundancies, Me.DeleteMember})
+        Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddMember, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuOverrides, Me.ToolStripSeparator6, Me.mnuMemberDependencies, Me.ToolStripSeparator8, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.RemoveRedundancies, Me.DeleteMember})
         Me.mnuMembers.Name = "mnuMembers"
-        Me.mnuMembers.Size = New System.Drawing.Size(227, 248)
+        Me.mnuMembers.Size = New System.Drawing.Size(227, 298)
         '
         'AddMember
         '
@@ -730,6 +732,13 @@ Partial Class dlgClass
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
         Me.ToolStripSeparator2.Size = New System.Drawing.Size(223, 6)
+        '
+        'RemoveRedundancies
+        '
+        Me.RemoveRedundancies.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
+        Me.RemoveRedundancies.Name = "RemoveRedundancies"
+        Me.RemoveRedundancies.Size = New System.Drawing.Size(226, 22)
+        Me.RemoveRedundancies.Text = "Remove redundancy..."
         '
         'DeleteMember
         '
@@ -907,13 +916,6 @@ Partial Class dlgClass
         Me.TableLayoutPanel10.Size = New System.Drawing.Size(792, 566)
         Me.TableLayoutPanel10.TabIndex = 10
         '
-        'RemoveRedundancies
-        '
-        Me.RemoveRedundancies.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
-        Me.RemoveRedundancies.Name = "RemoveRedundancies"
-        Me.RemoveRedundancies.Size = New System.Drawing.Size(226, 22)
-        Me.RemoveRedundancies.Text = "Remove redundancy..."
-        '
         'gridInherited
         '
         Me.gridInherited.AllowDrop = True
@@ -978,6 +980,17 @@ Partial Class dlgClass
         Me.gridMembers.TabIndex = 1
         Me.gridMembers.Tag = ""
         Me.ToolTip1.SetToolTip(Me.gridMembers, "Click right to update grid")
+        '
+        'mnuExportReferences
+        '
+        Me.mnuExportReferences.Name = "mnuExportReferences"
+        Me.mnuExportReferences.Size = New System.Drawing.Size(226, 22)
+        Me.mnuExportReferences.Text = "Export references..."
+        '
+        'ToolStripSeparator8
+        '
+        Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
+        Me.ToolStripSeparator8.Size = New System.Drawing.Size(223, 6)
         '
         'dlgClass
         '
@@ -1116,5 +1129,7 @@ Partial Class dlgClass
     Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
     Friend WithEvents TableLayoutPanel10 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents RemoveRedundancies As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator8 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents mnuExportReferences As System.Windows.Forms.ToolStripMenuItem
 
 End Class
