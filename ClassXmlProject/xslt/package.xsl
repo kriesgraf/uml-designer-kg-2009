@@ -799,7 +799,7 @@ border-left: 1px solid gray;
 	<xsl:template match="typedef" mode="FullPathName">
 		<span class="class-package">
 			<xsl:apply-templates select="parent::class" mode="FullPathName"/>
-		</span><xsl:value-of select="@name"/></xsl:template>
+		</span>::<xsl:value-of select="@name"/></xsl:template>
 	<!-- ======================================================================= -->
 	<xsl:template match="reference | interface" mode="FullPathName">
 		<span class="package">
@@ -1108,6 +1108,7 @@ border-left: 1px solid gray;
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
