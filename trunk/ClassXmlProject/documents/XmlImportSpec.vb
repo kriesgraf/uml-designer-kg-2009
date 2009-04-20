@@ -123,13 +123,26 @@ Public Class XmlImportSpec
 
             Name = "New_import"
             Visibility = "package"
-            Parameter = "import.h"
+            Select Case CType(Me.Tag, ELanguage)
+                Case ELanguage.Language_CplusPlus
+                    Parameter = "Import.h"
+                Case ELanguage.Language_Vbasic
+                    Parameter = "Namespace1"
+                Case ELanguage.Language_Java
+                    Parameter = "Package1"
+            End Select
 
         Catch ex As Exception
             Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
+    End Sub
+
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
+        ' We call back this method to rename import according to language
+        SetDefaultValues(False)
+        MyBase.SetIdReference(xmlRefNodeCounter, eRename, bSetIdrefChildren)
     End Sub
 
     Public Overrides Function AppendComponent(ByVal document As XmlComponent, Optional ByVal observer As Object = Nothing) As XmlNode
@@ -193,6 +206,8 @@ Public Class XmlImportSpec
         Dim bResult As Boolean = False
         Try
             Dim import As XmlImportSpec = CreateDocument("import")
+            import.Tag = Me.Tag
+            import.SetDefaultValues(False)
             import.Name = "MovedUp" + import.GetHashCode().ToString
 
             Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
