@@ -40,11 +40,19 @@ Public Class XmlComposite
 
     Public Overridable Function DropAppendComponent(ByVal child As XmlComponent) As Boolean
         Try
-            ' Notionally, child will be removed from first location by command Append
-            ' But is some case, "AppendComponent" moved only children and not current, 
-            ' also, we must remove current node manually
-            XmlProjectTools.RemoveNode(child.Node)
-            Return (AppendComponent(child) IsNot Nothing)
+            Dim dropped As XmlComponent = child
+
+            If child.Document IsNot Me.Document Then
+                ' We must call "ImportDocument" when dropped node comes from a different project
+                dropped = Me.ImportDocument(child)
+            Else
+                ' Notionally, child will be removed from first location by command Append
+                ' But is some case, "AppendComponent" moved only children and not current, 
+                ' also, we must remove current node manually
+                XmlProjectTools.RemoveNode(dropped.Node)
+            End If
+
+            Return (AppendComponent(dropped) IsNot Nothing)
 
         Catch ex As Exception
             Throw ex

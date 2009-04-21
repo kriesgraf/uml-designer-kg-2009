@@ -247,6 +247,14 @@ Public Class XmlProjectMemberView
     Public Function CanDropItem(ByVal child As XmlComponent, Optional ByVal bCheckOnly As Boolean = True) As Boolean Implements InterfListViewNotifier.CanDropItem
         Dim bResult As Boolean = True
         Select Case Me.NodeName
+            Case "root", "package"
+                Select Case child.NodeName
+                    Case "class", "package", "import"
+                        bResult = True
+                    Case Else
+                        bResult = False
+                End Select
+
             Case "relationship"
                 bResult = False
 
@@ -282,7 +290,7 @@ Public Class XmlProjectMemberView
                         Return parent.DropAppendComponent(child)
                 End Select
 
-            Case "package"
+            Case "root", "package"
                 Return parent.DropAppendComponent(child)
         End Select
 
