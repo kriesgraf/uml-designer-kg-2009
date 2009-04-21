@@ -38,21 +38,21 @@ Public Class XmlComposite
 
 #Region "Public functions"
 
-    Public Overridable Function DropAppendComponent(ByVal child As XmlComponent) As Boolean
+    Public Overridable Function DropAppendComponent(ByRef child As XmlComponent, ByRef bImportData As Boolean) As Boolean
         Try
-            Dim dropped As XmlComponent = child
-
             If child.Document IsNot Me.Document Then
                 ' We must call "ImportDocument" when dropped node comes from a different project
-                dropped = Me.ImportDocument(child)
+                child = Me.ImportDocument(child)
+                bImportData = True
             Else
                 ' Notionally, child will be removed from first location by command Append
                 ' But is some case, "AppendComponent" moved only children and not current, 
                 ' also, we must remove current node manually
-                XmlProjectTools.RemoveNode(dropped.Node)
+                XmlProjectTools.RemoveNode(child.Node)
+                bImportData = False
             End If
 
-            Return (AppendComponent(dropped) IsNot Nothing)
+            Return (AppendComponent(child) IsNot Nothing)
 
         Catch ex As Exception
             Throw ex

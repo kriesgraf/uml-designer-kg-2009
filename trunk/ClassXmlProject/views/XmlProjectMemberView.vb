@@ -244,7 +244,7 @@ Public Class XmlProjectMemberView
         Return (Me.NodeName <> "relationship")
     End Function
 
-    Public Function CanDropItem(ByVal child As XmlComponent, Optional ByVal bCheckOnly As Boolean = True) As Boolean Implements InterfListViewNotifier.CanDropItem
+    Public Function CanDropItem(ByRef child As XmlComponent, ByRef bImportData As Boolean, Optional ByVal bCheckOnly As Boolean = True) As Boolean Implements InterfListViewNotifier.CanDropItem
         Dim bResult As Boolean = True
         Select Case Me.NodeName
             Case "root", "package"
@@ -267,19 +267,27 @@ Public Class XmlProjectMemberView
                 bResult = xmlcpnt.CanDropItem(child)
         End Select
         If bResult And bCheckOnly = False Then
-            bResult = DropAppendComponent(child)
+            bResult = DropAppendComponent(child, bImportData)
         End If
         Return bResult
     End Function
 
-    Public Overrides Function DropAppendComponent(ByVal child As XmlComponent) As Boolean
+    Public Overrides Function DropAppendComponent(ByRef child As XmlComponent, ByRef bImportData As Boolean) As Boolean
         Dim parent As XmlComposite = CType(CreateDocument(Me.Node), XmlComposite)
         parent.Tag = Me.Tag
         Select Case parent.NodeName
             Case "import"
                 Select Case child.NodeName
                     Case "class"
-                        If MsgBox("This operation is irreversible, would you want to continue ?" _
+                        bImportData = False
+                        If child.Document IsNot Me.Document _
+                        Then
+                            ' TODO: check why node is removed from previous project listview. 
+                            bImportData = True
+                            MsgBox("Sorry command not yet implemented!", MsgBoxStyle.Exclamation, "Convert class as reference/interface node")
+                            Return False
+
+                        ElseIf MsgBox("This operation is irreversible, would you want to continue ?" _
                                   , cstMsgYesNoExclamation, "Convert class as reference/interface node") _
                                         = MsgBoxResult.Yes _
                         Then
@@ -287,11 +295,11 @@ Public Class XmlProjectMemberView
                         End If
 
                     Case Else
-                        Return parent.DropAppendComponent(child)
+                        Return parent.DropAppendComponent(child, bImportData)
                 End Select
 
             Case "root", "package"
-                Return parent.DropAppendComponent(child)
+                Return parent.DropAppendComponent(child, bImportData)
         End Select
 
         Return False
