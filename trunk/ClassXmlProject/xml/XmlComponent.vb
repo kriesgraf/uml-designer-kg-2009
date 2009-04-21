@@ -750,7 +750,10 @@ Public Class XmlComponent
         Try
             Dim clone As XmlNode = Nothing
 
-            If docXml IsNot Nothing _
+            If component Is Nothing Then
+                Return Nothing
+
+            ElseIf docXml IsNot Nothing _
             Then
                 clone = docXml.ImportNode(component.Node, True)
 

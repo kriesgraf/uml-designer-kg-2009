@@ -129,6 +129,22 @@ Public Class XmlBindingDataListView
         Return False
     End Function
 
+    Public Function DropParentItem(ByVal child As ListViewItem) As Boolean
+        Debug.Print("XmlBindingDataListView.DropParentItem")
+        Dim interf As InterfListViewNotifier = TryCast(m_xmlParentNode, InterfListViewNotifier)
+        If interf IsNot Nothing Then
+            Dim component As XmlComponent = TryCast(child.Tag, XmlComponent)
+            If interf.CanDropItem(component, False) Then
+                m_xmlRootNode.Updated = True
+                ResetBindings(True)
+                Return True
+            Else
+                MsgBox("Sorry can't drop node '" + component.NodeName + "'!", MsgBoxStyle.Exclamation, "'Drop' command")
+            End If
+        End If
+        Return False
+    End Function
+
     Public Function DropItem(ByVal parent As ListViewItem, ByVal child As ListViewItem) As Boolean
         Debug.Print("XmlBindingDataListView.DropItem")
         Dim interf As InterfListViewNotifier = TryCast(parent.Tag, InterfListViewNotifier)

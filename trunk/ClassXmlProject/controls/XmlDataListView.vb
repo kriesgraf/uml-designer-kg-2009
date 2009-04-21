@@ -289,6 +289,8 @@ Public Class XmlDataListView
                     lvItem.Remove()
                     OnItemChanged(New DataListViewEventArgs(destItem.Index))
                 End If
+            Else
+                m_xmlBinding.DropParentItem(lvItem)
             End If
         End If
     End Sub
