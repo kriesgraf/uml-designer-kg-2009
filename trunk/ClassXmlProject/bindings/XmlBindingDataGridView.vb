@@ -333,7 +333,7 @@ Public Class XmlBindingDataGridView
                     ElseIf bImportData _
                     Then
                         xmlComponent.Name = component.Name + "_imported"
-                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, xmlComponent.ENameReplacement.AddCopyName)
+                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, xmlComponent.ENameReplacement.AddCopyName, True)
                     End If
 
                     ' Append a node not duplicated cause move node to new location.
