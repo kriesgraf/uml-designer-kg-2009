@@ -16,7 +16,7 @@ Public Interface InterfListViewNotifier
     Function EventDoubleClick(ByRef bDisplayChildren As Boolean, Optional ByVal bEditMode As Boolean = False) As Boolean
     Function EventClick() As Boolean
     Function CanDrag() As Boolean
-    Function CanDropItem(ByVal child As XmlComponent, Optional ByVal bCheckOnly As Boolean = True) As Boolean
+    Function CanDropItem(ByRef child As XmlComponent, ByRef bImported As Boolean, Optional ByVal bCheckOnly As Boolean = True) As Boolean
 
 End Interface
 
@@ -122,7 +122,8 @@ Public Class XmlBindingDataListView
         Dim interf As InterfListViewNotifier = TryCast(parent.Tag, InterfListViewNotifier)
         If interf IsNot Nothing Then
             Dim component As XmlComponent = TryCast(child.Tag, XmlComponent)
-            If interf.CanDropItem(component) Then
+            Dim bUnused As Boolean = False
+            If interf.CanDropItem(component, bUnused) Then
                 Return True
             End If
         End If
@@ -132,9 +133,17 @@ Public Class XmlBindingDataListView
     Public Function DropParentItem(ByVal child As ListViewItem) As Boolean
         Debug.Print("XmlBindingDataListView.DropParentItem")
         Dim interf As InterfListViewNotifier = TryCast(m_xmlParentNode, InterfListViewNotifier)
+
         If interf IsNot Nothing Then
             Dim component As XmlComponent = TryCast(child.Tag, XmlComponent)
-            If interf.CanDropItem(component, False) Then
+            Dim bImportData As Boolean = False
+
+            If interf.CanDropItem(component, bImportData, False) Then
+                If bImportData Then
+                    component.Tag = m_xmlParentNode.Tag
+                    component.Name = component.Name + "_imported"
+                    component.SetIdReference(m_xmlReferenceNodeCounter, XmlComponent.ENameReplacement.AddCopyName, True)
+                End If
                 m_xmlRootNode.Updated = True
                 ResetBindings(True)
                 Return True
@@ -150,7 +159,13 @@ Public Class XmlBindingDataListView
         Dim interf As InterfListViewNotifier = TryCast(parent.Tag, InterfListViewNotifier)
         If interf IsNot Nothing Then
             Dim component As XmlComponent = TryCast(child.Tag, XmlComponent)
-            If interf.CanDropItem(component, False) Then
+            Dim bImportData As Boolean = False
+
+            If CType(parent.Tag, XmlComponent).Document IsNot component.Document _
+            Then
+                MsgBox("Please open sub-level of the target and drop node in an empty zone!", MsgBoxStyle.Exclamation, "'Drop' command")
+
+            ElseIf interf.CanDropItem(component, bImportData, False) Then
                 m_xmlRootNode.Updated = True
                 ResetBindings(True)
                 Return True
