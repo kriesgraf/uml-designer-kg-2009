@@ -184,7 +184,18 @@ Public Class XmlImportSpec
                 Return True
 
             Case Else
-                Return (Me.Parameter = child.GetAttribute("param"))
+                Dim tempo As String = child.GetAttribute("param")
+                Dim tempo2 As String = Me.Parameter
+                If tempo Is Nothing Then
+                    If tempo2 Is Nothing Then
+                        Return True
+                    End If
+                Else
+                    If tempo2 IsNot Nothing Then
+                        Return (tempo = tempo2)
+                    End If
+                End If
+                Return False
         End Select
         Return False
     End Function
