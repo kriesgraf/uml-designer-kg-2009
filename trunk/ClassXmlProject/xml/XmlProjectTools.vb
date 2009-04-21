@@ -1796,28 +1796,31 @@ Public Class XmlProjectTools
 
             ElseIf regCppHeader.IsMatch(dataControl.Text) = True _
             Then
-                bResult = False
-
-            ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
-            Then
-                If bNoHeaderFile Then
+                bResult = bNoHeaderFile
+                If bResult Then
                     strErrorMsg = "Must contains characters compliant with namespace: name1::name2::name3"
-                Else
-                    strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
-                                  "name1::name2::name3" + vbCrLf + _
-                                  "name.h or name.hpp" + vbCrLf + _
-                                  "include/name1/name2.h  or include\name1\name2.h"
                 End If
-                bResult = True
-            End If
 
-            If bResult = True Then
-                dataControl.Select(0, dataControl.Text.Length)
+                ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
+                Then
+                    If bNoHeaderFile Then
+                        strErrorMsg = "Must contains characters compliant with namespace: name1::name2::name3"
+                    Else
+                        strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
+                                      "name1::name2::name3" + vbCrLf + _
+                                      "name.h or name.hpp" + vbCrLf + _
+                                      "include/name1/name2.h  or include\name1\name2.h"
+                    End If
+                    bResult = True
+                End If
 
-                provider.SetIconPadding(dataControl, 0)
-                provider.SetIconAlignment(dataControl, eAlignment)
-                provider.SetError(dataControl, strErrorMsg)
-            End If
+                If bResult = True Then
+                    dataControl.Select(0, dataControl.Text.Length)
+
+                    provider.SetIconPadding(dataControl, 0)
+                    provider.SetIconAlignment(dataControl, eAlignment)
+                    provider.SetError(dataControl, strErrorMsg)
+                End If
         Catch ex As Exception
             Throw ex
         End Try
