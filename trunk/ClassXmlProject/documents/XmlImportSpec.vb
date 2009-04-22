@@ -111,6 +111,29 @@ Public Class XmlImportSpec
             SetAttribute("visibility", value)
         End Set
     End Property
+
+    Public ReadOnly Property ChildExportNode() As XmlExportSpec
+        Get
+            If m_xmlInline IsNot Nothing Then
+                Throw New Exception("Can't get 'export' node when 'inline' is active")
+            End If
+
+            If m_xmlExport Is Nothing _
+            Then
+                If TestNode("export") Then
+                    m_xmlExport = TryCast(CreateDocument(GetNode("export")), XmlExportSpec)
+                    m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
+                Else
+                    m_xmlExport = CreateDocument("export", Me.Document)
+                    m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
+                    AppendComponent(m_xmlExport)
+                End If
+            End If
+            If m_xmlExport IsNot Nothing Then m_xmlExport.Tag = Me.Tag
+
+            Return m_xmlExport
+        End Get
+    End Property
 #End Region
 
 #Region "Public methods"
@@ -317,27 +340,6 @@ Public Class XmlImportSpec
         Return bResult
     End Function
 
-    Protected Friend Function ChildExportNode() As XmlExportSpec
-        If m_xmlInline IsNot Nothing Then
-            Throw New Exception("Can't get 'export' node when 'inline' is active")
-        End If
-
-        If m_xmlExport Is Nothing _
-        Then
-            If TestNode("export") Then
-                m_xmlExport = TryCast(CreateDocument(GetNode("export")), XmlExportSpec)
-                m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
-            Else
-                m_xmlExport = CreateDocument("export", Me.Document)
-                m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
-                AppendComponent(m_xmlExport)
-            End If
-        End If
-        If m_xmlExport IsNot Nothing Then m_xmlExport.Tag = Me.Tag
-
-        Return m_xmlExport
-    End Function
-
     Protected Friend Function LoadDocument(ByVal form As Form, ByVal Filename As System.IO.FileInfo, _
                                            Optional ByVal eMode As EImportMode = EImportMode.ReplaceReferences) As Boolean
         Dim bResult As Boolean = False
@@ -430,7 +432,7 @@ Public Class XmlImportSpec
         Return bResult
     End Function
 
-    Private Function MergeFileReferences(ByVal form As form, ByVal strFilename As String, _
+    Private Function MergeFileReferences(ByVal form As Form, ByVal strFilename As String, _
                                          ByVal bAskReplace As Boolean, _
                                          Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
 
@@ -517,7 +519,7 @@ Public Class XmlImportSpec
 
     Private Function ReplaceFileReferences(ByVal form As Form, ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
 
-        Dim observer As InterfProgression = TryCast(Form, InterfProgression)
+        Dim observer As InterfProgression = TryCast(form, InterfProgression)
         Dim bResult As Boolean = False
         Try
             Dim bImportOk As Boolean = True
