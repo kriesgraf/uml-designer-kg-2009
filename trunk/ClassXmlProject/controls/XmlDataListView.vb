@@ -170,8 +170,8 @@ Public Class XmlDataListView
                         bChanged = True
                     End If
                 Next
-                If bChanged Then m_xmlBinding.ResetBindings(True)
-                If MyBase.Items.Count = 0 Then
+                If bChanged Then
+                    m_xmlBinding.ResetBindings(True)
                     MyBase.OnEmptyZoneClick()
                 End If
             End If
