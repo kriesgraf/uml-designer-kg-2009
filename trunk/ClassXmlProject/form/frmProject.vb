@@ -136,7 +136,7 @@ Public Class frmProject
     Private Sub MouseWheelMsg()
         MsgBox("The document view uses Internet Explorer application to display project info." + _
                 vbCrLf + "But your IE version is not compatible with this command, also we invite you to use the mouse wheel." + _
-                vbCrLf + vbCrLf + "To zoom out with mouse whell:" + vbCrLf + "Please click inside document view, press the key 'Ctrl' and hold down while rotate the wheel.", _
+                vbCrLf + vbCrLf + "To zoom out with mouse wheel:" + vbCrLf + "Please click inside document view, press the key 'Ctrl' and hold down while rotate the wheel.", _
                 MsgBoxStyle.Critical, "'Zoom' commands")
 
         btnZoomIn.Enabled = False
@@ -221,9 +221,9 @@ Public Class frmProject
                     m_xmlProject.Updated = False
                     RefreshUpdatedPath(False)
 
-                    If MsgBox("Would you want to save updates ?", vbYesNo + vbDefaultButton1 + vbQuestion, Me.Text) = vbYes Then
+                    If MsgBox("Would you want to save updates ?", vbYesNo + vbDefaultButton1 + vbQuestion, m_xmlProject.Filename) = vbYes Then
                         If SaveAs() = False Then
-                            If MsgBox("Retry to save this project ?", vbRetryCancel + vbQuestion + vbDefaultButton2, Me.Text) = vbCancel Then
+                            If MsgBox("Retry to save this project ?", vbRetryCancel + vbQuestion + vbDefaultButton2, m_xmlProject.Filename) = vbCancel Then
                                 e.Cancel = False
                             Else
                                 e.Cancel = True
@@ -236,7 +236,7 @@ Public Class frmProject
             ElseIf m_xmlProject.Updated _
             Then
                 Dim eResult As Microsoft.VisualBasic.MsgBoxResult
-                eResult = MsgBox("Would you want to save updates ?", vbYesNoCancel + vbDefaultButton1 + vbQuestion, Me.Text)
+                eResult = MsgBox("Would you want to save updates ?", vbYesNoCancel + vbDefaultButton1 + vbQuestion, m_xmlProject.Filename)
                 If eResult = vbYes Then
                     m_xmlProject.Save()
                     e.Cancel = False
@@ -309,6 +309,13 @@ Public Class frmProject
         Try
             ' TODO: for future use
             RefreshUpdatedPath(False)
+
+            If lvwProjectMembers.SelectedItem IsNot Nothing _
+            Then
+                RefreshProjectView(lvwProjectMembers.SelectedItem)
+            Else
+                RefreshProjectView(lvwProjectMembers.Binding.Parent)
+            End If
 
         Catch ex As Exception
             MsgExceptionBox(ex)
