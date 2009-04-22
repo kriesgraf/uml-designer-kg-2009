@@ -19,6 +19,8 @@ Public Class dlgAlertException
     Private Sub dlgAlertException_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Me.Text = TypeName(m_Exception)
         Me.Opacity = 0.8
+        Me.lblComment.Text = "Click on text message to copy 'error stacktrace' to clipboard." + vbCrLf _
+                            + "Click on link to send a new issue."
         lblMessage.Text = m_Exception.Message
         txtStackTrace.Text = m_Exception.StackTrace
     End Sub
@@ -43,6 +45,15 @@ Public Class dlgAlertException
     Private Sub lblMessage_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lblMessage.Click
         Clipboard.SetText(m_Exception.ToString)
         MsgBox("Message copied in clipboard", MsgBoxStyle.Information, "Clipboard")
+    End Sub
+
+    Private Sub LinkLabelIssue_LinkClicked(ByVal sender As Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkLabelIssue.LinkClicked
+
+        ' Specify that the link was visited.
+        Me.LinkLabelIssue.LinkVisited = True
+
+        ' Navigate to a URL.
+        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/issues/entry")
     End Sub
 End Class
 
