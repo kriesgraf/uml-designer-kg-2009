@@ -5,9 +5,20 @@ Imports Microsoft.VisualBasic
 
 Public Class dlgStructure
     Implements InterfFormDocument
+    Implements InterfFormClass
 
     Private m_bInvalideCell As Boolean = False
     Private m_xmlView As XmlStructureView
+    Private m_eCurrentClassImplementation As EImplementation
+
+    Public Property ClassImpl() As EImplementation Implements InterfFormClass.ClassImpl
+        Get
+            Return m_eCurrentClassImplementation
+        End Get
+        Set(ByVal value As EImplementation)
+            m_eCurrentClassImplementation = value
+        End Set
+    End Property
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
