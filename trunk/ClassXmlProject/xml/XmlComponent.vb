@@ -128,7 +128,11 @@ Public Class XmlComponent
             Return strResult
         End Get
         Set(ByVal value As String)
-            SetAttribute("name", value)
+            If value = "" Then
+                SetAttribute("name", "Please_rename_this_object")
+            Else
+                SetAttribute("name", value)
+            End If
         End Set
     End Property
 
