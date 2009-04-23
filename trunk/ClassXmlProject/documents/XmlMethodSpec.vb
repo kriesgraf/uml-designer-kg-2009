@@ -285,12 +285,17 @@ Public Class XmlMethodSpec
         MyBase.New(xmlNode, bLoadChildren)
     End Sub
 
-    Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
-        NumId = GenerateNumericId(Me.Node.ParentNode, "method")
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
+        If eRename <> ENameReplacement.NewName Then
+            Name = Name + "_" + CStr(NumId)
+        End If
     End Sub
 
-    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
-        Name = Name + "_" + CStr(NumId)
+    Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
+        NumId = CInt(GenerateNumericId(Me.Node.ParentNode, "method"))
+        If Name = "New_method" Then
+            Name = Name + "_" + CStr(NumId)
+        End If
     End Sub
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
