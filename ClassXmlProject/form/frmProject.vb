@@ -218,35 +218,46 @@ Public Class frmProject
             Then
                 If m_xmlProject.Updated Then
 
-                    m_xmlProject.Updated = False
-                    RefreshUpdatedPath(False)
+                    Select MsgBox("Would you want to save updates ?", cstMsgYesNoCancelExclamation, m_xmlProject.Name)
+                        Case MsgBoxResult.Yes
+                            Dim bContinue As Boolean = True
+                            While bContinue
+                                If SaveAs() = False Then
+                                    If MsgBox("Retry to save this project ?", vbRetryCancel + vbQuestion + vbDefaultButton2, m_xmlProject.Name) = vbCancel Then
+                                        bContinue = False
+                                    End If
+                                End If
+                            End While
+                            m_xmlProject.Updated = False
+                            e.Cancel = False
 
-                    If MsgBox("Would you want to save updates ?", vbYesNo + vbDefaultButton1 + vbQuestion, m_xmlProject.Filename) = vbYes Then
-                        If SaveAs() = False Then
-                            If MsgBox("Retry to save this project ?", vbRetryCancel + vbQuestion + vbDefaultButton2, m_xmlProject.Filename) = vbCancel Then
-                                e.Cancel = False
-                            Else
-                                e.Cancel = True
-                                SaveAs()  ' We retry save but leave without confirmation
-                            End If
-                        End If
-                    End If
+                        Case MsgBoxResult.Cancel
+                            e.Cancel = True
+
+                        Case Else
+                            m_xmlProject.Updated = False
+                            e.Cancel = False
+                    End Select
                 End If
-
             ElseIf m_xmlProject.Updated _
             Then
-                Dim eResult As Microsoft.VisualBasic.MsgBoxResult
-                eResult = MsgBox("Would you want to save updates ?", vbYesNoCancel + vbDefaultButton1 + vbQuestion, m_xmlProject.Filename)
-                If eResult = vbYes Then
-                    m_xmlProject.Save()
-                    e.Cancel = False
-                ElseIf eResult = vbCancel Then
-                    e.Cancel = True
-                Else
-                    m_xmlProject.Updated = False
-                End If
-                RefreshUpdatedPath(False)
+                Select Case MsgBox("Would you want to save updates ?", cstMsgYesNoCancelExclamation, m_xmlProject.Filename)
+                    Case MsgBoxResult.Yes
+                        m_xmlProject.Save()
+                        m_xmlProject.Updated = False
+                        e.Cancel = False
+
+                    Case MsgBoxResult.Cancel
+                        e.Cancel = True
+
+                    Case Else
+                        m_xmlProject.Updated = False
+                        e.Cancel = False
+                End Select
             End If
+
+            RefreshUpdatedPath(False)
+
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
