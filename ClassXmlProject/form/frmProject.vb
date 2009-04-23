@@ -226,6 +226,8 @@ Public Class frmProject
                                     If MsgBox("Retry to save this project ?", vbRetryCancel + vbQuestion + vbDefaultButton2, m_xmlProject.Name) = vbCancel Then
                                         bContinue = False
                                     End If
+                                Else
+                                    bContinue = False
                                 End If
                             End While
                             m_xmlProject.Updated = False
