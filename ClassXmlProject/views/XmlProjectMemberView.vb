@@ -259,7 +259,12 @@ Public Class XmlProjectMemberView
                 bResult = False
 
             Case "class"
-                bResult = False
+                Select Case child.NodeName
+                    Case "typedef", "property", "method"
+                        bResult = True
+                    Case Else
+                        bResult = False
+                End Select
 
             Case "import"
                 Dim xmlcpnt As XmlImportSpec = CreateDocument(Me.Node)
@@ -273,7 +278,10 @@ Public Class XmlProjectMemberView
     End Function
 
     Public Overrides Function DropAppendComponent(ByRef child As XmlComponent, ByRef bImportData As Boolean) As Boolean
-        Dim parent As XmlComposite = CType(CreateDocument(Me.Node), XmlComposite)
+
+        Dim parent As XmlComposite = TryCast(CreateDocument(Me.Node), XmlComposite)
+        If parent Is Nothing Then Return False
+
         parent.Tag = Me.Tag
         Select Case parent.NodeName
             Case "import"
@@ -298,7 +306,7 @@ Public Class XmlProjectMemberView
                         Return parent.DropAppendComponent(child, bImportData)
                 End Select
 
-            Case "root", "package"
+            Case "root", "package", "class"
                 Return parent.DropAppendComponent(child, bImportData)
         End Select
 
