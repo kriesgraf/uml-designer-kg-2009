@@ -540,10 +540,12 @@ Public Class XmlProjectMemberView
                        cstMsgYesNoQuestion, _
                        xmlcpnt.Label(0)) = MsgBoxResult.Yes _
             Then
-                Dim parent As XmlComposite = CreateDocument(MyBase.Node)
-                parent.Tag = Me.Tag
-                If parent.RemoveComponent(xmlcpnt) Then
-                    bResult = True
+                Dim parent As XmlComposite = TryCast(CreateDocument(MyBase.Node), XmlComposite)
+                If parent IsNot Nothing Then
+                    parent.Tag = Me.Tag
+                    If parent.RemoveComponent(xmlcpnt) Then
+                        bResult = True
+                    End If
                 End If
             End If
         Catch ex As Exception
@@ -555,18 +557,21 @@ Public Class XmlProjectMemberView
     Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
         Try
             'Not necessary to remove node, command Append will do it for us
-            Dim member As XmlComposite = CreateDocument(Me.Node)
-            member.Tag = Me.Tag
-            Select Case member.NodeName
-                Case "import"
-                    Return CType(member, XmlImportSpec).MoveUpComponent(child)
+            Dim member As XmlComposite = TryCast(CreateDocument(Me.Node), XmlComposite)
+            If member IsNot Nothing Then
+                member.Tag = Me.Tag
+                Select Case member.NodeName
+                    Case "import"
+                        Return CType(member, XmlImportSpec).MoveUpComponent(child)
 
-                Case Else
-                    Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
-                    parent.Tag = Me.Tag
-                    Return (parent.AppendComponent(child) IsNot Nothing)
-            End Select
-
+                    Case Else
+                        Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
+                        If parent IsNot Nothing Then
+                            parent.Tag = Me.Tag
+                            Return (parent.AppendComponent(child) IsNot Nothing)
+                        End If
+                End Select
+            End If
         Catch ex As Exception
             Throw ex
         End Try
