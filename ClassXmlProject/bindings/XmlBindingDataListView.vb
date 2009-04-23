@@ -422,20 +422,21 @@ Public Class XmlBindingDataListView
                 If xmlComponent IsNot Nothing Then
                     xmlComponent.Tag = m_xmlParentNode.Tag
 
-                    If bDuplicate And bImportData = False _
-                    Then
-                        xmlComponent.Name = component.Name + "_copy"
-                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, xmlComponent.ENameReplacement.AddCopyName)
-
-                    ElseIf bImportData _
-                    Then
-                        xmlComponent.Name = component.Name + "_imported"
-                        xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, xmlComponent.ENameReplacement.AddCopyName, True)
-                    End If
-
                     ' Append a node not duplicated cause move node to new location.
                     Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
                     If child IsNot Nothing Then
+
+                        If bDuplicate And bImportData = False _
+                        Then
+                            xmlComponent.Name = component.Name + "_copy"
+                            xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, xmlComponent.ENameReplacement.AddCopyName)
+
+                        ElseIf bImportData _
+                        Then
+                            xmlComponent.Name = component.Name + "_imported"
+                            xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, xmlComponent.ENameReplacement.AddCopyName, True)
+                        End If
+
                         m_xmlRootNode.Updated = True
                         Refresh()
                         Return True

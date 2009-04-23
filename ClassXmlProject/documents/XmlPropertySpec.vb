@@ -291,11 +291,16 @@ Public Class XmlPropertySpec
     End Sub
 
     Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
-        Name = Name + "_" + CStr(NumId)
+        If eRename <> ENameReplacement.NewName Then
+            Name = Name + "_" + CStr(NumId)
+        End If
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
         NumId = CInt(GenerateNumericId(Me.Node.ParentNode, "property"))
+        If Name = "New_property" Then
+            Name = Name + "_" + CStr(NumId)
+        End If
     End Sub
 #End Region
 
