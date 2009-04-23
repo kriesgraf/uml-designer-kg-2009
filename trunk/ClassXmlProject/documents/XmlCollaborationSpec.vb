@@ -148,7 +148,7 @@ Public Class XmlCollaborationSpec
             Throw New Exception("Argument 'xmlRefNodeCounter' is null")
         End If
 
-        Me.RelationSpec.SetIdReference(xmlRefNodeCounter, eRename, True)
+        Me.RelationSpec.SetIdReference(xmlRefNodeCounter, eRename, bSetIdrefChildren)
         RelationId = Me.RelationSpec.Id
     End Sub
 

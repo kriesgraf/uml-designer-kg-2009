@@ -169,8 +169,9 @@ Public Class XmlInterfaceSpec
                 Name = Name + "_" + strID
         End Select
 
-        ' Use this option only to paste interface from another project
+        ' Use this option only to paste this node from another project
         If bSetIdrefChildren Then
+            Me.RemoveAllNodes("collaboration")
             ' Change idref for attributes: type/@idref or list/@idref and list/@index-ref
             For Each unref As XmlNode In Me.SelectNodes("descendant::*/@idref")
                 unref.Value = Me.Id       ' We change to this arbitray ID to avoid error. We let user to change it himself

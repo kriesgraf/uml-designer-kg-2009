@@ -268,6 +268,7 @@ Public Class XmlPropertySpec
             Me.TypeVarDefinition.Range = "private"
 
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
+            Name = "New_property"
             Member = False
             NumId = 0
             Comment = "Insert here a comment"
@@ -289,9 +290,12 @@ Public Class XmlPropertySpec
         End Try
     End Sub
 
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
+        Name = Name + "_" + CStr(NumId)
+    End Sub
+
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
         NumId = CInt(GenerateNumericId(Me.Node.ParentNode, "property"))
-        Name = "New_property" + CStr(NumId)
     End Sub
 #End Region
 
