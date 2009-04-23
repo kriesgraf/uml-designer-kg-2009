@@ -241,9 +241,13 @@ Public Class XmlDataListView
     End Sub
 
     Private Sub XmlDataListView_AfterLabelEdit(ByVal sender As Object, ByVal e As LabelEditEventArgs) Handles Me.AfterLabelEdit
-        If m_xmlBinding.AfterLabelEdit(Me, New DataListViewEventArgs(e)) Then
-            OnItemChanged(New DataListViewEventArgs(e))
-        End If
+        Try
+            If m_xmlBinding.AfterLabelEdit(Me, New DataListViewEventArgs(e)) Then
+                OnItemChanged(New DataListViewEventArgs(e))
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
 
