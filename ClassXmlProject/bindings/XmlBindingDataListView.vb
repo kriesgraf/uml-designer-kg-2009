@@ -242,7 +242,7 @@ Public Class XmlBindingDataListView
     Public Function AfterLabelEdit(ByVal sender As DataListView, ByVal e As DataListViewEventArgs) As Boolean
 
         Dim component As XmlComponent = TryCast(sender.DataBoundItem(e.Item), XmlComponent)
-        If component IsNot Nothing Then
+        If component IsNot Nothing And e.Label IsNot Nothing Then
             component.Name = e.Label
             m_xmlRootNode.Updated = True
             Return True
