@@ -65,6 +65,20 @@ Public Class XmlExportSpec
         Return True
     End Function
 
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
+        Try
+            If xmlRefNodeCounter Is Nothing Then
+                Throw New Exception("Argument 'xmlRefNodeCounter' is null")
+            End If
+            Me.LoadChildrenList()
+
+            For Each child As XmlComponent In Me.ChildrenList
+                child.SetIdReference(xmlRefNodeCounter, ENameReplacement.NoReplacement, bSetIdrefChildren)
+            Next
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
 #End Region
 
 #Region "Protected friend methods"

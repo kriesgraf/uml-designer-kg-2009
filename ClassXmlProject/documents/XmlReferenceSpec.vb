@@ -131,6 +131,11 @@ Public Class XmlReferenceSpec
                 ' Name is set by caller
                 Name = Name + "_" + strId
         End Select
+
+        ' Use this option only to paste this node from another project
+        If bSetIdrefChildren Then
+            Me.RemoveAllNodes("collaboration")
+        End If
     End Sub
 
 End Class

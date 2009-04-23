@@ -287,7 +287,10 @@ Public Class XmlMethodSpec
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
         NumId = GenerateNumericId(Me.Node.ParentNode, "method")
-        Name = "New_method" + CStr(NumId)
+    End Sub
+
+    Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
+        Name = Name + "_" + CStr(NumId)
     End Sub
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
@@ -310,6 +313,7 @@ Public Class XmlMethodSpec
             xmlParam.NumId = "1"
             xmlParam = Nothing
 
+            Name = "New_method"
             Inline = False
             Modifier = False
             Member = "object"

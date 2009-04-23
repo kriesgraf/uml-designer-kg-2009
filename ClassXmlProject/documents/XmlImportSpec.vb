@@ -163,9 +163,22 @@ Public Class XmlImportSpec
     End Sub
 
     Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
-        ' We call back this method to rename import according to language
-        SetDefaultValues(False)
-        MyBase.SetIdReference(xmlRefNodeCounter, eRename, bSetIdrefChildren)
+        Try
+            If xmlRefNodeCounter Is Nothing Then
+                Throw New Exception("Argument 'xmlRefNodeCounter' is null")
+            End If
+            Select Case eRename
+                Case ENameReplacement.NewName
+                    ' We call a second time this method to rename import according to language
+                    SetDefaultValues(False)
+                Case Else
+            End Select
+            If Me.ChildExportNode IsNot Nothing Then
+                Me.ChildExportNode.SetIdReference(xmlRefNodeCounter, eRename, bSetIdrefChildren)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
     End Sub
 
     Public Overrides Function AppendComponent(ByVal document As XmlComponent, Optional ByVal observer As Object = Nothing) As XmlNode
