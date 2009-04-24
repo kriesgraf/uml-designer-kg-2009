@@ -5,6 +5,8 @@ Imports Microsoft.VisualBasic
 Public Class dlgAlertException
 
     Private m_Exception As Exception
+    Private m_strIssueMessage As String = ""
+    Private m_isize As Integer = 450
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         Me.DialogResult = DialogResult.OK
@@ -19,19 +21,26 @@ Public Class dlgAlertException
     Private Sub dlgAlertException_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Me.Text = TypeName(m_Exception)
         Me.Opacity = 0.8
-        Me.lblComment.Text = "Click on text message to copy 'error stacktrace' to clipboard." + vbCrLf _
-                            + "Click on link to send a new issue."
+        If m_strIssueMessage = "" Then
+            Me.lblComment.Text = "Click on text message to copy 'error stacktrace' to clipboard." + vbCrLf _
+                                + "Click on link to send a new issue and paste 'stracktrace'."
+        Else
+            Me.lblComment.Text = m_strIssueMessage
+        End If
         lblMessage.Text = m_Exception.Message
         txtStackTrace.Text = m_Exception.StackTrace
+        Me.Width = m_isize
     End Sub
 
-    Public Sub New(ByVal ex As Exception)
+    Public Sub New(ByVal ex As Exception, Optional ByVal strIssueMessage As String = "", Optional ByVal size As Integer = 450)
 
         ' Cet appel est requis par le Concepteur Windows Form.
         InitializeComponent()
 
         ' Ajoutez une initialisation quelconque après l'appel InitializeComponent().
         m_Exception = ex
+        m_strIssueMessage = strIssueMessage
+        m_isize = size
     End Sub
 
     Private Sub PictureBox1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox1.Click
@@ -58,8 +67,8 @@ Public Class dlgAlertException
 End Class
 
 Module MsgException
-    Public Sub MsgExceptionBox(ByVal ex As Exception)
-        Dim alert As New dlgAlertException(ex)
+    Public Sub MsgExceptionBox(ByVal ex As Exception, Optional ByVal strIssueMessage As String = "", Optional ByVal size As Integer = 600)
+        Dim alert As New dlgAlertException(ex, strIssueMessage, size)
         alert.ShowDialog()
     End Sub
 End Module
