@@ -33,6 +33,7 @@ Public Class XmlDocumentView
     Private Const cstUmlViewStyleSheet As String = "package.xsl"
     Private Const cstCodeSourceHeaderCppStyleSheet As String = "uml2cpp-h.xsl"
     Private Const cstCodeSourceVbDotNetStyleSheet As String = "uml2vbnet.xsl"
+    Private Const cstCodeSourceJavaStyleSheet As String = "uml2java.xsl"
 
     ' Internet Explorer page setup  is used for printing document
     Private Const cstPrintSetupKey As String = "Software\Microsoft\Internet Explorer\PageSetup"
@@ -105,8 +106,13 @@ Public Class XmlDocumentView
                     Select Case eLanguage
                         Case eLanguage.Language_CplusPlus
                             strStyleSheet = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceHeaderCppStyleSheet)
+
                         Case eLanguage.Language_Vbasic
                             strStyleSheet = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceVbDotNetStyleSheet)
+
+                        Case eLanguage.Language_Java
+                            strStyleSheet = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceJavaStyleSheet)
+
                         Case Else
                             strStyleSheet = My.Computer.FileSystem.CombinePath(strUmlFolder, cstDatabaseStyleSheet)
                     End Select
