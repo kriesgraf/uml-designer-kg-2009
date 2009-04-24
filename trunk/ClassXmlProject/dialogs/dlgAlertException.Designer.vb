@@ -65,7 +65,7 @@ Partial Class dlgAlertException
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 52.0!))
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(435, 315)
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(536, 315)
         Me.TableLayoutPanel1.TabIndex = 1
         '
         'SplitContainer1
@@ -82,7 +82,7 @@ Partial Class dlgAlertException
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.txtStackTrace)
-        Me.SplitContainer1.Size = New System.Drawing.Size(429, 257)
+        Me.SplitContainer1.Size = New System.Drawing.Size(530, 257)
         Me.SplitContainer1.SplitterDistance = 112
         Me.SplitContainer1.TabIndex = 3
         '
@@ -98,7 +98,7 @@ Partial Class dlgAlertException
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 1
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(429, 112)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(530, 112)
         Me.TableLayoutPanel2.TabIndex = 0
         '
         'lblMessage
@@ -108,7 +108,7 @@ Partial Class dlgAlertException
         Me.lblMessage.Location = New System.Drawing.Point(85, 20)
         Me.lblMessage.Margin = New System.Windows.Forms.Padding(10, 20, 10, 0)
         Me.lblMessage.Name = "lblMessage"
-        Me.lblMessage.Size = New System.Drawing.Size(334, 92)
+        Me.lblMessage.Size = New System.Drawing.Size(435, 92)
         Me.lblMessage.TabIndex = 1
         Me.lblMessage.Text = "Exception message"
         '
@@ -133,15 +133,15 @@ Partial Class dlgAlertException
         Me.txtStackTrace.Margin = New System.Windows.Forms.Padding(10, 0, 10, 0)
         Me.txtStackTrace.Multiline = True
         Me.txtStackTrace.Name = "txtStackTrace"
-        Me.txtStackTrace.Size = New System.Drawing.Size(429, 141)
+        Me.txtStackTrace.Size = New System.Drawing.Size(530, 141)
         Me.txtStackTrace.TabIndex = 2
         '
         'TableLayoutPanel3
         '
         Me.TableLayoutPanel3.ColumnCount = 3
-        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.70492!))
-        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.29508!))
-        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 123.0!))
+        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 124.0!))
+        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 124.0!))
         Me.TableLayoutPanel3.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel3.Controls.Add(Me.LinkLabelIssue, 2, 0)
         Me.TableLayoutPanel3.Controls.Add(Me.lblComment, 1, 0)
@@ -149,14 +149,14 @@ Partial Class dlgAlertException
         Me.TableLayoutPanel3.Location = New System.Drawing.Point(3, 266)
         Me.TableLayoutPanel3.Name = "TableLayoutPanel3"
         Me.TableLayoutPanel3.RowCount = 1
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(429, 46)
+        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel3.Size = New System.Drawing.Size(530, 46)
         Me.TableLayoutPanel3.TabIndex = 4
         '
         'LinkLabelIssue
         '
         Me.LinkLabelIssue.AutoSize = True
-        Me.LinkLabelIssue.Location = New System.Drawing.Point(308, 0)
+        Me.LinkLabelIssue.Location = New System.Drawing.Point(409, 0)
         Me.LinkLabelIssue.Name = "LinkLabelIssue"
         Me.LinkLabelIssue.Size = New System.Drawing.Size(91, 13)
         Me.LinkLabelIssue.TabIndex = 1
@@ -166,18 +166,18 @@ Partial Class dlgAlertException
         'lblComment
         '
         Me.lblComment.AutoSize = True
-        Me.lblComment.Location = New System.Drawing.Point(118, 0)
+        Me.lblComment.Location = New System.Drawing.Point(127, 0)
         Me.lblComment.Name = "lblComment"
-        Me.lblComment.Size = New System.Drawing.Size(39, 13)
+        Me.lblComment.Size = New System.Drawing.Size(274, 13)
         Me.lblComment.TabIndex = 2
-        Me.lblComment.Text = "Label1"
+        Me.lblComment.Text = "Click on link to send a new issue and paste 'stracktrace'."
         '
         'dlgAlertException
         '
         Me.AcceptButton = Me.OK_Button
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(435, 315)
+        Me.ClientSize = New System.Drawing.Size(536, 315)
         Me.Controls.Add(Me.TableLayoutPanel1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
