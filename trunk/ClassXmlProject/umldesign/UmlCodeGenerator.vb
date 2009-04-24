@@ -15,6 +15,7 @@ Public Class UmlCodeGenerator
     Private Const cstUpdate As String = "_codegen"
     Private Const cstCodeSourceHeaderCppStyleSheet As String = "uml2cpp-h.xsl"
     Private Const cstCodeSourceVbDotNetStyleSheet As String = "uml2vbnet.xsl"
+    Private Const cstCodeSourceJavaStyleSheet As String = "uml2java.xsl"
     Private Const cstTempExport As String = ".umlexp"
 
     Private Shared m_xsltCppSourceHeaderStyleSheet As XslSimpleTransform = Nothing
@@ -42,8 +43,17 @@ Public Class UmlCodeGenerator
                     Then
                         bResult = True
                     End If
+
                 Case eLanguage.Language_Vbasic
                     If GenerateVbClassModule(fen, node.OwnerDocument.DocumentElement, _
+                                            strClassId, strPackageId, strProgramFolder, _
+                                            strTransformation) _
+                    Then
+                        bResult = True
+                    End If
+
+                Case eLanguage.Language_Vbasic
+                    If GenerateJavaModule(fen, node.OwnerDocument.DocumentElement, _
                                             strClassId, strPackageId, strProgramFolder, _
                                             strTransformation) _
                     Then
@@ -160,6 +170,74 @@ Public Class UmlCodeGenerator
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceVbDotNetStyleSheet)
+            strTransformation = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+                                                                   cstUpdate + ".xml")
+
+            Dim argList As New Dictionary(Of String, String)
+            argList.Add("UmlFolder", strUmlFolder + m_strSeparator)
+            argList.Add("InputClass", strClassId)
+            argList.Add("InputPackage", strPackageId)
+
+            If node IsNot Nothing Then
+                If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
+                Then
+                    m_xsltVbClassModuleStyleSheet = New XslSimpleTransform(True)
+                    m_xsltVbClassModuleStyleSheet.Load(strStyleSheet)
+                Else
+                    If m_xsltVbClassModuleStyleSheet Is Nothing Then
+                        m_xsltVbClassModuleStyleSheet = New XslSimpleTransform(True)
+                        m_xsltVbClassModuleStyleSheet.Load(strStyleSheet)
+                    End If
+                End If
+                m_xsltVbClassModuleStyleSheet.Transform(node, strTransformation, argList)
+                observer.Increment(1)
+
+                ExtractCode(bCodeMerge, observer, strTransformation, strPath, ELanguage.Language_Vbasic)
+                bResult = True
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            observer.ProgressBarVisible = False
+            fen.Cursor = oldCursor
+            m_bTransformActive = False
+        End Try
+
+        Return bResult
+    End Function
+
+    Private Shared Function GenerateJavaModule(ByVal fen As System.Windows.Forms.Form, _
+                                                  ByVal node As XmlNode, ByVal strClassId As String, _
+                                                ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByRef strTransformation As String) As Boolean
+        Dim bCodeMerge As Boolean = False
+        Dim bResult As Boolean = False
+        Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
+        fen.Cursor = Cursors.WaitCursor
+        Try
+            If m_bTransformActive Then Return bResult
+            m_bTransformActive = True
+
+            Dim count As Integer = 1    ' One step for XSLT transformation
+            If strClassId <> "" Then
+                count += 1
+            ElseIf strPackageId <> "" _
+            Then
+                Dim child As XmlNode = node.SelectSingleNode("//package[@id='" + strPackageId + "']")
+                count += child.SelectNodes("descendant::package | descendant::class").Count
+            Else
+                count += node.SelectNodes("descendant::package | descendant::class").Count
+            End If
+
+            observer.Minimum = 0
+            observer.Maximum = count
+            observer.ProgressBarVisible = True
+
+            Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
+            Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceJavaStyleSheet)
             strTransformation = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
                                                                    cstUpdate + ".xml")
 
