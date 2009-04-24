@@ -64,6 +64,16 @@ Public Class XmlPackageMemberView
         End With
         data.Columns.Add(col1)
 
+        col1 = New DataGridViewTextBoxColumn
+        With col1
+            .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+            .DataPropertyName = "NodeName"
+            .ReadOnly = True
+            .HeaderText = "Node"
+            .Name = "ControlName_Node"
+        End With
+        data.Columns.Add(col1)
+
         col1 = New DataGridViewComboBoxColumn
         With CType(col1, DataGridViewComboBoxColumn)
             .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
