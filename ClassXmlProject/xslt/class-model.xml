@@ -148,8 +148,7 @@
           external (yes | no) "no"
           package NMTOKEN #IMPLIED
           class NMTOKEN #IMPLIED
-          container CDATA #IMPLIED
-          source CDATA #IMPLIED
+          container (0 | 1 | 2 | 3) #IMPLIED
           name %name; #REQUIRED>
 
 <!ELEMENT interface (collaboration*,property*,method*) >

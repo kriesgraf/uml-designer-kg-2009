@@ -4,6 +4,7 @@ Imports System.Windows.Forms
 Imports System.IO
 Imports System.Collections
 Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.XmlReferenceNodeCounter
 Imports System.Text
 Imports Microsoft.VisualBasic
 
@@ -750,7 +751,7 @@ Public Class UmlNodesManager
     Public Shared Sub RenumberProject(ByRef node As XmlNode, Optional ByVal bChangeRelation As Boolean = False)
         Try
             Dim listID As XmlNodeList
-            Dim child As XmlNode
+            Dim child, parent As XmlNode
             Dim szID As String
 
             Dim iClassIndex As Integer = 1
@@ -773,22 +774,56 @@ Public Class UmlNodesManager
             Next child
 
 
+            listID = SelectNodes(node, "//param | // method | //property | //element")
+
+            For Each child In listID
+                If child.ParentNode Is Nothing Then
+                    Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
+                End If
+                szID = GenerateNumericId(child.ParentNode, child.Name, "", "num-id", False)
+                AddAttributeValue(child, "num-id", szID)
+            Next
+
             Dim szOldID As String
             listID = SelectNodes(node, "//enumvalue")
 
             For Each child In listID
                 szOldID = GetID(child)
-                If child.ParentNode.Name <> "reference" Then
-                    szID = GetID(child.ParentNode.ParentNode)
-                Else
-                    szID = GetID(child.ParentNode)
+                If child.ParentNode Is Nothing Then
+                    Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
                 End If
+                Select Case child.ParentNode.Name
+                    Case "reference"
+                        szID = GetID(child.ParentNode)
+
+                    Case Else
+                        parent = child.ParentNode
+                        If parent.ParentNode Is Nothing Then
+                            Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
+                        End If
+                        parent = parent.ParentNode
+                        Select Case parent.Name
+                            Case "property"
+                                If parent.ParentNode Is Nothing Then
+                                    Throw New Exception("Node 'property' with name '" + GetName(parent) + "' has not parent.")
+                                End If
+                                szID = GetAttributeValue(parent, "num-id")
+                                szID = GetID(parent.ParentNode) + "_" + szID
+                            Case Else
+                                If parent.ParentNode Is Nothing Then
+                                    Throw New Exception("Node 'property' with name '" + GetName(parent) + "' has not parent.")
+                                End If
+                                szID = GetID(parent.ParentNode)
+                        End Select
+                End Select
                 szID = szID.Substring(Len("class"))
-                szID = "enum" + szID + "_" + GetName(child)
+                szID = "enum" + szID + "_"
+                szID = GenerateNumericId(child.ParentNode, "enumvalue", szID, "id", False)
                 AddAttributeValue(child, "id", szID)
                 RenumberRefElement(node, "valref", szOldID, szID)
                 RenumberRefElement(node, "sizeref", szOldID, szID)
             Next child
+
 
             If bChangeRelation Then
                 listID = SelectNodes(node, "//relationship")
@@ -929,6 +964,7 @@ Public Class UmlNodesManager
             SetID(node, szNewID)
 
             RenumberRefElement(node, "idref", szOldID, szNewID)
+            RenumberRefElement(node, "index-idref", szOldID, szNewID)
 
         Catch ex As Exception
             Throw ex
