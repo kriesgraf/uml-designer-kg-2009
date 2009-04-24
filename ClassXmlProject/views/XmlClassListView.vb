@@ -59,7 +59,11 @@ Public Class XmlClassListView
                 .MaxDropDownItems = 10
                 .FlatStyle = FlatStyle.Flat
 
-                .DataSource = myList
+                If myList.Count > 0 Then
+                    .DataSource = myList
+                Else
+                    .DataSource = Nothing
+                End If
                 .ValueMember = cstValueMember
                 .DisplayMember = cstDisplayMember
             End With
@@ -80,7 +84,11 @@ Public Class XmlClassListView
             With control
                 .DropDownStyle = ComboBoxStyle.DropDownList
 
-                .DataSource = myList
+                If myList.Count > 0 Then
+                    .DataSource = myList
+                Else
+                    .DataSource = Nothing
+                End If
                 .ValueMember = cstValueMember
                 .DisplayMember = cstDisplayMember
             End With

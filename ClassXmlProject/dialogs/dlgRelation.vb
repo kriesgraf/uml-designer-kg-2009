@@ -80,6 +80,11 @@ Public Class dlgRelation
                 .InitBindingChildAccessors(chkGetChild, chkSetChild)
                 .InitBindingChildCardinal(cmbChildCardinal, lblChildCardinal)    ' Called at the end, because all references
 
+                If cmbChildClass.Items.Count = 0 Or cmbFatherClass.Items.Count = 0 Then
+                    MsgBox("The project doesn't not contain classes compatible with relationships", MsgBoxStyle.Exclamation, "Relationship")
+                    Me.DialogResult = Windows.Forms.DialogResult.Cancel
+                End If
+
                 Me.Text = .Name
             End With
         Catch ex As Exception
