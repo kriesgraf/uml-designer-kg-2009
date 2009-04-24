@@ -438,8 +438,17 @@ Public Class XmlPropertyView
             m_cmbRange.Enabled = False
             m_chkGetInline.Enabled = False
             m_chkSetInline.Enabled = False
-            m_chkGetInline.Checked = (CType(m_cmbGetAccess.SelectedItem, String) <> "no")
-            m_chkSetInline.Checked = (CType(m_cmbSetAccess.SelectedItem, String) <> "no")
+
+            If m_eClassImplementation = EImplementation.Interf _
+            Then
+                m_chkGetInline.Checked = False
+                m_chkSetInline.Checked = False
+                m_chkGetInline.Visible = False
+                m_chkSetInline.Visible = False
+            Else
+                m_chkGetInline.Checked = (CType(m_cmbGetAccess.SelectedItem, String) <> "no")
+                m_chkSetInline.Checked = (CType(m_cmbSetAccess.SelectedItem, String) <> "no")
+            End If
         End If
     End Sub
 
