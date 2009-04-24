@@ -756,47 +756,7 @@ Public Class XmlProjectTools
         End Try
 
         If bDtdError Then
-            Try
-                Dim strToolsFolder = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
-                Dim strPatchFile As String = My.Computer.FileSystem.CombinePath(strToolsFolder, cstV1_2_To_V1_3_Patch)
-                Dim strTempFile As String = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
-                                                                                cstTempUmlFile + ".xprj")
-                Dim fen As New dlgUpgradeProject
-
-                fen.Filename = strFilename
-                fen.Warning = currentException
-
-                If fen.ShowDialog() = MsgBoxResult.Ok _
-                Then
-                    form.Cursor = Cursors.WaitCursor
-
-                    ApplyPatchFile(strFilename, strTempFile, strPatchFile)
-
-                    ' Using avoid to remain the file locked for another process
-                    ' the following to Validate succeeds.
-                    Dim settings As XmlReaderSettings = New XmlReaderSettings()
-                    settings.ProhibitDtd = False
-                    settings.ValidationType = System.Xml.ValidationType.DTD
-
-                    Using reader As XmlReader = XmlReader.Create(strTempFile, settings)
-                        document.Load(reader)
-                    End Using
-
-                    RenumberProject(document, True)
-                    UpdatesCollaborations(document)
-
-                    bDtdError = False
-                    form.Cursor = oldCursor
-                    eResult = XmlProjectTools.EResult.Converted
-                    MsgBox("Conversion completed!", MsgBoxStyle.Exclamation, "File converted")
-                End If
-
-            Catch ex As Exception
-                form.Cursor = oldCursor
-                eResult = XmlProjectTools.EResult.Failed
-                bDtdError = True
-                MsgExceptionBox(ex)
-            End Try
+            eResult = ConvertAndCorrectErrors(form, document, strFilename, bDtdError, currentException)
         End If
         Return eResult
     End Function
@@ -1139,6 +1099,8 @@ Public Class XmlProjectTools
 
     Public Shared Function ConvertDtdToEnumImpl(ByVal strImpl As String) As EImplementation
         Select Case strImpl
+            Case ""
+                Return EImplementation.Unknown
             Case "abstract"
                 Return EImplementation.Interf
             Case "final"
@@ -1174,6 +1136,8 @@ Public Class XmlProjectTools
                 Return "exception"
             Case EImplementation.Container
                 Return "container"
+            Case EImplementation.Unknown
+                Return ""
             Case Else
                 Return "simple"
         End Select
@@ -2071,6 +2035,76 @@ Public Class XmlProjectTools
 #End Region
 
 #Region "Private shared methods"
+
+    Private Shared Function ConvertAndCorrectErrors(ByVal form As Form, ByVal document As XmlDocument, _
+                                                    ByVal strFilename As String, ByRef bDtdError As Boolean, _
+                                                    ByVal currentException As Exception) As EResult
+        Dim oldCursor As Cursor = form.Cursor
+        Dim eResult As EResult
+        Try
+            Dim strToolsFolder = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
+            Dim strPatchFile As String = My.Computer.FileSystem.CombinePath(strToolsFolder, cstV1_2_To_V1_3_Patch)
+            Dim strTempFile As String = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+                                                                            cstTempUmlFile + ".xprj")
+            Dim dialog As New dlgUpgradeProject
+
+            dialog.Filename = strFilename
+            dialog.Warning = currentException
+
+            If dialog.ShowDialog(form) = MsgBoxResult.Cancel _
+            Then
+                eResult = XmlProjectTools.EResult.Failed
+            Else
+                form.Cursor = Cursors.WaitCursor
+
+                ApplyPatchFile(strFilename, strTempFile, strPatchFile)
+
+                ' Using avoid to remain the file locked for another process
+                ' the following to Validate succeeds.
+                Dim settings As XmlReaderSettings = New XmlReaderSettings()
+                settings.ProhibitDtd = False
+                settings.ValidationType = System.Xml.ValidationType.DTD
+
+                ' Check second time to validate corrections.
+                Using reader As XmlReader = XmlReader.Create(strTempFile, settings)
+                    document.Load(reader)
+                End Using
+
+                RenumberProject(document, True)
+                UpdatesCollaborations(document)
+                document.Save(strTempFile)
+
+                ' Check second time to validate corrections.
+                Using reader As XmlReader = XmlReader.Create(strTempFile, settings)
+                    document.Load(reader)
+                End Using
+
+                bDtdError = False
+                form.Cursor = oldCursor
+                eResult = XmlProjectTools.EResult.Converted
+                MsgBox("Conversion completed!", MsgBoxStyle.Exclamation, "File converted")
+            End If
+
+        Catch ex As XmlSchemaException
+            form.Cursor = oldCursor
+            eResult = XmlProjectTools.EResult.Failed
+            bDtdError = True
+            MsgExceptionBox(New Exception( _
+                                 "LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
+                                "LinePosition=" + ex.LinePosition.ToString + vbCrLf + _
+                                "Message=" + ex.Message + vbCrLf + _
+                                "SourceUri=" + ex.SourceUri, _
+                                ex), "Click on text message to copy 'error stacktrace' to clipboard." + vbCrLf _
+                                + "Click on link to send a new issue and paste 'stracktrace' and join mentioned temporary file.", 640)
+
+        Catch ex As Exception
+            form.Cursor = oldCursor
+            eResult = XmlProjectTools.EResult.Failed
+            bDtdError = True
+            MsgExceptionBox(ex)
+        End Try
+        Return eResult
+    End Function
 
     Private Shared Function CreateAppendCollaboration(ByVal node As XmlNode) As XmlNode
         Dim collaboration As XmlNode = CreateNode(node, "collaboration")

@@ -74,8 +74,12 @@
       <xsl:call-template name="Name"/>
       <xsl:call-template name="Visibility"/>
       <xsl:copy-of select="@param"/>
-      <xsl:apply-templates select="export[1]"/>
-      <xsl:apply-templates select="body[1]"/>
+      <xsl:if test="not(parent::class)">
+        <xsl:apply-templates select="export[1]"/>
+      </xsl:if>
+      <xsl:if test="parent::class">
+        <xsl:apply-templates select="body[1]"/>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -113,7 +117,7 @@
       </xsl:choose>
       <xsl:copy-of select="@external"/>
       <xsl:copy-of select="@package"/>
-      <xsl:copy-of select="@container"/>
+      <xsl:call-template name="Container"/>
       <xsl:apply-templates select="collaboration"/>
       <xsl:apply-templates select="enumvalue"/>
     </xsl:copy>
@@ -253,9 +257,11 @@
   <xsl:template match="collaboration">
     <xsl:text>
 </xsl:text>
-    <xsl:copy>
-      <xsl:call-template name="IDREF"/>
-    </xsl:copy>
+    <xsl:if test="id(@idref)[self::relationship]">
+      <xsl:copy>
+        <xsl:call-template name="IDREF"/>
+      </xsl:copy>
+    </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="dependency">
@@ -330,7 +336,7 @@
 </xsl:text>
     <xsl:copy>
       <xsl:call-template name="DescIdref"/>
-      <xsl:copy-of select="@struct"/>
+      <xsl:call-template name="Struct"/>
       <xsl:call-template name="Modifier"/>
       <xsl:call-template name="Level"/>
       <xsl:if test="not(@by)">
@@ -338,9 +344,15 @@
       </xsl:if>
       <xsl:copy-of select="@by"/>
       <xsl:apply-templates select="enumvalue"/>
-      <xsl:apply-templates select="element"/>
-      <xsl:apply-templates select="list"/>
-      <xsl:apply-templates select="array"/>
+      <xsl:if test="not(enumvalue)">
+        <xsl:apply-templates select="element"/>
+        <xsl:if test="not(element)">
+          <xsl:apply-templates select="list"/>
+          <xsl:if test="not(list)">
+            <xsl:apply-templates select="array"/>
+          </xsl:if>
+        </xsl:if>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -365,7 +377,9 @@
       <xsl:call-template name="Modifier"/>
       <xsl:call-template name="Level"/>
       <xsl:copy-of select="@size"/>
-      <xsl:copy-of select="@sizeref"/>
+      <xsl:if test="string-length(@sizeref)!=0 and not(@size)">
+        <xsl:call-template name="SIZEREF"/>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -373,13 +387,16 @@
     <xsl:text>
 </xsl:text>
     <xsl:copy>
-      <xsl:call-template name="Level"/>
       <xsl:if test="not(@type) or string-length(@type)=0">
         <xsl:attribute name="type">simple</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="parent::father or parent::child">
+        <xsl:copy-of select="@iterator"/>
       </xsl:if>
       <xsl:copy-of select="@type"/>
       <xsl:call-template name="DescIdref"/>
       <xsl:if test="@type='indexed'">
+        <xsl:call-template name="Level"/>
         <xsl:choose>
           <xsl:when test="not(@index-desc) and not(@index-idref)">
             <xsl:attribute name="index-desc">bool</xsl:attribute>
@@ -388,8 +405,7 @@
             <xsl:attribute name="index-desc">bool</xsl:attribute>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:copy-of select="@index-desc"/>
-            <xsl:copy-of select="@index-idref"/>
+            <xsl:call-template name="IndexIdref"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:if>
@@ -409,7 +425,9 @@
         </xsl:when>
         <xsl:otherwise>
           <xsl:copy-of select="@size"/>
-          <xsl:copy-of select="@sizeref"/>
+          <xsl:if test="string-length(@sizeref)!=0 and not(@size)">
+            <xsl:call-template name="SIZEREF"/>
+          </xsl:if>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:copy>
@@ -420,10 +438,18 @@
 </xsl:text>
     <xsl:copy>
       <xsl:call-template name="RangePublic"/>
-      <xsl:copy-of select="@value"/>
-      <xsl:copy-of select="@valref"/>
-      <xsl:copy-of select="@size"/>
-      <xsl:copy-of select="@sizeref"/>
+      <xsl:if test="not(parent::typedef)">
+        <xsl:copy-of select="@value"/>
+        <xsl:if test="string-length(@valref)!=0 and not(@value)">
+          <xsl:call-template name="VALREF"/>
+        </xsl:if>
+      </xsl:if>
+      <xsl:if test="not(preceding-sibling::type/*)">
+        <xsl:copy-of select="@size"/>
+        <xsl:if test="string-length(@sizeref)!=0 and not(@size)">
+          <xsl:call-template name="SIZEREF"/>
+        </xsl:if>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -747,6 +773,23 @@
     </xsl:attribute>
   </xsl:template>
   <!-- ======================================================================= -->
+  <xsl:template name="IndexIdref">
+    <xsl:choose>
+      <xsl:when test="not(@index-desc) and not(@index-idref)">
+        <xsl:attribute name="index-desc">int16</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="(@index-desc and string-length(@index-desc)=0) or (@index-idref and string-length(@index-idref)=0)">
+        <xsl:attribute name="index-desc">int16</xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select="@index-desc"/>
+        <xsl:if test="@index-idref and not(@index-desc)">
+          <xsl:call-template name="IndexIDREF"/>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
   <xsl:template name="DescIdref">
     <xsl:choose>
       <xsl:when test="not(@desc) and not(@idref) and not(enumvalue)">
@@ -757,11 +800,101 @@
       </xsl:when>
       <xsl:when test="not(enumvalue)">
         <xsl:copy-of select="@desc"/>
-        <xsl:if test="@idref">
+        <xsl:if test="@idref and not(@desc)">
           <xsl:call-template name="IDREF"/>
         </xsl:if>
       </xsl:when>
     </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="VALREF">
+    <xsl:if test="//enumvalue">
+      <xsl:attribute name="valref">
+        <xsl:choose>
+          <xsl:when test="not(@valref)">
+            <xsl:value-of select="//enumvalue/@id"/>
+          </xsl:when>
+          <xsl:when test="string-length(@valref)=0">
+            <xsl:value-of select="//enumvalue/@id"/>
+          </xsl:when>
+          <xsl:when test="not(id(@valref))">
+            <xsl:value-of select="//enumvalue/@id"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="@valref"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="SIZEREF">
+    <xsl:if test="//enumvalue">
+      <xsl:attribute name="sizeref">
+        <xsl:choose>
+          <xsl:when test="not(@sizeref)">
+            <xsl:value-of select="//enumvalue/@id"/>
+          </xsl:when>
+          <xsl:when test="string-length(@sizeref)=0">
+            <xsl:value-of select="//enumvalue/@id"/>
+          </xsl:when>
+          <xsl:when test="not(id(@sizeref))">
+            <xsl:value-of select="//enumvalue/@id"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="@sizeref"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="IndexIDREF">
+    <xsl:attribute name="index-idref">
+      <xsl:choose>
+        <xsl:when test="not(@index-idref)">
+          <xsl:value-of select="//class/@id"/>
+        </xsl:when>
+        <xsl:when test="string-length(@index-idref)=0">
+          <xsl:value-of select="//class/@id"/>
+        </xsl:when>
+        <xsl:when test="not(id(@index-idref))">
+          <xsl:value-of select="//class/@id"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@index-idref"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Struct">
+    <xsl:choose>
+      <xsl:when test="enumvalue"/>
+      <xsl:when test="list">
+        <xsl:attribute name="struct">container</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="element">
+        <xsl:choose>
+          <xsl:when test="@struct='union'"><xsl:attribute name="struct">union</xsl:attribute></xsl:when>
+          <xsl:when test="@struct='struct'"><xsl:attribute name="struct">struct</xsl:attribute></xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="struct">struct</xsl:attribute>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="Container">
+    <xsl:attribute name="container">
+      <xsl:choose>
+        <xsl:when test="@container='0' or @container='1' or @container='2' or @container='3'">
+          <xsl:value-of select="@container"/>
+        </xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Action">
@@ -776,6 +909,10 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
 
 
 

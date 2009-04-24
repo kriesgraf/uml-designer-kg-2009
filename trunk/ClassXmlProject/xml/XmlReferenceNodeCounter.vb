@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.Xml
 Imports Microsoft.VisualBasic
+Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.XmlNodeCounter
 
 Public Class XmlReferenceNodeCounter
@@ -143,7 +144,8 @@ Public Class XmlReferenceNodeCounter
 
     Public Shared Function GenerateNumericId(ByVal node As XmlNode, ByVal xpath As String, _
                                              Optional ByVal prefix As String = "", _
-                                             Optional ByVal attribute As String = "num-id") As String
+                                             Optional ByVal attribute As String = "num-id", _
+                                             Optional ByVal bRaiseException As Boolean = True) As String
         Dim iResult As Integer = 0
 
         Try
@@ -162,22 +164,31 @@ Public Class XmlReferenceNodeCounter
 
                 If prefix <> "" Then
                     If child.Value.StartsWith(prefix) = False Then
-                        Throw New Exception("In Node: " + node.OuterXml + vbCrLf + vbCrLf + "One child node with attribute '" + attribute + "' does not start with prefix '" + prefix + "'")
-                    End If
-                    tempo = AfterStr(child.Value, prefix)
-                    If IsNumeric(tempo) Then
-                        Id = CInt(tempo)
+                        If bRaiseException Then
+                            Throw New Exception("In Node '" + node.Name + "' with name '" + GetName(node) + "'" + vbCrLf + vbCrLf + "has a child node with attribute '" + attribute + "' that does not start with prefix '" + prefix + "'")
+                        Else
+                            Id = 0
+                        End If
                     Else
-                        Id = 0
+                        tempo = AfterStr(child.Value, prefix)
+                        If IsNumeric(tempo) Then
+                            Id = CInt(tempo)
+                        Else
+                            Id = 0
+                        End If
                     End If
 
                 ElseIf child.Value.StartsWith("CONST") = False _
                 Then
                     If IsNumeric(child.Value) = False Then
-                        Throw New Exception("In Node: " + node.OuterXml + vbCrLf + vbCrLf + "One child node with attribute '" + attribute + "' is not numeric")
+                        If bRaiseException Then
+                            Throw New Exception("In Node '" + node.Name + "' with name '" + GetName(node) + "'" + vbCrLf + vbCrLf + "has a child node with attribute '" + attribute + "' that is not numeric")
+                        Else
+                            Id = 0
+                        End If
+                    Else
+                        Id = CInt(child.Value)
                     End If
-
-                    Id = CInt(child.Value)
                 End If
 
                 If Id > iResult Then
