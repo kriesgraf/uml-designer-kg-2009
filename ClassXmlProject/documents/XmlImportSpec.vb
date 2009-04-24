@@ -46,7 +46,7 @@ Public Class XmlImportSpec
     Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
         Set(ByVal value As XmlReferenceNodeCounter)
             m_xmlReferenceNodeCounter = value
-            If Me.ChildExportNode IsNot Nothing Then
+            If m_xmlExport IsNot Nothing Then
                 Me.ChildExportNode.NodeCounter = value
             End If
         End Set
