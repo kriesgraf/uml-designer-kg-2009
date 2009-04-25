@@ -85,6 +85,8 @@ Public Class XmlNodeListView
                     name = """" + GetAttribute("action") + """"
                 Case "param"
                     name = """argument"" " + Me.Name
+                Case "return", "method"
+                    name = """method/return value"" " + Me.Name
                 Case Else
                     name = Me.Name
             End Select
@@ -100,6 +102,8 @@ Public Class XmlNodeListView
                     name = """" + GetAttribute("action") + """"
                 Case "param"
                     name = """argument"" " + Me.Name
+                Case "return", "method"
+                    name = """method/return value"" " + Me.Name
                 Case Else
                     name = Me.Name
             End Select
@@ -568,75 +572,81 @@ Public Class XmlNodeListView
     End Sub
 
     Private Shared Function GetFullUmlPath(ByVal current As XmlNode) As String
+        Dim strResult As String = ""
         Try
-            If current Is Nothing Then Return ""
+            If current Is Nothing Then Return strResult
 
             Dim tempo, tempo2 As String
 
             Select Case current.Name
                 Case "#document"
-                    Return ""
+                    strResult = ""
 
                 Case "package", "class", "import", "typedef"
-                    Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+                    strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
 
                 Case "interface"
                     tempo = GetAttributeValue(current, "package")
                     If tempo <> "" Then
-                        Return GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + GetName(current)
+                        strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + GetName(current)
+                    Else
+                        strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
                     End If
-                    Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
 
                 Case "reference"
-                    tempo = GetAttributeValue(current, "package")
                     If GetAttributeValue(current, "type") = "typedef" Then
                         tempo2 = GetAttributeValue(current, "class") + "/" + GetName(current)
                     Else
                         tempo2 = GetName(current)
                     End If
+
+                    tempo = GetAttributeValue(current, "package")
                     If tempo <> "" Then
-                        Return GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + tempo2
+                        strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + tempo2
+                    Else
+                        strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo2
                     End If
-                    Return GetFullUmlPath(current.ParentNode) + "/" + tempo2
 
                 Case "export"
                     If current.ParentNode Is Nothing _
                     Then
-                        Return "/" + GetName(current)
+                        strResult = "/" + GetName(current)
 
                     ElseIf current.ParentNode.Name = "#document" _
                     Then
-                        Return "/" + GetName(current)
+                        strResult = "/" + GetName(current)
+                    Else
+                        strResult = GetFullUmlPath(current.ParentNode)
                     End If
-
-                    Return GetFullUmlPath(current.ParentNode)
 
                 Case "enumvalue"
                     If current.ParentNode IsNot Nothing Then
                         If current.ParentNode.Name = "reference" Then
-                            Return +GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+                            strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
                         Else
-                            Return +GetFullUmlPath(current.ParentNode.ParentNode) + "/" + GetName(current)
+                            strResult = GetFullUmlPath(current.ParentNode.ParentNode) + "/" + GetName(current)
                         End If
+                    Else
+                        strResult = "/" + GetName(current)
                     End If
 
-                    Return "/" + GetName(current)
 
                 Case "root"
-                    Return "/" + GetName(current)
+                    strResult = "/" + GetName(current)
 
                 Case "method"
                     If GetName(current) Is Nothing Then
-                        Return GetFullUmlPath(current.ParentNode) + "/#method"
+                        strResult = GetFullUmlPath(current.ParentNode) + "/#method"
                     Else
-                        Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+                        strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
                     End If
 
                 Case Else
-                    Return GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+                    strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
             End Select
         Catch ex As Exception
             Throw ex
         End Try
+        Return strResult
     End Function
 End Class
