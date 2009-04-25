@@ -36,11 +36,7 @@ Public Class XmlClassMemberView
 
                 ElseIf MyBase.Name = "#method" _
                 Then ' No name
-                    If Me.Tag <> ELanguage.Language_Vbasic Then
-                        Return m_xmlClassView.Name
-                    Else
-                        Return "New"
-                    End If
+                    Return "Constructor"
                 End If
             End If
             Return MyBase.Name
