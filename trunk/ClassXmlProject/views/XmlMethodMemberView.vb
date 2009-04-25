@@ -31,10 +31,15 @@ Public Class XmlMethodMemberView
 
     Public Overrides Property Name() As String
         Get
+            If Me.NodeName = "exception" Then
+                Return "Exception"
+            End If
             Return MyBase.Name
         End Get
         Set(ByVal value As String)
-            MyBase.Name = value
+            If Me.NodeName <> "exception" Then
+                MyBase.Name = value
+            End If
         End Set
     End Property
 
