@@ -25,7 +25,7 @@ Public Class XmlPropertySpec
             Return strResult
         End Get
         Set(ByVal value As String)
-            If value <> "Normal" Then
+            If value <> "Normal" And value <> "" Then
                 AddAttribute("behaviour", value)
             Else
                 RemoveAttribute("behaviour")
