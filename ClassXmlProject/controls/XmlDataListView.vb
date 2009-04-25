@@ -326,6 +326,16 @@ Public Class XmlDataListView
         End If
     End Sub
 
+    Private Sub XmlDataListView_KeyUp(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyUp
+        Select e.KeyCode
+            Case Keys.Enter
+                EditCurrentItem()
+
+            Case (Keys.Delete)
+                ' Ignore, catch by menu shortcut
+        End Select
+    End Sub
+
     Private Function GetDestinationItem(ByVal destListview As ListView, ByVal oEvent As System.Windows.Forms.DragEventArgs) As ListViewItem
         Dim clX As Integer = destListview.PointToClient(New Point(oEvent.X, oEvent.Y)).X
         Dim clY As Integer = destListview.PointToClient(New Point(oEvent.X, oEvent.Y)).Y

@@ -60,6 +60,7 @@ Partial Class dlgClass
         Me.Cancel_Button = New System.Windows.Forms.Button
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
         Me.btnDelete = New System.Windows.Forms.Button
+        Me.strpProgressBar = New System.Windows.Forms.ProgressBar
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
         Me.TableLayoutPanel4 = New System.Windows.Forms.TableLayoutPanel
         Me.TableLayoutPanel8 = New System.Windows.Forms.TableLayoutPanel
@@ -106,7 +107,6 @@ Partial Class dlgClass
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel10 = New System.Windows.Forms.TableLayoutPanel
-        Me.strpProgressBar = New System.Windows.Forms.ProgressBar
         Me.TableLayoutPanel3.SuspendLayout()
         Me.SplitContainer2.Panel1.SuspendLayout()
         Me.SplitContainer2.Panel2.SuspendLayout()
@@ -411,39 +411,41 @@ Partial Class dlgClass
         '
         Me.mnuRelations.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddRelation, Me.EditRelation, Me.RelationProperties, Me.ToolStripSeparator4, Me.DeleteRelation})
         Me.mnuRelations.Name = "mnuRelations"
-        Me.mnuRelations.Size = New System.Drawing.Size(142, 98)
+        Me.mnuRelations.Size = New System.Drawing.Size(153, 120)
         '
         'AddRelation
         '
         Me.AddRelation.Image = Global.ClassXmlProject.My.Resources.Resources.network
         Me.AddRelation.Name = "AddRelation"
-        Me.AddRelation.Size = New System.Drawing.Size(141, 22)
+        Me.AddRelation.Size = New System.Drawing.Size(152, 22)
         Me.AddRelation.Text = "Add"
         '
         'EditRelation
         '
         Me.EditRelation.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
         Me.EditRelation.Name = "EditRelation"
-        Me.EditRelation.Size = New System.Drawing.Size(141, 22)
+        Me.EditRelation.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.EditRelation.Size = New System.Drawing.Size(152, 22)
         Me.EditRelation.Text = "Edit..."
         '
         'RelationProperties
         '
         Me.RelationProperties.Name = "RelationProperties"
-        Me.RelationProperties.Size = New System.Drawing.Size(141, 22)
+        Me.RelationProperties.Size = New System.Drawing.Size(152, 22)
         Me.RelationProperties.Text = "Parameters..."
         Me.RelationProperties.Visible = False
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(138, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(149, 6)
         '
         'DeleteRelation
         '
         Me.DeleteRelation.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.DeleteRelation.Name = "DeleteRelation"
-        Me.DeleteRelation.Size = New System.Drawing.Size(141, 22)
+        Me.DeleteRelation.ShortcutKeys = System.Windows.Forms.Keys.Delete
+        Me.DeleteRelation.Size = New System.Drawing.Size(152, 22)
         Me.DeleteRelation.Text = "Delete"
         '
         'TableLayoutPanel7
@@ -518,6 +520,7 @@ Partial Class dlgClass
         '
         Me.DeleteDependency.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.DeleteDependency.Name = "DeleteDependency"
+        Me.DeleteDependency.ShortcutKeys = System.Windows.Forms.Keys.Delete
         Me.DeleteDependency.Size = New System.Drawing.Size(141, 22)
         Me.DeleteDependency.Text = "Delete"
         '
@@ -569,6 +572,14 @@ Partial Class dlgClass
         Me.btnDelete.TabIndex = 2
         Me.btnDelete.Text = "Delete"
         Me.btnDelete.UseVisualStyleBackColor = True
+        '
+        'strpProgressBar
+        '
+        Me.strpProgressBar.Location = New System.Drawing.Point(91, 3)
+        Me.strpProgressBar.Name = "strpProgressBar"
+        Me.strpProgressBar.Size = New System.Drawing.Size(136, 21)
+        Me.strpProgressBar.TabIndex = 3
+        Me.strpProgressBar.Visible = False
         '
         'SplitContainer1
         '
@@ -652,13 +663,13 @@ Partial Class dlgClass
         '
         Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddMember, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuOverrides, Me.ToolStripSeparator6, Me.mnuMemberDependencies, Me.ToolStripSeparator8, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.RemoveRedundancies, Me.DeleteMember})
         Me.mnuMembers.Name = "mnuMembers"
-        Me.mnuMembers.Size = New System.Drawing.Size(227, 276)
+        Me.mnuMembers.Size = New System.Drawing.Size(246, 276)
         '
         'AddMember
         '
         Me.AddMember.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddTypedef, Me.AddContainer, Me.AddStructure, Me.AddProperty, Me.AddConstructor, Me.AddMethod})
         Me.AddMember.Name = "AddMember"
-        Me.AddMember.Size = New System.Drawing.Size(226, 22)
+        Me.AddMember.Size = New System.Drawing.Size(245, 22)
         Me.AddMember.Text = "Add"
         '
         'AddTypedef
@@ -719,20 +730,21 @@ Partial Class dlgClass
         '
         Me.EditMember.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
         Me.EditMember.Name = "EditMember"
-        Me.EditMember.Size = New System.Drawing.Size(226, 22)
+        Me.EditMember.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.EditMember.Size = New System.Drawing.Size(245, 22)
         Me.EditMember.Text = "Edit..."
         '
         'ToolStripSeparator7
         '
         Me.ToolStripSeparator7.Name = "ToolStripSeparator7"
-        Me.ToolStripSeparator7.Size = New System.Drawing.Size(223, 6)
+        Me.ToolStripSeparator7.Size = New System.Drawing.Size(242, 6)
         '
         'CopyMember
         '
         Me.CopyMember.Image = Global.ClassXmlProject.My.Resources.Resources.Copy
         Me.CopyMember.Name = "CopyMember"
         Me.CopyMember.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-        Me.CopyMember.Size = New System.Drawing.Size(226, 22)
+        Me.CopyMember.Size = New System.Drawing.Size(245, 22)
         Me.CopyMember.Text = "Copy"
         '
         'PasteMember
@@ -740,33 +752,33 @@ Partial Class dlgClass
         Me.PasteMember.Image = Global.ClassXmlProject.My.Resources.Resources.Paste
         Me.PasteMember.Name = "PasteMember"
         Me.PasteMember.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
-        Me.PasteMember.Size = New System.Drawing.Size(226, 22)
+        Me.PasteMember.Size = New System.Drawing.Size(245, 22)
         Me.PasteMember.Text = "Paste"
         '
         'DuplicateMember
         '
         Me.DuplicateMember.Name = "DuplicateMember"
         Me.DuplicateMember.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
-        Me.DuplicateMember.Size = New System.Drawing.Size(226, 22)
+        Me.DuplicateMember.Size = New System.Drawing.Size(245, 22)
         Me.DuplicateMember.Text = "Duplicate"
         '
         'MemberProperties
         '
         Me.MemberProperties.Name = "MemberProperties"
-        Me.MemberProperties.Size = New System.Drawing.Size(226, 22)
+        Me.MemberProperties.Size = New System.Drawing.Size(245, 22)
         Me.MemberProperties.Text = "Parameters..."
         Me.MemberProperties.Visible = False
         '
         'ToolStripSeparator5
         '
         Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(223, 6)
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(242, 6)
         '
         'mnuOverrides
         '
         Me.mnuOverrides.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuOverrideProperties, Me.mnuOverrideMethods})
         Me.mnuOverrides.Name = "mnuOverrides"
-        Me.mnuOverrides.Size = New System.Drawing.Size(226, 22)
+        Me.mnuOverrides.Size = New System.Drawing.Size(245, 22)
         Me.mnuOverrides.Text = "Overrides"
         '
         'mnuOverrideProperties
@@ -786,44 +798,46 @@ Partial Class dlgClass
         'ToolStripSeparator6
         '
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
-        Me.ToolStripSeparator6.Size = New System.Drawing.Size(223, 6)
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(242, 6)
         '
         'mnuMemberDependencies
         '
         Me.mnuMemberDependencies.Image = Global.ClassXmlProject.My.Resources.Resources.Search
         Me.mnuMemberDependencies.Name = "mnuMemberDependencies"
-        Me.mnuMemberDependencies.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
-        Me.mnuMemberDependencies.Size = New System.Drawing.Size(226, 22)
+        Me.mnuMemberDependencies.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F), System.Windows.Forms.Keys)
+        Me.mnuMemberDependencies.Size = New System.Drawing.Size(245, 22)
         Me.mnuMemberDependencies.Text = "Search dependencies..."
         '
         'ToolStripSeparator8
         '
         Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
-        Me.ToolStripSeparator8.Size = New System.Drawing.Size(223, 6)
+        Me.ToolStripSeparator8.Size = New System.Drawing.Size(242, 6)
         '
         'mnuExportReferences
         '
         Me.mnuExportReferences.Name = "mnuExportReferences"
-        Me.mnuExportReferences.Size = New System.Drawing.Size(226, 22)
+        Me.mnuExportReferences.Size = New System.Drawing.Size(245, 22)
         Me.mnuExportReferences.Text = "Export references..."
         '
         'ToolStripSeparator2
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(223, 6)
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(242, 6)
         '
         'RemoveRedundancies
         '
         Me.RemoveRedundancies.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
         Me.RemoveRedundancies.Name = "RemoveRedundancies"
-        Me.RemoveRedundancies.Size = New System.Drawing.Size(226, 22)
+        Me.RemoveRedundancies.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Delete), System.Windows.Forms.Keys)
+        Me.RemoveRedundancies.Size = New System.Drawing.Size(245, 22)
         Me.RemoveRedundancies.Text = "Remove redundancy..."
         '
         'DeleteMember
         '
         Me.DeleteMember.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.DeleteMember.Name = "DeleteMember"
-        Me.DeleteMember.Size = New System.Drawing.Size(226, 22)
+        Me.DeleteMember.ShortcutKeys = System.Windows.Forms.Keys.Delete
+        Me.DeleteMember.Size = New System.Drawing.Size(245, 22)
         Me.DeleteMember.Text = "Delete"
         '
         'TableLayoutPanel5
@@ -994,14 +1008,6 @@ Partial Class dlgClass
         Me.TableLayoutPanel10.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40.0!))
         Me.TableLayoutPanel10.Size = New System.Drawing.Size(792, 566)
         Me.TableLayoutPanel10.TabIndex = 10
-        '
-        'strpProgressBar
-        '
-        Me.strpProgressBar.Location = New System.Drawing.Point(91, 3)
-        Me.strpProgressBar.Name = "strpProgressBar"
-        Me.strpProgressBar.Size = New System.Drawing.Size(136, 21)
-        Me.strpProgressBar.TabIndex = 3
-        Me.strpProgressBar.Visible = False
         '
         'dlgClass
         '
