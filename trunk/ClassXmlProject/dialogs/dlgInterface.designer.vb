@@ -185,7 +185,7 @@ Partial Class dlgInterface
         '
         Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddProperty, Me.AddMethod, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuMemberDependencies, Me.ToolStripSeparator2, Me.DeleteMember})
         Me.mnuMembers.Name = "mnuMembers"
-        Me.mnuMembers.Size = New System.Drawing.Size(227, 220)
+        Me.mnuMembers.Size = New System.Drawing.Size(227, 242)
         '
         'AddProperty
         '
@@ -209,6 +209,7 @@ Partial Class dlgInterface
         '
         Me.EditMember.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
         Me.EditMember.Name = "EditMember"
+        Me.EditMember.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
         Me.EditMember.Size = New System.Drawing.Size(226, 22)
         Me.EditMember.Text = "Edit..."
         '
@@ -256,7 +257,7 @@ Partial Class dlgInterface
         '
         Me.mnuMemberDependencies.Image = Global.ClassXmlProject.My.Resources.Resources.Search
         Me.mnuMemberDependencies.Name = "mnuMemberDependencies"
-        Me.mnuMemberDependencies.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
+        Me.mnuMemberDependencies.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F), System.Windows.Forms.Keys)
         Me.mnuMemberDependencies.Size = New System.Drawing.Size(226, 22)
         Me.mnuMemberDependencies.Text = "Search dependencies..."
         '
@@ -269,6 +270,7 @@ Partial Class dlgInterface
         '
         Me.DeleteMember.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.DeleteMember.Name = "DeleteMember"
+        Me.DeleteMember.ShortcutKeys = System.Windows.Forms.Keys.Delete
         Me.DeleteMember.Size = New System.Drawing.Size(226, 22)
         Me.DeleteMember.Text = "Delete"
         '

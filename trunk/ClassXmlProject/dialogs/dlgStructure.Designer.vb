@@ -78,7 +78,7 @@ Partial Class dlgStructure
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.94931!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.05069!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 89.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -94,7 +94,7 @@ Partial Class dlgStructure
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.Location = New System.Drawing.Point(432, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(431, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -103,7 +103,7 @@ Partial Class dlgStructure
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(353, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(352, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(65, 23)
         Me.OK_Button.TabIndex = 0
@@ -243,7 +243,7 @@ Partial Class dlgStructure
         '
         Me.mnuElements.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddElement, Me.mnuEditElement, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, ToolStripSeparator1, Me.mnuDeleteElement})
         Me.mnuElements.Name = "mnuElements"
-        Me.mnuElements.Size = New System.Drawing.Size(169, 170)
+        Me.mnuElements.Size = New System.Drawing.Size(169, 192)
         '
         'mnuAddElement
         '
@@ -291,6 +291,7 @@ Partial Class dlgStructure
         '
         Me.mnuDeleteElement.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.mnuDeleteElement.Name = "mnuDeleteElement"
+        Me.mnuDeleteElement.ShortcutKeys = System.Windows.Forms.Keys.Delete
         Me.mnuDeleteElement.Size = New System.Drawing.Size(168, 22)
         Me.mnuDeleteElement.Text = "Delete"
         '

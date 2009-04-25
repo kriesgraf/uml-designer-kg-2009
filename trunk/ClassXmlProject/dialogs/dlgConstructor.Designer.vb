@@ -37,6 +37,7 @@ Partial Class dlgConstructor
         Me.chkInline = New System.Windows.Forms.CheckBox
         Me.cmbRange = New System.Windows.Forms.ComboBox
         Me.Label3 = New System.Windows.Forms.Label
+        Me.grdParams = New ClassXmlProject.XmlDataGridView
         Me.mnuParam = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.mnuAddParam = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditParam = New System.Windows.Forms.ToolStripMenuItem
@@ -49,13 +50,12 @@ Partial Class dlgConstructor
         Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.grdParams = New ClassXmlProject.XmlDataGridView
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
+        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuParam.SuspendLayout()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
@@ -226,11 +226,27 @@ Partial Class dlgConstructor
         Me.Label3.Text = "Range:"
         Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
+        'grdParams
+        '
+        Me.grdParams.AllowDrop = True
+        Me.grdParams.ColumnDragStart = 0
+        Me.grdParams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.TableLayoutPanel2.SetColumnSpan(Me.grdParams, 2)
+        Me.grdParams.ContextMenuStrip = Me.mnuParam
+        Me.grdParams.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdParams.Location = New System.Drawing.Point(20, 166)
+        Me.grdParams.Margin = New System.Windows.Forms.Padding(20, 3, 3, 3)
+        Me.grdParams.Name = "grdParams"
+        Me.grdParams.Size = New System.Drawing.Size(624, 159)
+        Me.grdParams.TabIndex = 7
+        Me.grdParams.Tag = "param"
+        Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
+        '
         'mnuParam
         '
         Me.mnuParam.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuEditParam, Me.ToolStripSeparator2, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator1, Me.mnuDelete})
         Me.mnuParam.Name = "mnuParam"
-        Me.mnuParam.Size = New System.Drawing.Size(161, 170)
+        Me.mnuParam.Size = New System.Drawing.Size(161, 192)
         '
         'mnuAddParam
         '
@@ -291,28 +307,13 @@ Partial Class dlgConstructor
         '
         Me.mnuDelete.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.mnuDelete.Name = "mnuDelete"
+        Me.mnuDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete
         Me.mnuDelete.Size = New System.Drawing.Size(160, 22)
         Me.mnuDelete.Text = "Delete"
         '
         'errorProvider
         '
         Me.errorProvider.ContainerControl = Me
-        '
-        'grdParams
-        '
-        Me.grdParams.AllowDrop = True
-        Me.grdParams.ColumnDragStart = 0
-        Me.grdParams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.TableLayoutPanel2.SetColumnSpan(Me.grdParams, 2)
-        Me.grdParams.ContextMenuStrip = Me.mnuParam
-        Me.grdParams.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdParams.Location = New System.Drawing.Point(20, 166)
-        Me.grdParams.Margin = New System.Windows.Forms.Padding(20, 3, 3, 3)
-        Me.grdParams.Name = "grdParams"
-        Me.grdParams.Size = New System.Drawing.Size(624, 159)
-        Me.grdParams.TabIndex = 7
-        Me.grdParams.Tag = "param"
-        Me.ToolTip1.SetToolTip(Me.grdParams, "Click right to update grid")
         '
         'dlgConstructor
         '
@@ -333,9 +334,9 @@ Partial Class dlgConstructor
         Me.TableLayoutPanel2.PerformLayout()
         Me.FlowLayoutPanel1.ResumeLayout(False)
         Me.FlowLayoutPanel1.PerformLayout()
+        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuParam.ResumeLayout(False)
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grdParams, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
