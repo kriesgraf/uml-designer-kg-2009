@@ -529,34 +529,41 @@
       <xsl:copy-of select="@inline"/>
       <xsl:call-template name="Modifier"/>
       <xsl:call-template name="Implementation"/>
-      <xsl:copy-of select="@operator"/>
-      <xsl:copy-of select="@operator"/>
       <xsl:copy-of select="@behaviour"/>
       <xsl:call-template name="Overrides"/>
       <xsl:call-template name="Member"/>
-      <xsl:apply-templates select="exception"/>
       <xsl:choose>
         <xsl:when test="not(@constructor) or string-length(@constructor)=0">
+          <xsl:copy-of select="@operator"/>
           <xsl:call-template name="Name"/>
           <xsl:attribute name="constructor">no</xsl:attribute>
+          <xsl:apply-templates select="exception"/>
           <xsl:if test="not(return)">
             <xsl:call-template name="Return"/>
           </xsl:if>
+          <xsl:apply-templates select="return[1]"/>
         </xsl:when>
-        <xsl:when test="@constructor='no'">
-          <xsl:copy-of select="@constructor"/>
+        <xsl:when test="@constructor!='private' and @constructor!='protected' and @constructor!='public'">
+          <xsl:attribute name="constructor">no</xsl:attribute>
+          <xsl:copy-of select="@operator"/>
           <xsl:call-template name="Name"/>
           <xsl:if test="not(return)">
             <xsl:call-template name="Return"/>
           </xsl:if>
+          <xsl:apply-templates select="return[1]"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:copy-of select="@constructor"/>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="return[1]"/>
       <xsl:apply-templates select="comment[1]"/>
       <xsl:apply-templates select="param"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="exception">
+    <xsl:copy>
+      <xsl:call-template name="IDREF"/>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -601,7 +608,7 @@
         <xsl:when test="string-length(@overrides)=0"/>
         <xsl:when test="not(id(@overrides))"/>
         <xsl:otherwise>
-          <xsl:copy-of select="@overrides"/>
+          <xsl:attribute name="overrides"><xsl:value-of select="@overrides"/></xsl:attribute>
         </xsl:otherwise>
       </xsl:choose>
   </xsl:template>
@@ -909,6 +916,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 

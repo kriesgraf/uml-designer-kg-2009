@@ -78,7 +78,7 @@
 
 
 <!--Method declaration-->
-<!ELEMENT method (exception*,return?,comment,param*,inline?)>
+<!ELEMENT method (exception*,return?,comment,param*)>
 <!ATTLIST method
           %num-id;
           inline (yes | no) "no"
@@ -90,8 +90,6 @@
           overrides IDREF #IMPLIED
           name %name; #IMPLIED
           %implementation; >
-
-<!ELEMENT inline (body*)>
 
 <!ELEMENT body (line*)>
 <!ATTLIST body
