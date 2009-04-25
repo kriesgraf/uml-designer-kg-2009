@@ -963,6 +963,7 @@ Public Class UmlNodesManager
             Dim szNewID As String = Prefix + CStr(index)
             SetID(node, szNewID)
 
+            RenumberRefElement(node, "overrides", szOldID, szNewID)
             RenumberRefElement(node, "idref", szOldID, szNewID)
             RenumberRefElement(node, "index-idref", szOldID, szNewID)
 
