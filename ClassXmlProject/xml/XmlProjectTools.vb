@@ -1145,7 +1145,8 @@ Public Class XmlProjectTools
 
     Public Shared Function ConvertViewToEnumImpl(ByVal strImpl As String) As EImplementation
         If strImpl Is Nothing Then
-            Throw New Exception("Argument can't be null")
+            'Throw New Exception("Argument can't be null")
+            Return EImplementation.Simple
         End If
         Dim eResult As EImplementation
         Select Case strImpl
