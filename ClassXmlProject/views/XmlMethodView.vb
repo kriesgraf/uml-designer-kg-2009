@@ -235,6 +235,10 @@ Public Class XmlMethodView
 
     Public Sub InitBindingCheckInline(ByVal dataControl As CheckBox)
 
+        If m_eClassImplementation = EImplementation.Unknown Then
+            m_eClassImplementation = ConvertDtdToEnumImpl(GetAttribute("implementation", "parent::class"))
+        End If
+
         If Me.Tag <> ELanguage.Language_CplusPlus _
             Or m_eClassImplementation = EImplementation.Interf _
             Or Me.Node.ParentNode.Name = "interface" _
@@ -342,10 +346,6 @@ Public Class XmlMethodView
     End Sub
 
     Private Sub AddImplementation(ByVal combo As ComboBox)
-
-        If m_eClassImplementation = EImplementation.Unknown Then
-            m_eClassImplementation = ConvertDtdToEnumImpl(GetAttribute("implementation", "parent::class"))
-        End If
 
         Select Case m_eClassImplementation
             Case EImplementation.Interf
