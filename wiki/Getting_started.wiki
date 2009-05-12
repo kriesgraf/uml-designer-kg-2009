@@ -9,7 +9,7 @@ First download the current [http://code.google.com/p/uml-designer-kg-2009/downlo
 
 Remain it because you would have an error when you will install future releases, see [Troubleshooting troubleshooting]. 
 
-Program {{{setup.exe}}} is launched automatically and installs all files, resources and frameworks that are required. If the setup fails to install the *Microsoft .NET 3.5* framework, you can download framework [http://go.microsoft.com/fwlink/?LinkId=97964 here] or [http://www.microsoft.com/downloads/info.aspx?na=90&p=&SrcDisplayLang=en&SrcCategoryId=&SrcFamilyId=333325fd-ae52-4e35-b531-508d977d32a6&u=http%3a%2f%2fdownload.microsoft.com%2fdownload%2f7%2f0%2f3%2f703455ee-a747-4cc8-bd3e-98a615c3aedb%2fdotNetFx35setup.exe there]. 
+Program {{{setup.exe}}} is launched automatically and installs all files, resources and frameworks that are required. If the setup fails to install the *Microsoft .NET 3.5* framework, you can download framework [http://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe here]. 
 
 The old releases remain on disk as long as you don't _remove the application from_ your _computer_. Also you can _restore the application to its previous state_ by descending order history.
 
