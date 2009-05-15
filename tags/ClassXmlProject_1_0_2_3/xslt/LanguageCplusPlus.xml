@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="yes"?>
+<root>
+  <type name="bool" prefix="b" implementation="bool" />
+  <type name="char" prefix="uc" implementation="unsigned char" />
+  <type name="float32" prefix="f" implementation="float" />
+  <type name="float64" prefix="d" implementation="double" />
+  <type name="int" prefix="i" implementation="int" />
+  <type name="int16" prefix="us" implementation="unsigned short" />
+  <type name="int32" prefix="ul" implementation="unsigned long" />
+  <type name="int64" prefix="ull" implementation="unsigned __int64" />
+  <type name="istringstream" prefix="istr" implementation="std::istringstream" import="sstream" />
+  <type name="ifstream" prefix="ifstr" implementation="std::ifstream" import="fstream" />
+  <type name="ostringstream" prefix="ostr" implementation="std::ostringstream" import="sstream" />
+  <type name="ofstream" prefix="ofstr" implementation="std::ofstream" import="fstream" />
+  <type name="schar" prefix="c" implementation="char" />
+  <type name="sint16" prefix="s" implementation="short" />
+  <type name="sint32" prefix="l" implementation="long" />
+  <type name="sint64" prefix="t" implementation="__int64" />
+  <type name="time_t" prefix="t" implementation="time_t" />
+  <type name="string" prefix="str" implementation="std::string" import="string" />
+  <type name="void" prefix="" implementation="void" />
+  <type name="unsigned int" prefix="ui" implementation="unsigned int" />
+</root>

@@ -1,0 +1,4 @@
+Path="C:\Program files\ClassXmlProject"
+SavePath
+Setup=setup.exe
+Title=ClassXmlProject self-extracted setup
