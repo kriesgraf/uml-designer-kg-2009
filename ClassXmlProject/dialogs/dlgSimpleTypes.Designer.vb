@@ -24,13 +24,14 @@ Partial Class dlgSimpleTypes
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
         Me.grdSimpleTypeList = New System.Windows.Forms.DataGridView
-        Me.dtsSimpleTypesList = New System.Data.DataSet
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.AddToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.DeleteToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.dtsSimpleTypesList = New System.Data.DataSet
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         CType(Me.grdSimpleTypeList, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.dtsSimpleTypesList, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ContextMenuStrip1.SuspendLayout()
+        CType(Me.dtsSimpleTypesList, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'grdSimpleTypeList
@@ -42,10 +43,6 @@ Partial Class dlgSimpleTypes
         Me.grdSimpleTypeList.Name = "grdSimpleTypeList"
         Me.grdSimpleTypeList.Size = New System.Drawing.Size(403, 474)
         Me.grdSimpleTypeList.TabIndex = 0
-        '
-        'dtsSimpleTypesList
-        '
-        Me.dtsSimpleTypesList.DataSetName = "NewDataSet"
         '
         'ContextMenuStrip1
         '
@@ -65,6 +62,10 @@ Partial Class dlgSimpleTypes
         Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(105, 22)
         Me.DeleteToolStripMenuItem.Text = "Delete"
         '
+        'dtsSimpleTypesList
+        '
+        Me.dtsSimpleTypesList.DataSetName = "NewDataSet"
+        '
         'dlgSimpleTypes
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -75,8 +76,8 @@ Partial Class dlgSimpleTypes
         Me.Name = "dlgSimpleTypes"
         Me.Text = "dlgSimpleTypes"
         CType(Me.grdSimpleTypeList, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.dtsSimpleTypesList, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ContextMenuStrip1.ResumeLayout(False)
+        CType(Me.dtsSimpleTypesList, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -85,4 +86,5 @@ Partial Class dlgSimpleTypes
     Friend WithEvents ContextMenuStrip1 As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents AddToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents DeleteToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
 End Class

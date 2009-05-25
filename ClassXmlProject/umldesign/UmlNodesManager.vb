@@ -448,12 +448,17 @@ Public Class UmlNodesManager
         Return bResult
     End Function
 
-    Public Shared Function UpdateSimpleTypes(ByVal strFilename As String) As Boolean
-        Dim fen As New dlgSimpleTypes
-        fen.Filename = strFilename
+    Public Shared Sub UpdatePrefixNames()
+        Dim fen As New dlgPrefixNames
         fen.ShowDialog()
-        Return CType(fen.Tag, Boolean)
-    End Function
+    End Sub
+
+    Public Shared Sub UpdateSimpleTypes(ByVal eLang As ELanguage)
+        Dim fen As New dlgSimpleTypes
+        fen.Filename = GetSimpleTypesFilename(eLang)
+        fen.CodeLanguage = eLang
+        fen.ShowDialog()
+    End Sub
 
     Private Shared Function CheckExportedReferences(ByVal source As XmlDocument) As Boolean
         Dim bResult As Boolean = False

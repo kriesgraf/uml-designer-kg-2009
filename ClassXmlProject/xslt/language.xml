@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" standalone="yes"?>
 <root>
+  <PrefixStructProperty>T</PrefixStructProperty>
+  <PrefixEnumProperty>E</PrefixEnumProperty>
   <PrefixList>List</PrefixList>
+  <PrefixTypeList>TList</PrefixTypeList>
   <SuffixIterator>Iterator</SuffixIterator>
   <GetName>Get</GetName>
   <SetName>Set</SetName>
