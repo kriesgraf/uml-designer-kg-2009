@@ -121,9 +121,9 @@ Partial Class dlgProperty
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.OK_Button.Location = New System.Drawing.Point(411, 7)
+        Me.OK_Button.Location = New System.Drawing.Point(404, 7)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(57, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(56, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
@@ -296,7 +296,7 @@ Partial Class dlgProperty
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 86.61972!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.38028!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 96.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -312,7 +312,7 @@ Partial Class dlgProperty
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.Location = New System.Drawing.Point(474, 7)
+        Me.Cancel_Button.Location = New System.Drawing.Point(466, 7)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1

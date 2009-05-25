@@ -81,18 +81,14 @@ Public Class dlgProperty
 
     Private Sub OK_Button_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         Try
-            If m_xmlView.UpdateValues(cmbGetAccess, cmbSetAccess, chkAttribute) _
+            If m_xmlView.UpdateValues(cmbGetAccess, cmbSetAccess, chkAttribute, chkSetInline) _
             Then
                 Me.Tag = True
                 Me.DialogResult = DialogResult.OK
-            Else
-                Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
+                Me.Close()
             End If
-
         Catch ex As Exception
             MsgExceptionBox(ex)
-        Finally
-            Me.Close()
         End Try
     End Sub
 
@@ -160,12 +156,12 @@ Public Class dlgProperty
 
     Private Sub cmbGetAccess_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbGetAccess.SelectedIndexChanged
         ChangeCombo(True)
-        m_xmlView.HandlingAttribute(sender, e)
+        m_xmlView.HandlingAttribute()
     End Sub
 
     Private Sub cmbSetAccess_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSetAccess.SelectedIndexChanged
         ChangeCombo(False)
-        m_xmlView.HandlingAttribute(sender, e)
+        m_xmlView.HandlingAttribute()
     End Sub
 
     Private Sub cmdType_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdType.Click
@@ -173,8 +169,8 @@ Public Class dlgProperty
         fen.ShowDialog()
         If CType(fen.Tag, Boolean) = True Then
             m_xmlView.Updated = True
-            cmdType.Text = m_xmlView.FullpathTypeDescription
         End If
+        cmdType.Text = m_xmlView.FullpathTypeDescription
     End Sub
 
     Private Sub optTypeArray_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles optTypeArray.Click
