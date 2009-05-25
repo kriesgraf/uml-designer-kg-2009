@@ -25,7 +25,7 @@
     <xsl:apply-templates select="@level" mode="TypePrefix"/>
     <xsl:apply-templates select="@desc" mode="TypePrefix"/>
     <xsl:apply-templates select="id(@idref)" mode="TypePrefix"/>
-    <xsl:apply-templates select="list | enumvalue | element" mode="TypePrefix"/>
+    <xsl:apply-templates select="list | enumvalue[1] | element" mode="TypePrefix"/>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="reference" mode="TypePrefix">
@@ -169,8 +169,8 @@
   <xsl:template match="type">
     <xsl:if test="@modifier='const'">const </xsl:if>
     <xsl:choose>
-      <xsl:when test="enumvalue">enum<xsl:if test="parent::property"><xsl:value-of select="concat(' E',parent::property/@name)"/></xsl:if><xsl:apply-templates select="enumvalue"/></xsl:when>
-      <xsl:when test="element"><xsl:value-of select="@struct"/><xsl:if test="parent::property"><xsl:value-of select="concat(' T',parent::property/@name)"/></xsl:if><xsl:apply-templates select="element"/></xsl:when>
+      <xsl:when test="enumvalue">enum<xsl:if test="parent::property"><xsl:value-of select="concat(' ', $PrefixEnumProperty, parent::property/@name)"/></xsl:if><xsl:apply-templates select="enumvalue"/></xsl:when>
+      <xsl:when test="element"><xsl:value-of select="@struct"/><xsl:if test="parent::property"><xsl:value-of select="concat(' ', $PrefixStructProperty, parent::property/@name)"/></xsl:if><xsl:apply-templates select="element"/></xsl:when>
       <xsl:when test="list or array">
         <xsl:apply-templates select="list | array" mode="Typedef">
           <xsl:with-param name="Type">
@@ -905,6 +905,8 @@
     </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
 
 
 

@@ -8,11 +8,13 @@
   <xsl:param name="InputPackage"/>
   <!-- ======================================================================= -->
   <xsl:variable name="FileLanguage"><xsl:value-of select="$UmlFolder"/>\language.xml</xsl:variable>
-  <xsl:variable name="PrefixList" select="document($FileLanguage)//PrefixList/text()"/>
-  <xsl:variable name="PrefixMember" select="document($FileLanguage)//PrefixMember/text()"/>
-  <xsl:variable name="PrefixArray" select="document($FileLanguage)//PrefixArray/text()"/>
-  <xsl:variable name="TypeAccess" select="document($FileLanguage)//TypeAccess/text()"/>
-  <xsl:variable name="SetParam">value</xsl:variable>
+  <xsl:variable name="PrefixList" select="translate(document($FileLanguage)//PrefixList/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixTypeList" select="translate(document($FileLanguage)//PrefixTypeList/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixStructProperty" select="translate(document($FileLanguage)//PrefixStructProperty/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixEnumProperty" select="translate(document($FileLanguage)//PrefixEnumProperty/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixMember" select="translate(document($FileLanguage)//PrefixMember/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixArray" select="translate(document($FileLanguage)//PrefixArray/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="SetParam" select="translate(document($FileLanguage)//SetParam/text(),'&#32;&#10;&#13;','')"/>
 <!-- ======================================================================= -->
   <xsl:include href="vbnet-types.xsl"/>
 <!-- ======================================================================= -->
@@ -127,7 +129,7 @@ Public </xsl:if>
       <xsl:sort select="id(@idref)[@root='yes' or @implementation!='abstract']" order="descending"/>
     </xsl:apply-templates>
     <xsl:if test="property[type/@modifier='const']"><xsl:call-template name="Constants"/></xsl:if>
-    <xsl:if test="typedef"><xsl:call-template name="Typedef"/></xsl:if>
+    <xsl:if test="typedef or property[descendant::element or descendant::enumvalue]"><xsl:call-template name="Typedef"/></xsl:if>
   <xsl:if test="property"><xsl:call-template name="Properties"/></xsl:if>
   <xsl:variable name="ClassID" select="@id"/>
   <xsl:if test="id(collaboration/@idref)[(child/@idref=$ClassID and father/@range!='no') or father/@idref=$ClassID]">
@@ -191,16 +193,19 @@ End Namespace
   <xsl:template name="Typedef">
 
 #Region "Predefined types"
-    <xsl:if test="typedef[variable/@range='public']">
+    <xsl:if test="typedef[variable/@range='public'] or property[(descendant::enumvalue or descendant::element) and variable/@range='public']">
     <xsl:apply-templates select="typedef[variable/@range='public']" mode="Code"/>
+    <xsl:apply-templates select="property[(descendant::enumvalue or descendant::element) and variable/@range='public']" mode="PropertyCode"/>
     </xsl:if>
-    <xsl:if test="typedef[variable/@range='protected']">
+    <xsl:if test="typedef[variable/@range='protected'] or property[(descendant::enumvalue or descendant::element) and variable/@range='protected']">
 
     <xsl:apply-templates select="typedef[variable/@range='protected']" mode="Code"/>
+    <xsl:apply-templates select="property[(descendant::enumvalue or descendant::element) and variable/@range='protected']" mode="PropertyCode"/>
     </xsl:if>
-    <xsl:if test="typedef[variable/@range='private']">
+    <xsl:if test="typedef[variable/@range='private'] or property[(descendant::enumvalue or descendant::element) and variable/@range='private']">
 
     <xsl:apply-templates select="typedef[variable/@range='private']" mode="Code"/>
+    <xsl:apply-templates select="property[(descendant::enumvalue or descendant::element) and variable/@range='private']" mode="PropertyCode"/>
     </xsl:if>
 #End Region
   </xsl:template>
@@ -338,6 +343,36 @@ End Namespace
     </xsl:choose>
   </xsl:template>
 <!-- ======================================================================= -->
+  <xsl:template match="property" mode="PropertyCode">
+    <xsl:text>
+    </xsl:text>
+    <xsl:choose>
+      <xsl:when test="get/@range!='no'">
+	    <xsl:apply-templates select="get/@range" mode="Code"/>
+  	  </xsl:when>
+      <xsl:when test="set/@range!='no'">
+	    <xsl:apply-templates select="set/@range" mode="Code"/>
+	  </xsl:when>
+    </xsl:choose>
+    <xsl:choose>
+      <xsl:when test="descendant::enumvalue">
+        <xsl:value-of select="concat('Enum ', $PrefixEnumProperty, @name)"/>
+        <xsl:apply-templates select="descendant::enumvalue" mode="Code"/>
+    End Enum
+      </xsl:when>
+      <xsl:when test="descendant::element">
+        <xsl:value-of select="concat('Structure ', $PrefixStructProperty, @name)"/>
+        <xsl:apply-templates select="descendant::element" mode="Code"/>
+    End Structure
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="concat('Class ',@name)"/>
+        Inherits <xsl:apply-templates select="type"/>
+    End Class
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+<!-- ======================================================================= -->
   <xsl:template match="enumvalue" mode="Code">
     <xsl:apply-templates select="." mode="Simple"/>
     <xsl:text>
@@ -376,7 +411,17 @@ End Namespace
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="type" mode="Access">
-    <xsl:apply-templates select="."/>
+    <xsl:choose>
+      <xsl:when test="enumvalue and parent::property">
+        <xsl:value-of select="concat($PrefixEnumProperty,parent::property/@name)"/>
+      </xsl:when>
+      <xsl:when test="element and parent::property">
+        <xsl:value-of select="concat($PrefixStructProperty,parent::property/@name)"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="property" mode="Access">
@@ -390,41 +435,41 @@ End Namespace
     </xsl:choose>
   </xsl:variable>
   <xsl:variable name="InheritedClassName" select="id(@overrides)/@name"/>
-	<xsl:variable name="VarName">
-	    <xsl:value-of select="$PrefixMember"/>
-	      <xsl:apply-templates select="type" mode="TypePrefix"/>
-	      <xsl:apply-templates select="variable" mode="TypePrefix"/>
-	    <xsl:value-of select="@name"/>
-	</xsl:variable>
-	<xsl:variable name="Type">
-		<xsl:choose>
-			<xsl:when test="variable[@size or @sizeref]">
-	      		<xsl:apply-templates select="type" mode="Access"/>
-	      		<xsl:text>()</xsl:text>
-			</xsl:when>
-			<xsl:otherwise>
-	      		<xsl:apply-templates select="type" mode="Access"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:variable>
-	<xsl:variable name="Range">
-  	  <xsl:choose>
-	    <xsl:when test="get/@range!='no'">
-		  <xsl:apply-templates select="get/@range" mode="Code"/>
+  <xsl:variable name="VarName">
+    <xsl:value-of select="$PrefixMember"/>
+      <xsl:apply-templates select="type" mode="TypePrefix"/>
+      <xsl:apply-templates select="variable" mode="TypePrefix"/>
+    <xsl:value-of select="@name"/>
+  </xsl:variable>
+  <xsl:variable name="Type">
+	<xsl:choose>
+		<xsl:when test="variable[@size or @sizeref]">
+      		<xsl:apply-templates select="type" mode="Access"/>
+      		<xsl:text>()</xsl:text>
 		</xsl:when>
-	    <xsl:when test="set/@range!='no'">
-  		  <xsl:apply-templates select="set/@range" mode="Code"/>
-		</xsl:when>
-	  </xsl:choose>
-	</xsl:variable>
-	<xsl:variable name="Modifier">
-  	  <xsl:choose>
-	    <xsl:when test="get/@range='no'">WriteOnly </xsl:when>
-	    <xsl:when test="set/@range='no'">ReadOnly </xsl:when>
-	  </xsl:choose>
-	</xsl:variable>
-    <xsl:apply-templates select="comment" mode="Simple"/>
-	<xsl:text>
+		<xsl:otherwise>
+      		<xsl:apply-templates select="type" mode="Access"/>
+		</xsl:otherwise>
+	</xsl:choose>
+  </xsl:variable>
+  <xsl:variable name="Range">
+    <xsl:choose>
+      <xsl:when test="get/@range!='no'">
+	    <xsl:apply-templates select="get/@range" mode="Code"/>
+  	  </xsl:when>
+      <xsl:when test="set/@range!='no'">
+	    <xsl:apply-templates select="set/@range" mode="Code"/>
+	  </xsl:when>
+    </xsl:choose>
+  </xsl:variable>
+  <xsl:variable name="Modifier">
+    <xsl:choose>
+      <xsl:when test="get/@range='no'">WriteOnly </xsl:when>
+      <xsl:when test="set/@range='no'">ReadOnly </xsl:when>
+    </xsl:choose>
+  </xsl:variable>
+  <xsl:apply-templates select="comment" mode="Simple"/>
+  <xsl:text>
     </xsl:text>
 	<xsl:if test="@behaviour='Default'">Default </xsl:if>
 	<xsl:if test="$ClassImpl!='abstract'"><xsl:value-of select="$Range"/></xsl:if>
@@ -438,11 +483,17 @@ End Namespace
 	<xsl:if test="$InheritedClassImpl='abstract'"> Implements <xsl:value-of select="concat($InheritedClassName,'.',@name)"/></xsl:if>
     <xsl:if test="get[@range!='no'] and $ClassImpl!='abstract'">
     Get<xsl:if test="@attribute='yes'">
+    <xsl:if test="get/@inline='no' and @attribute='yes'">
         Return <xsl:value-of select="$VarName"/></xsl:if>
+    </xsl:if>
     End Get</xsl:if>
     <xsl:if test="set[@range!='no'] and $ClassImpl!='abstract'">
-    Set<xsl:value-of select="concat('(ByVal ',$SetParam,' As ',$Type)"/>)
-        <xsl:if test="@attribute='yes'"><xsl:value-of select="concat($VarName,' = ',$SetParam)"/></xsl:if>
+    Set<xsl:value-of select="concat('(ByVal ',$SetParam,' As ',$Type,')')"/>
+    <xsl:if test="set/@inline='no' and @attribute='yes'">
+    <xsl:text>
+        </xsl:text>
+        <xsl:value-of select="concat($VarName,' = ',$SetParam)"/>
+    </xsl:if>
     End Set</xsl:if>
     <xsl:if test="$ClassImpl!='abstract'">
     End Property
@@ -577,13 +628,13 @@ End Namespace
       <xsl:when test="number($Container)!=3">
 <xsl:text xml:space="preserve">
     </xsl:text>
-    <xsl:value-of select="$Range"/>Class <xsl:value-of select="concat('TList',$MemberName)"/>
+    <xsl:value-of select="$Range"/>Class <xsl:value-of select="concat($PrefixTypeList, $MemberName)"/>
         Inherits <xsl:value-of select="$TypeList"/>
     End Class
 
     ''' &lt;summary&gt;<xsl:value-of select="$Comment"/>&lt;/summary&gt;
     <xsl:value-of select="$Range"/><xsl:if test="@member='class'">Shared </xsl:if>
-    <xsl:value-of select="concat($PrefixMember,'t',$PrefixList,$MemberName,' As ','TList',$MemberName)"/>
+    <xsl:value-of select="concat($PrefixMember,'t',$PrefixList,$MemberName,' As ', $PrefixTypeList, $MemberName)"/>
     <xsl:text>
     </xsl:text>
     </xsl:when>
@@ -619,6 +670,11 @@ End Namespace
   </xsl:template>
 <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
+
 
 
 
