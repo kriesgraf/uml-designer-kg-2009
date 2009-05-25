@@ -24,8 +24,9 @@ Partial Class dlgReference
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
-        Me.OK_Button = New System.Windows.Forms.Button
         Me.Cancel_Button = New System.Windows.Forms.Button
+        Me.OK_Button = New System.Windows.Forms.Button
+        Me.btnDelete = New System.Windows.Forms.Button
         Me.tblLayout = New System.Windows.Forms.TableLayoutPanel
         Me.lblName = New System.Windows.Forms.Label
         Me.lblParentClass = New System.Windows.Forms.Label
@@ -38,7 +39,6 @@ Partial Class dlgReference
         Me.txtPackage = New System.Windows.Forms.TextBox
         Me.cmbContainer = New System.Windows.Forms.ComboBox
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.btnDelete = New System.Windows.Forms.Button
         Me.TableLayoutPanel1.SuspendLayout()
         Me.tblLayout.SuspendLayout()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -51,7 +51,7 @@ Partial Class dlgReference
         Me.tblLayout.SetColumnSpan(Me.TableLayoutPanel1, 4)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82.83262!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.16738!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 73.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 74.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -63,15 +63,6 @@ Partial Class dlgReference
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(533, 43)
         Me.TableLayoutPanel1.TabIndex = 0
         '
-        'OK_Button
-        '
-        Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(386, 10)
-        Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(67, 23)
-        Me.OK_Button.TabIndex = 0
-        Me.OK_Button.Text = "OK"
-        '
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
@@ -82,6 +73,26 @@ Partial Class dlgReference
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
         Me.Cancel_Button.Text = "Cancel"
+        '
+        'OK_Button
+        '
+        Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.OK_Button.Location = New System.Drawing.Point(385, 10)
+        Me.OK_Button.Name = "OK_Button"
+        Me.OK_Button.Size = New System.Drawing.Size(67, 23)
+        Me.OK_Button.TabIndex = 0
+        Me.OK_Button.Text = "OK"
+        '
+        'btnDelete
+        '
+        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.btnDelete.CausesValidation = False
+        Me.btnDelete.Location = New System.Drawing.Point(3, 10)
+        Me.btnDelete.Name = "btnDelete"
+        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
+        Me.btnDelete.TabIndex = 3
+        Me.btnDelete.Text = "Delete"
+        Me.btnDelete.UseVisualStyleBackColor = True
         '
         'tblLayout
         '
@@ -214,17 +225,6 @@ Partial Class dlgReference
         'errorProvider
         '
         Me.errorProvider.ContainerControl = Me
-        '
-        'btnDelete
-        '
-        Me.btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.btnDelete.CausesValidation = False
-        Me.btnDelete.Location = New System.Drawing.Point(3, 10)
-        Me.btnDelete.Name = "btnDelete"
-        Me.btnDelete.Size = New System.Drawing.Size(67, 23)
-        Me.btnDelete.TabIndex = 3
-        Me.btnDelete.Text = "Delete"
-        Me.btnDelete.UseVisualStyleBackColor = True
         '
         'dlgReference
         '
