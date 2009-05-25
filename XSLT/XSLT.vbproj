@@ -23,7 +23,7 @@
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\XSLT\</PublishUrl>
+    <PublishUrl>C:\Program Files\XSLT\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -34,8 +34,8 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/XSLT/</UpdateUrl>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>3.0.1.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>3.0.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -190,10 +190,8 @@
     <None Include="XSLT_TemporaryKey.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="AfterPublish">
+    <Message Text="This is the AfterPublish target" Importance="normal" />
+    <Exec Command="&quot;$(ProjectDir)tools\deploy.bat&quot; &quot;$(OutputPath)app.publish&quot; $(TargetName) &quot;$(ProjectDir)&quot;" IgnoreExitCode="true" />
+  </Target>
 </Project>
