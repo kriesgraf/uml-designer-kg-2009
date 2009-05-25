@@ -123,8 +123,8 @@ Public Class XmlNodeListView
             Else
                 strResult = GetFullpathDescription(Me.Node, eLang)
             End If
-            If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
             strResult += m_strName
+            If DEBUG_COMMANDS_ACTIVE And m_strName.Length = 0 Then strResult += " (" + eLang.ToString + ")"
             Return strResult
         End Get
     End Property
@@ -229,11 +229,16 @@ Public Class XmlNodeListView
         End Try
     End Sub
 
-    Public Shared Sub InitValueCombo(ByVal document As XmlComponent, ByVal control As ComboBox)
+    Public Shared Sub InitValueCombo(ByVal document As XmlComponent, ByVal control As ComboBox, _
+                                    Optional ByVal bProperty As Boolean = False)
         Try
             Dim myList As New ArrayList
 
-            AddNodeList(document, myList, "//enumvalue")
+            If bProperty Then
+                AddNodeList(document, myList, "descendant::enumvalue")
+            Else
+                AddNodeList(document, myList, "//enumvalue[ancestor::typedef]")
+            End If
 
             With control
                 .DropDownStyle = ComboBoxStyle.DropDown

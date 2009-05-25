@@ -28,7 +28,7 @@ Partial Class dlgParam
         Me.OK_Button = New System.Windows.Forms.Button
         Me.btnDelete = New System.Windows.Forms.Button
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
-        Me.btnType = New System.Windows.Forms.Button
+        Me.cmdType = New System.Windows.Forms.Button
         Me.Label1 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label3 = New System.Windows.Forms.Label
@@ -95,7 +95,7 @@ Partial Class dlgParam
         Me.TableLayoutPanel2.ColumnCount = 2
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.44643!))
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 74.55357!))
-        Me.TableLayoutPanel2.Controls.Add(Me.btnType, 1, 2)
+        Me.TableLayoutPanel2.Controls.Add(Me.cmdType, 1, 2)
         Me.TableLayoutPanel2.Controls.Add(Me.Label1, 0, 2)
         Me.TableLayoutPanel2.Controls.Add(Me.Label2, 0, 1)
         Me.TableLayoutPanel2.Controls.Add(Me.Label3, 0, 0)
@@ -115,15 +115,15 @@ Partial Class dlgParam
         '
         'btnType
         '
-        Me.btnType.CausesValidation = False
-        Me.btnType.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.btnType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btnType.Location = New System.Drawing.Point(117, 53)
-        Me.btnType.Name = "btnType"
-        Me.btnType.Size = New System.Drawing.Size(328, 24)
-        Me.btnType.TabIndex = 1
-        Me.btnType.Text = "<Type>"
-        Me.btnType.UseVisualStyleBackColor = True
+        Me.cmdType.CausesValidation = False
+        Me.cmdType.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.cmdType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.cmdType.Location = New System.Drawing.Point(117, 53)
+        Me.cmdType.Name = "btnType"
+        Me.cmdType.Size = New System.Drawing.Size(328, 24)
+        Me.cmdType.TabIndex = 1
+        Me.cmdType.Text = "<Type>"
+        Me.cmdType.UseVisualStyleBackColor = True
         '
         'Label1
         '
@@ -205,7 +205,7 @@ Partial Class dlgParam
     Friend WithEvents OK_Button As System.Windows.Forms.Button
     Friend WithEvents Cancel_Button As System.Windows.Forms.Button
     Friend WithEvents TableLayoutPanel2 As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents btnType As System.Windows.Forms.Button
+    Friend WithEvents cmdType As System.Windows.Forms.Button
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents Label3 As System.Windows.Forms.Label

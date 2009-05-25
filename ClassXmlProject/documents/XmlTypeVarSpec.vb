@@ -533,6 +533,13 @@ Public Class XmlTypeVarSpec
                     End If
 
                 Case XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
+
+                    If eOldKind <> EKindDeclaration.EK_Enumeration Then
+                        Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
+                        element.Tag = Me.Tag
+                        AppendComponent(element)
+                    End If
+
                     Select Case eOldKind
                         Case XmlTypeVarSpec.EKindDeclaration.EK_Container
                             RemoveAttribute("struct")

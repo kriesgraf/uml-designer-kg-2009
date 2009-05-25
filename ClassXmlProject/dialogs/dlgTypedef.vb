@@ -69,8 +69,8 @@ Public Class dlgTypedef
         fen.ShowDialog()
         If CType(fen.Tag, Boolean) = True Then
             m_xmlView.Updated = True
-            cmdType.Text = m_xmlView.FullpathTypeDescription
         End If
+        cmdType.Text = m_xmlView.FullpathTypeDescription
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click

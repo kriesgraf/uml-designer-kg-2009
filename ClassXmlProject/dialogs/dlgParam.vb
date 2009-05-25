@@ -45,18 +45,18 @@ Public Class dlgParam
             .InitBindingName(Me.txtName)
             .InitBindingComment(Me.txtComment)
 
-            Me.btnType.Text = .FullpathTypeDescription
+            Me.cmdType.Text = .FullpathTypeDescription
             Me.Text = .Name
         End With
     End Sub
 
-    Private Sub btnType_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnType.Click
+    Private Sub btnType_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdType.Click
         Dim fen As Form = m_xmlView.TypeVarDefinition.CreateDialogBox()
         fen.ShowDialog()
         If CType(fen.Tag, Boolean) = True Then
             m_xmlView.Updated = True
-            btnType.Text = m_xmlView.FullpathTypeDescription
         End If
+        cmdType.Text = m_xmlView.FullpathTypeDescription
     End Sub
 
     Public Sub New()
