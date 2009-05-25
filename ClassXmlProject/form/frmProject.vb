@@ -357,10 +357,6 @@ Public Class frmProject
         Me.Mainframe.ImportFromDoxygenIndex()
     End Sub
 
-    Private Sub mnuFileNewOmgUmlFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileNewOmgUmlFile.Click
-        Me.Mainframe.ImportFromOmgUmlModel()
-    End Sub
-
     Private Sub mnuFilePrint_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFilePrint.Click
         Me.PrintPage()
     End Sub
@@ -760,7 +756,6 @@ Public Class frmProject
             MouseWheelMsg()
         End If
     End Sub
-#End Region
 
     Private Sub mnuProjectImportReferences_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
             Handles mnuProjectImportReferences.Click, mnuPackageImportReference.Click
@@ -769,4 +764,15 @@ Public Class frmProject
             RefreshUpdatedPath(True)
         End If
     End Sub
+
+    Private Sub mnuFileNewOmgRhpXmiFile_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
+            Handles mnuFileNewOmgRhpXmiFile.Click, mnuFileNewOmgBoomlXmiFile.Click
+
+        Me.Mainframe.ImportFromOmgUmlModel(CType(sender.Tag, Integer))
+    End Sub
+
+    Private Sub mnuUpdatePrefixNames_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuUpdatePrefixNames.Click
+        m_xmlProject.UpdatePrefixNames()
+    End Sub
+#End Region
 End Class
