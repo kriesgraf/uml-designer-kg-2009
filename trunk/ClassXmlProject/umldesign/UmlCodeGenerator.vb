@@ -20,6 +20,7 @@ Public Class UmlCodeGenerator
 
     Private Shared m_xsltCppSourceHeaderStyleSheet As XslSimpleTransform = Nothing
     Private Shared m_xsltVbClassModuleStyleSheet As XslSimpleTransform = Nothing
+    Private Shared m_xsltJavaModuleStyleSheet As XslSimpleTransform = Nothing
 
     Private Shared m_bTransformActive As Boolean = False
     Private Shared m_strSeparator As String = Path.DirectorySeparatorChar.ToString
@@ -52,7 +53,7 @@ Public Class UmlCodeGenerator
                         bResult = True
                     End If
 
-                Case eLanguage.Language_Vbasic
+                Case eLanguage.Language_Java
                     If GenerateJavaModule(fen, node.OwnerDocument.DocumentElement, _
                                             strClassId, strPackageId, strProgramFolder, _
                                             strTransformation) _
@@ -249,18 +250,18 @@ Public Class UmlCodeGenerator
             If node IsNot Nothing Then
                 If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
                 Then
-                    m_xsltVbClassModuleStyleSheet = New XslSimpleTransform(True)
-                    m_xsltVbClassModuleStyleSheet.Load(strStyleSheet)
+                    m_xsltJavaModuleStyleSheet = New XslSimpleTransform(True)
+                    m_xsltJavaModuleStyleSheet.Load(strStyleSheet)
                 Else
-                    If m_xsltVbClassModuleStyleSheet Is Nothing Then
-                        m_xsltVbClassModuleStyleSheet = New XslSimpleTransform(True)
-                        m_xsltVbClassModuleStyleSheet.Load(strStyleSheet)
+                    If m_xsltJavaModuleStyleSheet Is Nothing Then
+                        m_xsltJavaModuleStyleSheet = New XslSimpleTransform(True)
+                        m_xsltJavaModuleStyleSheet.Load(strStyleSheet)
                     End If
                 End If
-                m_xsltVbClassModuleStyleSheet.Transform(node, strTransformation, argList)
+                m_xsltJavaModuleStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
-                ExtractCode(bCodeMerge, observer, strTransformation, strPath, ELanguage.Language_Vbasic)
+                ExtractCode(bCodeMerge, observer, strTransformation, strPath, ELanguage.Language_Java)
                 bResult = True
             End If
 
