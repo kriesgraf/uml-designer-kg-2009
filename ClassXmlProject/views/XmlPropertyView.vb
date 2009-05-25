@@ -28,6 +28,12 @@ Public Class XmlPropertyView
         End Set
     End Property
 
+    Public ReadOnly Property ArrayDeclaration() As Boolean
+        Get
+            Return (Me.TypeVarDefinition.SizeRef <> "" Or Me.TypeVarDefinition.VarSize <> "")
+        End Get
+    End Property
+
     Public Sub New()
         m_xmlBindingsList = New XmlBindingsList
     End Sub
@@ -50,15 +56,26 @@ Public Class XmlPropertyView
         m_xmlNodeManager = XmlNodeManager.GetInstance()
     End Sub
 
-    Public Function UpdateValues(ByVal cmbGet As ComboBox, ByVal cmbSet As ComboBox, ByVal chkAttribute As CheckBox) As Boolean
+    Public Function UpdateValues(ByVal cmbGet As ComboBox, ByVal cmbSet As ComboBox, _
+                                 ByVal chkAttribute As CheckBox, ByVal chkSetInline As CheckBox) As Boolean
 
         If chkAttribute.Checked = False _
         Then
             If CType(cmbGet.SelectedItem, String) = "no" And CType(cmbSet.SelectedItem, String) = "no" _
             Then
-                MsgBox("Please choose an 'Attribute range' or a getter and/or setter", MsgBoxStyle.Critical, "Property parameters")
+                MsgBox("This property declaration is empty!" + vbCrLf + vbCrLf + _
+                   "Solution: choose an 'Attribute range' or a getter and/or setter", MsgBoxStyle.Critical, "Property parameters")
                 Return False
             End If
+        ElseIf CType(cmbSet.SelectedItem, String) <> "no" _
+                And chkAttribute.Checked _
+                And Me.ArrayDeclaration _
+                And chkSetInline.Checked = False _
+                And Me.Tag = ELanguage.Language_CplusPlus _
+        Then
+            MsgBox("An array typed attribute can't be set in C++!" + vbCrLf + vbCrLf + _
+                   "Solution: uncheck attribute range or remove/customize setter.", MsgBoxStyle.Critical, "Property parameters")
+            Return False
         End If
 
         m_xmlBindingsList.UpdateValues()
@@ -131,7 +148,7 @@ Public Class XmlPropertyView
     End Sub
 
     Public Sub InitComplete()
-        HandlingAttribute(m_chkAttribute, Nothing)
+        HandlingAttribute()
         HandlingOverridable(m_chkAttribute, Nothing)
     End Sub
 
@@ -233,12 +250,6 @@ Public Class XmlPropertyView
             dataControl.ThreeState = False
             m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetInline", "Checked")
 
-            If Me.Tag = ELanguage.Language_Vbasic _
-            Then
-                dataControl.Checked = False
-                dataControl.Enabled = False
-                dataControl.Visible = False
-            End If
         Catch ex As Exception
             Throw ex
         End Try
@@ -250,12 +261,6 @@ Public Class XmlPropertyView
             dataControl.ThreeState = False
             m_xmlBindingsList.AddBinding(dataControl, Me, "AccessSetInline", "Checked")
 
-            If Me.Tag = ELanguage.Language_Vbasic _
-            Then
-                dataControl.Checked = False
-                dataControl.Enabled = False
-                dataControl.Visible = False
-            End If
         Catch ex As Exception
             Throw ex
         End Try
@@ -425,14 +430,30 @@ Public Class XmlPropertyView
         End Try
     End Sub
 
-    Public Sub HandlingAttribute(ByVal sender As Object, ByVal e As System.EventArgs) Handles m_chkAttribute.CheckedChanged
+    Private Sub chkAttribute_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles m_chkAttribute.CheckedChanged
+        If m_bInitOk = False Then Exit Sub
+
+        If m_chkAttribute.Checked _
+        Then
+            m_chkGetInline.Checked = False
+            m_chkSetInline.Checked = False
+        Else
+            m_chkGetInline.Checked = True
+            m_chkSetInline.Checked = True
+        End If
+        HandlingAttribute()
+    End Sub
+
+    Public Sub HandlingAttribute()
         If m_bInitOk = False Then Exit Sub
 
         If m_chkAttribute.Checked _
         Then
             m_cmbRange.Enabled = True
-            m_chkGetInline.Enabled = (CType(m_cmbGetAccess.SelectedItem, String) <> "no")
-            m_chkSetInline.Enabled = (CType(m_cmbSetAccess.SelectedItem, String) <> "no")
+            m_chkGetInline.Visible = (CType(m_cmbGetAccess.SelectedItem, String) <> "no")
+            m_chkSetInline.Visible = (CType(m_cmbSetAccess.SelectedItem, String) <> "no")
+            m_chkGetInline.Enabled = True
+            m_chkSetInline.Enabled = True
         Else
             m_cmbRange.SelectedIndex = 0
             m_cmbRange.Enabled = False
@@ -446,8 +467,8 @@ Public Class XmlPropertyView
                 m_chkGetInline.Visible = False
                 m_chkSetInline.Visible = False
             Else
-                m_chkGetInline.Checked = (CType(m_cmbGetAccess.SelectedItem, String) <> "no")
-                m_chkSetInline.Checked = (CType(m_cmbSetAccess.SelectedItem, String) <> "no")
+                m_chkGetInline.Visible = (CType(m_cmbGetAccess.SelectedItem, String) <> "no")
+                m_chkSetInline.Visible = (CType(m_cmbSetAccess.SelectedItem, String) <> "no")
             End If
         End If
     End Sub
