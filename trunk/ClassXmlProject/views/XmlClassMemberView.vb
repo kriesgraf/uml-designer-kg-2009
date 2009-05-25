@@ -116,6 +116,9 @@ Public Class XmlClassMemberView
                     Case XmlProjectTools.EImplementation.Interf
 
                         xmlProperty.OverridableProperty = True
+                        xmlProperty.AccessSetInline = False
+                        xmlProperty.AccessGetInline = False
+                        xmlProperty.MemberAttribute = False
 
                     Case XmlProjectTools.EImplementation.Leaf, _
                          XmlProjectTools.EImplementation.Node, _
