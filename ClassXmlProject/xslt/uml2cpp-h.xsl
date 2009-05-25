@@ -8,14 +8,16 @@
   <xsl:param name="InputPackage"/>
   <!-- ======================================================================= -->
   <xsl:variable name="FileLanguage"><xsl:value-of select="$UmlFolder"/>\language.xml</xsl:variable>
-  <xsl:variable name="GetName" select="document($FileLanguage)//GetName/text()"/>
-  <xsl:variable name="SetName" select="document($FileLanguage)//SetName/text()"/>
-  <xsl:variable name="PrefixList" select="document($FileLanguage)//PrefixList/text()"/>
-  <xsl:variable name="SuffixIterator" select="document($FileLanguage)//SuffixIterator/text()"/>
-  <xsl:variable name="PrefixMember" select="document($FileLanguage)//PrefixMember/text()"/>
-  <xsl:variable name="PrefixArray" select="document($FileLanguage)//PrefixArray/text()"/>
-  <xsl:variable name="TypeAccess" select="document($FileLanguage)//TypeAccess/text()"/>
-  <xsl:variable name="SetParam" select="document($FileLanguage)//SetParam/text()"/>
+  <xsl:variable name="GetName" select="translate(document($FileLanguage)//GetName/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="SetName" select="translate(document($FileLanguage)//SetName/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixList" select="translate(document($FileLanguage)//PrefixList/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixTypeList" select="translate(document($FileLanguage)//PrefixTypeList/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixStructProperty" select="translate(document($FileLanguage)//PrefixStructProperty/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixEnumProperty" select="translate(document($FileLanguage)//PrefixEnumProperty/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="SuffixIterator" select="translate(document($FileLanguage)//SuffixIterator/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixMember" select="translate(document($FileLanguage)//PrefixMember/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="PrefixArray" select="translate(document($FileLanguage)//PrefixArray/text(),'&#32;&#10;&#13;','')"/>
+  <xsl:variable name="SetParam" select="translate(document($FileLanguage)//SetParam/text(),'&#32;&#10;&#13;','')"/>
 <!-- ======================================================================= -->
   <xsl:include href="cpp-types.xsl"/>
 <!-- ======================================================================= -->
@@ -57,16 +59,16 @@
     <xsl:element name="document">
     <xsl:choose>
       <xsl:when test="$InputClass!=''">
-        <xsl:comment>InputClass=<xsl:value-of select="$InputClass"/></xsl:comment>
+        <!--xsl:comment>InputClass=<xsl:value-of select="$InputClass"/></xsl:comment-->
         <xsl:apply-templates select="//root/package[descendant::class[@id=$InputClass]]" mode="Code"/>
         <xsl:apply-templates select="//root/class[@id=$InputClass]" mode="Code"/>
       </xsl:when>
       <xsl:when test="$InputPackage!=''">
-        <xsl:comment>InputPackage=<xsl:value-of select="$InputPackage"/></xsl:comment>
+        <!--xsl:comment>InputPackage=<xsl:value-of select="$InputPackage"/></xsl:comment-->
         <xsl:apply-templates select="//root/package[@id=$InputPackage or descendant::package[@id=$InputPackage]]" mode="Code"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:comment>Otherwise</xsl:comment>
+        <!--xsl:comment>Otherwise</xsl:comment-->
         <xsl:apply-templates select="class" mode="Code"/>
         <xsl:apply-templates select="package" mode="Code"/>
       </xsl:otherwise>
@@ -187,7 +189,7 @@ namespace <xsl:value-of select="parent::package/@name"/>
     </xsl:call-template>
   </xsl:if>
     // =========================================================================
-    //#Region "ConstructorsDestructor/Methods"
+    //#Region "Constructors/Destructor/Methods"
   <xsl:call-template name="Functions">
     <xsl:with-param name="Range">private</xsl:with-param>
   </xsl:call-template>
@@ -319,9 +321,10 @@ namespace <xsl:value-of select="parent::package/@name"/>
     <xsl:param name="Range"/>
     <xsl:param name="ClassID"/>
     <xsl:variable name="CurrentPackageName" select="id($ClassID)/parent::package/@name"/>
-    <xsl:if test="//relationship[($Range= child/@range and father/@idref=$ClassID) or ($Range= father/@range and child/@idref=$ClassID) or               (($Range= child/get/@range or $Range= child/set/@range) and father/@idref=$ClassID) or (($Range= father/get/@range or $Range= father/set/@range) and child/@idref=$ClassID)]">
+    <xsl:if test="//relationship[($Range= child/@range and father/@idref=$ClassID) or ($Range= father/@range and child/@idref=$ClassID) or (($Range= child/get/@range or $Range= child/set/@range) and father/@idref=$ClassID) or (($Range= father/get/@range or $Range= father/set/@range) and child/@idref=$ClassID)]">
 <xsl:text xml:space="preserve">
-    </xsl:text><xsl:value-of select="$Range"/><xsl:text>:</xsl:text>
+    </xsl:text><xsl:value-of select="$Range"/><xsl:text>:
+    </xsl:text>
 		<xsl:apply-templates select="//relationship/child[$Range= @range and preceding-sibling::father/@idref=$ClassID]" mode="Relation">
 			<xsl:with-param name="CurrentPackageName" select="$CurrentPackageName"/>
 			<xsl:with-param name="CurrentClassID" select="$ClassID"/>
@@ -492,15 +495,16 @@ namespace <xsl:value-of select="parent::package/@name"/>
 				</xsl:call-template>
 			</xsl:when>
 			<xsl:when test="type/enumvalue">
-				<xsl:value-of select="concat('enum  E',@name)"/>
+				<xsl:value-of select="concat('enum  ', $PrefixEnumProperty, @name)"/>
 			</xsl:when>
 			<xsl:when test="type/element">
-				<xsl:value-of select="concat('struct  T',@name)"/>
+				<xsl:value-of select="concat('struct  ', $PrefixStructProperty, @name)"/>
 			</xsl:when>
 			<xsl:otherwise>
 	      		<xsl:apply-templates select="type" mode="Access"/>
 			</xsl:otherwise>
 		</xsl:choose>
+		<xsl:if test="variable/@size or variable/@sizeref">*</xsl:if>
 	</xsl:variable>
 
     <xsl:variable name="Const"><xsl:if test="set/@by='ref'">const </xsl:if></xsl:variable>
@@ -526,7 +530,7 @@ namespace <xsl:value-of select="parent::package/@name"/>
     <xsl:value-of select="concat($Type,' ',$Get,$GetName,@name)"/>() <xsl:if test="@member!='class'">const</xsl:if><xsl:if test="$ClassImpl='abstract'">= 0;
     </xsl:if>
     <xsl:if test="$ClassImpl!='abstract'">
-    {<xsl:if test="@attribute='yes'">
+    {<xsl:if test="get/@inline='no' and @attribute='yes'">
         return <xsl:value-of select="$VarName"/><xsl:if test="contains(type/@desc,'ostringstream')">.str()</xsl:if>;</xsl:if>
     }
     </xsl:if>
@@ -538,7 +542,7 @@ namespace <xsl:value-of select="parent::package/@name"/>
     <xsl:if test="@member='class'">static </xsl:if>void <xsl:value-of select="concat($SetName,@name,'(',$Const,$Type,' ',$Set,$SetParam)"/>)<xsl:if test="$ClassImpl='abstract'">= 0;
     </xsl:if>
     <xsl:if test="$ClassImpl!='abstract'">
-    {<xsl:if test="@attribute='yes'">
+    {<xsl:if test="set/@inline='no' and @attribute='yes'">
         <xsl:text xml:space="preserve">
         </xsl:text>
         <xsl:value-of select="$SetSteatment"/>;</xsl:if>
@@ -555,7 +559,11 @@ namespace <xsl:value-of select="parent::package/@name"/>
 			<xsl:apply-templates select="id(@idref)" mode="FullPackageName">
 				<xsl:with-param name="CurrentPackageName" select="$CurrentPackageName"/>
 			</xsl:apply-templates>
-			<xsl:if test="@level='1'">*</xsl:if>
+			<xsl:choose>
+              <xsl:when test="@level='0'">&amp;</xsl:when>
+              <xsl:when test="@level='1'">*</xsl:when>
+              <xsl:otherwise>**</xsl:otherwise>
+            </xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="Level2"><xsl:if test="@level='1'">p</xsl:if></xsl:variable>
 	<xsl:if test="get[@range=$Range]">
@@ -570,9 +578,9 @@ namespace <xsl:value-of select="parent::package/@name"/>
     </xsl:if>
     <xsl:if test="set[@range=$Range]"><xsl:text xml:space="preserve">
     </xsl:text>
-	<xsl:if test="@member='class'">static </xsl:if>void <xsl:value-of select="concat($SetName,@name,'(',$Type,' ',$Level2,@name)"/>)
+	<xsl:if test="@member='class'">static </xsl:if>void <xsl:value-of select="concat($SetName,@name,'(',$Type,' ',$Level2, $SetParam)"/>)
     {
-        <xsl:value-of select="concat($PrefixMember,$Level2,@name)"/>= <xsl:value-of select="concat($Level2,@name)"/>;
+        <xsl:value-of select="concat($PrefixMember,$Level2,@name)"/>= <xsl:value-of select="concat($Level2,$SetParam)"/>;
     }
 
     </xsl:if>
@@ -644,27 +652,30 @@ namespace <xsl:value-of select="parent::package/@name"/>
     </xsl:variable>
 <xsl:text xml:space="preserve">
     </xsl:text>
-    <xsl:value-of select="concat('typedef ',$TypeList,' TList',$MemberName)"/>;
-    <xsl:if test="@iterator='yes'"><xsl:value-of select="concat('typedef TList',$MemberName,'::iterator T',$MemberName,$SuffixIterator)"/>;</xsl:if><xsl:text xml:space="preserve">
+    <xsl:value-of select="concat('typedef ',$TypeList,' ', $PrefixTypeList, $MemberName)"/>;
+    <xsl:if test="@iterator='yes'"><xsl:value-of select="concat('typedef ', $PrefixTypeList, $MemberName, '::iterator T', $MemberName, $SuffixIterator)"/>;</xsl:if><xsl:text xml:space="preserve">
     </xsl:text>
     //! <xsl:value-of select="$Comment"/>.
     <xsl:if test="@member='class'">static </xsl:if>
-    <xsl:value-of select="concat('TList',$MemberName,' ',$PrefixMember,'t',$PrefixList,$MemberName)"/>;
+    <xsl:value-of select="concat($PrefixTypeList, $MemberName, ' ', $PrefixMember, 't', $PrefixList, $MemberName)"/>;
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="array">
     <xsl:param name="ClassName"/>
     <xsl:param name="MemberName"/>
     <xsl:param name="CurrentClassID"/>
+    <xsl:param name="Comment"/>
     <xsl:variable name="Size">
       <xsl:if test="not(@size) and not(@sizeref)">0</xsl:if>
       <xsl:value-of select="@size"/>
-      <xsl:apply-templates select="@sizeref" mode="FullPackageName">
+      <xsl:apply-templates select="id(@sizeref)" mode="FullPackageName">
         <xsl:with-param name="CurrentClassName" select="id($CurrentClassID)/@name"/>
         <xsl:with-param name="CurrentPackage" select="id($CurrentClassID)/parent::package/@name"/>
       </xsl:apply-templates>
     </xsl:variable>
-    <xsl:value-of select="concat($ClassName,' ',$PrefixMember,'array',$MemberName,'[',$Size,']')"/>;
+    //! <xsl:value-of select="$Comment"/>.
+    <xsl:if test="@member='class'">static </xsl:if>
+    <xsl:value-of select="concat($ClassName,' ',$PrefixMember,$PrefixArray,$MemberName,'[',$Size,']')"/>;
   </xsl:template>
 <!-- ======================================================================= -->
 <xsl:template match="class | package" mode="Entete">
@@ -674,3 +685,9 @@ namespace <xsl:value-of select="parent::package/@name"/>
 </xsl:template>
 <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
+
+
