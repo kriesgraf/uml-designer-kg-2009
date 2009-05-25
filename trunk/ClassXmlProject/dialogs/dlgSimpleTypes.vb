@@ -6,6 +6,8 @@ Imports Microsoft.VisualBasic
 Public Class dlgSimpleTypes
 
     Private m_strFilename As String
+    Private m_eLang As ELanguage = ELanguage.Language_CplusPlus
+    Private m_bContentChanged As Boolean = False
 
     Public WriteOnly Property Filename() As String
         Set(ByVal value As String)
@@ -13,12 +15,24 @@ Public Class dlgSimpleTypes
         End Set
     End Property
 
+    Public WriteOnly Property CodeLanguage() As ELanguage
+        Set(ByVal value As ELanguage)
+            m_eLang = value
+        End Set
+    End Property
+
     Private Sub dlgSimpleTypes_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
-        dtsSimpleTypesList.WriteXml(m_strFilename)
+        If m_bContentChanged Then
+            If MsgBox("Do you want to save change?", cstMsgYesNoQuestion, "Language simple types") = MsgBoxResult.Yes Then
+                dtsSimpleTypesList.WriteXml(m_strFilename)
+            End If
+        End If
+
     End Sub
 
     Private Sub dlgSimpleTypes_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
+            Me.Text = "Update simple types (" + XmlProjectTools.GetLanguage(m_eLang) + ")"
             dtsSimpleTypesList.ReadXml(m_strFilename)
 
             Dim col As DataGridViewTextBoxColumn
@@ -81,11 +95,17 @@ Public Class dlgSimpleTypes
     End Sub
 
     Private Sub DeleteToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteToolStripMenuItem.Click
-        Dim row As DataGridViewRow = grdSimpleTypeList.SelectedRows(0)
-        If MsgBox("Please confirm delete '" + row.Cells(0).Value.ToString + "'", cstMsgYesNoQuestion, "'Delete' command") _
-                 = MsgBoxResult.Yes _
-        Then
-            grdSimpleTypeList.Rows.Remove(row)
+        If grdSimpleTypeList.SelectedRows.Count > 0 Then
+            Dim row As DataGridViewRow = grdSimpleTypeList.SelectedRows(0)
+            If MsgBox("Please confirm delete '" + row.Cells(0).Value.ToString + "'", cstMsgYesNoQuestion, "'Delete' command") _
+                     = MsgBoxResult.Yes _
+            Then
+                grdSimpleTypeList.Rows.Remove(row)
+            End If
         End If
+    End Sub
+
+    Private Sub grdSimpleTypeList_CellValueChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles grdSimpleTypeList.CellValueChanged
+        m_bContentChanged = True
     End Sub
 End Class

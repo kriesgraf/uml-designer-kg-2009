@@ -604,8 +604,13 @@ Public Class XmlProjectView
         Return False
     End Function
 
+    Public Sub UpdatePrefixNames()
+        UmlNodesManager.UpdatePrefixNames()
+    End Sub
+
     Public Sub UpdateSimpleTypes()
-        UmlNodesManager.UpdateSimpleTypes(GetSimpleTypesFilename(CType(Me.Properties.GenerationLanguage, ELanguage)))
+        Dim eLang As ELanguage = CType(Me.Properties.GenerationLanguage, ELanguage)
+        UmlNodesManager.UpdateSimpleTypes(eLang)
     End Sub
 
     Public Shared Function InitPrototypes() As Boolean
