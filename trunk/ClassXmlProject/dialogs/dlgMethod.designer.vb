@@ -25,7 +25,7 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel
         Me.txtBrief = New System.Windows.Forms.TextBox
         Me.lblRange = New System.Windows.Forms.Label
-        Me.btnType = New System.Windows.Forms.Button
+        Me.cmdType = New System.Windows.Forms.Button
         Me.lblMember = New System.Windows.Forms.Label
         Me.Label6 = New System.Windows.Forms.Label
         Me.lblReturnComment = New System.Windows.Forms.Label
@@ -106,7 +106,7 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.Controls.Add(Me.lblName, 0, 1)
         Me.TableLayoutPanel3.Controls.Add(Me.txtBrief, 1, 2)
         Me.TableLayoutPanel3.Controls.Add(Me.lblRange, 0, 4)
-        Me.TableLayoutPanel3.Controls.Add(Me.btnType, 1, 0)
+        Me.TableLayoutPanel3.Controls.Add(Me.cmdType, 1, 0)
         Me.TableLayoutPanel3.Controls.Add(Me.lblMember, 0, 5)
         Me.TableLayoutPanel3.Controls.Add(Me.Label6, 0, 6)
         Me.TableLayoutPanel3.Controls.Add(Me.lblReturnComment, 0, 3)
@@ -155,15 +155,15 @@ Partial Class dlgMethod
         '
         'btnType
         '
-        Me.btnType.CausesValidation = False
-        Me.btnType.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.btnType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btnType.Location = New System.Drawing.Point(102, 3)
-        Me.btnType.Name = "btnType"
-        Me.btnType.Size = New System.Drawing.Size(501, 27)
-        Me.btnType.TabIndex = 5
-        Me.btnType.Text = "<Type>"
-        Me.btnType.UseVisualStyleBackColor = True
+        Me.cmdType.CausesValidation = False
+        Me.cmdType.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.cmdType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.cmdType.Location = New System.Drawing.Point(102, 3)
+        Me.cmdType.Name = "btnType"
+        Me.cmdType.Size = New System.Drawing.Size(501, 27)
+        Me.cmdType.TabIndex = 5
+        Me.cmdType.Text = "<Type>"
+        Me.cmdType.UseVisualStyleBackColor = True
         '
         'lblMember
         '
@@ -543,7 +543,7 @@ Partial Class dlgMethod
     Friend WithEvents TableLayoutPanel3 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents txtBrief As System.Windows.Forms.TextBox
     Friend WithEvents txtName As System.Windows.Forms.TextBox
-    Friend WithEvents btnType As System.Windows.Forms.Button
+    Friend WithEvents cmdType As System.Windows.Forms.Button
     Friend WithEvents cmbRange As System.Windows.Forms.ComboBox
     Friend WithEvents lblRange As System.Windows.Forms.Label
     Friend WithEvents lblImplementation As System.Windows.Forms.Label

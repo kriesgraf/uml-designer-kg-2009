@@ -33,7 +33,7 @@ Public Class dlgMethod
 
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
         If m_xmlView.OverridesMethod <> "" Then
-            btnType.Enabled = False
+            cmdType.Enabled = False
             grdParams.Enabled = False
         End If
     End Sub
@@ -64,7 +64,7 @@ Public Class dlgMethod
             .LoadParamMembers(grdParams)
 
             chkOperator_CheckedChanged(sender, e)
-            btnType.Text = .ReturnValue.FullpathTypeDescription()
+            cmdType.Text = .ReturnValue.FullpathTypeDescription()
 
             If .OverridesMethod <> "" Then
                 Text = .Name + " (Overrides)"
@@ -111,13 +111,13 @@ Public Class dlgMethod
         m_xmlView = XmlNodeManager.GetInstance().CreateView(Nothing, "method")
     End Sub
 
-    Private Sub btnType_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnType.Click
+    Private Sub btnType_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdType.Click
         Dim fen As Form = m_xmlView.ReturnValue.CreateDialogBox()
         fen.ShowDialog()
         If CType(fen.Tag, Boolean) = True Then
             m_xmlView.Updated = True
-            btnType.Text = m_xmlView.ReturnValue.FullpathTypeDescription
         End If
+        cmdType.Text = m_xmlView.ReturnValue.FullpathTypeDescription
     End Sub
 
     Private Sub mnuAddException_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuAddException.Click

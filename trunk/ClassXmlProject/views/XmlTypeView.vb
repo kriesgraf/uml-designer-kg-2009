@@ -106,28 +106,49 @@ Public Class XmlTypeView
         End Try
     End Sub
 
-    Public Function UpdateOption(ByVal radioControl As RadioButtonArray, ByVal dataControl As XmlDataGridView, ByVal fen As Form) As Boolean
-        Dim bLocked As Boolean = False
+    Public Function CheckOption(ByVal bSimpleType As Boolean, ByVal group As GroupBox) As Boolean
+        If bSimpleType And Kind = EKindDeclaration.EK_Enumeration _
+        Then
+            If MsgBox("This operation is irreversible, would you want to continue ?" _
+                      , cstMsgYesNoExclamation, "Delete 'Enumeration'") _
+                            = MsgBoxResult.No _
+            Then
+                Return True
+            End If
+        End If
+
+        If (bSimpleType And Kind = EKindDeclaration.EK_Enumeration) Or _
+            (bSimpleType = False And Kind = EKindDeclaration.EK_SimpleType) _
+            Then
+            Me.Updated = True
+        End If
+
+        If bSimpleType _
+        Then
+            group.Enabled = True
+            m_SizeCheckBox.Enabled = True
+
+        ElseIf GetNode("parent::property") IsNot Nothing _
+        Then
+            group.Enabled = True
+            m_SizeCheckBox.Enabled = False
+        Else
+            group.Enabled = False
+        End If
+        Return False
+    End Function
+
+    Public Sub UpdateOption(ByVal radioControl As RadioButtonArray, ByVal dataControl As XmlDataGridView, ByVal fen As Form)
         If Me.Tag = ELanguage.Language_Vbasic _
         Then
-            radioControl.Item(0).Visible = False
-            radioControl.Item(1).Visible = False
-
-            If GetNode("ancestor::typedef") Is Nothing _
+            If GetNode("ancestor::typedef") IsNot Nothing _
             Then
-                radioControl.Item(0).Checked = True
-                dataControl.Visible = False
-                fen.Height = 250
-                bLocked = True
-            Else
+                radioControl.Item(0).Visible = False
+                radioControl.Item(1).Visible = False
                 radioControl.Item(1).Checked = True
             End If
-        Else
-            radioControl.Item(0).Visible = True
-            radioControl.Item(1).Visible = True
         End If
-        Return bLocked
-    End Function
+    End Sub
 
     Public Sub InitBindingReference(ByVal control As Control)
         Try
@@ -202,7 +223,7 @@ Public Class XmlTypeView
             If MyBase.ParentNodeName = "typedef" Then
                 control.Enabled = False
             Else
-                InitValueCombo(Me, control)
+                InitValueCombo(Me, control, (Me.GetNode("parent::property") IsNot Nothing))
 
                 m_xmlComboValue = New XmlBindingCombo(control, Me, "Value", "ValRef")
             End If

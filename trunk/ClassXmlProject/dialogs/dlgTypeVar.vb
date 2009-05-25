@@ -7,7 +7,6 @@ Public Class dlgTypeVar
 
     Private m_xmlView As XmlTypeView
     Private m_bValueEnabled As Boolean = True
-    Private m_bLocked As Boolean = False
     Private m_bInvalideCell As Boolean = False
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
@@ -72,7 +71,7 @@ Public Class dlgTypeVar
                 .InitBindingLevel(cmbTypeLevel, lblTypeLevel)
                 .InitBindingValue(cmbValue)
 
-                m_bLocked = .UpdateOption(optTypeArray, gridEnumeration, Me)
+                .UpdateOption(optTypeArray, gridEnumeration, Me)
 
                 ' Load document values into controls
                 .LoadEnumeration(gridEnumeration)
@@ -129,16 +128,19 @@ Public Class dlgTypeVar
 
     Private Sub TypeChange()
 
-        If m_bLocked Then Exit Sub
+        If m_xmlView.CheckOption(optType_0.Checked, GroupVariable) _
+        Then
+            optType_0.Checked = False
+            optType_1.Checked = True
 
-        If optType_0.Checked Then
+        ElseIf optType_0.Checked _
+        Then
             m_xmlView.Kind = XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
             gridEnumeration.Binding.ResetBindings(True)
             Me.Height = 316
             cmbTypedefs.Enabled = True
             cmbTypeLevel.Enabled = True
             gridEnumeration.Enabled = False
-            GroupVariable.Enabled = True
             chkReference.Enabled = True
             chkTypeConst.Enabled = True
         Else
@@ -147,7 +149,7 @@ Public Class dlgTypeVar
             cmbTypedefs.Enabled = False
             cmbTypeLevel.Enabled = False
             gridEnumeration.Enabled = True
-            GroupVariable.Enabled = False
+            gridEnumeration.Binding.ResetBindings(True)
             chkReference.Enabled = False
             chkTypeConst.Enabled = False
         End If
