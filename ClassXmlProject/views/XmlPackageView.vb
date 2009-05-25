@@ -199,6 +199,7 @@ Public Class XmlPackageView
                 bResult = LoadImport(fen, dlgOpenFile.FileName)
 
                 If bResult Then
+                    Me.Updated = True
                     m_gridMembers.Binding.ResetBindings(True)
                 End If
             End If

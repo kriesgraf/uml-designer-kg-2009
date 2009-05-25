@@ -605,6 +605,10 @@ Public Class XmlProjectMemberView
                     bResult = True
                 End If
             End If
+
+            If bResult Then
+                Me.Updated = True
+            End If
         Catch ex As Exception
             Throw ex
         End Try

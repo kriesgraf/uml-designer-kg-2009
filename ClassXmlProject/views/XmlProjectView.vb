@@ -337,6 +337,7 @@ Public Class XmlProjectView
                 bResult = member.ImportReferences(fen, dlgOpenFile.FileName)
 
                 If bResult Then
+                    Me.Properties.Updated = True
                     m_Control.Binding.ResetBindings(True)
                 End If
             End If
