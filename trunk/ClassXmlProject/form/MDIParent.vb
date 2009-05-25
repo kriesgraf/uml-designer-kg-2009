@@ -93,7 +93,7 @@ Public Class MDIParent
         Me.Close()
     End Sub
 
-    Public Sub ImportFromOmgUmlModel()
+    Public Sub ImportFromOmgUmlModel(Optional ByVal iMode As Integer = 1)
         Try
             Dim dlgOpenFile As New OpenFileDialog
             If My.Settings.CurrentFolder = m_strCurrentFolder Then
@@ -102,15 +102,15 @@ Public Class MDIParent
                 dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder
             End If
 
-            dlgOpenFile.Title = "Select the OMG UML 2.1 XMI file..."
-            dlgOpenFile.Filter = "UML 2.1 XMI file|*.xml;*.xmi"
+            dlgOpenFile.Title = "Select the OMG UML XMI 2.1 file..."
+            dlgOpenFile.Filter = "XMI export file|*.xml;*.xmi"
 
             If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
                 Dim strTempFile As String = ""
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
 
-                XmlProjectTools.ConvertOmgUmlModel(Me, dlgOpenFile.FileName, strTempFile)
+                XmlProjectTools.ConvertOmgUmlModel(Me, dlgOpenFile.FileName, strTempFile, iMode)
 
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
@@ -385,8 +385,10 @@ Public Class MDIParent
         ImportFromDoxygenIndex()
     End Sub
 
-    Private Sub mnuFileNewOmgUmlFile_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuFileNewOmgUmlFile.Click
-        ImportFromOmgUmlModel()
+    Private Sub mnuFileNewOmgXmiFile_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
+            Handles mnuFileNewOmgRhpXmiFile.Click, mnuFileNewOmgBoomlXmiFile.Click
+
+        ImportFromOmgUmlModel(CType(sender.Tag, Integer))
     End Sub
 
     Private Sub mnuPatchApply_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuPatchApply.Click
@@ -402,20 +404,15 @@ Public Class MDIParent
         msg += vbCrLf + "------------------------------------------------------------------------------------------"
         msg += vbCrLf + "Application paths and declarations:"
         msg += vbCrLf + "------------------------------------------------------------------------------------------"
-        msg += vbCrLf + "- CommonAppDataPath:    " + (Application.CommonAppDataPath)
         msg += vbCrLf + "- CommonAppDataRegistry:" + Application.CommonAppDataRegistry.ToString
         msg += vbCrLf + "- CurrentCulture:       " + Application.CurrentCulture.ToString
         msg += vbCrLf + "- CurrentInputLanguage: " + Application.CurrentInputLanguage.LayoutName
-        msg += vbCrLf + "- ExecutablePath:       " + (Application.ExecutablePath)
-        msg += vbCrLf + "- LocalUserAppDataPath: " + (Application.LocalUserAppDataPath)
         msg += vbCrLf + "- StartupPath:          " + (Application.StartupPath)
-        msg += vbCrLf + "- UserAppDataPath:      " + (Application.UserAppDataPath)
         msg += vbCrLf + "- UserAppDataRegistry:  " + Application.UserAppDataRegistry.ToString
         msg += vbCrLf + "------------------------------------------------------------------------------------------"
         msg += vbCrLf + "Computer paths:"
         msg += vbCrLf + "------------------------------------------------------------------------------------------"
         msg += vbCrLf + "- CurrentUserApplicationData: " + (My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData)
-        msg += vbCrLf + "- AllUsersApplicationData:    " + (My.Computer.FileSystem.SpecialDirectories.AllUsersApplicationData)
         msg += vbCrLf + "- MyDocuments:                " + (My.Computer.FileSystem.SpecialDirectories.MyDocuments)
 
         Dim form As New dlgAboutBox

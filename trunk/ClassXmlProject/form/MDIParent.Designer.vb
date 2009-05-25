@@ -32,6 +32,8 @@ Partial Class MDIParent
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuFileNewDoxygenFile = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuFileNewOmgRhpXmiFile = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuFileNewOmgBoomlXmiFile = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPatchApply = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditDatabase = New System.Windows.Forms.ToolStripMenuItem
@@ -102,7 +104,7 @@ Partial Class MDIParent
         Me.mnuFileNew.ImageTransparentColor = System.Drawing.Color.Black
         Me.mnuFileNew.Name = "mnuFileNew"
         Me.mnuFileNew.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
-        Me.mnuFileNew.Size = New System.Drawing.Size(252, 22)
+        Me.mnuFileNew.Size = New System.Drawing.Size(228, 22)
         Me.mnuFileNew.Text = "&New"
         '
         'mnuFileOpen
@@ -111,31 +113,46 @@ Partial Class MDIParent
         Me.mnuFileOpen.ImageTransparentColor = System.Drawing.Color.Black
         Me.mnuFileOpen.Name = "mnuFileOpen"
         Me.mnuFileOpen.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
-        Me.mnuFileOpen.Size = New System.Drawing.Size(252, 22)
+        Me.mnuFileOpen.Size = New System.Drawing.Size(228, 22)
         Me.mnuFileOpen.Text = "&Open..."
         '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(249, 6)
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(225, 6)
         '
         'mnuFileNewDoxygenFile
         '
         Me.mnuFileNewDoxygenFile.Name = "mnuFileNewDoxygenFile"
-        Me.mnuFileNewDoxygenFile.Size = New System.Drawing.Size(252, 22)
+        Me.mnuFileNewDoxygenFile.Size = New System.Drawing.Size(228, 22)
         Me.mnuFileNewDoxygenFile.Text = "Import from Doxygen XML file..."
         '
         'mnuFileNewOmgUmlFile
         '
+        Me.mnuFileNewOmgUmlFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNewOmgRhpXmiFile, Me.mnuFileNewOmgBoomlXmiFile})
         Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
-        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(252, 22)
-        Me.mnuFileNewOmgUmlFile.Text = "Import from OMG UML  2.1 XMI file..."
+        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(228, 22)
+        Me.mnuFileNewOmgUmlFile.Text = "Import OMG UML XMI 2.1 file"
+        '
+        'mnuFileNewOmgRhpXmiFile
+        '
+        Me.mnuFileNewOmgRhpXmiFile.Name = "mnuFileNewOmgRhpXmiFile"
+        Me.mnuFileNewOmgRhpXmiFile.Size = New System.Drawing.Size(171, 22)
+        Me.mnuFileNewOmgRhpXmiFile.Tag = "1"
+        Me.mnuFileNewOmgRhpXmiFile.Text = "From UML 2.1.1"
+        '
+        'mnuFileNewOmgBoomlXmiFile
+        '
+        Me.mnuFileNewOmgBoomlXmiFile.Name = "mnuFileNewOmgBoomlXmiFile"
+        Me.mnuFileNewOmgBoomlXmiFile.Size = New System.Drawing.Size(171, 22)
+        Me.mnuFileNewOmgBoomlXmiFile.Tag = "0"
+        Me.mnuFileNewOmgBoomlXmiFile.Text = "From Booml UML 2.1"
         '
         'ToolStripMenuItem1
         '
         Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPatchApply, Me.mnuEditDatabase})
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(252, 22)
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(228, 22)
         Me.ToolStripMenuItem1.Text = "Patchs"
         '
         'mnuPatchApply
@@ -153,12 +170,12 @@ Partial Class MDIParent
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(249, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(225, 6)
         '
         'mnuFileExit
         '
         Me.mnuFileExit.Name = "mnuFileExit"
-        Me.mnuFileExit.Size = New System.Drawing.Size(252, 22)
+        Me.mnuFileExit.Size = New System.Drawing.Size(228, 22)
         Me.mnuFileExit.Text = "&Quit"
         '
         'ViewMenu
@@ -482,5 +499,7 @@ Partial Class MDIParent
     Friend WithEvents strpStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents strpProgressBar As System.Windows.Forms.ToolStripProgressBar
     Friend WithEvents DebugToolStripOption As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuFileNewOmgRhpXmiFile As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuFileNewOmgBoomlXmiFile As System.Windows.Forms.ToolStripMenuItem
 
 End Class

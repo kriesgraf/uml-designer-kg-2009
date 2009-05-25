@@ -32,6 +32,7 @@ Public Class XmlProjectTools
     Private Const cstTag2ImportStyle As String = "tag2imp.xsl"
     Private Const cstDoxygen2ProjectStyle As String = "dox2prj.xsl"
     Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
+    Private Const cstIbmXmi2ProjectStyle As String = "rhp-xmi2prj.xsl"
     Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xsl"
 
     Public Shared regVariableName As Regex = New Regex("^[a-zA-Z_][a-zA-Z0-9_]{0,}$")
@@ -379,7 +380,8 @@ Public Class XmlProjectTools
         Next
     End Sub
 
-    Public Shared Function ConvertOmgUmlModel(ByVal form As Form, ByVal strFilename As String, ByRef strTempFile As String) As Boolean
+    Public Shared Function ConvertOmgUmlModel(ByVal form As Form, ByVal strFilename As String, _
+                                              ByRef strTempFile As String, Optional ByVal iMode As Integer = 1) As Boolean
         Dim oldCursor As Cursor = form.Cursor
         Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim bResult As Boolean = False
@@ -393,8 +395,14 @@ Public Class XmlProjectTools
             observer.ProgressBarVisible = True
 
             Dim styleXsl As New XslSimpleTransform(True)
-            styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
-                                                             My.Settings.ToolsFolder + cstXmi2ProjectStyle))
+            Select Case iMode
+                Case 0
+                    styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
+                                                                     My.Settings.ToolsFolder + cstXmi2ProjectStyle))
+                Case Else
+                    styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
+                                                                     My.Settings.ToolsFolder + cstIbmXmi2ProjectStyle))
+            End Select
             observer.Increment(1)
             Dim argList As New Dictionary(Of String, String)
             argList.Add("FolderDTD", My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData + Path.DirectorySeparatorChar)
@@ -2183,23 +2191,24 @@ Public Class XmlProjectTools
     End Sub
 
     Private Shared Sub CleanPrefixProperties(ByVal document As XmlDocument, _
-                                             Optional ByVal regexPrefixMember As String = "^(m_|_|)[a-z]{1,4}", _
+                                             Optional ByVal regexPrefixMember As String = "([a-z]{1,2}|[a-z]{0,1}str)([A-Z])", _
                                              Optional ByVal prefixMember As String = "m_")
         Dim regex As New Regex(regexPrefixMember, RegexOptions.Compiled)
 
         Try
             For Each name As XmlNode In document.SelectNodes("//property/@name")
                 Dim strName As String = name.InnerText
-                If regex.IsMatch(strName) Then
-                    Dim groups As String() = regex.Split(name.InnerText)
-                    If groups.Length > 1 Then
-                        strName = groups(groups.Length - 1)
-                    End If
-                ElseIf strName.StartsWith(prefixMember) Then
+                If strName.StartsWith(prefixMember) Then
                     strName = strName.Substring(Len(prefixMember))
-                End If
-                If strName.Length > 0 Then
-                    name.InnerText = strName
+                    If regex.IsMatch(strName) Then
+                        Dim groups As String() = regex.Split(strName)
+                        If groups.Length = 4 Then
+                            strName = groups(2) + groups(3)
+                        End If
+                    End If
+                    If strName.Length > 0 Then
+                        name.InnerText = strName
+                    End If
                 End If
             Next
 
