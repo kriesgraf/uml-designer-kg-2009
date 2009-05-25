@@ -979,6 +979,19 @@ Public Class XmlProjectTools
         End Try
     End Function
 
+    Public Shared Sub SetNodeString(ByRef node As XmlNode, ByVal strValue As String)
+        Try
+            If strValue IsNot Nothing Then
+                node.InnerText = strValue
+            Else
+                node.InnerText = ""
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
     Public Shared Function GetNodeString(ByRef node As XmlNode, ByVal strElement As String, Optional ByVal strDefault As String = "") As String
         Dim strNodeString As String = Nothing
         Try
@@ -1368,7 +1381,11 @@ Public Class XmlProjectTools
                         strTempo = GetAttributeValue(current, "param")
                         If strCurrentPath <> "" _
                         Then
-                            strResult = strCurrentPath + strSeparator + strResult
+                            If eTag = ELanguage.Language_CplusPlus Then
+                                strResult = strResult + " (Include """ + strCurrentPath + """)"
+                            Else
+                                strResult = strCurrentPath + strSeparator + strResult
+                            End If
                         ElseIf strTempo IsNot Nothing _
                         Then
                             strResult = strTempo + strSeparator + strResult
@@ -1746,7 +1763,7 @@ Public Class XmlProjectTools
                 If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
                 Then
                     strErrorMsg = "Must contains characters compliant with namespace:" + vbCrLf + _
-                                  "name1.name2.name3"
+                                  "name1 or name1.name2"
                     bResult = True
                 End If
 
@@ -1755,24 +1772,26 @@ Public Class XmlProjectTools
                 If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
                 Then
                     strErrorMsg = "Must contains characters compliant with package name:" + vbCrLf + _
-                                  "name1.name2.name3"
+                                  "name1 or name1.name2"
                     bResult = True
                 End If
 
             ElseIf regCppHeader.IsMatch(dataControl.Text) = True _
             Then
-                bResult = bNoHeaderFile
-                If bResult Then
-                    strErrorMsg = "Must contains characters compliant with namespace: name1::name2::name3"
+                If bNoHeaderFile Then
+                    If regCppPackage.IsMatch(dataControl.Text) = False Then
+                        strErrorMsg = "Must contains characters compliant with namespace: name1 or name1::name2"
+                        bResult = True
+                    End If
                 End If
 
                 ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
                 Then
                     If bNoHeaderFile Then
-                        strErrorMsg = "Must contains characters compliant with namespace: name1::name2::name3"
+                        strErrorMsg = "Must contains characters compliant with namespace: name1 or name1::name2"
                     Else
                         strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
-                                      "name1::name2::name3" + vbCrLf + _
+                                      "name1 or name1::name2" + vbCrLf + _
                                       "name.h or name.hpp" + vbCrLf + _
                                       "include/name1/name2.h  or include\name1\name2.h"
                     End If
