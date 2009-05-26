@@ -62,6 +62,18 @@ Public Class dlgDependencies
         Return False
     End Function
 
+    Private Sub dlgDependencies_KeyUp(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) _
+            Handles Me.KeyUp, lsbDependencies.KeyUp
+
+        Select Case e.KeyCode
+            Case Keys.Escape
+                Me.Close()
+
+            Case Keys.Enter
+                lsbDependencies_DoubleClick(lsbDependencies, Nothing)
+        End Select
+    End Sub
+
     Private Sub dlgDependencies_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
             RefreshList()
