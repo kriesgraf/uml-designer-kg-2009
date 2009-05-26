@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:msxsl="urn:schemas-microsoft-com:xslt">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:msxsl="urn:schemas-microsoft-com:xslt">
 	<xsl:output method="html" indent="yes"/>
 	<!-- ======================================================================= -->
 	<xsl:param name="IconsFolder">./</xsl:param>
@@ -499,6 +499,10 @@ border-left: 1px solid gray;
 	</xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="reference | interface" mode="Class">
+    <xsl:variable name="CurrentID" select="@id"/>
+    <table border="0">
+    <tr>
+    <td>
     <table class="code">
       <tr>
         <td class="member" align="center">
@@ -575,6 +579,32 @@ border-left: 1px solid gray;
         </td>
       </tr>
     </table>
+	</td>
+	<td>
+	<table>
+		<!-- preceding-sibling::father/@range!='no' and  -->
+		<xsl:apply-templates select="//relationship/child[@idref=$CurrentID]" mode="Class"/>
+		<xsl:apply-templates select="//relationship/father[@idref=$CurrentID]" mode="Class"/>
+		<xsl:apply-templates select="dependency" mode="Dependencies"/>
+		<xsl:apply-templates select="//dependency[@idref=$CurrentID]" mode="ReverseDependencies"/>
+	</table>
+    </td>
+	</tr>
+	<tr>
+	<td colspan="2">
+	<table border="0">
+		<tr>
+			<xsl:apply-templates select="//inherited[@idref=$CurrentID]" mode="Arrow"/>
+		</tr>
+		<tr>
+			<xsl:apply-templates select="//inherited[@idref=$CurrentID]" mode="Child"/>
+		</tr>
+		<tr>
+		</tr>
+	</table>
+    </td>
+    </tr>
+	</table>
   </xsl:template>
     <!-- ======================================================================= -->
 	<xsl:template match="class" mode="Class">
