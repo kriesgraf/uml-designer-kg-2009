@@ -236,17 +236,59 @@ Public Class XmlImportSpec
         Return False
     End Function
 
-    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
-        Select Case removeNode.NodeName
-            Case "reference", "interface"
-                ' Don't use return value that returns "true" only when export is empty
-                RemoveReference(removeNode)
-                Return True
+    Public Overrides Function CanRemove(ByVal removeNode As XmlComponent) As Boolean
+        Try
+            Select Case removeNode.NodeName
+                Case "reference", "interface"
+                    If SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 _
+                    Then
+                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
+                                  vbCrLf + "Do you want to proceed", _
+                                    cstMsgYesNoQuestion, _
+                                    removeNode.Name) = MsgBoxResult.Yes _
+                        Then
+                            Dim bIsEmpty As Boolean = False
 
-            Case "export"
-                Return RemoveImport()
-        End Select
+                            If dlgDependencies.ShowDependencies(removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
+                                Me.Updated = True
+                            End If
+
+                            Return bIsEmpty
+                        End If
+                    Else
+                        Return True
+                    End If
+
+                Case Else
+                    Return MyBase.CanRemove(removeNode)
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
         Return False
+    End Function
+
+    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim strName As String = removeNode.Name
+            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
+                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
+            Then
+                Select Case removeNode.NodeName
+                    Case "reference", "interface"
+                        ' Don't use return value that returns "true" only when export is empty
+                        RemoveReference(removeNode)
+                        Return True
+
+                    Case "export"
+                        Return RemoveImport()
+                End Select
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
     End Function
 
     Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean

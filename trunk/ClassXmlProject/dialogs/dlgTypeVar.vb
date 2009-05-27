@@ -89,7 +89,7 @@ Public Class dlgTypeVar
     End Sub
 
     Private Sub mnuDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuDelete.Click
-        gridEnumeration.DeleteSelectedItems()
+        gridEnumeration.DeleteSelectedItems(1)
     End Sub
 
     Private Sub mnuAdd_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles mnuAdd.Click

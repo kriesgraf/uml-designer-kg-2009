@@ -93,27 +93,26 @@ Public Class XmlInterfaceSpec
         Return True
     End Function
 
-    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
-        Dim bResult As Boolean = False
+    Public Overrides Function CanRemove(ByVal removeNode As XmlComponent) As Boolean
         Try
             Select Case removeNode.NodeName
                 Case "property"
-                    If RemoveOverridedProperty(Me, removeNode) = False Then
-                        Return False
+                    If CanRemoveOverridedProperty(Me, removeNode) Then
+                        Return True
                     End If
 
                 Case "method"
-                    If RemoveOverridedMethod(Me, removeNode) = False Then
-                        Return False
+                    If CanRemoveOverridedMethod(Me, removeNode) Then
+                        Return True
                     End If
+
+                Case Else
+                    Return MyBase.CanRemove(removeNode)
             End Select
-
-            bResult = MyBase.RemoveComponent(removeNode)
-
         Catch ex As Exception
-            MsgExceptionBox(ex)
+            Throw ex
         End Try
-        Return bResult
+        Return False
     End Function
 
     Protected Friend Overrides Function AppendNode(ByVal child As System.Xml.XmlNode, Optional ByVal observer As Object = Nothing) As System.Xml.XmlNode

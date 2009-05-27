@@ -3,7 +3,6 @@ Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
-Imports ClassXmlProject.XmlNodeListView
 Imports ClassXmlProject.UmlNodesManager
 
 Public Class XmlPackageView
@@ -289,62 +288,6 @@ Public Class XmlPackageView
             Throw ex
         End Try
     End Sub
-
-    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
-        Dim bResult As Boolean = False
-        Try
-            Dim xmlcpnt As XmlComponent = CreateDocument(removeNode.Node)
-            xmlcpnt.Tag = Me.Tag
-
-            Select Case xmlcpnt.NodeName
-
-                Case "package", "import"
-                    ' Search children from removed node
-                    If xmlcpnt.SelectNodes(GetQueryListDependencies(xmlcpnt)).Count > 0 Then
-                        MsgBox("This element is not empty", MsgBoxStyle.Exclamation, xmlcpnt.Name)
-                        Return False
-                    End If
-
-                Case Else
-                    If SelectNodes(GetQueryListDependencies(xmlcpnt)).Count > 0 Then
-
-                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
-                                  vbCrLf + "Do you want to proceed", _
-                                    cstMsgYesNoQuestion, _
-                                    xmlcpnt.Name) = MsgBoxResult.Yes _
-                        Then
-                            Dim bIsEmpty As Boolean = False
-
-                            If dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Name) Then
-                                bResult = True
-                            End If
-
-                            If bIsEmpty = False Then
-                                Return bResult
-                            End If
-                        Else
-                            Return False
-                        End If
-                    End If
-            End Select
-
-            Dim strName As String = xmlcpnt.Name
-            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
-                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
-            Then
-                Dim strNodeName As String = removeNode.NodeName
-                If MyBase.RemoveComponent(removeNode) Then
-                    If strNodeName = "inherited" Then
-                        m_gridMembers.Binding.ResetBindings(True)
-                    End If
-                    bResult = True
-                End If
-            End If
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        End Try
-        Return bResult
-    End Function
 
     Private Function LoadImport(ByVal fen As Form, ByVal fileName As String) As Boolean
         Dim bResult As Boolean = False

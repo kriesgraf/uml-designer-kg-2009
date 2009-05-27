@@ -451,8 +451,21 @@ Public Class XmlBindingDataListView
 
     Public Function DeleteItem(ByVal component As XmlComponent) As Boolean
         Try
-            If component IsNot Nothing Then
-                If m_xmlParentNode.RemoveComponent(component) Then
+            If component IsNot Nothing _
+            Then
+                Dim parent As XmlComposite = CType(XmlNodeManager.GetInstance().CreateDocument(m_xmlParentNode.Node), XmlComposite)
+                parent.Tag = m_xmlParentNode.Tag
+
+                If parent.CanRemove(component) _
+                Then
+                    If parent.RemoveComponent(component) _
+                    Then
+                        parent.Updated = True
+                    End If
+                End If
+
+                If parent.Updated Then
+                    ' Updated real document
                     m_xmlRootNode.Updated = True
                     Return True
                 End If
