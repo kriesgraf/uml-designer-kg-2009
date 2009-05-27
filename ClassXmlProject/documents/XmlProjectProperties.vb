@@ -2,6 +2,7 @@
 Imports System.Windows.Forms
 Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.XmlNodeListView
 Imports Microsoft.VisualBasic
 Imports System.ComponentModel
 Imports System.Xml
@@ -116,6 +117,63 @@ Public Class XmlProjectProperties
             Throw ex
         End Try
     End Sub
+
+    Public Overrides Function CanRemove(ByVal removedNode As XmlComponent) As Boolean
+        Try
+            Select Case removedNode.NodeName
+                Case "class"
+                    ' Search link from parent node
+                    If SelectNodes(GetQueryListDependencies(removedNode)).Count > 0 Then
+
+                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
+                              vbCrLf + "Do you want to proceed ?", _
+                            cstMsgYesNoQuestion, _
+                            removedNode.Name) = MsgBoxResult.Yes _
+                        Then
+                            Dim bIsEmpty As Boolean = False
+
+                            If dlgDependencies.ShowDependencies(removedNode, bIsEmpty, "Remove references to " + removedNode.Name) Then
+                                Me.Updated = True
+                            End If
+
+                            Return bIsEmpty
+                        End If
+                    Else
+                        Return True
+                    End If
+
+                Case "package", "import"
+                    ' Search children from removed node
+                    If removedNode.SelectNodes(GetQueryListDependencies(removedNode)).Count > 0 Then
+                        MsgBox("This element is not empty", MsgBoxStyle.Exclamation, removedNode.Name)
+                    Else
+                        Return True
+                    End If
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
+    End Function
+
+    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim strName As String = removeNode.Name
+            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
+                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
+            Then
+                Dim strNodeName As String = removeNode.NodeName
+                If MyBase.RemoveComponent(removeNode) _
+                Then
+                    bResult = True
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
 
     Protected Friend Overrides Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
         If component IsNot Nothing Then

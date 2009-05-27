@@ -135,7 +135,7 @@ Public Class XmlInterfaceView
                 bResult = MyBase.RemoveComponent(removeNode)
             End If
         Catch ex As Exception
-            MsgExceptionBox(ex)
+            Throw ex
         End Try
         Return bResult
     End Function

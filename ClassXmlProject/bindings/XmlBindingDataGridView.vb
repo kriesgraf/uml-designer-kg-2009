@@ -355,13 +355,30 @@ Public Class XmlBindingDataGridView
     End Function
 
     Public Function DeleteItem(ByVal component As XmlComponent) As Boolean
-        If component IsNot Nothing Then
-            If m_xmlParentNode.RemoveComponent(component) Then
-                m_xmlParentNode.Updated = True
-                If m_BindingSource.List.Count < 1 Then m_dataControl.AllowUserToAddRows = False
-                Return True
+        Try
+            If component IsNot Nothing Then
+
+                Dim parent As XmlComposite = CType(XmlNodeManager.GetInstance().CreateDocument(m_xmlParentNode.Node), XmlComposite)
+                parent.Tag = m_xmlParentNode.Tag
+
+                If parent.CanRemove(component) _
+                Then
+                    If parent.RemoveComponent(component) _
+                    Then
+                        parent.Updated = True
+                        If m_BindingSource.List.Count < 1 Then m_dataControl.AllowUserToAddRows = False
+                    End If
+                End If
+
+                If parent.Updated Then
+                    ' Updated real document
+                    m_xmlParentNode.Updated = True
+                    Return True
+                End If
             End If
-        End If
+        Catch ex As Exception
+            Throw ex
+        End Try
         Return False
     End Function
 

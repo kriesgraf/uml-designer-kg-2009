@@ -63,6 +63,10 @@ Public Class XmlComposite
         Return CreateDocument(component.Node.CloneNode(True))
     End Function
 
+    Public Overridable Function CanRemove(ByVal removeNode As XmlComponent) As Boolean
+        Return True
+    End Function
+
     Public Overridable Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
         Try
             Return removeNode.RemoveMe()

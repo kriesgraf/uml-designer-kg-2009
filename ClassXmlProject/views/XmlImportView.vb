@@ -263,42 +263,6 @@ Public Class XmlImportView
         Return False
     End Function
 
-    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
-        Dim bResult As Boolean = False
-        Try
-            Select Case removeNode.NodeName
-                Case "reference", "interface"
-                    If SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 Then
-
-                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
-                                  vbCrLf + "Do you want to proceed", _
-                                    cstMsgYesNoQuestion, _
-                                    removeNode.Name) = MsgBoxResult.Yes _
-                        Then
-                            Dim bIsEmpty As Boolean = False
-
-                            If dlgDependencies.ShowDependencies(removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
-                                bResult = True
-                            End If
-
-                            If bIsEmpty = False Then
-                                Return bResult
-                            End If
-                        Else
-                            Return False
-                        End If
-                    End If
-                    bResult = MyBase.RemoveComponent(removeNode)
-
-                Case "export"
-                    bResult = MyBase.RemoveComponent(removeNode)
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return bResult
-    End Function
-
     Public Function RemoveAllReferences() As Boolean
         Dim bResult As Boolean = False
         Try
@@ -330,9 +294,12 @@ Public Class XmlImportView
     Public Sub Delete(ByVal list As ListBox)
         Try
             If list.SelectedItem IsNot Nothing Then
-                If RemoveComponent(CType(list.SelectedItem, XmlComponent)) Then
-                    InitBindingListReferences(list, True)
-                    Me.Updated = True
+                Dim document As XmlComponent = CType(list.SelectedItem, XmlComponent)
+                If MyBase.CanRemove(document) Then
+                    If MyBase.RemoveComponent(document) Then
+                        InitBindingListReferences(list, True)
+                        Me.Updated = True
+                    End If
                 End If
             End If
         Catch ex As Exception

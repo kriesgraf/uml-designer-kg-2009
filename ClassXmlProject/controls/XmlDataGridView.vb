@@ -123,17 +123,6 @@ Public Class XmlDataGridView
         End Try
     End Sub
 
-    Public Sub DeleteItem(ByVal component As XmlComponent)
-        Try
-            If m_xmlBinding.DeleteItem(component) Then
-                m_xmlBinding.ResetBindings(True)
-            End If
-
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        End Try
-    End Sub
-
     Public Sub AddItem(Optional ByVal strNodeName As String = Nothing)
         Try
             m_xmlBinding.AddItem(strNodeName)

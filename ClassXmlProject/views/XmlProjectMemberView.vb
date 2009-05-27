@@ -498,62 +498,6 @@ Public Class XmlProjectMemberView
         Return Nothing
     End Function
 
-    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
-        Dim bResult As Boolean = False
-        Try
-            Dim xmlcpnt As XmlProjectMemberView = CType(removeNode, XmlProjectMemberView)
-
-            Select Case xmlcpnt.NodeName
-
-                Case "typedef", "class", "reference", "interface"
-                    ' Search link from parent node
-                    If SelectNodes(GetQueryListDependencies(xmlcpnt)).Count > 0 Then
-
-                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
-                              vbCrLf + "Do you want to proceed ?", _
-                            cstMsgYesNoQuestion, _
-                            xmlcpnt.Label(0)) = MsgBoxResult.Yes _
-                        Then
-                            Dim bIsEmpty As Boolean = False
-
-                            If dlgDependencies.ShowDependencies(xmlcpnt, bIsEmpty, "Remove references to " + xmlcpnt.Label(0)) Then
-                                bResult = True
-                            End If
-
-                            If bIsEmpty = False Then
-                                Return bResult
-                            End If
-                        Else
-                            Return False
-                        End If
-                    End If
-
-                Case "package", "import"
-                    ' Search children from removed node
-                    If xmlcpnt.SelectNodes(GetQueryListDependencies(xmlcpnt)).Count > 0 Then
-                        MsgBox("This element is not empty", MsgBoxStyle.Exclamation, xmlcpnt.Label(0))
-                        Return False
-                    End If
-            End Select
-
-            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + xmlcpnt.Label(0) + vbCrLf + "Comment: " + xmlcpnt.Label(1), _
-                       cstMsgYesNoQuestion, _
-                       xmlcpnt.Label(0)) = MsgBoxResult.Yes _
-            Then
-                Dim parent As XmlComposite = TryCast(CreateDocument(MyBase.Node), XmlComposite)
-                If parent IsNot Nothing Then
-                    parent.Tag = Me.Tag
-                    If parent.RemoveComponent(xmlcpnt) Then
-                        bResult = True
-                    End If
-                End If
-            End If
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        End Try
-        Return bResult
-    End Function
-
     Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
         Try
             'Not necessary to remove node, command Append will do it for us

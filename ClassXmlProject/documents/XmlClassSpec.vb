@@ -223,29 +223,83 @@ Public Class XmlClassSpec
         Return strDocName
     End Function
 
-    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
-        Dim bResult As Boolean = False
+    Public Overrides Function CanRemove(ByVal removeNode As XmlComponent) As Boolean
         Try
             Select Case removeNode.NodeName
+                Case "typedef"
+                    If SelectNodes(XmlNodeListView.GetQueryListDependencies(removeNode)).Count > 0 _
+                    Then
+                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
+                                  vbCrLf + "Do you want to proceed", _
+                                    cstMsgYesNoQuestion, _
+                                    removeNode.Name) = MsgBoxResult.Yes _
+                        Then
+                            Dim bIsEmpty As Boolean = False
+
+                            If dlgDependencies.ShowDependencies(removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
+                                Me.Updated = True
+                            End If
+
+                            Return bIsEmpty
+                        End If
+                    Else
+                        Return True
+                    End If
+
                 Case "property"
-                    If RemoveOverridedProperty(Me, removeNode) = False Then
-                        Return False
+                    If CanRemoveOverridedProperty(Me, removeNode) Then
+                        Return True
                     End If
 
                 Case "method"
-                    If RemoveOverridedMethod(Me, removeNode) = False Then
-                        Return False
+                    If CanRemoveOverridedMethod(Me, removeNode) Then
+                        Return True
                     End If
 
+                Case Else
+                    Return MyBase.CanRemove(removeNode)
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return False
+    End Function
+
+    Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim strTitle As String = "Name"
+            Select Case removeNode.NodeName
                 Case "inherited"
-                    RemoveInheritedProperties(Me, removeNode)
-                    RemoveInheritedMethods(Me, removeNode)
+                    strTitle = "Inheritance"
+
+                Case "dependency"
+                    strTitle = "Dependency"
+
+                Case "collaboration"
+                    strTitle = "Collaboration"
+
+                Case Else
+                    ' Nothing to do
             End Select
 
-            bResult = MyBase.RemoveComponent(removeNode)
+            Dim strName As String = removeNode.Name
+            If MsgBox("Confirm to delete:" + vbCrLf + strTitle + ": " + strName, _
+                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
+            Then
+                Select Case removeNode.NodeName
+                    Case "inherited"
+                        RemoveInheritedProperties(Me, removeNode)
+                        RemoveInheritedMethods(Me, removeNode)
 
+                    Case Else
+                        ' Nothing to do
+                End Select
+
+                bResult = MyBase.RemoveComponent(removeNode)
+            End If
         Catch ex As Exception
-            MsgExceptionBox(ex)
+            Throw ex
         End Try
         Return bResult
     End Function

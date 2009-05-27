@@ -174,6 +174,7 @@ Public Class dlgClass
 
     Private Sub mnuDeleteSuperClass_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteSuperClass.Click
         gridInherited.DeleteSelectedItems()
+        gridMembers.Binding.ResetBindings(True)
     End Sub
 
     Private Sub mnuDeleteMember_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteMember.Click

@@ -804,7 +804,7 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Public Shared Function RemoveOverridedProperty(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
+    Public Shared Function CanRemoveOverridedProperty(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = True
         Try
             Dim strQuery As String = "//property[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
@@ -818,7 +818,7 @@ Public Class XmlProjectTools
         Return bResult
     End Function
 
-    Public Shared Function RemoveOverridedMethod(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
+    Public Shared Function CanRemoveOverridedMethod(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = True
         Try
             Dim strQuery As String = "//method[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
