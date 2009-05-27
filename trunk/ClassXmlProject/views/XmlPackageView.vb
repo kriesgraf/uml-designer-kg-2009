@@ -53,7 +53,7 @@ Public Class XmlPackageView
             If component Is Nothing Then Return False
 
             Dim bIsEmpty As Boolean = False
-            If dlgDependencies.ShowDependencies(component, bIsEmpty) _
+            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, component, bIsEmpty) _
             Then
                 m_gridMembers.Binding.ResetBindings(True)
                 Me.Updated = True

@@ -5,6 +5,15 @@ Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlInterfaceSpec
     Inherits XmlComposite
+    Implements InterfNodeCounter
+
+    Protected m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
+
+    Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
+        Set(ByVal value As XmlReferenceNodeCounter)
+            m_xmlReferenceNodeCounter = value
+        End Set
+    End Property
 
     Public ReadOnly Property Comment() As String
         Get
@@ -177,5 +186,4 @@ Public Class XmlInterfaceSpec
             Next
         End If
     End Sub
-
 End Class

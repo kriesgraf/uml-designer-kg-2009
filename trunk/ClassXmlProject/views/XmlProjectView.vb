@@ -103,6 +103,7 @@ Public Class XmlProjectView
 
                 ' After load, document reference change and old nodes must be updated
                 m_xmlProperties.Node = m_xmlDocument.LastChild
+                m_xmlProperties.NodeCounter = m_xmlReferenceNodeCounter
             End If
             Return True
 
@@ -457,7 +458,7 @@ Public Class XmlProjectView
             If component Is Nothing Then Return False
 
             Dim bIsEmpty As Boolean = False
-            If dlgDependencies.ShowDependencies(component, bIsEmpty) _
+            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, component, bIsEmpty) _
             Then
                 Me.Updated = True
                 Return True
@@ -719,6 +720,7 @@ Public Class XmlProjectView
                 m_xmlProperties.Updated = bChanged
                 Me.Updated = bChanged
                 m_xmlReferenceNodeCounter = New XmlReferenceNodeCounter(m_xmlDocument)
+                m_xmlProperties.NodeCounter = m_xmlReferenceNodeCounter
             End If
         Catch ex As Exception
             Throw ex

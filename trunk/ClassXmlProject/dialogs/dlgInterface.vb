@@ -5,9 +5,16 @@ Imports Microsoft.VisualBasic
 
 Public Class dlgInterface
     Implements InterfFormDocument
+    Implements InterfNodeCounter
 
     Private m_xmlView As XmlInterfaceView
     Private m_bInvalideCell As Boolean
+
+    Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
+        Set(ByVal value As XmlReferenceNodeCounter)
+            m_xmlView.NodeCounter = value
+        End Set
+    End Property
 
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
