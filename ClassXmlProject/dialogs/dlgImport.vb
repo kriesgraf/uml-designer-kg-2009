@@ -14,6 +14,13 @@ Public Class dlgImport
 #End Region
 
 #Region "Properties"
+
+    Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
+        Set(ByVal value As XmlReferenceNodeCounter)
+            m_xmlView.NodeCounter = value
+        End Set
+    End Property
+
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
@@ -153,12 +160,6 @@ Public Class dlgImport
             m_xmlView.Edit(lsbReferences)
         End If
     End Sub
-
-    Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
-        Set(ByVal value As XmlReferenceNodeCounter)
-            m_xmlView.NodeCounter = value
-        End Set
-    End Property
 
     Private Sub AddNode_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
     Handles NewReference.Click, NewInterface.Click

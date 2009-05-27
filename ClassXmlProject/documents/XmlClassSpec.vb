@@ -236,7 +236,7 @@ Public Class XmlClassSpec
                         Then
                             Dim bIsEmpty As Boolean = False
 
-                            If dlgDependencies.ShowDependencies(removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
+                            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
                                 Me.Updated = True
                             End If
 

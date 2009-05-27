@@ -80,7 +80,7 @@ Public Class XmlImportView
             If component Is Nothing Then Return False
 
             Dim bIsEmpty As Boolean = False
-            If dlgDependencies.ShowDependencies(component, bIsEmpty) _
+            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, component, bIsEmpty) _
             Then
                 Me.Updated = True
                 Return True
@@ -325,9 +325,12 @@ Public Class XmlImportView
 
     Public Sub Edit(ByVal list As ListBox)
         Try
-            If list.SelectedItem IsNot Nothing Then
-                Dim fen As Form
-                fen = m_xmlNodeManager.CreateForm(CType(list.SelectedItem, XmlComponent))
+            If list.SelectedItem IsNot Nothing _
+            Then
+                Dim fen As Form = m_xmlNodeManager.CreateForm(CType(list.SelectedItem, XmlComponent))
+                Dim InterfCounter As InterfNodeCounter = TryCast(fen, InterfNodeCounter)
+                If InterfCounter IsNot Nothing Then InterfCounter.NodeCounter = m_xmlReferenceNodeCounter
+
                 fen.ShowDialog()
                 If CType(fen.Tag, Boolean) Then
                     InitBindingListReferences(list, True)

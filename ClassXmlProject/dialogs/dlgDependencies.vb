@@ -7,8 +7,10 @@ Imports ClassXmlProject.XmlNodeListView
 
 Public Class dlgDependencies
     Implements InterfFormDocument
+    Implements InterfNodeCounter
 
     Private m_xmlDataSource As XmlComponent
+    Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
     Private m_bEmpty As Boolean = True
     Private m_bNoTitle As Boolean = True
 
@@ -26,6 +28,8 @@ Public Class dlgDependencies
         End Get
     End Property
 
+
+
     Public WriteOnly Property Title() As String
         Set(ByVal value As String)
             If value IsNot Nothing Then
@@ -35,11 +39,18 @@ Public Class dlgDependencies
         End Set
     End Property
 
+    Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
+        Set(ByVal value As XmlReferenceNodeCounter)
+            m_xmlReferenceNodeCounter = value
+        End Set
+    End Property
+
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
         ' Nothing TODO
     End Sub
 
-    Public Shared Function ShowDependencies(ByVal component As XmlComponent, ByRef bIsEmpty As Boolean, Optional ByVal title As String = Nothing) As Boolean
+    Public Shared Function ShowDependencies(ByVal refNodeCounter As XmlReferenceNodeCounter, ByVal component As XmlComponent, _
+                                            ByRef bIsEmpty As Boolean, Optional ByVal title As String = Nothing) As Boolean
         If component IsNot Nothing Then
             Select Case component.NodeName
                 Case "import", "package"
@@ -54,6 +65,7 @@ Public Class dlgDependencies
 
             Dim fen As New dlgDependencies
             fen.Title = title
+            fen.NodeCounter = refNodeCounter
             fen.Document = component
             fen.ShowDialog()
             bIsEmpty = fen.IsEmpty
@@ -85,10 +97,15 @@ Public Class dlgDependencies
 
     Private Sub lsbDependencies_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles lsbDependencies.DoubleClick
         Try
-            If lsbDependencies.SelectedItem IsNot Nothing Then
+            If lsbDependencies.SelectedItem IsNot Nothing _
+            Then
                 Dim xmlcpnt As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(CType(lsbDependencies.SelectedItem, XmlNodeListView).MasterNode)
                 xmlcpnt.Tag = m_xmlDataSource.Tag
+
                 Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(xmlcpnt)
+                Dim InterfCounter As InterfNodeCounter = TryCast(fen, InterfNodeCounter)
+                If InterfCounter IsNot Nothing Then InterfCounter.NodeCounter = m_xmlReferenceNodeCounter
+
                 fen.ShowDialog()
                 If CType(fen.Tag, Boolean) = True Then
                     RefreshList()

@@ -10,6 +10,15 @@ Imports System.Xml
 Public Class XmlProjectProperties
     Inherits XmlComposite
     Implements InterfListViewContext
+    Implements InterfNodeCounter
+
+    Private m_xmlReferenceNodeCounter As XmlReferenceNodeCounter
+
+    Public WriteOnly Property NodeCounter() As XmlReferenceNodeCounter Implements InterfNodeCounter.NodeCounter
+        Set(ByVal value As XmlReferenceNodeCounter)
+            m_xmlReferenceNodeCounter = value
+        End Set
+    End Property
 
     Public Function Edit() As Boolean
         Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me)
@@ -132,7 +141,7 @@ Public Class XmlProjectProperties
                         Then
                             Dim bIsEmpty As Boolean = False
 
-                            If dlgDependencies.ShowDependencies(removedNode, bIsEmpty, "Remove references to " + removedNode.Name) Then
+                            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removedNode, bIsEmpty, "Remove references to " + removedNode.Name) Then
                                 Me.Updated = True
                             End If
 
