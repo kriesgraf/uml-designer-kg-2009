@@ -104,7 +104,7 @@ Public Class UmlCodeGenerator
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceHeaderCppStyleSheet)
-            strTransformation = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                                    cstUpdate + ".xml")
 
             Dim argList As New Dictionary(Of String, String)
@@ -171,7 +171,7 @@ Public Class UmlCodeGenerator
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceVbDotNetStyleSheet)
-            strTransformation = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                                    cstUpdate + ".xml")
 
             Dim argList As New Dictionary(Of String, String)
@@ -239,7 +239,7 @@ Public Class UmlCodeGenerator
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceJavaStyleSheet)
-            strTransformation = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                                    cstUpdate + ".xml")
 
             Dim argList As New Dictionary(Of String, String)
