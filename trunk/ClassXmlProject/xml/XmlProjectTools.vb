@@ -385,7 +385,7 @@ Public Class XmlProjectTools
         Dim oldCursor As Cursor = form.Cursor
         Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim bResult As Boolean = False
-        strTempFile = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+        strTempFile = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                          cstTempUmlFile + ".xprj")
         Try
             form.Cursor = Cursors.WaitCursor
@@ -405,7 +405,7 @@ Public Class XmlProjectTools
             End Select
             observer.Increment(1)
             Dim argList As New Dictionary(Of String, String)
-            argList.Add("FolderDTD", My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData + Path.DirectorySeparatorChar)
+            argList.Add("FolderDTD", Application.LocalUserAppDataPath.ToString + Path.DirectorySeparatorChar)
 
             ' This transformation generates a metafile 85% compliant with end-generated file
             styleXsl.Transform(strFilename, strTempFile, argList)
@@ -496,7 +496,7 @@ Public Class XmlProjectTools
         Dim bResult As Boolean = False
         Dim oldCursor As Cursor = form.Cursor
 
-        strTempFile = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+        strTempFile = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                          cstTempDoxygenFile + ".xprj")
         Try
             form.Cursor = Cursors.WaitCursor
@@ -686,7 +686,7 @@ Public Class XmlProjectTools
             observer.Increment(2)
             form.Cursor = oldCursor
 
-            Dim strTempFile As String = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+            Dim strTempFile As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                                            cstTempDoxygenFile + ".ximp")
             styleXsl.Transform(strFilename, strTempFile)
             observer.Increment(2)
@@ -1396,7 +1396,11 @@ Public Class XmlProjectTools
                             End If
                         ElseIf strTempo IsNot Nothing _
                         Then
-                            strResult = strTempo + strSeparator + strResult
+                            If eTag = ELanguage.Language_CplusPlus Then
+                                strResult = strResult + " (Include """ + strTempo + """)"
+                            Else
+                                strResult = strTempo + strSeparator + strResult
+                            End If
                         End If
 
                     Case "model"
@@ -1793,26 +1797,26 @@ Public Class XmlProjectTools
                     End If
                 End If
 
-                ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
-                Then
-                    If bNoHeaderFile Then
-                        strErrorMsg = "Must contains characters compliant with namespace: name1 or name1::name2"
-                    Else
-                        strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
-                                      "name1 or name1::name2" + vbCrLf + _
-                                      "name.h or name.hpp" + vbCrLf + _
-                                      "include/name1/name2.h  or include\name1\name2.h"
-                    End If
-                    bResult = True
+            ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
+            Then
+                If bNoHeaderFile Then
+                    strErrorMsg = "Must contains characters compliant with namespace: name1 or name1::name2"
+                Else
+                    strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
+                                  "name1 or name1::name2" + vbCrLf + _
+                                  "name.h or name.hpp" + vbCrLf + _
+                                  "include/name1/name2.h  or include\name1\name2.h"
                 End If
+                bResult = True
+            End If
 
-                If bResult = True Then
-                    dataControl.Select(0, dataControl.Text.Length)
+            If bResult = True Then
+                dataControl.Select(0, dataControl.Text.Length)
 
-                    provider.SetIconPadding(dataControl, 0)
-                    provider.SetIconAlignment(dataControl, eAlignment)
-                    provider.SetError(dataControl, strErrorMsg)
-                End If
+                provider.SetIconPadding(dataControl, 0)
+                provider.SetIconAlignment(dataControl, eAlignment)
+                provider.SetError(dataControl, strErrorMsg)
+            End If
         Catch ex As Exception
             Throw ex
         End Try
@@ -2072,7 +2076,7 @@ Public Class XmlProjectTools
         Try
             Dim strToolsFolder = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strPatchFile As String = My.Computer.FileSystem.CombinePath(strToolsFolder, cstV1_2_To_V1_3_Patch)
-            Dim strTempFile As String = My.Computer.FileSystem.CombinePath(My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData, _
+            Dim strTempFile As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                                             cstTempUmlFile + ".xprj")
             Dim dialog As New dlgUpgradeProject
 

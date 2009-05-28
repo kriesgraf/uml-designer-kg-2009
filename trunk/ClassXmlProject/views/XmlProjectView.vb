@@ -84,7 +84,7 @@ Public Class XmlProjectView
             m_strFilename = strFilename
             If strFilename <> "" _
             Then
-                Dim strTempPath As String = My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData
+                Dim strTempPath As String = Application.LocalUserAppDataPath.ToString
 
                 If LoadDocument(form, strFilename) = False Then
                     Return False

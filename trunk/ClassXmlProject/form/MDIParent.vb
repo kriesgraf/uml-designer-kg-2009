@@ -349,7 +349,7 @@ Public Class MDIParent
                 Me.Text = Me.Text + " - " + "Version not published"
             End If
 
-            Dim strTmpFolder As String = My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData
+            Dim strTmpFolder As String = Application.LocalUserAppDataPath.ToString
             If My.Computer.FileSystem.DirectoryExists(strTmpFolder) = False Then
                 My.Computer.FileSystem.CreateDirectory(strTmpFolder)
             End If
@@ -402,18 +402,31 @@ Public Class MDIParent
     Private Sub AboutToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AboutToolStripMenuItem.Click
         Dim msg As String = ""
         msg += vbCrLf + "------------------------------------------------------------------------------------------"
-        msg += vbCrLf + "Application paths and declarations:"
-        msg += vbCrLf + "------------------------------------------------------------------------------------------"
-        msg += vbCrLf + "- CommonAppDataRegistry:" + Application.CommonAppDataRegistry.ToString
-        msg += vbCrLf + "- CurrentCulture:       " + Application.CurrentCulture.ToString
-        msg += vbCrLf + "- CurrentInputLanguage: " + Application.CurrentInputLanguage.LayoutName
-        msg += vbCrLf + "- StartupPath:          " + (Application.StartupPath)
-        msg += vbCrLf + "- UserAppDataRegistry:  " + Application.UserAppDataRegistry.ToString
-        msg += vbCrLf + "------------------------------------------------------------------------------------------"
-        msg += vbCrLf + "Computer paths:"
-        msg += vbCrLf + "------------------------------------------------------------------------------------------"
-        msg += vbCrLf + "- CurrentUserApplicationData: " + (My.Computer.FileSystem.SpecialDirectories.CurrentUserApplicationData)
-        msg += vbCrLf + "- MyDocuments:                " + (My.Computer.FileSystem.SpecialDirectories.MyDocuments)
+        If Deployment.Application.ApplicationDeployment.IsNetworkDeployed Then
+            msg += vbCrLf + "- Version:               " + My.Application.Deployment.CurrentVersion.ToString
+            msg += vbCrLf + "- CommonAppDataRegistry: " + Application.CommonAppDataRegistry.ToString
+            msg += vbCrLf + "- CurrentCulture:        " + Application.CurrentCulture.ToString
+            msg += vbCrLf + "- CurrentInputLanguage:  " + Application.CurrentInputLanguage.LayoutName
+            msg += vbCrLf + "- StartupPath:           " + (Application.StartupPath)
+            msg += vbCrLf + "- UserAppDataRegistry:   " + Application.UserAppDataRegistry.ToString
+            msg += vbCrLf + "- LocalUserAppDataPath:  " + Application.LocalUserAppDataPath.ToString
+            msg += vbCrLf + "------------------------------------------------------------------------------------------"
+            msg += vbCrLf + "Computer paths:"
+            msg += vbCrLf + "------------------------------------------------------------------------------------------"
+            msg += vbCrLf + "- MyDocuments:           " + (My.Computer.FileSystem.SpecialDirectories.MyDocuments)
+        Else
+            msg += vbCrLf + "- Version:               not published"
+            msg += vbCrLf + "- CommonAppDataRegistry: " + Application.CommonAppDataRegistry.ToString
+            msg += vbCrLf + "- CurrentCulture:        " + Application.CurrentCulture.ToString
+            msg += vbCrLf + "- CurrentInputLanguage:  " + Application.CurrentInputLanguage.LayoutName
+            msg += vbCrLf + "- StartupPath:           " + (Application.StartupPath)
+            msg += vbCrLf + "- UserAppDataRegistry:   " + Application.UserAppDataRegistry.ToString
+            msg += vbCrLf + "- LocalUserAppDataPath:  " + Application.LocalUserAppDataPath.ToString
+            msg += vbCrLf + "------------------------------------------------------------------------------------------"
+            msg += vbCrLf + "Computer paths:"
+            msg += vbCrLf + "------------------------------------------------------------------------------------------"
+            msg += vbCrLf + "- MyDocuments:           " + (My.Computer.FileSystem.SpecialDirectories.MyDocuments)
+        End If
 
         Dim form As New dlgAboutBox
 
