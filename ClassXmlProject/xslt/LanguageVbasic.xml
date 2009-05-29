@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<root>
+<root version="1.0">
 <type name="bool" prefix="b" implementation="Boolean"/>
 <type name="char" prefix="uc" implementation="UByte"/>
 <type name="float32" prefix="f" implementation="Decimal"/>

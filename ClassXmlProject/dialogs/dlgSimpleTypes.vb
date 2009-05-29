@@ -30,6 +30,10 @@ Public Class dlgSimpleTypes
 
     End Sub
 
+    Private Sub dlgSimpleTypes_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
+        grdSimpleTypeList.EndEdit()
+    End Sub
+
     Private Sub dlgSimpleTypes_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
             Me.Text = "Update simple types (" + XmlProjectTools.GetLanguage(m_eLang) + ")"

@@ -290,6 +290,23 @@ Public Class XmlProjectTools
         Return True
     End Function
 
+    Public Shared Function CopyRessourcesInUserPath(ByVal strDestinationFolder As String) As Boolean
+        Try
+            If Not CopyLanguagePrefix(strDestinationFolder) Then
+                Return False
+            ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_CplusPlus) Then
+                Return False
+            ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_Vbasic) Then
+                Return False
+            ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_Java) Then
+                Return False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return True
+    End Function
+
     Public Shared Function CopyDocTypeDeclarationFile(ByVal strDestinationFolder As String, Optional ByVal bNoAdvertising As Boolean = False) As Boolean
         ' With Xml Schema, we won't save document structure file into project folder.
         Dim bResult As Boolean = False
@@ -1441,17 +1458,21 @@ Public Class XmlProjectTools
         End Select
     End Function
 
-    Public Shared Function GetSimpleTypesFilename(ByVal value As Integer) As String
-        Dim strFilename As String = My.Settings.ToolsFolder
-        strFilename = My.Computer.FileSystem.CombinePath(Application.StartupPath, strFilename)
+    Public Shared Function GetSimpleTypesFilename(ByVal value As Integer, Optional ByVal strPath As String = "") As String
+        If strPath = "" Then
+            strPath = Application.LocalUserAppDataPath.ToString
+        End If
+
+        Dim strFilename As String
         Dim index As ELanguage = CType(value, ELanguage)
+
         Select Case index
             Case ELanguage.Language_Java
-                strFilename = My.Computer.FileSystem.CombinePath(strFilename, "LanguageJava.xml")
+                strFilename = My.Computer.FileSystem.CombinePath(strPath, "LanguageJava.xml")
             Case ELanguage.Language_Vbasic
-                strFilename = My.Computer.FileSystem.CombinePath(strFilename, "LanguageVbasic.xml")
+                strFilename = My.Computer.FileSystem.CombinePath(strPath, "LanguageVbasic.xml")
             Case Else
-                strFilename = My.Computer.FileSystem.CombinePath(strFilename, "LanguageCplusPlus.xml")
+                strFilename = My.Computer.FileSystem.CombinePath(strPath, "LanguageCplusPlus.xml")
         End Select
         Return strFilename
     End Function
@@ -2480,6 +2501,62 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
+
+    Private Shared Function CopyLanguagePrefix(ByVal strDestinationFolder As String) As Boolean
+        Try
+            Dim srcFile As String = My.Settings.ToolsFolder
+            srcFile = My.Computer.FileSystem.CombinePath(Application.StartupPath, srcFile)
+            srcFile = My.Computer.FileSystem.CombinePath(srcFile, "language.xml")
+
+            Dim dstFile As String = My.Computer.FileSystem.CombinePath(strDestinationFolder, Path.GetFileName(srcFile))
+
+            If My.Computer.FileSystem.FileExists(dstFile) _
+            Then
+                CorrectCodePrefix(srcFile, dstFile)
+            Else
+                File.Copy(srcFile, dstFile, True)
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return True
+    End Function
+
+    Private Shared Function CopyLanguageSimpleTypes(ByVal strDestinationFolder As String, ByVal eLang As ELanguage) As Boolean
+        Try
+            Dim strFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
+            Dim srcFile As String = GetSimpleTypesFilename(eLang, strFolder)
+            Dim dstFile As String = GetSimpleTypesFilename(eLang, strDestinationFolder)
+
+            If My.Computer.FileSystem.FileExists(dstFile) _
+            Then
+                CorrectSimpleType(srcFile, dstFile)
+            Else
+                File.Copy(srcFile, dstFile, True)
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return True
+    End Function
+
+    Private Shared Function CorrectSimpleType(ByVal srcFile As String, ByVal dstFile As String) As Boolean
+        Try
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Private Shared Function CorrectCodePrefix(ByVal srcFile As String, ByVal dstFile As String) As Boolean
+        Try
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 
 #End Region
 End Class

@@ -40,8 +40,7 @@ Public Class dlgPrefixNames
 
     Private Sub dlgPrefixNames_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
         Try
-            Dim filename As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
-            filename = My.Computer.FileSystem.CombinePath(filename, cstFilename)
+            Dim filename As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath, cstFilename)
 
             If m_bValide And m_bContentChanged Then
                 If MsgBox("Do you want to save change?", cstMsgYesNoQuestion, "Language prefix names") = MsgBoxResult.Yes Then
@@ -53,11 +52,14 @@ Public Class dlgPrefixNames
         End Try
     End Sub
 
+    Private Sub dlgPrefixNames_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
+        grdPrefixNameList.EndEdit()
+    End Sub
+
     Private Sub dlgPrefixNames_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
             Me.Text = "Update prefix names"
-            Dim filename As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
-            filename = My.Computer.FileSystem.CombinePath(filename, cstFilename)
+            Dim filename As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath, cstFilename)
 
             m_xmlDocument.Load(filename)
 
