@@ -16,6 +16,7 @@ Public Class MDIParent
     Private m_strSetupHeader As String
     Private m_strSetupFooter As String
     Private m_strCurrentFolder As String = "." + Path.DirectorySeparatorChar.ToString
+    Private m_ctrlExternalTools As MenuItemCommand
 
 #End Region
 
@@ -199,6 +200,18 @@ Public Class MDIParent
 
 #Region "Private methods"
 
+    Private Function LoadExternalTools() As Boolean
+        Try
+            m_ctrlExternalTools = New MenuItemCommand(Me.ToolsMenu, Me.ExternalTools)
+            m_ctrlExternalTools.AddCommand(12, "Essai")
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+            Return False
+        End Try
+        Return True
+    End Function
+
     Private Sub OpenOneFile(ByVal filename As String)
         Try
             Dim bFromDoxygenIndex As Boolean = False
@@ -360,6 +373,8 @@ Public Class MDIParent
             If XmlProjectTools.CopyRessourcesInUserPath(strTmpFolder) = False Then
 
                 Me.Close()
+
+            ElseIf LoadExternalTools() = False Then
 
             ElseIf My.Application.CommandLineArgs.Count > 0 Then
                 Dim strFilename As String = My.Application.CommandLineArgs.Item(0)

@@ -74,6 +74,8 @@ Partial Class MDIParent
         Me.strpStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.strpProgressBar = New System.Windows.Forms.ToolStripProgressBar
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
+        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
+        Me.ExternalTools = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
         Me.StatusStrip.SuspendLayout()
@@ -206,7 +208,7 @@ Partial Class MDIParent
         '
         'ToolsMenu
         '
-        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DiffToolStripOption, Me.VbMergeToolStripOption, Me.ToolStripSeparator5, Me.DebugToolStripOption, Me.OptionsToolStripMenuItem})
+        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DiffToolStripOption, Me.VbMergeToolStripOption, Me.ToolStripSeparator5, Me.ExternalTools, Me.ToolStripSeparator6, Me.DebugToolStripOption, Me.OptionsToolStripMenuItem})
         Me.ToolsMenu.MergeIndex = 4
         Me.ToolsMenu.Name = "ToolsMenu"
         Me.ToolsMenu.Size = New System.Drawing.Size(44, 20)
@@ -254,31 +256,31 @@ Partial Class MDIParent
         'CascadeToolStripMenuItem
         '
         Me.CascadeToolStripMenuItem.Name = "CascadeToolStripMenuItem"
-        Me.CascadeToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.CascadeToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.CascadeToolStripMenuItem.Text = "&Cascade"
         '
         'TileVerticalToolStripMenuItem
         '
         Me.TileVerticalToolStripMenuItem.Name = "TileVerticalToolStripMenuItem"
-        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TileVerticalToolStripMenuItem.Text = "Tile &Vertically"
         '
         'TileHorizontalToolStripMenuItem
         '
         Me.TileHorizontalToolStripMenuItem.Name = "TileHorizontalToolStripMenuItem"
-        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TileHorizontalToolStripMenuItem.Text = "Tile &Horizontally"
         '
         'CloseAllToolStripMenuItem
         '
         Me.CloseAllToolStripMenuItem.Name = "CloseAllToolStripMenuItem"
-        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.CloseAllToolStripMenuItem.Text = "C&lose all"
         '
         'ArrangeIconsToolStripMenuItem
         '
         Me.ArrangeIconsToolStripMenuItem.Name = "ArrangeIconsToolStripMenuItem"
-        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
+        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.ArrangeIconsToolStripMenuItem.Text = "&Arange icons"
         '
         'HelpMenu
@@ -428,6 +430,17 @@ Partial Class MDIParent
         Me.strpProgressBar.Size = New System.Drawing.Size(100, 16)
         Me.strpProgressBar.Visible = False
         '
+        'ToolStripSeparator6
+        '
+        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(186, 6)
+        '
+        'ExternalTools
+        '
+        Me.ExternalTools.Name = "ExternalTools"
+        Me.ExternalTools.Size = New System.Drawing.Size(189, 22)
+        Me.ExternalTools.Text = "External tools..."
+        '
         'MDIParent
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -501,5 +514,7 @@ Partial Class MDIParent
     Friend WithEvents DebugToolStripOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuFileNewOmgRhpXmiFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuFileNewOmgBoomlXmiFile As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator6 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ExternalTools As System.Windows.Forms.ToolStripMenuItem
 
 End Class
