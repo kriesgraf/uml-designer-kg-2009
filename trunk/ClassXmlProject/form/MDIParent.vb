@@ -357,7 +357,7 @@ Public Class MDIParent
             SaveToolStripButton.Enabled = False
             strpStatusLabel.Text = "Ready"
 
-            If XmlProjectTools.CopyDocTypeDeclarationFile(strTmpFolder, True) = False Then
+            If XmlProjectTools.CopyRessourcesInUserPath(strTmpFolder) = False Then
 
                 Me.Close()
 
