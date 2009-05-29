@@ -103,6 +103,10 @@ Public Class XmlRelationView
         Try
             m_xmlBindingsList.UpdateValues()
 
+            ' To avoid an instability
+            Me.Father.Cardinal = CType(Me.m_cmbFatherCardinal.SelectedIndex, ECardinal)
+            Me.Child.Cardinal = CType(Me.m_cmbChildCardinal.SelectedIndex, ECardinal)
+
             Dim bParentDifferent As Boolean = (Me.Child.Idref <> Me.Father.Idref)
             Dim bFatherChanged As Boolean = (Me.Father.Idref <> m_strOldFather)
             Dim bChildChanged As Boolean = (Me.Child.Idref <> m_strOldChild)
