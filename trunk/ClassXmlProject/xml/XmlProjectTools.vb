@@ -292,7 +292,9 @@ Public Class XmlProjectTools
 
     Public Shared Function CopyRessourcesInUserPath(ByVal strDestinationFolder As String) As Boolean
         Try
-            If Not CopyLanguagePrefix(strDestinationFolder) Then
+            If Not CopyDocTypeDeclarationFile(strDestinationFolder, True) Then
+                Return False
+            ElseIf Not CopyLanguagePrefix(strDestinationFolder) Then
                 Return False
             ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_CplusPlus) Then
                 Return False
