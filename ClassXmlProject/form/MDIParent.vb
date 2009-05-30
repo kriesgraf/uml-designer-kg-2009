@@ -203,7 +203,12 @@ Public Class MDIParent
     Private Function LoadExternalTools() As Boolean
         Try
             m_ctrlExternalTools = New MenuItemCommand(Me.ToolsMenu, Me.ExternalTools)
-            m_ctrlExternalTools.AddCommand(12, "Essai")
+            m_ctrlExternalTools.LoadTools()
+
+            While m_ctrlExternalTools.MoveNext()
+                AddHandler m_ctrlExternalTools.AddCommand(m_ctrlExternalTools.Current).Click, AddressOf ExternalTool1_Click
+            End While
+
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -211,6 +216,24 @@ Public Class MDIParent
         End Try
         Return True
     End Function
+
+    ' Handling managed by MenuItemCommand class
+    Private Sub ExternalTool1_Click(ByVal sender As ToolStripMenuItem, ByVal e As EventArgs)
+        Debug.Print(sender.Tag.ToString)
+        Dim item As MenuItemCommand.MenuItemNode = m_ctrlExternalTools.Find(CInt(sender.Tag))
+        If item IsNot Nothing Then
+            Dim fen As frmProject = TryCast(Me.ActiveMdiChild, frmProject)
+            If fen IsNot Nothing Then
+                fen.GenerateExternalTool(item)
+            End If
+        Else
+            MsgBox("Please open a project", MsgBoxStyle.Critical, "Command " + sender.Text)
+        End If
+    End Sub
+
+    Private Sub ExternalTools_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) Handles ExternalTools.Click
+        Debug.Print(sender.Name.ToString)
+    End Sub
 
     Private Sub OpenOneFile(ByVal filename As String)
         Try

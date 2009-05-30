@@ -9,9 +9,7 @@
   <xsl:param name="InputClass"/>
   <xsl:param name="InputPackage"/>
   <!-- ======================================================================= -->
-  <xsl:variable name="FileLanguage">
-    <xsl:value-of select="$LanguageFolder"/>\language.xml
-  </xsl:variable>
+  <xsl:variable name="FileLanguage"><xsl:value-of select="$LanguageFolder"/>\language.xml</xsl:variable>
   <xsl:variable name="PrefixList" select="translate(document($FileLanguage)//PrefixList/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="PrefixTypeList" select="translate(document($FileLanguage)//PrefixTypeList/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="PrefixStructProperty" select="translate(document($FileLanguage)//PrefixStructProperty/text(),'&#32;&#10;&#13;','')"/>
@@ -20,31 +18,13 @@
   <xsl:variable name="PrefixArray" select="translate(document($FileLanguage)//PrefixArray/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="SetParam" select="translate(document($FileLanguage)//SetParam/text(),'&#32;&#10;&#13;','')"/>
   <!-- ======================================================================= -->
-  <xsl:template match="class">
-    <xsl:element name="document">
-      <xsl:apply-templates select="." mode="Code"/>
-    </xsl:element>
-  </xsl:template>
-  <!-- ======================================================================= -->
-  <xsl:template match="package">
-    <xsl:element name="document">
-      <xsl:apply-templates select="." mode="Code"/>
-    </xsl:element>
-  </xsl:template>
-  <!-- ======================================================================= -->
-  <xsl:template match="typedef | property | method">
-    <xsl:element name="document">
-      No code generation at this level
-    </xsl:element>
-  </xsl:template>
-  <!-- ======================================================================= -->
-  <xsl:template match="import|relationship">
-    <xsl:element name="document">
-      No code generation for this node
-    </xsl:element>
-  </xsl:template>
-  <!-- ======================================================================= -->
   <xsl:template match="/root">
+    <xsl:comment>
+ToolsFolder   :=<xsl:value-of select="$ToolsFolder"/>
+LanguageFolder:=<xsl:value-of select="$LanguageFolder"/>
+InputClass    :=<xsl:value-of select="$InputClass"/>
+InputPackage  :=<xsl:value-of select="$InputPackage"/>
+    </xsl:comment>
     <xsl:element name="document">
       <!-- CAUTION: do not change this version, application will upgrade this for you if necessary -->
       <xsl:attribute name="version">1.0</xsl:attribute>
@@ -99,15 +79,13 @@
       </xsl:choose>
     </xsl:element>
   </xsl:template>
-  <!-- ======================================================================= -->
+<!-- ======================================================================= -->
   <xsl:template match="class" mode="Code">
     <xsl:element name="code">
       <!-- Possible "Merge" value: no, yes (To preserve your previous generated code) -->
-      <xsl:attribute name="Merge">yes</xsl:attribute>
-      <xsl:attribute name="name">
-        <xsl:value-of select="@name"/>.java
-      </xsl:attribute>
-      Not yet implemented
+      <xsl:attribute name="Merge">no</xsl:attribute>
+      <xsl:attribute name="name"><xsl:value-of select="@name"/>.tmp</xsl:attribute>
+      This is a template. Please implement your own code here
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->

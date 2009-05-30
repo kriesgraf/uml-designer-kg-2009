@@ -189,7 +189,8 @@ Public Class dlgPackage
             Else
                 absolutePath = My.Computer.FileSystem.CombinePath(m_strProjectFolder, txtFolder.Text)
             End If
-            dlg.RootFolder = Environment.SpecialFolder.Desktop
+            dlg.Description = "Select the folder where you want to deposit generated code...."
+            dlg.RootFolder = Environment.SpecialFolder.MyDocuments
             dlg.SelectedPath = absolutePath
             If dlg.ShowDialog() = DialogResult.OK Then
                 txtFolder.Text = UmlNodesManager.ComputeRelativePath(m_strProjectFolder, dlg.SelectedPath)
@@ -235,7 +236,7 @@ Public Class dlgPackage
     End Sub
 
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
-        e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, CType(m_xmlView.Tag, ELanguage), True)
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
