@@ -3,11 +3,13 @@
 <!-- ======================================================================= -->
   <xsl:output method="xml" cdata-section-elements="code" encoding="ISO-8859-1"/>
 <!-- ======================================================================= -->
-  <xsl:param name="UmlFolder"/>
+  <xsl:param name="ProjectFolder"/>
+  <xsl:param name="ToolsFolder"/>
+  <xsl:param name="LanguageFolder"/>
   <xsl:param name="InputClass"/>
   <xsl:param name="InputPackage"/>
   <!-- ======================================================================= -->
-  <xsl:variable name="FileLanguage"><xsl:value-of select="$UmlFolder"/>\language.xml</xsl:variable>
+  <xsl:variable name="FileLanguage"><xsl:value-of select="$LanguageFolder"/>\language.xml</xsl:variable>
   <xsl:variable name="PrefixList" select="translate(document($FileLanguage)//PrefixList/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="PrefixTypeList" select="translate(document($FileLanguage)//PrefixTypeList/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="PrefixStructProperty" select="translate(document($FileLanguage)//PrefixStructProperty/text(),'&#32;&#10;&#13;','')"/>
@@ -34,12 +36,6 @@
     </xsl:element>
   </xsl:template>
 <!-- ======================================================================= -->
-  <xsl:template match="/typedef">
-    <xsl:element name="document">
-        No code generation at this level
-    </xsl:element>
-  </xsl:template>
-<!-- ======================================================================= -->
   <xsl:template match="typedef | property | method">
     <xsl:element name="document">
         No code generation at this level
@@ -54,7 +50,14 @@
 <!-- ======================================================================= -->
   <xsl:template match="/root">
     <xsl:element name="document">
-    <xsl:choose>
+      <!-- CAUTION: do not change this version, application will upgrade this for you if necessary -->
+      <xsl:attribute name="version">1.0</xsl:attribute>
+      <!-- Possible "method" value: code, batch -->
+      <xsl:attribute name="method">code</xsl:attribute>
+      <xsl:attribute name="project">
+        <xsl:value-of select="$ProjectFolder"/>
+      </xsl:attribute>
+      <xsl:choose>
       <xsl:when test="$InputClass!=''">
         <xsl:apply-templates select="//root/package[descendant::class[@id=$InputClass]]" mode="Code"/>
         <xsl:apply-templates select="//root/class[@id=$InputClass]" mode="Code"/>
@@ -72,7 +75,11 @@
 <!-- ======================================================================= -->
   <xsl:template match="package" mode="Code">
     <xsl:variable name="PackageName"><xsl:value-of select="@folder"/><xsl:if test="not(@folder)"><xsl:value-of select="@name"/></xsl:if></xsl:variable>
-    <package name="{$PackageName}">
+    <xsl:element name="package">
+      <xsl:attribute name="name">
+        <xsl:value-of select="$PackageName"/>
+      </xsl:attribute>
+      <xsl:copy-of select="@id"/>
       <xsl:choose>
         <xsl:when test="$InputClass!=''">
           <xsl:apply-templates select="package[descendant::class[@id=$InputClass]]" mode="Code"/>
@@ -85,15 +92,17 @@
           <xsl:apply-templates select="package[@id=$InputPackage or descendant::package[@id=$InputPackage]]" mode="Code"/>
         </xsl:when>
         <xsl:otherwise>
-        <xsl:apply-templates select="class" mode="Code"/>
-        <xsl:apply-templates select="package" mode="Code"/>
+          <xsl:apply-templates select="class" mode="Code"/>
+          <xsl:apply-templates select="package" mode="Code"/>
         </xsl:otherwise>
       </xsl:choose>
-    </package>
+    </xsl:element>
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="class" mode="Code">
     <xsl:element name="code">
+      <!-- Possible "Merge" value: no, yes (To preserve your previous generated code) -->
+      <xsl:attribute name="Merge">yes</xsl:attribute>
       <xsl:attribute name="name"><xsl:value-of select="@name"/>.vb</xsl:attribute>
     <xsl:variable name="Request1"><xsl:call-template name="FullImportName"/></xsl:variable>
     <!--

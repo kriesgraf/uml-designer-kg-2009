@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <!-- ======================================================================= -->
-  <xsl:output method="xml" cdata-section-elements="code reference" encoding="iso-8859-1"/>
-  <!-- ======================================================================= -->
-  <xsl:param name="Language"><xsl:value-of select="$UmlFolder"/>LanguageVbasic.xml</xsl:param>
+  <xsl:param name="Language"><xsl:value-of select="$LanguageFolder"/>\LanguageVbasic.xml</xsl:param>
   <!-- ======================================================================= -->
   <xsl:template match="@desc | @index | @index-desc">
     <xsl:call-template name="PredefinedType">

@@ -21,6 +21,7 @@ Public Class UmlCodeGenerator
     Private Shared m_xsltCppSourceHeaderStyleSheet As XslSimpleTransform = Nothing
     Private Shared m_xsltVbClassModuleStyleSheet As XslSimpleTransform = Nothing
     Private Shared m_xsltJavaModuleStyleSheet As XslSimpleTransform = Nothing
+    Private Shared m_xsltExternalToolStyleSheet As XslSimpleTransform = Nothing
 
     Private Shared m_bTransformActive As Boolean = False
     Private Shared m_strSeparator As String = Path.DirectorySeparatorChar.ToString
@@ -36,10 +37,20 @@ Public Class UmlCodeGenerator
         Dim bResult As Boolean = False
 
         Try
+
+            Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
+            Dim argList As New Dictionary(Of String, String)
+
+            argList.Add("ProjectFolder", strProgramFolder)
+            argList.Add("ToolsFolder", strUmlFolder)
+            argList.Add("LanguageFolder", Application.LocalUserAppDataPath.ToString)
+            argList.Add("InputClass", strClassId)
+            argList.Add("InputPackage", strPackageId)
+
             Select Case eLanguage
                 Case eLanguage.Language_CplusPlus
                     If GenerateCppSourceHeader(fen, node.OwnerDocument.DocumentElement, _
-                                            strClassId, strPackageId, strProgramFolder, _
+                                            strClassId, strPackageId, strProgramFolder, argList, _
                                             strTransformation) _
                     Then
                         bResult = True
@@ -47,7 +58,7 @@ Public Class UmlCodeGenerator
 
                 Case eLanguage.Language_Vbasic
                     If GenerateVbClassModule(fen, node.OwnerDocument.DocumentElement, _
-                                            strClassId, strPackageId, strProgramFolder, _
+                                            strClassId, strPackageId, strProgramFolder, argList, _
                                             strTransformation) _
                     Then
                         bResult = True
@@ -55,7 +66,7 @@ Public Class UmlCodeGenerator
 
                 Case eLanguage.Language_Java
                     If GenerateJavaModule(fen, node.OwnerDocument.DocumentElement, _
-                                            strClassId, strPackageId, strProgramFolder, _
+                                            strClassId, strPackageId, strProgramFolder, argList, _
                                             strTransformation) _
                     Then
                         bResult = True
@@ -68,6 +79,37 @@ Public Class UmlCodeGenerator
         End Try
         Return bResult
     End Function
+
+    Public Shared Function GenerateExternalTool(ByVal fen As System.Windows.Forms.Form, ByVal node As XmlNode, _
+                                                ByVal strClassId As String, ByVal strPackageId As String, _
+                                                ByVal eLanguage As ELanguage, ByVal strProgramFolder As String, _
+                                                ByRef strTransformation As String, _
+                                                ByVal ExternalCommand As MenuItemCommand.MenuItemNode) As Boolean
+
+        Dim bResult As Boolean = False
+
+        Try
+
+            Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
+            Dim argList As New Dictionary(Of String, String)
+
+            argList.Add("ProjectFolder", strProgramFolder)
+            argList.Add("ToolsFolder", Path.GetDirectoryName(ExternalCommand.Stylesheet))
+            argList.Add("LanguageFolder", Application.LocalUserAppDataPath.ToString)
+            argList.Add("InputClass", strClassId)
+            argList.Add("InputPackage", strPackageId)
+
+            If GenerateAndLaunchExternalTool(fen, node.OwnerDocument.DocumentElement, _
+                                            strClassId, strPackageId, strProgramFolder, argList, _
+                                            strTransformation, ExternalCommand) _
+            Then
+                bResult = True
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+        Return bResult
+    End Function
 #End Region
 
 #Region "Private shared methods"
@@ -75,6 +117,7 @@ Public Class UmlCodeGenerator
     Private Shared Function GenerateCppSourceHeader(ByVal fen As System.Windows.Forms.Form, _
                                                     ByVal node As XmlNode, ByVal strClassId As String, _
                                                 ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String) As Boolean
         Dim bResult As Boolean = False
         Dim bCodeMerge As Boolean = False
@@ -103,14 +146,8 @@ Public Class UmlCodeGenerator
             observer.ProgressBarVisible = True
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
+            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceHeaderCppStyleSheet)
-            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
-                                                                   cstUpdate + ".xml")
-
-            Dim argList As New Dictionary(Of String, String)
-            argList.Add("UmlFolder", strUmlFolder + m_strSeparator)
-            argList.Add("InputClass", strClassId)
-            argList.Add("InputPackage", strPackageId)
 
             If node IsNot Nothing Then
                 If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
@@ -125,7 +162,8 @@ Public Class UmlCodeGenerator
                 End If
                 m_xsltCppSourceHeaderStyleSheet.Transform(node, strTransformation, argList)
 
-                ExtractCode(bCodeMerge, observer, strTransformation, strPath, ELanguage.Language_CplusPlus)
+                ExtractCode(bCodeMerge, observer, strTransformation, strPath, _
+                            ELanguage.Language_CplusPlus, My.Settings.DiffTool, "{0} {1}")
                 bResult = True
             End If
 
@@ -143,6 +181,7 @@ Public Class UmlCodeGenerator
     Private Shared Function GenerateVbClassModule(ByVal fen As System.Windows.Forms.Form, _
                                                   ByVal node As XmlNode, ByVal strClassId As String, _
                                                 ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String) As Boolean
         Dim bCodeMerge As Boolean = False
         Dim bResult As Boolean = False
@@ -171,13 +210,7 @@ Public Class UmlCodeGenerator
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceVbDotNetStyleSheet)
-            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
-                                                                   cstUpdate + ".xml")
-
-            Dim argList As New Dictionary(Of String, String)
-            argList.Add("UmlFolder", strUmlFolder + m_strSeparator)
-            argList.Add("InputClass", strClassId)
-            argList.Add("InputPackage", strPackageId)
+            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
 
             If node IsNot Nothing Then
                 If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
@@ -193,7 +226,8 @@ Public Class UmlCodeGenerator
                 m_xsltVbClassModuleStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
-                ExtractCode(bCodeMerge, observer, strTransformation, strPath, ELanguage.Language_Vbasic)
+                ExtractCode(bCodeMerge, observer, strTransformation, strPath, _
+                            ELanguage.Language_Vbasic, My.Settings.DiffTool, "{0} {1}")
                 bResult = True
             End If
 
@@ -211,6 +245,7 @@ Public Class UmlCodeGenerator
     Private Shared Function GenerateJavaModule(ByVal fen As System.Windows.Forms.Form, _
                                                   ByVal node As XmlNode, ByVal strClassId As String, _
                                                 ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String) As Boolean
         Dim bCodeMerge As Boolean = False
         Dim bResult As Boolean = False
@@ -239,13 +274,7 @@ Public Class UmlCodeGenerator
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceJavaStyleSheet)
-            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
-                                                                   cstUpdate + ".xml")
-
-            Dim argList As New Dictionary(Of String, String)
-            argList.Add("UmlFolder", strUmlFolder + m_strSeparator)
-            argList.Add("InputClass", strClassId)
-            argList.Add("InputPackage", strPackageId)
+            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
 
             If node IsNot Nothing Then
                 If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
@@ -261,7 +290,77 @@ Public Class UmlCodeGenerator
                 m_xsltJavaModuleStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
-                ExtractCode(bCodeMerge, observer, strTransformation, strPath, ELanguage.Language_Java)
+                ExtractCode(bCodeMerge, observer, strTransformation, strPath, _
+                            ELanguage.Language_Java, My.Settings.DiffTool, "{0} {1}")
+                bResult = True
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            observer.ProgressBarVisible = False
+            fen.Cursor = oldCursor
+            m_bTransformActive = False
+        End Try
+
+        Return bResult
+    End Function
+
+    Private Shared Function GenerateAndLaunchExternalTool(ByVal fen As System.Windows.Forms.Form, _
+                                                  ByVal node As XmlNode, ByVal strClassId As String, _
+                                                ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByVal argList As Dictionary(Of String, String), _
+                                                ByRef strTransformation As String, _
+                                                ByVal ExternalTool As MenuItemCommand.MenuItemNode) As Boolean
+        Dim bCodeMerge As Boolean = False
+        Dim bResult As Boolean = False
+        Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
+        fen.Cursor = Cursors.WaitCursor
+        Try
+            If m_bTransformActive Then Return bResult
+            m_bTransformActive = True
+
+            Dim count As Integer = 1    ' One step for XSLT transformation
+            If strClassId <> "" Then
+                count += 1
+            ElseIf strPackageId <> "" _
+            Then
+                Dim child As XmlNode = node.SelectSingleNode("//package[@id='" + strPackageId + "']")
+                count += child.SelectNodes("descendant::package | descendant::class").Count
+            Else
+                count += node.SelectNodes("descendant::package | descendant::class").Count
+            End If
+
+            observer.Minimum = 0
+            observer.Maximum = count
+            observer.ProgressBarVisible = True
+
+            strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
+
+            If node IsNot Nothing Then
+                If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
+                Then
+                    m_xsltExternalToolStyleSheet = New XslSimpleTransform(True)
+                    m_xsltExternalToolStyleSheet.Load(ExternalTool.Stylesheet)
+                Else
+                    If m_xsltExternalToolStyleSheet Is Nothing Then
+                        m_xsltExternalToolStyleSheet = New XslSimpleTransform(True)
+                        m_xsltExternalToolStyleSheet.Load(ExternalTool.Stylesheet)
+                    End If
+                End If
+                m_xsltExternalToolStyleSheet.Transform(node, strTransformation, argList)
+                observer.Increment(1)
+
+                ExtractCode(bCodeMerge, observer, strTransformation, strPath, _
+                            ELanguage.Language_Tools, ExternalTool.DiffTool, _
+                            ExternalTool.DiffArgument)
+
+                If String.IsNullOrEmpty(ExternalTool.Tool) = False Then
+                    LaunchProcess(ExternalTool.Tool, ExternalTool.ToolArgument)
+                End If
+
                 bResult = True
             End If
 
@@ -277,7 +376,9 @@ Public Class UmlCodeGenerator
     End Function
 
     Private Shared Sub ExtractCode(ByRef bCodeMerge As Boolean, ByVal observer As InterfProgression, _
-                                   ByVal strTransformation As String, ByVal strFolder As String, ByVal eLang As ELanguage)
+                                   ByVal strTransformation As String, ByVal strFolder As String, _
+                                   ByVal eLang As ELanguage, ByVal strExternalMerger As String, _
+                                   ByVal strArguments As String)
         Try
             If eLang <> ELanguage.Language_CplusPlus Then
                 bCodeMerge = True
@@ -293,10 +394,12 @@ Public Class UmlCodeGenerator
                         Case XmlNodeType.Element
                             Select Case reader.Name
                                 Case cstFolderElement
-                                    ExtractPackage(observer, strFolder, reader, eLang, True)
+                                    ExtractPackage(observer, strFolder, reader, eLang, True, _
+                                                   strExternalMerger, strArguments)
 
                                 Case cstFileElement
-                                    ExtractClass(observer, strFolder, reader, eLang, True)
+                                    ExtractClass(observer, strFolder, reader, eLang, True, _
+                                                 strExternalMerger, strArguments)
                                 Case Else
                                     'Debug.Print("Node ignored:=" + reader.Name)
                             End Select
@@ -313,7 +416,8 @@ Public Class UmlCodeGenerator
 
     Private Shared Sub ExtractPackage(ByVal observer As InterfProgression, _
                                       ByVal currentFolder As String, ByVal reader As XmlTextReader, _
-                                      ByVal eLang As ELanguage, Optional ByVal bUseTempFolder As Boolean = False)
+                                      ByVal eLang As ELanguage, ByVal bUseTempFolder As Boolean, _
+                                      ByVal strExternalMerger As String, ByVal strArguments As String)
         Try
             observer.Increment(1)
 
@@ -332,10 +436,12 @@ Public Class UmlCodeGenerator
                     Case XmlNodeType.Element
                         Select Case reader.Name
                             Case cstFolderElement
-                                ExtractPackage(observer, strNewFolder, reader, eLang, bUseTempFolder)
+                                ExtractPackage(observer, strNewFolder, reader, eLang, _
+                                               bUseTempFolder, strExternalMerger, strArguments)
 
                             Case cstFileElement
-                                ExtractClass(observer, strNewFolder, reader, eLang, bUseTempFolder)
+                                ExtractClass(observer, strNewFolder, reader, eLang, _
+                                             bUseTempFolder, strExternalMerger, strArguments)
                             Case Else
                                 'Debug.Print("Node ignored:=" + reader.Name)
                         End Select
@@ -351,7 +457,8 @@ Public Class UmlCodeGenerator
 
     Private Shared Sub ExtractClass(ByVal observer As InterfProgression, _
                                     ByVal currentFolder As String, ByVal reader As XmlTextReader, _
-                                    ByVal eLang As ELanguage, Optional ByVal bUseTempFolder As Boolean = False)
+                                    ByVal eLang As ELanguage, ByVal bUseTempFolder As Boolean, _
+                                    ByVal strExternalMerger As String, ByVal strArguments As String)
         Try
             observer.Increment(1)
 
@@ -400,16 +507,16 @@ Public Class UmlCodeGenerator
                             If My.Settings.VbMergeTool Then
                                 VbCodeMerger.Merge(currentFolder, strNewFile, cstTempExport)
                             Else
-                                CompareAndMergeFiles(strTempFile, strReleaseFile)
+                                CompareAndMergeFiles(strExternalMerger, strArguments, strTempFile, strReleaseFile)
                             End If
                         Else
                             ' No need to merge or backup
                         End If
 
-                    Case ELanguage.Language_CplusPlus
+                    Case ELanguage.Language_Tools
                         If bCodeMerge And bSourceExists Then
                             ' Temporary use an external merger to add/remove code
-                            CompareAndMergeFiles(strTempFile, strReleaseFile)
+                            CompareAndMergeFiles(strExternalMerger, strArguments, strReleaseFile, strReleaseFile)
 
                         ElseIf bSourceExists Then
                             ' No need to merge
@@ -417,7 +524,11 @@ Public Class UmlCodeGenerator
                         End If
 
                     Case Else
-                        If bSourceExists Then
+                        If bCodeMerge And bSourceExists Then
+                            ' Temporary use an external merger to add/remove code
+                            CompareAndMergeFiles(strExternalMerger, strArguments, strReleaseFile, strReleaseFile)
+
+                        ElseIf bSourceExists Then
                             ' No need to merge
                             BackupFile(strTempFile, strReleaseFile)
                         End If
@@ -470,22 +581,38 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub CompareAndMergeFiles(ByVal strTempFile As String, ByVal strReleaseFile As String)
+    Private Shared Sub LaunchProcess(ByVal strProcess As String, ByVal strArguments As String)
         Try
             Dim proc As New Process()
-            If My.Computer.FileSystem.FileExists(My.Settings.DiffTool) = False Then
+            proc.StartInfo.FileName = strProcess
+            proc.StartInfo.Arguments = strArguments
+            proc.StartInfo.CreateNoWindow = False
+            proc.StartInfo.UseShellExecute = True
+            ' Run it.
+            proc.Start()
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
+    Private Shared Sub CompareAndMergeFiles(ByVal strExternalMerger As String, ByVal strArguments As String, _
+                                            ByVal strTempFile As String, ByVal strReleaseFile As String)
+        Try
+            Dim proc As New Process()
+            If My.Computer.FileSystem.FileExists(strExternalMerger) = False Then
                 Dim fen As Form = New dlgDiffTool
                 If fen.ShowDialog() = System.Windows.Forms.DialogResult.Cancel Then
                     MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical, "Compare and merge tool")
                     Exit Sub
                 End If
             End If
-            If My.Computer.FileSystem.FileExists(My.Settings.DiffTool) = False Then
+            If My.Computer.FileSystem.FileExists(strExternalMerger) = False Then
                 MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical, "Compare and merge tool")
                 Exit Sub
             End If
-            proc.StartInfo.FileName = My.Settings.DiffTool
-            proc.StartInfo.Arguments = Chr(34) + strTempFile + Chr(34) + " " + Chr(34) + strReleaseFile + Chr(34)
+            proc.StartInfo.FileName = strExternalMerger
+            proc.StartInfo.Arguments = String.Format(strArguments, Chr(34) + strTempFile + Chr(34), Chr(34) + strReleaseFile + Chr(34))
             ' Run it.
             proc.Start()
 

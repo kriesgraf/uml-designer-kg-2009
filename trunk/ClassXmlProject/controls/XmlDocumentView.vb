@@ -152,7 +152,9 @@ Public Class XmlDocumentView
 
                 Case XmlDocumentViewMode.CodeSource
                     m_strTransformation = My.Computer.FileSystem.CombinePath(strTmpFolder, cstUpdate + ".xml")
-                    argList.Add("UmlFolder", strUmlFolder + sep)
+                    argList.Add("ProjectFolder", "")
+                    argList.Add("ToolsFolder", strUmlFolder)
+                    argList.Add("LanguageFolder", strTmpFolder)
 
                 Case Else
                     m_strTransformation = My.Computer.FileSystem.CombinePath(strTmpFolder, cstUpdate + ".html")

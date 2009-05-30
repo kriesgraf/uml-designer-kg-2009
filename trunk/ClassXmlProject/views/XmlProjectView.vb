@@ -428,28 +428,59 @@ Public Class XmlProjectView
         End Try
     End Sub
 
+    Public Function GenerateExternalTool(ByVal component As XmlComponent, ByVal item As MenuItemCommand.MenuItemNode, ByVal fen As Form, _
+                                            ByRef strTransformation As String) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Select Case component.NodeName
+
+                Case "class"
+                    bResult = UmlCodeGenerator.GenerateExternalTool(fen, component.Node, GetID(component.Node), "", _
+                                                          CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
+                                                          Me.m_xmlProperties.GenerationFolder, _
+                                                          strTransformation, item)
+                Case "package"
+                    bResult = UmlCodeGenerator.GenerateExternalTool(fen, component.Node, "", GetID(component.Node), _
+                                                          CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
+                                                          Me.m_xmlProperties.GenerationFolder, _
+                                                          strTransformation, item)
+                Case "root"
+                    bResult = UmlCodeGenerator.GenerateExternalTool(fen, component.Node, "", "", CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
+                                                          Me.m_xmlProperties.GenerationFolder, strTransformation, item)
+                Case Else
+                    Throw New Exception("Argument " + component.ToString + " is not compatible with code generation")
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
     Public Function GenerateCode(ByVal component As XmlComponent, ByVal fen As Form, _
                                             ByRef strTransformation As String) As Boolean
         Dim bResult As Boolean = False
+        Try
+            Select Case component.NodeName
 
-        Select Case component.NodeName
-
-            Case "class"
-                bResult = UmlCodeGenerator.Generate(fen, component.Node, GetID(component.Node), "", _
-                                                      CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
-                                                      Me.m_xmlProperties.GenerationFolder, _
-                                                      strTransformation)
-            Case "package"
-                bResult = UmlCodeGenerator.Generate(fen, component.Node, "", GetID(component.Node), _
-                                                      CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
-                                                      Me.m_xmlProperties.GenerationFolder, _
-                                                      strTransformation)
-            Case "root"
-                bResult = UmlCodeGenerator.Generate(fen, component.Node, "", "", CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
-                                                      Me.m_xmlProperties.GenerationFolder, strTransformation)
-            Case Else
-                Throw New Exception("Argument " + component.ToString + " is not compatible with code generation")
-        End Select
+                Case "class"
+                    bResult = UmlCodeGenerator.Generate(fen, component.Node, GetID(component.Node), "", _
+                                                          CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
+                                                          Me.m_xmlProperties.GenerationFolder, _
+                                                          strTransformation)
+                Case "package"
+                    bResult = UmlCodeGenerator.Generate(fen, component.Node, "", GetID(component.Node), _
+                                                          CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
+                                                          Me.m_xmlProperties.GenerationFolder, _
+                                                          strTransformation)
+                Case "root"
+                    bResult = UmlCodeGenerator.Generate(fen, component.Node, "", "", CType(Me.m_xmlProperties.GenerationLanguage, ELanguage), _
+                                                          Me.m_xmlProperties.GenerationFolder, strTransformation)
+                Case Else
+                    Throw New Exception("Argument " + component.ToString + " is not compatible with code generation")
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
         Return bResult
     End Function
 

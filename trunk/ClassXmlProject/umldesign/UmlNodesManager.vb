@@ -17,6 +17,7 @@ Public Enum ELanguage
     Language_CplusPlus = 0
     Language_Java = 1
     Language_Vbasic = 2
+    Language_Tools = 3
 End Enum
 
 Public Class UmlNodesManager

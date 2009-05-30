@@ -61,6 +61,27 @@ Public Class frmProject
     Public Sub PrintPage()
         Me.docvwProjectDisplay.ShowPrintDialog()
     End Sub
+
+    Public Sub GenerateExternalTool(ByVal item As MenuItemCommand.MenuItemNode)
+        Try
+            Dim xmlcpnt As XmlComponent = CType(lvwProjectMembers.SelectedItem, XmlComponent)
+
+            If xmlcpnt Is Nothing Then
+                xmlcpnt = lvwProjectMembers.Binding.Parent
+            End If
+
+            If xmlcpnt IsNot Nothing Then
+                Dim strTransformation As String = ""
+
+                If m_xmlProject.GenerateExternalTool(xmlcpnt, item, Me.Mainframe, strTransformation) _
+                Then
+                    Me.docvwProjectDisplay.Display = strTransformation
+                End If
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
 #End Region
 
 #Region "Private methods"
