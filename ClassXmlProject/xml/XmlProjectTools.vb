@@ -24,6 +24,7 @@ Public Class XmlProjectTools
     Public Const cstMsgOkCancelCritical As MsgBoxStyle = CType(MsgBoxStyle.Critical + MsgBoxStyle.OkCancel + MsgBoxStyle.DefaultButton1, MsgBoxStyle)
 
     Public Const cstMaxCircularReferences As Integer = 20
+    Public Const cstExternalToolsFileVersion As String = "1.0"
 
     Private Const cstSchemaName As String = "class-model"
     Private Const cstSchemaVersion As String = "1.3"
@@ -94,6 +95,11 @@ Public Class XmlProjectTools
 #End Region
 
 #Region "Public shared methods"
+
+    Public Shared Function CreateToolsFile() As String
+        Return "<?xml version='1.0' encoding='utf-8'?>" + vbCrLf + _
+               "<root version='" + cstExternalToolsFileVersion + "'/>" + vbCrLf
+    End Function
 
     Public Shared Function CreateNewProject() As String
         Return "<?xml version='1.0' encoding='utf-8'?>" + vbCrLf + _

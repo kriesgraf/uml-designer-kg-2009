@@ -4,6 +4,7 @@ Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.MenuItemCommand
 
 Public Class frmProject
 
@@ -62,7 +63,7 @@ Public Class frmProject
         Me.docvwProjectDisplay.ShowPrintDialog()
     End Sub
 
-    Public Sub GenerateExternalTool(ByVal item As MenuItemCommand.MenuItemNode)
+    Public Sub GenerateExternalTool(ByVal item As MenuItemNode)
         Try
             Dim xmlcpnt As XmlComponent = CType(lvwProjectMembers.SelectedItem, XmlComponent)
 

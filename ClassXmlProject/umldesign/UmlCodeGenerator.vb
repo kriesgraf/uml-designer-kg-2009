@@ -3,8 +3,10 @@ Imports System.Diagnostics
 Imports System.Windows.Forms
 Imports System.Collections.Generic
 Imports System.Xml
+Imports System.ComponentModel
 Imports System.IO
 Imports Microsoft.VisualBasic
+Imports ClassXmlProject.MenuItemCommand
 
 Public Class UmlCodeGenerator
 
@@ -84,7 +86,7 @@ Public Class UmlCodeGenerator
                                                 ByVal strClassId As String, ByVal strPackageId As String, _
                                                 ByVal eLanguage As ELanguage, ByVal strProgramFolder As String, _
                                                 ByRef strTransformation As String, _
-                                                ByVal ExternalCommand As MenuItemCommand.MenuItemNode) As Boolean
+                                                ByVal ExternalCommand As MenuItemNode) As Boolean
 
         Dim bResult As Boolean = False
 
@@ -308,10 +310,10 @@ Public Class UmlCodeGenerator
 
     Private Shared Function GenerateAndLaunchExternalTool(ByVal fen As System.Windows.Forms.Form, _
                                                   ByVal node As XmlNode, ByVal strClassId As String, _
-                                                ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByVal strPackageId As String, ByVal strProgramFolder As String, _
                                                 ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String, _
-                                                ByVal ExternalTool As MenuItemCommand.MenuItemNode) As Boolean
+                                                ByVal ExternalTool As MenuItemNode) As Boolean
         Dim bCodeMerge As Boolean = False
         Dim bResult As Boolean = False
         Dim oldCursor As Cursor = fen.Cursor
@@ -353,12 +355,12 @@ Public Class UmlCodeGenerator
                 m_xsltExternalToolStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
-                ExtractCode(bCodeMerge, observer, strTransformation, strPath, _
+                ExtractCode(bCodeMerge, observer, strTransformation, strProgramFolder, _
                             ELanguage.Language_Tools, ExternalTool.DiffTool, _
-                            ExternalTool.DiffArgument)
+                            ExternalTool.DiffArguments)
 
                 If String.IsNullOrEmpty(ExternalTool.Tool) = False Then
-                    LaunchProcess(ExternalTool.Tool, ExternalTool.ToolArgument)
+                    LaunchProcess(ExternalTool.Tool, ExternalTool.ToolArguments, strProgramFolder)
                 End If
 
                 bResult = True
@@ -581,15 +583,22 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub LaunchProcess(ByVal strProcess As String, ByVal strArguments As String)
+    Private Shared Sub LaunchProcess(ByVal strProcess As String, ByVal strArguments As String, _
+                                     ByVal strProjectFolder As String)
+        Dim proc As New Process()
         Try
-            Dim proc As New Process()
             proc.StartInfo.FileName = strProcess
             proc.StartInfo.Arguments = strArguments
             proc.StartInfo.CreateNoWindow = False
             proc.StartInfo.UseShellExecute = True
+            proc.StartInfo.WorkingDirectory = strProjectFolder
+            proc.StartInfo.ErrorDialog = True
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Normal
+
             ' Run it.
             proc.Start()
+
+        Catch ex1 As Win32Exception
 
         Catch ex As Exception
             Throw ex

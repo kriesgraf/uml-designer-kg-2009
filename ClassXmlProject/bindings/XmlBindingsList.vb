@@ -78,16 +78,20 @@ Public Class XmlBindingsList
 
     Public Sub RemoveBinding(ByVal dataControl As Control, Optional ByVal strProperty As String = "")
         Dim binding As Binding = Nothing
-        If strProperty = "" Then
-            If dataControl.DataBindings.Count > 0 Then
+        If dataControl.DataBindings.Count > 0 Then
+            If strProperty = "" Then
                 binding = dataControl.DataBindings(0)
                 m_BindingManager.Remove(binding)
                 dataControl.DataBindings.Remove(binding)
+            Else
+                For Each binding In dataControl.DataBindings
+                    If binding.BindingMemberInfo.BindingMember = strProperty Then
+                        m_BindingManager.Remove(binding)
+                        dataControl.DataBindings.Remove(binding)
+                        Exit For
+                    End If
+                Next
             End If
-        ElseIf dataControl.DataBindings(strProperty) IsNot Nothing Then
-            binding = dataControl.DataBindings(strProperty)
-            m_BindingManager.Remove(binding)
-            dataControl.DataBindings.Remove(binding)
         End If
     End Sub
 End Class

@@ -3,6 +3,7 @@ Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 Imports Microsoft.Win32
+Imports ClassXmlProject.MenuItemCommand
 
 Public Class MDIParent
     Implements InterfProgression
@@ -206,7 +207,7 @@ Public Class MDIParent
             m_ctrlExternalTools.LoadTools()
 
             While m_ctrlExternalTools.MoveNext()
-                AddHandler m_ctrlExternalTools.AddCommand(m_ctrlExternalTools.Current).Click, AddressOf ExternalTool1_Click
+                AddHandler m_ctrlExternalTools.InsertCommand(m_ctrlExternalTools.Current).Click, AddressOf ExternalTool1_Click
             End While
 
 
@@ -220,7 +221,7 @@ Public Class MDIParent
     ' Handling managed by MenuItemCommand class
     Private Sub ExternalTool1_Click(ByVal sender As ToolStripMenuItem, ByVal e As EventArgs)
         Debug.Print(sender.Tag.ToString)
-        Dim item As MenuItemCommand.MenuItemNode = m_ctrlExternalTools.Find(CInt(sender.Tag))
+        Dim item As MenuItemNode = m_ctrlExternalTools.Find(CInt(sender.Tag))
         If item IsNot Nothing Then
             Dim fen As frmProject = TryCast(Me.ActiveMdiChild, frmProject)
             If fen IsNot Nothing Then
@@ -232,7 +233,14 @@ Public Class MDIParent
     End Sub
 
     Private Sub ExternalTools_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) Handles ExternalTools.Click
-        Debug.Print(sender.Name.ToString)
+        Dim fen As New dlgExternalTools
+
+        fen.Control = m_ctrlExternalTools
+        fen.ShowDialog(Me)
+
+        If CType(fen.Tag, Boolean) = True Then
+            m_ctrlExternalTools.RefreshMenu()
+        End If
     End Sub
 
     Private Sub OpenOneFile(ByVal filename As String)

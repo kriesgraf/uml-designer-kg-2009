@@ -110,6 +110,30 @@ Namespace My
                 Me("VbMergeTool") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("{0} {1}")>  _
+        Public Property DiffToolArguments() As String
+            Get
+                Return CType(Me("DiffToolArguments"),String)
+            End Get
+            Set
+                Me("DiffToolArguments") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property ExternalToolsFolder() As String
+            Get
+                Return CType(Me("ExternalToolsFolder"),String)
+            End Get
+            Set
+                Me("ExternalToolsFolder") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
