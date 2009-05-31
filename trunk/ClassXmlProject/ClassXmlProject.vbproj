@@ -153,6 +153,12 @@
     <Compile Include="dialogs\dlgElement.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="dialogs\dlgExternalTools.Designer.vb">
+      <DependentUpon>dlgExternalTools.vb</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\dlgExternalTools.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="dialogs\dlgImport.designer.vb">
       <DependentUpon>dlgImport.vb</DependentUpon>
     </Compile>
@@ -469,6 +475,10 @@
       <DependentUpon>dlgElement.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\dlgExternalTools.resx">
+      <DependentUpon>dlgExternalTools.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="dialogs\dlgImport.resx">
       <DependentUpon>dlgImport.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -657,6 +667,7 @@
     <Content Include="xslt\LeftD.GIF" />
     <Content Include="xslt\Package.GIF" />
     <Content Include="xslt\package.xsl" />
+    <Content Include="xslt\rhp-xmi2prj.xsl" />
     <Content Include="xslt\Right.GIF" />
     <Content Include="xslt\RightD.GIF" />
     <Content Include="xslt\tag2imp.xsl" />

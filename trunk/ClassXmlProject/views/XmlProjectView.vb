@@ -1,13 +1,15 @@
 ﻿Imports System
-Imports System.Windows.Forms
-Imports ClassXmlProject.UmlCodeGenerator
-Imports ClassXmlProject.UmlNodesManager
-Imports ClassXmlProject.XmlProjectTools
 Imports System.Xml
 Imports System.IO
 Imports System.Text
 Imports System.Xml.Schema
+Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
+
+Imports ClassXmlProject.UmlCodeGenerator
+Imports ClassXmlProject.UmlNodesManager
+Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.MenuItemCommand
 
 Public Class XmlProjectView
 
@@ -428,7 +430,7 @@ Public Class XmlProjectView
         End Try
     End Sub
 
-    Public Function GenerateExternalTool(ByVal component As XmlComponent, ByVal item As MenuItemCommand.MenuItemNode, ByVal fen As Form, _
+    Public Function GenerateExternalTool(ByVal component As XmlComponent, ByVal item As MenuItemNode, ByVal fen As Form, _
                                             ByRef strTransformation As String) As Boolean
         Dim bResult As Boolean = False
         Try
