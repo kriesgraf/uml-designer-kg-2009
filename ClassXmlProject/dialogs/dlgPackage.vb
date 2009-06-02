@@ -182,18 +182,18 @@ Public Class dlgPackage
 
     Private Sub btnFolder_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnFolder.Click
         Try
-            Dim dlg As New FolderBrowserDialog
             Dim absolutePath As String
             If txtFolder.Text = "" Then
                 absolutePath = m_strProjectFolder
             Else
                 absolutePath = My.Computer.FileSystem.CombinePath(m_strProjectFolder, txtFolder.Text)
             End If
-            dlg.Description = "Select the folder where you want to deposit generated code...."
-            dlg.RootFolder = Environment.SpecialFolder.MyDocuments
-            dlg.SelectedPath = absolutePath
-            If dlg.ShowDialog() = DialogResult.OK Then
-                txtFolder.Text = UmlNodesManager.ComputeRelativePath(m_strProjectFolder, dlg.SelectedPath)
+
+            FolderBrowserDialog1.Description = "Select the folder where you want to deposit generated code...."
+            FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop
+            FolderBrowserDialog1.SelectedPath = absolutePath
+            If FolderBrowserDialog1.ShowDialog() = DialogResult.OK Then
+                txtFolder.Text = UmlNodesManager.ComputeRelativePath(m_strProjectFolder, FolderBrowserDialog1.SelectedPath)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)

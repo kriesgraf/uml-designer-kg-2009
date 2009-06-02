@@ -61,9 +61,10 @@ Partial Class dlgPackage
         Me.mnuDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
-        Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
+        Me.gridClasses = New ClassXmlProject.XmlDataGridView
+        Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -72,8 +73,8 @@ Partial Class dlgPackage
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
@@ -257,7 +258,6 @@ Partial Class dlgPackage
         Me.txtFolder.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtFolder.Location = New System.Drawing.Point(65, 3)
         Me.txtFolder.Name = "txtFolder"
-        Me.txtFolder.ReadOnly = True
         Me.txtFolder.Size = New System.Drawing.Size(427, 20)
         Me.txtFolder.TabIndex = 1
         '
@@ -265,7 +265,7 @@ Partial Class dlgPackage
         '
         Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportReferences, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.mnuExportNodes, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
         Me.mnuClass.Name = "mnuClass"
-        Me.mnuClass.Size = New System.Drawing.Size(246, 364)
+        Me.mnuClass.Size = New System.Drawing.Size(246, 342)
         '
         'mnuAdd
         '
@@ -458,6 +458,10 @@ Partial Class dlgPackage
         Me.SplitContainer1.SplitterDistance = 194
         Me.SplitContainer1.TabIndex = 1
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
         'gridClasses
         '
         Me.gridClasses.ColumnDragStart = 0
@@ -469,10 +473,6 @@ Partial Class dlgPackage
         Me.gridClasses.Size = New System.Drawing.Size(720, 272)
         Me.gridClasses.TabIndex = 1
         Me.ToolTip1.SetToolTip(Me.gridClasses, "Click right to update grid")
-        '
-        'errorProvider
-        '
-        Me.errorProvider.ContainerControl = Me
         '
         'dlgPackage
         '
@@ -496,8 +496,8 @@ Partial Class dlgPackage
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.gridClasses, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -545,5 +545,6 @@ Partial Class dlgPackage
     Friend WithEvents strpProgressBar As System.Windows.Forms.ProgressBar
     Friend WithEvents mnuExportReferences As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuExportNodes As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents FolderBrowserDialog1 As System.Windows.Forms.FolderBrowserDialog
 
 End Class

@@ -5,6 +5,7 @@ Imports System.Collections
 Imports System.Xml
 Imports System.Xml.Schema
 Imports System.IO
+Imports System.Text
 Imports System.Text.RegularExpressions
 Imports ClassXmlProject.UmlNodesManager
 Imports Microsoft.VisualBasic
@@ -12,6 +13,18 @@ Imports Microsoft.VisualBasic
 #If _APP_UML = "1" Then
 Imports ClassXmlProject.UmlCodeGenerator
 #End If
+
+Public Class shlwapi
+    <System.Runtime.InteropServices.DllImport("shlwapi.dll", CharSet:=System.Runtime.InteropServices.CharSet.Auto)> _
+    Shared Function PathCompactPath(ByVal hDC As IntPtr, ByVal lpszPath As StringBuilder, ByVal dx As Integer) As Boolean
+    End Function
+End Class
+
+Public Class user32
+    <System.Runtime.InteropServices.DllImport("user32")> _
+    Shared Function GetWindowDC(ByVal hWnd As IntPtr) As IntPtr
+    End Function
+End Class
 
 Public Class XmlProjectTools
 
@@ -95,6 +108,12 @@ Public Class XmlProjectTools
 #End Region
 
 #Region "Public shared methods"
+
+    Public Shared Function CompactPath(ByVal control As Control, ByVal strFullPathFilename As String) As String
+        Dim strTempo As New StringBuilder(strFullPathFilename)
+        shlwapi.PathCompactPath(user32.GetWindowDC(control.Handle), strTempo, control.ClientSize.Width)
+        Return strTempo.ToString
+    End Function
 
     Public Shared Function CreateToolsFile() As String
         Return "<?xml version='1.0' encoding='utf-8'?>" + vbCrLf + _
