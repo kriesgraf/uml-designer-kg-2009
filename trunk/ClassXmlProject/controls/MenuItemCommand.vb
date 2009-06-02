@@ -57,7 +57,14 @@ Public Class MenuItemCommand
             End Set
         End Property
 
-
+        Property XslParams() As String
+            Get
+                Return GetAttribute("params")
+            End Get
+            Set(ByVal value As String)
+                SetAttribute("params", value)
+            End Set
+        End Property
 
         Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
             Try
@@ -65,8 +72,8 @@ Public Class MenuItemCommand
                 ChangeReferences()
                 Me.Name = "Menu item name"
                 Me.Stylesheet = "<Please select a XSL style sheet>"
-                Me.Tool = ""
-                Me.ToolArguments = ""
+                Me.Tool = "C:\WINDOWS\system32\cmd.exe"
+                Me.ToolArguments = "/c dir"
                 Me.DiffTool = My.Settings.DiffTool
                 Me.DiffArguments = My.Settings.DiffToolArguments
 
@@ -87,6 +94,7 @@ Public Class MenuItemCommand
     Private m_xmlDocument As XmlDocument
     Private m_xmlNodeList As ArrayList
     Private m_xmlNodeEnumerator As IEnumerator
+    Private m_lstMenuItems As New ArrayList
 
     Private Const cstExternalToolsFile As String = "ExternalToolsFile.xml"
 
@@ -131,6 +139,7 @@ Public Class MenuItemCommand
         Catch ex As Exception
             Throw ex
         End Try
+        Return True
     End Function
 
     Public Function CreateCommand() As MenuItemNode
@@ -180,7 +189,9 @@ Public Class MenuItemCommand
 
             newItem = New ToolStripMenuItem(element.Name)
             newItem.Tag = element.Tag
+
             m_mnuParent.DropDownItems.Insert(index, newItem)
+            m_lstMenuItems.Add(newItem) ' To remove item later
 
         Catch ex As Exception
             Throw ex
@@ -195,7 +206,7 @@ Public Class MenuItemCommand
         Return Nothing
     End Function
 
-    Public Sub RefreshList(ByVal list As ListBox)
+    Public Sub RefreshList(ByVal list As ListBox, Optional ByVal bSelectLastItem As Boolean = False)
         Try
             list.DataSource = Nothing
             list.Items.Clear()
@@ -206,33 +217,17 @@ Public Class MenuItemCommand
             If m_xmlNodeList.Count > 0 Then
                 list.DisplayMember = "Name"
                 list.DataSource = m_xmlNodeList
+                If bSelectLastItem Then
+                    list.SelectedIndex = list.Items.Count - 1
+                End If
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
-    Private Sub RefreshList()
-        Try
-            If m_xmlNodeList IsNot Nothing Then
-                m_xmlNodeList.Clear()
-            End If
-
-            m_xmlNodeList = New ArrayList
-            m_xmlNodeEnumerator = Nothing
-
-            For Each node As XmlNode In m_xmlDocument.SelectNodes("//menuitem")
-                Dim itemNode As MenuItemNode = New MenuItemNode(node)
-                itemNode.Tag = m_xmlNodeList.Add(itemNode)
-            Next
-            m_xmlNodeEnumerator = m_xmlNodeList.GetEnumerator
-
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
 
     Public Sub RefreshMenu()
+        RemoveMenuItems()
         LoadTools()
     End Sub
 
@@ -256,5 +251,32 @@ Public Class MenuItemCommand
         If m_xmlNodeEnumerator IsNot Nothing Then
             m_xmlNodeEnumerator.Reset()
         End If
+    End Sub
+
+    Private Sub RemoveMenuItems()
+        For Each item As ToolStripMenuItem In m_lstMenuItems
+            m_mnuParent.DropDownItems.Remove(item)
+        Next
+        m_lstMenuItems.Clear()
+    End Sub
+
+    Private Sub RefreshList()
+        Try
+            If m_xmlNodeList IsNot Nothing Then
+                m_xmlNodeList.Clear()
+            End If
+
+            m_xmlNodeList = New ArrayList
+            m_xmlNodeEnumerator = Nothing
+
+            For Each node As XmlNode In m_xmlDocument.SelectNodes("//menuitem")
+                Dim itemNode As MenuItemNode = New MenuItemNode(node)
+                itemNode.Tag = m_xmlNodeList.Add(itemNode)
+            Next
+            m_xmlNodeEnumerator = m_xmlNodeList.GetEnumerator
+
+        Catch ex As Exception
+            Throw ex
+        End Try
     End Sub
 End Class

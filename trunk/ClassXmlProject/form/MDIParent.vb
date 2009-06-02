@@ -210,7 +210,6 @@ Public Class MDIParent
                 AddHandler m_ctrlExternalTools.InsertCommand(m_ctrlExternalTools.Current).Click, AddressOf ExternalTool1_Click
             End While
 
-
         Catch ex As Exception
             MsgExceptionBox(ex)
             Return False
@@ -240,6 +239,10 @@ Public Class MDIParent
 
         If CType(fen.Tag, Boolean) = True Then
             m_ctrlExternalTools.RefreshMenu()
+
+            While m_ctrlExternalTools.MoveNext()
+                AddHandler m_ctrlExternalTools.InsertCommand(m_ctrlExternalTools.Current).Click, AddressOf ExternalTool1_Click
+            End While
         End If
     End Sub
 

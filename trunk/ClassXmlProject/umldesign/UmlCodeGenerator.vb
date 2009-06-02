@@ -2,7 +2,9 @@
 Imports System.Diagnostics
 Imports System.Windows.Forms
 Imports System.Collections.Generic
+Imports System.Collections
 Imports System.Xml
+Imports System.Text.RegularExpressions
 Imports System.ComponentModel
 Imports System.IO
 Imports Microsoft.VisualBasic
@@ -352,15 +354,23 @@ Public Class UmlCodeGenerator
                         m_xsltExternalToolStyleSheet.Load(ExternalTool.Stylesheet)
                     End If
                 End If
+
+                ConvertXslParams(argList, ExternalTool.XslParams)
+
                 m_xsltExternalToolStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
+                Dim strDiffArguments As String = ConvertArguments(ExternalTool.DiffArguments, strProgramFolder)
+                Dim strToolArguments As String = ConvertArguments(ExternalTool.ToolArguments, strProgramFolder)
+
+                Dim lstFileList As New ArrayList
+
                 ExtractCode(bCodeMerge, observer, strTransformation, strProgramFolder, _
                             ELanguage.Language_Tools, ExternalTool.DiffTool, _
-                            ExternalTool.DiffArguments)
+                            strDiffArguments, lstFileList)
 
                 If String.IsNullOrEmpty(ExternalTool.Tool) = False Then
-                    LaunchProcess(ExternalTool.Tool, ExternalTool.ToolArguments, strProgramFolder)
+                    LaunchProcess(ExternalTool.Tool, strToolArguments, strProgramFolder, lstFileList)
                 End If
 
                 bResult = True
@@ -377,10 +387,60 @@ Public Class UmlCodeGenerator
         Return bResult
     End Function
 
+    Private Shared Sub ConvertXslParams(ByVal argList As Dictionary(Of String, String), ByVal strArguments As String)
+        Try
+            Dim regex As New Regex("\-(\w+)\=(\b\w+\b)")
+            If regex.IsMatch(strArguments) _
+            Then
+                Dim m As Match = regex.Match(strArguments)
+                While (m.Success)
+                    Dim param As Group = m.Groups(1)
+                    Dim value As Group = m.Groups(2)
+                    If argList.ContainsKey(param.Value) _
+                    Then
+                        MsgBox("XSL param '" + param.Value + "' already defined or reserved!", MsgBoxStyle.Exclamation, "XSL transformation parameters")
+                    Else
+                        argList.Add(param.Value, value.Value)
+                    End If
+                    m = m.NextMatch()
+                End While
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
+    Private Shared Function ConvertFileListArgs(ByVal FileList As ArrayList, ByVal strArguments As String) As String
+        Dim strResult As String = strArguments
+        Try
+            Dim regex As New Regex("(\{[0-9]\})")
+            If regex.IsMatch(strArguments) Then
+                Dim tempo() As Object = FileList.ToArray()
+                strResult = String.Format(strArguments, tempo)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strResult
+    End Function
+
+    Private Shared Function ConvertArguments(ByVal strArguments As String, ByVal strProgramFolder As String) As String
+        Dim strResult As String = strArguments
+        Try
+            Dim regex As New Regex("(\{\$ProjectFolder\})")
+            If regex.IsMatch(strArguments) Then
+                strResult = regex.Replace(strArguments, Chr(34) + strProgramFolder + Chr(34))
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strResult
+    End Function
+
     Private Shared Sub ExtractCode(ByRef bCodeMerge As Boolean, ByVal observer As InterfProgression, _
                                    ByVal strTransformation As String, ByVal strFolder As String, _
                                    ByVal eLang As ELanguage, ByVal strExternalMerger As String, _
-                                   ByVal strArguments As String)
+                                   ByVal strArguments As String, Optional ByVal lstFileList As ArrayList = Nothing)
         Try
             If eLang <> ELanguage.Language_CplusPlus Then
                 bCodeMerge = True
@@ -397,11 +457,11 @@ Public Class UmlCodeGenerator
                             Select Case reader.Name
                                 Case cstFolderElement
                                     ExtractPackage(observer, strFolder, reader, eLang, True, _
-                                                   strExternalMerger, strArguments)
+                                                   strExternalMerger, strArguments, lstFileList)
 
                                 Case cstFileElement
                                     ExtractClass(observer, strFolder, reader, eLang, True, _
-                                                 strExternalMerger, strArguments)
+                                                 strExternalMerger, strArguments, lstFileList)
                                 Case Else
                                     'Debug.Print("Node ignored:=" + reader.Name)
                             End Select
@@ -419,7 +479,7 @@ Public Class UmlCodeGenerator
     Private Shared Sub ExtractPackage(ByVal observer As InterfProgression, _
                                       ByVal currentFolder As String, ByVal reader As XmlTextReader, _
                                       ByVal eLang As ELanguage, ByVal bUseTempFolder As Boolean, _
-                                      ByVal strExternalMerger As String, ByVal strArguments As String)
+                                      ByVal strExternalMerger As String, ByVal strArguments As String, Optional ByVal lstFileList As ArrayList = Nothing)
         Try
             observer.Increment(1)
 
@@ -460,7 +520,7 @@ Public Class UmlCodeGenerator
     Private Shared Sub ExtractClass(ByVal observer As InterfProgression, _
                                     ByVal currentFolder As String, ByVal reader As XmlTextReader, _
                                     ByVal eLang As ELanguage, ByVal bUseTempFolder As Boolean, _
-                                    ByVal strExternalMerger As String, ByVal strArguments As String)
+                                    ByVal strExternalMerger As String, ByVal strArguments As String, Optional ByVal lstFileList As ArrayList = Nothing)
         Try
             observer.Increment(1)
 
@@ -516,9 +576,9 @@ Public Class UmlCodeGenerator
                         End If
 
                     Case ELanguage.Language_Tools
-                        If bCodeMerge And bSourceExists Then
+                        If bCodeMerge And bSourceExists And strExternalMerger.Length > 0 Then
                             ' Temporary use an external merger to add/remove code
-                            CompareAndMergeFiles(strExternalMerger, strArguments, strReleaseFile, strReleaseFile)
+                            CompareAndMergeFiles(strExternalMerger, strArguments, strTempFile, strReleaseFile)
 
                         ElseIf bSourceExists Then
                             ' No need to merge
@@ -528,7 +588,7 @@ Public Class UmlCodeGenerator
                     Case Else
                         If bCodeMerge And bSourceExists Then
                             ' Temporary use an external merger to add/remove code
-                            CompareAndMergeFiles(strExternalMerger, strArguments, strReleaseFile, strReleaseFile)
+                            CompareAndMergeFiles(strExternalMerger, strArguments, strTempFile, strReleaseFile)
 
                         ElseIf bSourceExists Then
                             ' No need to merge
@@ -536,6 +596,11 @@ Public Class UmlCodeGenerator
                         End If
                 End Select
             End If
+
+            If lstFileList IsNot Nothing Then
+                lstFileList.Add(strReleaseFile)
+            End If
+
         Catch ex As Exception
             Throw ex
         End Try
@@ -584,11 +649,17 @@ Public Class UmlCodeGenerator
     End Sub
 
     Private Shared Sub LaunchProcess(ByVal strProcess As String, ByVal strArguments As String, _
-                                     ByVal strProjectFolder As String)
-        Dim proc As New Process()
+                                     ByVal strProjectFolder As String, ByVal lstFileList As ArrayList)
+
+        Dim tempo As String = strArguments
         Try
+            If lstFileList.Count > 0 Then
+                tempo = ConvertFileListArgs(lstFileList, tempo)
+            End If
+
+            Dim proc As New Process()
             proc.StartInfo.FileName = strProcess
-            proc.StartInfo.Arguments = strArguments
+            proc.StartInfo.Arguments = tempo
             proc.StartInfo.CreateNoWindow = False
             proc.StartInfo.UseShellExecute = True
             proc.StartInfo.WorkingDirectory = strProjectFolder
@@ -601,14 +672,15 @@ Public Class UmlCodeGenerator
         Catch ex1 As Win32Exception
 
         Catch ex As Exception
-            Throw ex
+            Throw New Exception("External tool failed!" + vbCrLf + vbCrLf + "Command: " + strProcess + vbCrLf + "Arguments: " + tempo, ex)
         End Try
     End Sub
 
     Private Shared Sub CompareAndMergeFiles(ByVal strExternalMerger As String, ByVal strArguments As String, _
                                             ByVal strTempFile As String, ByVal strReleaseFile As String)
+
+        Dim tempo As String = strArguments
         Try
-            Dim proc As New Process()
             If My.Computer.FileSystem.FileExists(strExternalMerger) = False Then
                 Dim fen As Form = New dlgDiffTool
                 If fen.ShowDialog() = System.Windows.Forms.DialogResult.Cancel Then
@@ -620,13 +692,23 @@ Public Class UmlCodeGenerator
                 MsgBox("Sorry but you should install WinMerge or an equivalent tool, please!", MsgBoxStyle.Critical, "Compare and merge tool")
                 Exit Sub
             End If
+
+            tempo = String.Format(strArguments, Chr(34) + strTempFile + Chr(34), Chr(34) + strReleaseFile + Chr(34))
+
+            Dim proc As New Process()
             proc.StartInfo.FileName = strExternalMerger
-            proc.StartInfo.Arguments = String.Format(strArguments, Chr(34) + strTempFile + Chr(34), Chr(34) + strReleaseFile + Chr(34))
-            ' Run it.
+            proc.StartInfo.Arguments = tempo
+            proc.StartInfo.ErrorDialog = True
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Normal
+
+            ' Run it and wait end infinite.
             proc.Start()
+            proc.WaitForExit()
+
+        Catch ex1 As Win32Exception
 
         Catch ex As Exception
-            Throw ex
+            Throw New Exception("External merger failed!" + vbCrLf + vbCrLf + "Command: " + strExternalMerger + vbCrLf + "Arguments: " + tempo, ex)
         End Try
     End Sub
 
