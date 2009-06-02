@@ -1,19 +1,56 @@
 ﻿Imports System
+Imports System.Xml
+Imports System.Collections
 Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
 Imports Microsoft.VisualBasic
 
 Public Class dlgSimpleTypes
 
-    Private m_strFilename As String
-    Private m_eLang As ELanguage = ELanguage.Language_CplusPlus
+    Private m_xmlDocument As New XmlDocument
+    Private m_bValide As Boolean = False
     Private m_bContentChanged As Boolean = False
+    Private m_strFilename As String
+    Private m_eLang As ELanguage
 
-    Public WriteOnly Property Filename() As String
-        Set(ByVal value As String)
-            m_strFilename = value
-        End Set
-    End Property
+    Private Class XmlSimpleType
+        Inherits XmlComponent
+
+        Public Property Prefix() As String
+            Get
+                Return GetAttribute("prefix")
+            End Get
+            Set(ByVal value As String)
+                SetAttribute("prefix", value)
+            End Set
+        End Property
+
+        Public Property Implementation() As String
+            Get
+                Return GetAttribute("implementation")
+            End Get
+            Set(ByVal value As String)
+                SetAttribute("implementation", value)
+            End Set
+        End Property
+
+        Public Property Import() As String
+            Get
+                Return GetAttribute("import")
+            End Get
+            Set(ByVal value As String)
+                If value = "" Then
+                    RemoveAttribute("import")
+                Else
+                    AddAttribute("import", value)
+                End If
+            End Set
+        End Property
+
+        Public Sub New(Optional ByVal node As XmlNode = Nothing)
+            MyBase.New(node)
+        End Sub
+    End Class
 
     Public WriteOnly Property CodeLanguage() As ELanguage
         Set(ByVal value As ELanguage)
@@ -21,13 +58,24 @@ Public Class dlgSimpleTypes
         End Set
     End Property
 
-    Private Sub dlgSimpleTypes_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
-        If m_bContentChanged Then
-            If MsgBox("Do you want to save change?", cstMsgYesNoQuestion, "Language simple types") = MsgBoxResult.Yes Then
-                dtsSimpleTypesList.WriteXml(m_strFilename)
-            End If
-        End If
+    Public WriteOnly Property Filename() As String
+        Set(ByVal value As String)
+            m_strFilename = value
+        End Set
+    End Property
 
+    Private Sub dlgSimpleTypes_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
+        Try
+            Dim filename As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath, m_strFilename)
+
+            If m_bValide And m_bContentChanged Then
+                If MsgBox("Do you want to save change?", cstMsgYesNoQuestion, "Language prefix names") = MsgBoxResult.Yes Then
+                    m_xmlDocument.Save(filename)
+                End If
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub dlgSimpleTypes_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
@@ -36,10 +84,18 @@ Public Class dlgSimpleTypes
 
     Private Sub dlgSimpleTypes_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
-            Me.Text = "Update simple types (" + XmlProjectTools.GetLanguage(m_eLang) + ")"
-            dtsSimpleTypesList.ReadXml(m_strFilename)
+            Me.Text = "Update simple types (" + GetLanguage(m_eLang) + ")"
+            Dim filename As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath, m_strFilename)
 
-            Dim col As DataGridViewTextBoxColumn
+            m_xmlDocument.Load(filename)
+
+            Dim MyList As New ArrayList
+
+            For Each node As XmlNode In m_xmlDocument.SelectNodes("//root/*")
+                MyList.Add(New XmlSimpleType(node))
+            Next
+
+            '            Dim col As DataGridViewTextBoxColumn
 
             With grdSimpleTypeList
                 .AutoGenerateColumns = False
@@ -47,11 +103,11 @@ Public Class dlgSimpleTypes
                 .AllowUserToDeleteRows = False
                 .AllowUserToOrderColumns = False
 
-                col = New DataGridViewTextBoxColumn
+                Dim col As DataGridViewTextBoxColumn = New DataGridViewTextBoxColumn
                 With col
                     .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                     .ReadOnly = False
-                    .DataPropertyName = "name"
+                    .DataPropertyName = "Name"
                     .HeaderText = "Name"
                     .Name = "ControlName_Name"
                 End With
@@ -61,7 +117,7 @@ Public Class dlgSimpleTypes
                 With col
                     .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                     .ReadOnly = False
-                    .DataPropertyName = "prefix"
+                    .DataPropertyName = "Prefix"
                     .HeaderText = "Prefix"
                     .Name = "ControlName_Prefix"
                 End With
@@ -71,7 +127,7 @@ Public Class dlgSimpleTypes
                 With col
                     .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                     .ReadOnly = False
-                    .DataPropertyName = "implementation"
+                    .DataPropertyName = "Implementation"
                     .HeaderText = "Implementation"
                     .Name = "ControlName_Implementation"
                 End With
@@ -81,32 +137,20 @@ Public Class dlgSimpleTypes
                 With col
                     .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                     .ReadOnly = False
-                    .DataPropertyName = "import"
+                    .DataPropertyName = "Import"
                     .HeaderText = "Import"
-                    .Name = "C"
+                    .Name = "ControlName_Import"
                 End With
                 .Columns.Add(col)
 
-                .DataSource = dtsSimpleTypesList.Tables("type")
+                .DataSource = MyList
             End With
+            m_bValide = True
+
         Catch ex As Exception
             MsgExceptionBox(ex)
+            Me.DialogResult = Windows.Forms.DialogResult.Cancel
         End Try
-    End Sub
-
-    Private Sub AddToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddToolStripMenuItem.Click
-        dtsSimpleTypesList.Tables("type").Rows().Add(New String() {"name1", "tt1", "type1"})
-    End Sub
-
-    Private Sub DeleteToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteToolStripMenuItem.Click
-        If grdSimpleTypeList.SelectedRows.Count > 0 Then
-            Dim row As DataGridViewRow = grdSimpleTypeList.SelectedRows(0)
-            If MsgBox("Please confirm delete '" + row.Cells(0).Value.ToString + "'", cstMsgYesNoQuestion, "'Delete' command") _
-                     = MsgBoxResult.Yes _
-            Then
-                grdSimpleTypeList.Rows.Remove(row)
-            End If
-        End If
     End Sub
 
     Private Sub grdSimpleTypeList_CellValueChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles grdSimpleTypeList.CellValueChanged
