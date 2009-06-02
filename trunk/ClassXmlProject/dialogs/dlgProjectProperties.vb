@@ -63,29 +63,13 @@ Public Class dlgProjectProperties
     End Sub
 
     Private Sub btnPath_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnPath.Click
+        FolderBrowserDialog1.Description = "Select the project root folder..."
+        FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop
         FolderBrowserDialog1.SelectedPath = fileListBox.Path
         If FolderBrowserDialog1.ShowDialog() = Windows.Forms.DialogResult.OK Then
             txtPath.Text = FolderBrowserDialog1.SelectedPath
         End If
     End Sub
-
-    Public Class shlwapi
-        <System.Runtime.InteropServices.DllImport("shlwapi.dll", CharSet:=System.Runtime.InteropServices.CharSet.Auto)> _
-        Shared Function PathCompactPath(ByVal hDC As IntPtr, ByVal lpszPath As StringBuilder, ByVal dx As Integer) As Boolean
-        End Function
-    End Class
-
-    Public Class user32
-        <System.Runtime.InteropServices.DllImport("user32")> _
-        Shared Function GetWindowDC(ByVal hWnd As IntPtr) As IntPtr
-        End Function
-    End Class
-
-    Private Function CompactPath(ByVal control As Control, ByVal strFullPathFilename As String) As String
-        Dim strTempo As New StringBuilder(strFullPathFilename)
-        shlwapi.PathCompactPath(user32.GetWindowDC(control.Handle), strTempo, control.ClientSize.Width)
-        Return strTempo.ToString
-    End Function
 
     Private Sub txtPath_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtPath.TextChanged
         Try
@@ -93,7 +77,7 @@ Public Class dlgProjectProperties
                 txtPath.Text = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             End If
             fileListBox.Path = txtPath.Text
-            lblPath.Text = CompactPath(lblPath, txtPath.Text)
+
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try

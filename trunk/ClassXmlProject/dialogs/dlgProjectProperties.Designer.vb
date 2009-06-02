@@ -27,6 +27,7 @@ Partial Class dlgProjectProperties
         Me.OK_Button = New System.Windows.Forms.Button
         Me.Cancel_Button = New System.Windows.Forms.Button
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
+        Me.txtPath = New System.Windows.Forms.TextBox
         Me.Label1 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
         Me.cmbLanguage = New System.Windows.Forms.ComboBox
@@ -36,11 +37,9 @@ Partial Class dlgProjectProperties
         Me.fileListBox = New Microsoft.VisualBasic.Compatibility.VB6.FileListBox
         Me.Label6 = New System.Windows.Forms.Label
         Me.txtBrief = New System.Windows.Forms.TextBox
-        Me.lblPath = New System.Windows.Forms.Label
         Me.Label4 = New System.Windows.Forms.Label
         Me.btnPath = New System.Windows.Forms.Button
         Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog
-        Me.txtPath = New System.Windows.Forms.TextBox
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
@@ -89,6 +88,7 @@ Partial Class dlgProjectProperties
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90.0!))
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.TableLayoutPanel2.Controls.Add(Me.txtPath, 1, 4)
         Me.TableLayoutPanel2.Controls.Add(Me.Label1, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.Label2, 0, 1)
         Me.TableLayoutPanel2.Controls.Add(Me.cmbLanguage, 1, 1)
@@ -98,7 +98,6 @@ Partial Class dlgProjectProperties
         Me.TableLayoutPanel2.Controls.Add(Me.fileListBox, 1, 5)
         Me.TableLayoutPanel2.Controls.Add(Me.Label6, 0, 5)
         Me.TableLayoutPanel2.Controls.Add(Me.txtBrief, 1, 2)
-        Me.TableLayoutPanel2.Controls.Add(Me.lblPath, 1, 4)
         Me.TableLayoutPanel2.Controls.Add(Me.Label4, 0, 2)
         Me.TableLayoutPanel2.Controls.Add(Me.btnPath, 0, 4)
         Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top
@@ -113,6 +112,15 @@ Partial Class dlgProjectProperties
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 156.0!))
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(443, 338)
         Me.TableLayoutPanel2.TabIndex = 1
+        '
+        'txtPath
+        '
+        Me.txtPath.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtPath.Location = New System.Drawing.Point(93, 152)
+        Me.txtPath.Margin = New System.Windows.Forms.Padding(3, 12, 3, 3)
+        Me.txtPath.Name = "txtPath"
+        Me.txtPath.Size = New System.Drawing.Size(347, 20)
+        Me.txtPath.TabIndex = 2
         '
         'Label1
         '
@@ -204,17 +212,6 @@ Partial Class dlgProjectProperties
         Me.txtBrief.Size = New System.Drawing.Size(347, 20)
         Me.txtBrief.TabIndex = 8
         '
-        'lblPath
-        '
-        Me.lblPath.AutoSize = True
-        Me.lblPath.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblPath.Location = New System.Drawing.Point(93, 140)
-        Me.lblPath.Name = "lblPath"
-        Me.lblPath.Size = New System.Drawing.Size(347, 42)
-        Me.lblPath.TabIndex = 15
-        Me.lblPath.Text = "<-- Please click on this button "
-        Me.lblPath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        '
         'Label4
         '
         Me.Label4.AutoSize = True
@@ -229,21 +226,13 @@ Partial Class dlgProjectProperties
         'btnPath
         '
         Me.btnPath.CausesValidation = False
-        Me.btnPath.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.btnPath.Dock = System.Windows.Forms.DockStyle.Left
         Me.btnPath.Location = New System.Drawing.Point(3, 143)
         Me.btnPath.Name = "btnPath"
         Me.btnPath.Size = New System.Drawing.Size(84, 36)
         Me.btnPath.TabIndex = 14
         Me.btnPath.Text = "Sources location"
         Me.btnPath.UseVisualStyleBackColor = True
-        '
-        'txtPath
-        '
-        Me.txtPath.Location = New System.Drawing.Point(220, 353)
-        Me.txtPath.Name = "txtPath"
-        Me.txtPath.Size = New System.Drawing.Size(181, 20)
-        Me.txtPath.TabIndex = 2
-        Me.txtPath.Visible = False
         '
         'errorProvider
         '
@@ -256,7 +245,6 @@ Partial Class dlgProjectProperties
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel_Button
         Me.ClientSize = New System.Drawing.Size(443, 388)
-        Me.Controls.Add(Me.txtPath)
         Me.Controls.Add(Me.TableLayoutPanel2)
         Me.Controls.Add(Me.TableLayoutPanel1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
@@ -271,7 +259,6 @@ Partial Class dlgProjectProperties
         Me.TableLayoutPanel2.PerformLayout()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
     Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
@@ -290,7 +277,6 @@ Partial Class dlgProjectProperties
     Friend WithEvents Label6 As System.Windows.Forms.Label
     Friend WithEvents btnPath As System.Windows.Forms.Button
     Friend WithEvents FolderBrowserDialog1 As System.Windows.Forms.FolderBrowserDialog
-    Friend WithEvents lblPath As System.Windows.Forms.Label
     Friend WithEvents txtPath As System.Windows.Forms.TextBox
     Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
