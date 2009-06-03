@@ -8,6 +8,7 @@ Public Class MenuItemCommand
     Implements IEnumerator
 
     Public Const cstElement As String = "menuitem"
+    Public Const cstProjectFolder As String = "{$ProjectFolder}"
 
     Public Class MenuItemNode
         Inherits XmlComponent
@@ -71,9 +72,9 @@ Public Class MenuItemCommand
                 m_bCreateNodeNow = bCreateNodeNow
                 ChangeReferences()
                 Me.Name = "Menu item name"
-                Me.Stylesheet = "<Please select a XSL style sheet>"
+                Me.Stylesheet = "<Left button to create/edit one, right to find it>"
                 Me.Tool = "C:\WINDOWS\system32\cmd.exe"
-                Me.ToolArguments = "/c dir"
+                Me.ToolArguments = "/k dir " + cstProjectFolder
                 Me.DiffTool = My.Settings.DiffTool
                 Me.DiffArguments = My.Settings.DiffToolArguments
 

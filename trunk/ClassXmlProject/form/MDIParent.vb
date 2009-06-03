@@ -233,17 +233,21 @@ Public Class MDIParent
 
     Private Sub ExternalTools_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) Handles ExternalTools.Click
         Dim fen As New dlgExternalTools
+        Try
 
-        fen.Control = m_ctrlExternalTools
-        fen.ShowDialog(Me)
+            fen.Control = m_ctrlExternalTools
+            fen.ShowDialog(Me)
 
-        If CType(fen.Tag, Boolean) = True Then
-            m_ctrlExternalTools.RefreshMenu()
+            If CType(fen.Tag, Boolean) = True Then
+                m_ctrlExternalTools.RefreshMenu()
 
-            While m_ctrlExternalTools.MoveNext()
-                AddHandler m_ctrlExternalTools.InsertCommand(m_ctrlExternalTools.Current).Click, AddressOf ExternalTool1_Click
-            End While
-        End If
+                While m_ctrlExternalTools.MoveNext()
+                    AddHandler m_ctrlExternalTools.InsertCommand(m_ctrlExternalTools.Current).Click, AddressOf ExternalTool1_Click
+                End While
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub OpenOneFile(ByVal filename As String)

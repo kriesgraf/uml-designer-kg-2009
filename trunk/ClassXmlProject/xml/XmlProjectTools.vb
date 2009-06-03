@@ -38,6 +38,7 @@ Public Class XmlProjectTools
 
     Public Const cstMaxCircularReferences As Integer = 20
     Public Const cstExternalToolsFileVersion As String = "1.0"
+    Public Const cstXslTemplate As String = "uml2template.xsl"
 
     Private Const cstSchemaName As String = "class-model"
     Private Const cstSchemaVersion As String = "1.3"

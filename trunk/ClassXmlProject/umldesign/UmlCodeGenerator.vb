@@ -390,7 +390,9 @@ Public Class UmlCodeGenerator
     Private Shared Sub ConvertXslParams(ByVal argList As Dictionary(Of String, String), ByVal strArguments As String)
         Try
             Dim regex As New Regex("\-(\w+)\=(\b\w+\b)")
-            If regex.IsMatch(strArguments) _
+            If String.IsNullOrEmpty(strArguments) Then
+                Return
+            ElseIf regex.IsMatch(strArguments) _
             Then
                 Dim m As Match = regex.Match(strArguments)
                 While (m.Success)
@@ -414,7 +416,9 @@ Public Class UmlCodeGenerator
         Dim strResult As String = strArguments
         Try
             Dim regex As New Regex("(\{[0-9]\})")
-            If regex.IsMatch(strArguments) Then
+            If String.IsNullOrEmpty(strArguments) Then
+                Return ""
+            ElseIf regex.IsMatch(strArguments) Then
                 Dim tempo() As Object = FileList.ToArray()
                 strResult = String.Format(strArguments, tempo)
             End If
@@ -428,7 +432,9 @@ Public Class UmlCodeGenerator
         Dim strResult As String = strArguments
         Try
             Dim regex As New Regex("(\{\$ProjectFolder\})")
-            If regex.IsMatch(strArguments) Then
+            If String.IsNullOrEmpty(strArguments) Then
+                Return ""
+            ElseIf regex.IsMatch(strArguments) Then
                 strResult = regex.Replace(strArguments, Chr(34) + strProgramFolder + Chr(34))
             End If
         Catch ex As Exception

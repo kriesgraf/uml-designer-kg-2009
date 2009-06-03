@@ -35,16 +35,23 @@ InputPackage  :=<xsl:value-of select="$InputPackage"/>
       </xsl:attribute>
       <xsl:choose>
         <xsl:when test="$InputClass!=''">
-          <!--xsl:comment>InputClass=<xsl:value-of select="$InputClass"/></xsl:comment-->
           <xsl:apply-templates select="//root/package[descendant::class[@id=$InputClass]]" mode="Code"/>
           <xsl:apply-templates select="//root/class[@id=$InputClass]" mode="Code"/>
         </xsl:when>
         <xsl:when test="$InputPackage!=''">
-          <!--xsl:comment>InputPackage=<xsl:value-of select="$InputPackage"/></xsl:comment-->
           <xsl:apply-templates select="//root/package[@id=$InputPackage or descendant::package[@id=$InputPackage]]" mode="Code"/>
         </xsl:when>
         <xsl:otherwise>
-          <!--xsl:comment>Otherwise</xsl:comment-->
+          <!-- The element "code" declare a code source file to generate. 
+               This file could contains programming language to compile, or a DOS script to execute  -->
+          <xsl:element name="code">
+            <!-- Attribute Merge (mandatory): no (generate .bak file),  yes (call Diff and merge tool of your choice) -->
+            <xsl:attribute name="Merge">no</xsl:attribute>
+            <!-- Attribute name (mandatory):  a filename of your choice, a "Makefile" for example: {@name}.mak 
+                 File is generated in the folder you have declared in your project properties. -->
+            <xsl:attribute name="name"><xsl:value-of select="@name"/>.mak</xsl:attribute>
+            This is a template. Please implement your own code here for your "root" node if necessary.
+          </xsl:element>
           <xsl:apply-templates select="class" mode="Code"/>
           <xsl:apply-templates select="package" mode="Code"/>
         </xsl:otherwise>
@@ -60,21 +67,36 @@ InputPackage  :=<xsl:value-of select="$InputPackage"/>
       </xsl:if>
     </xsl:variable>
     <xsl:element name="package">
-      <xsl:copy-of select="@name | @id"/>
+      <!-- Attribute name (mandatory):  a package folder of your choice, example: {$PackageName}
+           Each class object declared inside this one is generated in this folder
+      -->
+      <xsl:attribute name="name"><xsl:value-of select="$PackageName"/></xsl:attribute>
       <xsl:choose>
         <xsl:when test="$InputClass!=''">
           <xsl:apply-templates select="package[descendant::class[@id=$InputClass]]" mode="Code"/>
           <xsl:apply-templates select="class[@id=$InputClass]" mode="Code"/>
         </xsl:when>
-        <xsl:when test="$InputPackage!=''">
-          <xsl:if test="@id=$InputPackage">
-            <xsl:apply-templates select="class" mode="Code"/>
-          </xsl:if>
-          <xsl:apply-templates select="package[@id=$InputPackage or descendant::package[@id=$InputPackage]]" mode="Code"/>
-        </xsl:when>
         <xsl:otherwise>
-          <xsl:apply-templates select="class" mode="Code"/>
-          <xsl:apply-templates select="package" mode="Code"/>
+          <xsl:element name="code">
+            <!-- Attribute Merge (mandatory): no (generate .bak file),  yes (call Diff and merge tool of your choice) -->
+            <xsl:attribute name="Merge">no</xsl:attribute>
+            <!-- Attribute name (mandatory):  a file that contains main declaration for while classes inside package.
+                 Example: {$PackageName}.h -->
+            <xsl:attribute name="name"><xsl:value-of select="$PackageName"/>.h</xsl:attribute>
+            This is a template. Please implement your own code here for your "package" nodes if necessary.
+          </xsl:element>
+          <xsl:choose>
+            <xsl:when test="@id=$InputPackage">
+              <xsl:apply-templates select="class" mode="Code"/>
+            </xsl:when>
+            <xsl:when test="$InputPackage!=''">
+              <xsl:apply-templates select="package[@id=$InputPackage or descendant::package[@id=$InputPackage]]" mode="Code"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:apply-templates select="class" mode="Code"/>
+              <xsl:apply-templates select="package" mode="Code"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:element>
@@ -82,10 +104,14 @@ InputPackage  :=<xsl:value-of select="$InputPackage"/>
 <!-- ======================================================================= -->
   <xsl:template match="class" mode="Code">
     <xsl:element name="code">
-      <!-- Possible "Merge" value: no, yes (To preserve your previous generated code) -->
+      <!-- Attribute Merge (mandatory): no (generate .bak file),  yes (call Diff and merge tool of your choice) -->
       <xsl:attribute name="Merge">no</xsl:attribute>
+      <!-- Attribute name (mandatory):  a filename of your choice, example: {@name}.tmp 
+           File is generated in the folder you have declared in your project properties + the package folder
+           when class is declared inside this one.
+      -->
       <xsl:attribute name="name"><xsl:value-of select="@name"/>.tmp</xsl:attribute>
-      This is a template. Please implement your own code here
+      This is a template. Please implement your own code here for your "class" nodes if necessary.
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
