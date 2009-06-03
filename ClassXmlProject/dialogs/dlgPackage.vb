@@ -193,7 +193,7 @@ Public Class dlgPackage
             FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop
             FolderBrowserDialog1.SelectedPath = absolutePath
             If FolderBrowserDialog1.ShowDialog() = DialogResult.OK Then
-                txtFolder.Text = UmlNodesManager.ComputeRelativePath(m_strProjectFolder, FolderBrowserDialog1.SelectedPath)
+                txtFolder.Text = FolderBrowserDialog1.SelectedPath
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -268,4 +268,15 @@ Public Class dlgPackage
         End Try
     End Sub
 #End Region
+
+    Private Sub txtFolder_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtFolder.TextChanged
+        Try
+            txtFolder.Enabled = False
+            txtFolder.Text = UmlNodesManager.ComputeRelativePath(m_strProjectFolder, txtFolder.Text)
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        Finally
+            txtFolder.Enabled = True
+        End Try
+    End Sub
 End Class
