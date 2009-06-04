@@ -25,7 +25,6 @@ Public Class UmlCodeGenerator
     Private Shared m_xsltCppSourceHeaderStyleSheet As XslSimpleTransform = Nothing
     Private Shared m_xsltVbClassModuleStyleSheet As XslSimpleTransform = Nothing
     Private Shared m_xsltJavaModuleStyleSheet As XslSimpleTransform = Nothing
-    Private Shared m_xsltExternalToolStyleSheet As XslSimpleTransform = Nothing
 
     Private Shared m_bTransformActive As Boolean = False
     Private Shared m_strSeparator As String = Path.DirectorySeparatorChar.ToString
@@ -124,7 +123,6 @@ Public Class UmlCodeGenerator
                                                 ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String) As Boolean
         Dim bResult As Boolean = False
-        Dim bCodeMerge As Boolean = False
         Dim oldCursor As Cursor = fen.Cursor
         Dim observer As InterfProgression = CType(fen, InterfProgression)
 
@@ -166,8 +164,9 @@ Public Class UmlCodeGenerator
                 End If
                 m_xsltCppSourceHeaderStyleSheet.Transform(node, strTransformation, argList)
 
-                ExtractCode(bCodeMerge, observer, strTransformation, strPath, _
-                            ELanguage.Language_CplusPlus, My.Settings.DiffTool, "{0} {1}")
+                Dim lstFileList As New ArrayList
+                ExtractCode(observer, strTransformation, strPath, ELanguage.Language_CplusPlus, lstFileList)
+                MergeCode(ELanguage.Language_CplusPlus, My.Settings.DiffTool, My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
 
@@ -230,8 +229,10 @@ Public Class UmlCodeGenerator
                 m_xsltVbClassModuleStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
-                ExtractCode(bCodeMerge, observer, strTransformation, strPath, _
-                            ELanguage.Language_Vbasic, My.Settings.DiffTool, "{0} {1}")
+
+                Dim lstFileList As New ArrayList
+                ExtractCode(observer, strTransformation, strPath, ELanguage.Language_Vbasic, lstFileList)
+                MergeCode(ELanguage.Language_Vbasic, My.Settings.DiffTool, My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
 
@@ -294,8 +295,9 @@ Public Class UmlCodeGenerator
                 m_xsltJavaModuleStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
-                ExtractCode(bCodeMerge, observer, strTransformation, strPath, _
-                            ELanguage.Language_Java, My.Settings.DiffTool, "{0} {1}")
+                Dim lstFileList As New ArrayList
+                ExtractCode(observer, strTransformation, strPath, ELanguage.Language_Java, lstFileList)
+                MergeCode(ELanguage.Language_Java, My.Settings.DiffTool, My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
 
@@ -316,7 +318,6 @@ Public Class UmlCodeGenerator
                                                 ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String, _
                                                 ByVal ExternalTool As MenuItemNode) As Boolean
-        Dim bCodeMerge As Boolean = False
         Dim bResult As Boolean = False
         Dim oldCursor As Cursor = fen.Cursor
         Dim observer As InterfProgression = CType(fen, InterfProgression)
@@ -344,30 +345,20 @@ Public Class UmlCodeGenerator
             strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
 
             If node IsNot Nothing Then
-                If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
-                Then
-                    m_xsltExternalToolStyleSheet = New XslSimpleTransform(True)
-                    m_xsltExternalToolStyleSheet.Load(ExternalTool.Stylesheet)
-                Else
-                    If m_xsltExternalToolStyleSheet Is Nothing Then
-                        m_xsltExternalToolStyleSheet = New XslSimpleTransform(True)
-                        m_xsltExternalToolStyleSheet.Load(ExternalTool.Stylesheet)
-                    End If
-                End If
+                Dim xsltExternalToolStyleSheet As XslSimpleTransform = New XslSimpleTransform(True)
+                xsltExternalToolStyleSheet.Load(ExternalTool.Stylesheet)
 
                 ConvertXslParams(argList, ExternalTool.XslParams)
 
-                m_xsltExternalToolStyleSheet.Transform(node, strTransformation, argList)
+                xsltExternalToolStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
                 Dim strDiffArguments As String = ConvertArguments(ExternalTool.DiffArguments, strProgramFolder)
                 Dim strToolArguments As String = ConvertArguments(ExternalTool.ToolArguments, strProgramFolder)
 
                 Dim lstFileList As New ArrayList
-
-                ExtractCode(bCodeMerge, observer, strTransformation, strProgramFolder, _
-                            ELanguage.Language_Tools, ExternalTool.DiffTool, _
-                            strDiffArguments, lstFileList)
+                ExtractCode(observer, strTransformation, strProgramFolder, ELanguage.Language_Tools, lstFileList)
+                MergeCode(ELanguage.Language_Tools, ExternalTool.DiffTool, strDiffArguments, lstFileList)
 
                 If String.IsNullOrEmpty(ExternalTool.Tool) = False Then
                     LaunchProcess(ExternalTool.Tool, strToolArguments, strProgramFolder, lstFileList)
@@ -443,14 +434,10 @@ Public Class UmlCodeGenerator
         Return strResult
     End Function
 
-    Private Shared Sub ExtractCode(ByRef bCodeMerge As Boolean, ByVal observer As InterfProgression, _
+    Private Shared Sub ExtractCode(ByVal observer As InterfProgression, _
                                    ByVal strTransformation As String, ByVal strFolder As String, _
-                                   ByVal eLang As ELanguage, ByVal strExternalMerger As String, _
-                                   ByVal strArguments As String, Optional ByVal lstFileList As ArrayList = Nothing)
+                                   ByVal eLang As ELanguage, ByVal lstFileList As ArrayList)
         Try
-            If eLang <> ELanguage.Language_CplusPlus Then
-                bCodeMerge = True
-            End If
             ' Load the reader with the data file and ignore all white space nodes.         
             Using reader As XmlTextReader = New XmlTextReader(strTransformation)
 
@@ -462,12 +449,10 @@ Public Class UmlCodeGenerator
                         Case XmlNodeType.Element
                             Select Case reader.Name
                                 Case cstFolderElement
-                                    ExtractPackage(observer, strFolder, reader, eLang, True, _
-                                                   strExternalMerger, strArguments, lstFileList)
+                                    ExtractPackageFolder(observer, strFolder, reader, eLang, lstFileList)
 
                                 Case cstFileElement
-                                    ExtractClass(observer, strFolder, reader, eLang, True, _
-                                                 strExternalMerger, strArguments, lstFileList)
+                                    ExtractFileNode(observer, strFolder, reader, eLang, lstFileList)
                                 Case Else
                                     'Debug.Print("Node ignored:=" + reader.Name)
                             End Select
@@ -482,10 +467,9 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub ExtractPackage(ByVal observer As InterfProgression, _
+    Private Shared Sub ExtractPackageFolder(ByVal observer As InterfProgression, _
                                       ByVal currentFolder As String, ByVal reader As XmlTextReader, _
-                                      ByVal eLang As ELanguage, ByVal bUseTempFolder As Boolean, _
-                                      ByVal strExternalMerger As String, ByVal strArguments As String, Optional ByVal lstFileList As ArrayList = Nothing)
+                                      ByVal eLang As ELanguage, ByVal lstFileList As ArrayList)
         Try
             observer.Increment(1)
 
@@ -504,12 +488,11 @@ Public Class UmlCodeGenerator
                     Case XmlNodeType.Element
                         Select Case reader.Name
                             Case cstFolderElement
-                                ExtractPackage(observer, strNewFolder, reader, eLang, _
-                                               bUseTempFolder, strExternalMerger, strArguments)
+                                ExtractPackageFolder(observer, strNewFolder, reader, eLang, lstFileList)
 
                             Case cstFileElement
-                                ExtractClass(observer, strNewFolder, reader, eLang, _
-                                             bUseTempFolder, strExternalMerger, strArguments)
+                                ExtractFileNode(observer, strNewFolder, reader, eLang, lstFileList)
+
                             Case Else
                                 'Debug.Print("Node ignored:=" + reader.Name)
                         End Select
@@ -523,18 +506,25 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub ExtractClass(ByVal observer As InterfProgression, _
+    Private Structure FileInfo
+        Dim strTempFile As String
+        Dim strReleaseFile As String
+        Dim bCodeMerge As Boolean
+        Dim bSourceExists As Boolean
+    End Structure
+
+    Private Shared Sub ExtractFileNode(ByVal observer As InterfProgression, _
                                     ByVal currentFolder As String, ByVal reader As XmlTextReader, _
-                                    ByVal eLang As ELanguage, ByVal bUseTempFolder As Boolean, _
-                                    ByVal strExternalMerger As String, ByVal strArguments As String, Optional ByVal lstFileList As ArrayList = Nothing)
+                                    ByVal eLang As ELanguage, ByVal lstFileList As ArrayList)
         Try
             observer.Increment(1)
 
             reader.MoveToFirstAttribute()
             Dim bCodeMerge As Boolean = False
 
+            Dim fileInfo As New FileInfo
             If reader.Name <> "name" Then
-                bCodeMerge = (reader.Value = "yes")
+                fileInfo.bCodeMerge = (reader.Value = "yes")
                 reader.MoveToNextAttribute()
             End If
 
@@ -542,15 +532,15 @@ Public Class UmlCodeGenerator
             reader.MoveToElement()
 
             'Debug.Print("ExtractClass:=" + currentFolder + strNewFile)
-            Dim strTempFile As String = My.Computer.FileSystem.CombinePath(currentFolder, strNewFile)
-            Dim strReleaseFile As String = strTempFile
-            Dim bSourceExists As Boolean = My.Computer.FileSystem.FileExists(strReleaseFile)
+            FileInfo.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, strNewFile)
+            fileInfo.strReleaseFile = fileInfo.strTempFile
+            fileInfo.bSourceExists = My.Computer.FileSystem.FileExists(fileInfo.strReleaseFile)
 
-            If bUseTempFolder And bSourceExists Then
-                strTempFile = My.Computer.FileSystem.CombinePath(CreateTempFolder(currentFolder), strNewFile)
+            If fileInfo.bSourceExists Then
+                fileInfo.strTempFile = My.Computer.FileSystem.CombinePath(CreateTempFolder(currentFolder), strNewFile + ".new")
             End If
 
-            Using streamWriter As StreamWriter = New StreamWriter(strTempFile)
+            Using streamWriter As StreamWriter = New StreamWriter(fileInfo.strTempFile)
                 While reader.Read()
                     Select Case reader.NodeType
                         Case XmlNodeType.Element
@@ -567,50 +557,87 @@ Public Class UmlCodeGenerator
                 streamWriter.Close()
             End Using
 
-            If bUseTempFolder Then
-                Select Case eLang
-                    Case ELanguage.Language_Vbasic
-                        If bSourceExists Then
-                            ' Use can choose between automatic and manual external merger
-                            If My.Settings.VbMergeTool Then
-                                VbCodeMerger.Merge(currentFolder, strNewFile, cstTempExport)
-                            Else
-                                CompareAndMergeFiles(strExternalMerger, strArguments, strTempFile, strReleaseFile)
-                            End If
-                        Else
-                            ' No need to merge or backup
-                        End If
-
-                    Case ELanguage.Language_Tools
-                        If bCodeMerge And bSourceExists And strExternalMerger.Length > 0 Then
-                            ' Temporary use an external merger to add/remove code
-                            CompareAndMergeFiles(strExternalMerger, strArguments, strTempFile, strReleaseFile)
-
-                        ElseIf bSourceExists Then
-                            ' No need to merge
-                            BackupFile(strTempFile, strReleaseFile)
-                        End If
-
-                    Case Else
-                        If bCodeMerge And bSourceExists Then
-                            ' Temporary use an external merger to add/remove code
-                            CompareAndMergeFiles(strExternalMerger, strArguments, strTempFile, strReleaseFile)
-
-                        ElseIf bSourceExists Then
-                            ' No need to merge
-                            BackupFile(strTempFile, strReleaseFile)
-                        End If
-                End Select
-            End If
-
             If lstFileList IsNot Nothing Then
-                lstFileList.Add(strReleaseFile)
+                lstFileList.Add(FileInfo)
             End If
 
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
+
+    Private Shared Sub MergeCode(ByVal eLang As ELanguage, ByVal strFolder As String, ByVal strExternalMerger As String, _
+                                 ByVal strArguments As String, ByVal lstFileList As ArrayList)
+        Try
+            Dim lstFilesToMerge As New ArrayList
+            For Each fileInfo As FileInfo In lstFileList
+                If MergeNode(eLang, (strExternalMerger.Length > 0), fileInfo) Then
+                    lstFilesToMerge.Add(fileInfo)
+                End If
+            Next
+            lstFileList.Clear()
+            If lstFilesToMerge.Count > 0 Then
+                Dim fen As New dlgMergeFileList
+                fen.ProjectFolder = strFolder
+                fen.FileList = lstFilesToMerge
+                fen.ExternalMerger = strExternalMerger
+                fen.Arguments = strArguments
+                fen.ShowDialog()
+                lstFilesToMerge.Clear()
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
+    Private Shared Function MergeNode(ByVal eLang As ELanguage, ByVal bExternalMerger As Boolean, ByVal fileInfo As FileInfo) As Boolean
+
+        Dim bResult As Boolean = True
+        Try
+            Select Case eLang
+                Case ELanguage.Language_Vbasic
+                    If fileInfo.bSourceExists Then
+                        ' User can choose between automatic and manual external merger
+                        If My.Settings.VbMergeTool Then
+                            VbCodeMerger.Merge(Path.GetDirectoryName(fileInfo.strReleaseFile), fileInfo.strTempFile, cstTempExport)
+                            bResult = False
+
+                        ElseIf bExternalMerger Then
+                            ' Use an external merger to add/remove code as user ask it
+                            bResult = True
+                            '                           CompareAndMergeFiles(strExternalMerger, strArguments, fileInfo.strTempFile, fileInfo.strReleaseFile)
+                        Else
+                            ' Can't merge, tool unavailable
+                            BackupFile(fileInfo.strTempFile, fileInfo.strReleaseFile)
+                            bResult = False
+                        End If
+                    Else
+                        ' No need to merge or backup
+                        bResult = False
+                    End If
+
+                Case Else
+                    If fileInfo.bSourceExists Then
+                        If fileInfo.bCodeMerge And bExternalMerger Then
+                            ' Use an external merger to add/remove code as user ask it
+                            bResult = True
+                            '                        CompareAndMergeFiles(strExternalMerger, strArguments, fileInfo.strTempFile, fileInfo.strReleaseFile)
+
+                        Else
+                            ' No need to merge
+                            BackupFile(fileInfo.strTempFile, fileInfo.strReleaseFile)
+                            bResult = False
+                        End If
+                    Else
+                        ' No need to merge or backup
+                        bResult = False
+                    End If
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
 
     Private Shared Function CreateBranch(ByVal ExistingPath As String, ByVal NewBranch As String) As String
         Dim strResult As String = My.Computer.FileSystem.CombinePath(ExistingPath, NewBranch)
