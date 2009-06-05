@@ -83,7 +83,7 @@ Partial Class dlgExternalTools
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 47.61905!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 52.38095!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 101.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnApply, 2, 0)
@@ -100,7 +100,7 @@ Partial Class dlgExternalTools
         Me.OK_Button.Enabled = False
         Me.OK_Button.Location = New System.Drawing.Point(3, 3)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(59, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(58, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Tag = "false"
         Me.OK_Button.Text = "OK"
@@ -109,7 +109,7 @@ Partial Class dlgExternalTools
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(68, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(67, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(65, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -118,7 +118,7 @@ Partial Class dlgExternalTools
         'btnApply
         '
         Me.btnApply.Enabled = False
-        Me.btnApply.Location = New System.Drawing.Point(139, 3)
+        Me.btnApply.Location = New System.Drawing.Point(138, 3)
         Me.btnApply.Name = "btnApply"
         Me.btnApply.Size = New System.Drawing.Size(72, 23)
         Me.btnApply.TabIndex = 2
