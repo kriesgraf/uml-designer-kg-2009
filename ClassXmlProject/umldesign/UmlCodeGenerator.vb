@@ -9,8 +9,28 @@ Imports System.ComponentModel
 Imports System.IO
 Imports Microsoft.VisualBasic
 Imports ClassXmlProject.MenuItemCommand
+Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.UmlNodesManager
 
 Public Class UmlCodeGenerator
+
+    Public Class CodeInfo
+        Public Property Filename() As String
+            Get
+                Return strFilename
+            End Get
+            Set(ByVal value As String)
+                strFilename = ComputeRelativePath(value, strReleaseFile)
+            End Set
+        End Property
+
+        Private strFilename As String
+
+        Public strTempFile As String
+        Public strReleaseFile As String
+        Public bCodeMerge As Boolean
+        Public bSourceExists As Boolean
+    End Class
 
 #Region "Class declarations"
 
@@ -152,7 +172,7 @@ Public Class UmlCodeGenerator
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceHeaderCppStyleSheet)
 
             If node IsNot Nothing Then
-                If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
+                If DEBUG_COMMANDS_ACTIVE _
                 Then
                     m_xsltCppSourceHeaderStyleSheet = New XslSimpleTransform(True)
                     m_xsltCppSourceHeaderStyleSheet.Load(strStyleSheet)
@@ -166,7 +186,8 @@ Public Class UmlCodeGenerator
 
                 Dim lstFileList As New ArrayList
                 ExtractCode(observer, strTransformation, strPath, ELanguage.Language_CplusPlus, lstFileList)
-                MergeCode(ELanguage.Language_CplusPlus, My.Settings.DiffTool, My.Settings.DiffToolArguments, lstFileList)
+                MergeCode(ELanguage.Language_CplusPlus, strPath, My.Settings.DiffTool, _
+                          My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
 
@@ -216,7 +237,7 @@ Public Class UmlCodeGenerator
             strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
 
             If node IsNot Nothing Then
-                If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
+                If DEBUG_COMMANDS_ACTIVE _
                 Then
                     m_xsltVbClassModuleStyleSheet = New XslSimpleTransform(True)
                     m_xsltVbClassModuleStyleSheet.Load(strStyleSheet)
@@ -232,7 +253,8 @@ Public Class UmlCodeGenerator
 
                 Dim lstFileList As New ArrayList
                 ExtractCode(observer, strTransformation, strPath, ELanguage.Language_Vbasic, lstFileList)
-                MergeCode(ELanguage.Language_Vbasic, My.Settings.DiffTool, My.Settings.DiffToolArguments, lstFileList)
+                MergeCode(ELanguage.Language_Vbasic, strPath, My.Settings.DiffTool, _
+                          My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
 
@@ -282,7 +304,7 @@ Public Class UmlCodeGenerator
             strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
 
             If node IsNot Nothing Then
-                If XmlProjectTools.DEBUG_COMMANDS_ACTIVE _
+                If DEBUG_COMMANDS_ACTIVE _
                 Then
                     m_xsltJavaModuleStyleSheet = New XslSimpleTransform(True)
                     m_xsltJavaModuleStyleSheet.Load(strStyleSheet)
@@ -297,7 +319,8 @@ Public Class UmlCodeGenerator
 
                 Dim lstFileList As New ArrayList
                 ExtractCode(observer, strTransformation, strPath, ELanguage.Language_Java, lstFileList)
-                MergeCode(ELanguage.Language_Java, My.Settings.DiffTool, My.Settings.DiffToolArguments, lstFileList)
+                MergeCode(ELanguage.Language_Java, strPath, My.Settings.DiffTool, _
+                          My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
 
@@ -357,10 +380,14 @@ Public Class UmlCodeGenerator
                 Dim strToolArguments As String = ConvertArguments(ExternalTool.ToolArguments, strProgramFolder)
 
                 Dim lstFileList As New ArrayList
-                ExtractCode(observer, strTransformation, strProgramFolder, ELanguage.Language_Tools, lstFileList)
-                MergeCode(ELanguage.Language_Tools, ExternalTool.DiffTool, strDiffArguments, lstFileList)
+                Dim bPostGeneration As Boolean = Not (String.IsNullOrEmpty(ExternalTool.Tool))
 
-                If String.IsNullOrEmpty(ExternalTool.Tool) = False Then
+                ExtractCode(observer, strTransformation, strProgramFolder, _
+                            ELanguage.Language_Tools, lstFileList)
+                MergeCode(ELanguage.Language_Tools, strProgramFolder, ExternalTool.DiffTool, _
+                          strDiffArguments, lstFileList, bPostGeneration)
+
+                If bPostGeneration Then
                     LaunchProcess(ExternalTool.Tool, strToolArguments, strProgramFolder, lstFileList)
                 End If
 
@@ -506,13 +533,6 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Structure FileInfo
-        Dim strTempFile As String
-        Dim strReleaseFile As String
-        Dim bCodeMerge As Boolean
-        Dim bSourceExists As Boolean
-    End Structure
-
     Private Shared Sub ExtractFileNode(ByVal observer As InterfProgression, _
                                     ByVal currentFolder As String, ByVal reader As XmlTextReader, _
                                     ByVal eLang As ELanguage, ByVal lstFileList As ArrayList)
@@ -522,7 +542,7 @@ Public Class UmlCodeGenerator
             reader.MoveToFirstAttribute()
             Dim bCodeMerge As Boolean = False
 
-            Dim fileInfo As New FileInfo
+            Dim fileInfo As New CodeInfo
             If reader.Name <> "name" Then
                 fileInfo.bCodeMerge = (reader.Value = "yes")
                 reader.MoveToNextAttribute()
@@ -532,7 +552,7 @@ Public Class UmlCodeGenerator
             reader.MoveToElement()
 
             'Debug.Print("ExtractClass:=" + currentFolder + strNewFile)
-            FileInfo.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, strNewFile)
+            fileInfo.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, strNewFile)
             fileInfo.strReleaseFile = fileInfo.strTempFile
             fileInfo.bSourceExists = My.Computer.FileSystem.FileExists(fileInfo.strReleaseFile)
 
@@ -558,7 +578,7 @@ Public Class UmlCodeGenerator
             End Using
 
             If lstFileList IsNot Nothing Then
-                lstFileList.Add(FileInfo)
+                lstFileList.Add(fileInfo)
             End If
 
         Catch ex As Exception
@@ -566,17 +586,30 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub MergeCode(ByVal eLang As ELanguage, ByVal strFolder As String, ByVal strExternalMerger As String, _
-                                 ByVal strArguments As String, ByVal lstFileList As ArrayList)
+    Private Shared Sub MergeCode(ByVal eLang As ELanguage, ByVal strFolder As String, _
+                                 ByVal strExternalMerger As String, _
+                                 ByVal strArguments As String, ByVal lstFileList As ArrayList, _
+                                 Optional ByVal bPostGeneration As Boolean = False)
         Try
             Dim lstFilesToMerge As New ArrayList
-            For Each fileInfo As FileInfo In lstFileList
+            For Each fileInfo As CodeInfo In lstFileList
                 If MergeNode(eLang, (strExternalMerger.Length > 0), fileInfo) Then
+                    fileInfo.Filename = strFolder
                     lstFilesToMerge.Add(fileInfo)
                 End If
             Next
+
             lstFileList.Clear()
-            If lstFilesToMerge.Count > 0 Then
+
+            If lstFilesToMerge.Count = 1 _
+            Then
+                Dim fileInfo As CodeInfo = CType(lstFilesToMerge.Item(0), CodeInfo)
+                CompareAndMergeFiles(strExternalMerger, strArguments, _
+                                     fileInfo.strTempFile, fileInfo.strReleaseFile, _
+                                     bPostGeneration)
+
+            ElseIf lstFilesToMerge.Count > 1 _
+            Then
                 Dim fen As New dlgMergeFileList
                 fen.ProjectFolder = strFolder
                 fen.FileList = lstFilesToMerge
@@ -590,7 +623,7 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Function MergeNode(ByVal eLang As ELanguage, ByVal bExternalMerger As Boolean, ByVal fileInfo As FileInfo) As Boolean
+    Private Shared Function MergeNode(ByVal eLang As ELanguage, ByVal bExternalMerger As Boolean, ByVal fileInfo As CodeInfo) As Boolean
 
         Dim bResult As Boolean = True
         Try
@@ -709,8 +742,9 @@ Public Class UmlCodeGenerator
         End Try
     End Sub
 
-    Private Shared Sub CompareAndMergeFiles(ByVal strExternalMerger As String, ByVal strArguments As String, _
-                                            ByVal strTempFile As String, ByVal strReleaseFile As String)
+    Public Shared Sub CompareAndMergeFiles(ByVal strExternalMerger As String, ByVal strArguments As String, _
+                                            ByVal strTempFile As String, ByVal strReleaseFile As String, _
+                                            Optional ByVal bWaitForExit As Boolean = False)
 
         Dim tempo As String = strArguments
         Try
@@ -736,7 +770,7 @@ Public Class UmlCodeGenerator
 
             ' Run it and wait end infinite.
             proc.Start()
-            proc.WaitForExit()
+            If bWaitForExit Then proc.WaitForExit()
 
         Catch ex1 As Win32Exception
 
