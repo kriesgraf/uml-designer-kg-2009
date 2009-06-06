@@ -47,7 +47,7 @@ Partial Class dlgParam
         Me.TableLayoutPanel2.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80.87431!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.12568!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 84.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -64,7 +64,7 @@ Partial Class dlgParam
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(367, 6)
+        Me.Cancel_Button.Location = New System.Drawing.Point(366, 6)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -73,7 +73,7 @@ Partial Class dlgParam
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(294, 6)
+        Me.OK_Button.Location = New System.Drawing.Point(292, 6)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(62, 23)
         Me.OK_Button.TabIndex = 0
@@ -113,13 +113,13 @@ Partial Class dlgParam
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(448, 121)
         Me.TableLayoutPanel2.TabIndex = 1
         '
-        'btnType
+        'cmdType
         '
         Me.cmdType.CausesValidation = False
         Me.cmdType.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmdType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.cmdType.Location = New System.Drawing.Point(117, 53)
-        Me.cmdType.Name = "btnType"
+        Me.cmdType.Name = "cmdType"
         Me.cmdType.Size = New System.Drawing.Size(328, 24)
         Me.cmdType.TabIndex = 1
         Me.cmdType.Text = "<Type>"

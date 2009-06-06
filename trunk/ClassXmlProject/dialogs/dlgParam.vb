@@ -50,7 +50,7 @@ Public Class dlgParam
         End With
     End Sub
 
-    Private Sub btnType_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdType.Click
+    Private Sub cmdType_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdType.Click
         Dim fen As Form = m_xmlView.TypeVarDefinition.CreateDialogBox()
         fen.ShowDialog()
         If CType(fen.Tag, Boolean) = True Then
