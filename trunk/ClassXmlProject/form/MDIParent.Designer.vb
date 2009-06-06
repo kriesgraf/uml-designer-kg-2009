@@ -453,7 +453,7 @@ Partial Class MDIParent
         Me.IsMdiContainer = True
         Me.MainMenuStrip = Me.mnuBar
         Me.Name = "MDIParent"
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "UML Designer"
         Me.mnuBar.ResumeLayout(False)
         Me.mnuBar.PerformLayout()

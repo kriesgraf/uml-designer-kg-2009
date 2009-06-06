@@ -1,6 +1,7 @@
 Imports System
 Imports System.Windows.Forms
 Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.UmlNodesManager
 Imports Microsoft.VisualBasic
 
 Public Class dlgPackage
@@ -272,7 +273,7 @@ Public Class dlgPackage
     Private Sub txtFolder_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtFolder.TextChanged
         Try
             txtFolder.Enabled = False
-            txtFolder.Text = UmlNodesManager.ComputeRelativePath(m_strProjectFolder, txtFolder.Text)
+            txtFolder.Text = ComputeRelativePath(m_strProjectFolder, txtFolder.Text)
         Catch ex As Exception
             MsgExceptionBox(ex)
         Finally
