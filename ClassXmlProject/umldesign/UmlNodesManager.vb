@@ -757,8 +757,8 @@ Public Class UmlNodesManager
     Public Shared Sub RenumberProject(ByRef node As XmlNode, Optional ByVal bChangeRelation As Boolean = False)
         Try
             Dim listID As XmlNodeList
-            Dim child, parent As XmlNode
-            Dim szID As String
+            Dim child As XmlNode
+            Dim strID As String
 
             Dim iClassIndex As Integer = 1
             listID = SelectNodes(node, "//*[@id]")
@@ -786,48 +786,38 @@ Public Class UmlNodesManager
                 If child.ParentNode Is Nothing Then
                     Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
                 End If
-                szID = GenerateNumericId(child.ParentNode, child.Name, "", "num-id", False)
-                AddAttributeValue(child, "num-id", szID)
+                strID = GenerateNumericId(child.ParentNode, child.Name, "", "num-id", False)
+                AddAttributeValue(child, "num-id", strID)
             Next
 
-            Dim szOldID As String
-            listID = SelectNodes(node, "//enumvalue")
+            listID = SelectNodes(node, "//*[enumvalue or type/enumvalue]")
 
             For Each child In listID
-                szOldID = GetID(child)
-                If child.ParentNode Is Nothing Then
-                    Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
-                End If
-                Select Case child.ParentNode.Name
+                Dim strPrefix As String = ""
+                Select Case child.Name
                     Case "reference"
-                        szID = GetID(child.ParentNode)
+                        strPrefix = GetID(child)
 
-                    Case Else
-                        parent = child.ParentNode
-                        If parent.ParentNode Is Nothing Then
-                            Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
+                    Case "property"
+                        If child.ParentNode Is Nothing Then
+                            Throw New Exception("Node 'property' with name '" + GetName(child) + "' has not parent.")
                         End If
-                        parent = parent.ParentNode
-                        Select Case parent.Name
-                            Case "property"
-                                If parent.ParentNode Is Nothing Then
-                                    Throw New Exception("Node 'property' with name '" + GetName(parent) + "' has not parent.")
-                                End If
-                                szID = GetAttributeValue(parent, "num-id")
-                                szID = GetID(parent.ParentNode) + "_" + szID
-                            Case Else
-                                If parent.ParentNode Is Nothing Then
-                                    Throw New Exception("Node 'property' with name '" + GetName(parent) + "' has not parent.")
-                                End If
-                                szID = GetID(parent.ParentNode)
-                        End Select
+                        strPrefix = GetAttributeValue(child, "num-id")
+                        strPrefix = GetID(child.ParentNode) + "_" + strPrefix
+                    Case Else
+                        strPrefix = GetID(child)
                 End Select
-                szID = szID.Substring(Len("class"))
-                szID = "enum" + szID + "_"
-                szID = GenerateNumericId(child.ParentNode, "enumvalue", szID, "id", False)
-                AddAttributeValue(child, "id", szID)
-                RenumberRefElement(node, "valref", szOldID, szID)
-                RenumberRefElement(node, "sizeref", szOldID, szID)
+
+                Dim szOldID As String
+                strPrefix = "enum" + XmlNodeCounter.AfterStr(strPrefix, "class")
+
+                For Each enumalue As XmlNode In child.SelectNodes("descendant::enumvalue")
+                    szOldID = GetID(enumalue)
+                    strID = GenerateNumericId(child, "descendant::enumvalue", strPrefix, "id", False)
+                    AddAttributeValue(enumalue, "id", strID)
+                    RenumberRefElement(node, "valref", szOldID, strID)
+                    RenumberRefElement(node, "sizeref", szOldID, strID)
+                Next
             Next child
 
 
