@@ -44,7 +44,7 @@ Partial Class dlgXmlNodeProperties
         Me.MinimizeBox = False
         Me.Name = "dlgXmlNodeProperties"
         Me.ShowInTaskbar = False
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "dlgXmlNodeProperties"
         Me.ResumeLayout(False)
 

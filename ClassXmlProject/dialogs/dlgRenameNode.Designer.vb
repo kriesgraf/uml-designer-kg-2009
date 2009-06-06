@@ -43,7 +43,7 @@ Partial Class dlgRenameNode
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(297, 47)
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(371, 47)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -73,8 +73,8 @@ Partial Class dlgRenameNode
         'TableLayoutPanel2
         '
         Me.TableLayoutPanel2.ColumnCount = 2
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.13004!))
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.86996!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.07692!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.92308!))
         Me.TableLayoutPanel2.Controls.Add(Me.lblLabel, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 1, 1)
         Me.TableLayoutPanel2.Controls.Add(Me.txtResult, 1, 0)
@@ -84,7 +84,7 @@ Partial Class dlgRenameNode
         Me.TableLayoutPanel2.RowCount = 2
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 35.44304!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 64.55696!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(446, 79)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(520, 79)
         Me.TableLayoutPanel2.TabIndex = 1
         '
         'lblLabel
@@ -93,7 +93,7 @@ Partial Class dlgRenameNode
         Me.lblLabel.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lblLabel.Location = New System.Drawing.Point(3, 0)
         Me.lblLabel.Name = "lblLabel"
-        Me.lblLabel.Size = New System.Drawing.Size(114, 28)
+        Me.lblLabel.Size = New System.Drawing.Size(139, 28)
         Me.lblLabel.TabIndex = 0
         Me.lblLabel.Text = "Label1"
         Me.lblLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -101,9 +101,9 @@ Partial Class dlgRenameNode
         'txtResult
         '
         Me.txtResult.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtResult.Location = New System.Drawing.Point(123, 3)
+        Me.txtResult.Location = New System.Drawing.Point(148, 3)
         Me.txtResult.Name = "txtResult"
-        Me.txtResult.Size = New System.Drawing.Size(320, 20)
+        Me.txtResult.Size = New System.Drawing.Size(369, 20)
         Me.txtResult.TabIndex = 1
         '
         'errorProvider
@@ -116,7 +116,7 @@ Partial Class dlgRenameNode
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel_Button
-        Me.ClientSize = New System.Drawing.Size(446, 79)
+        Me.ClientSize = New System.Drawing.Size(520, 79)
         Me.Controls.Add(Me.TableLayoutPanel2)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.MaximizeBox = False
