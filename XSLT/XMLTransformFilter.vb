@@ -221,7 +221,7 @@ Friend Class XMLTransformFilter
             If Len(LabelXSL.Text) = 0 Then
                 MsgBox("Veuillez sélectionner un fichier XSL", MsgBoxStyle.Critical)
             Else
-                m_styleXSL.Load(m_strFileXSL)
+                m_styleXSL.Load(m_strFileXSL, False)
                 cmdParams.Enabled = LoadParams()
             End If
 
@@ -655,11 +655,13 @@ Friend Class XMLTransformFilter
             settings.ValidationType = System.Xml.ValidationType.DTD
 
             ' Using avoid to remain the file locked for another process
-            Dim strDTD As String
+            Dim strDTD As String = "<Standalone>"
             Dim document As New XmlDocument
             Using reader As XmlReader = XmlReader.Create(strFilename, settings)
                 document.Load(reader)
-                strDTD = document.DocumentType.SystemId
+                If document.DocumentType IsNot Nothing Then
+                    strDTD = document.DocumentType.SystemId
+                End If
             End Using
 
             MsgBox("Validation complete with DTD:" + vbCrLf + vbCrLf + strDTD, MsgBoxStyle.Information)
