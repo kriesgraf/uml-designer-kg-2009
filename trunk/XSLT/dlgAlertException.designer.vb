@@ -43,7 +43,7 @@ Partial Class dlgAlertException
         Me.txtStackTrace.Multiline = True
         Me.txtStackTrace.Name = "txtStackTrace"
         Me.txtStackTrace.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txtStackTrace.Size = New System.Drawing.Size(784, 115)
+        Me.txtStackTrace.Size = New System.Drawing.Size(479, 264)
         Me.txtStackTrace.TabIndex = 0
         Me.txtStackTrace.Text = "Stack trace"
         '
@@ -58,8 +58,8 @@ Partial Class dlgAlertException
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 1
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 62.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(784, 298)
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 298.0!))
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(479, 98)
         Me.TableLayoutPanel2.TabIndex = 0
         '
         'lblMessage
@@ -71,7 +71,7 @@ Partial Class dlgAlertException
         Me.lblMessage.Margin = New System.Windows.Forms.Padding(10, 10, 10, 0)
         Me.lblMessage.Multiline = True
         Me.lblMessage.Name = "lblMessage"
-        Me.lblMessage.Size = New System.Drawing.Size(689, 288)
+        Me.lblMessage.Size = New System.Drawing.Size(384, 288)
         Me.lblMessage.TabIndex = 3
         Me.lblMessage.Text = "Message"
         '
@@ -101,15 +101,15 @@ Partial Class dlgAlertException
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.txtStackTrace)
-        Me.SplitContainer1.Size = New System.Drawing.Size(784, 417)
-        Me.SplitContainer1.SplitterDistance = 298
+        Me.SplitContainer1.Size = New System.Drawing.Size(479, 366)
+        Me.SplitContainer1.SplitterDistance = 98
         Me.SplitContainer1.TabIndex = 1
         '
         'dlgAlertException
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(784, 417)
+        Me.ClientSize = New System.Drawing.Size(479, 366)
         Me.Controls.Add(Me.SplitContainer1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)

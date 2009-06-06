@@ -15,10 +15,12 @@ Public Class XslSimpleTransform
     ''' Loads and compiles the style sheet located at the specified URI. 
     ''' </summary>
     ''' <param name="stylesheetUri">The URI of the style sheet. </param>
+    ''' <param name="bRedirectException">Ask to encapsulate exception inside new one. </param>
     ''' <param name="resolver">The XmlResolver used to resolve specific style sheet URI. This argument is optional.</param>
     ''' <remarks>This class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace. 
     ''' Supports XSLT import, include elements, the XSLT document() function and embedded script blocks.</remarks>
-    Public Sub Load(ByVal stylesheetUri As String, Optional ByVal resolver As XmlResolver = Nothing)
+    Public Sub Load(ByVal stylesheetUri As String, Optional ByVal bRedirectException As Boolean = True, _
+                    Optional ByVal resolver As XmlResolver = Nothing)
         Try
 
             If resolver IsNot Nothing Then
@@ -29,8 +31,29 @@ Public Class XslSimpleTransform
             End If
             m_oStylesheet.Load(stylesheetUri, New XsltSettings(True, True), m_oResolver)
 
+
+        Catch ex1 As Xsl.XsltCompileException
+            If bRedirectException Then
+                Throw ex1
+            ElseIf ex1.InnerException IsNot Nothing Then
+                Throw ex1.InnerException
+            Else
+                Throw ex1
+            End If
+        Catch ex2 As Xsl.XsltException
+            If bRedirectException Then
+                Throw ex2
+            ElseIf ex2.InnerException IsNot Nothing Then
+                Throw ex2.InnerException
+            Else
+                Throw ex2
+            End If
         Catch ex As Exception
-            Throw New Exception("Can't load XSL stylesheet: " + vbCrLf + stylesheetUri, ex)
+            If bRedirectException Then
+                Throw New Exception("Can't load XSL stylesheet: " + vbCrLf + stylesheetUri, ex)
+            Else
+                Throw ex
+            End If
         End Try
     End Sub
 
@@ -100,6 +123,18 @@ Public Class XslSimpleTransform
                 m_oStylesheet.Transform(input.CreateNavigator(), argList, fs)
                 fs.Close()
             End Using
+        Catch ex1 As XsltException
+            If ex1.InnerException IsNot Nothing Then
+                Throw ex1.InnerException
+            ElseIf ex1.LineNumber > 0 And ex1.LinePosition > 0 Then
+                Dim message As String = "LineNumber=" + ex1.LineNumber.ToString + vbCrLf + _
+                                    "LinePosition=" + ex1.LinePosition.ToString + vbCrLf + _
+                                    "Message=" + ex1.Message + vbCrLf + _
+                                    "SourceUri=" + ex1.SourceUri
+                Throw New Exception(message, ex1)
+            Else
+                Throw ex1
+            End If
         Catch ex As Exception
             Throw ex
         End Try
