@@ -785,22 +785,28 @@ Public Class XmlProjectTools
                 ' Using avoid to remain the file locked for another process
                 form.Cursor = Cursors.WaitCursor
                 Using reader As XmlReader = XmlReader.Create(strFilename, settings)
-                    document.Load(reader)
+                    Try
+                        document.Load(reader)
+			            eResult = XmlProjectTools.EResult.Completed
+
+                    Catch ex As XmlSchemaException
+                        eResult = XmlProjectTools.EResult.Failed
+                        bDtdError = True
+                        currentException = New Exception( _
+                                             "Reader=" + reader.Name + "-" + reader.Value + "(" + reader.ValueType.ToString + ")" + vbCrLf + _
+                                             "LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
+                                            "LinePosition=" + ex.LinePosition.ToString + vbCrLf + _
+                                            "Message=" + ex.Message + vbCrLf + _
+                                            "SourceUri=" + ex.SourceUri, _
+                                            ex)
+
+                        If bThrowsException Then Throw currentException
+
+                    Catch ex As Exception
+                        Throw ex
+                    End Try
                 End Using
             End If
-            eResult = XmlProjectTools.EResult.Completed
-
-        Catch ex As XmlSchemaException
-            eResult = XmlProjectTools.EResult.Failed
-            bDtdError = True
-            currentException = New Exception( _
-                                 "LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
-                                "LinePosition=" + ex.LinePosition.ToString + vbCrLf + _
-                                "Message=" + ex.Message + vbCrLf + _
-                                "SourceUri=" + ex.SourceUri, _
-                                ex)
-
-            If bThrowsException Then Throw currentException
 
         Catch ex As Exception
             Throw ex

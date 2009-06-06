@@ -404,23 +404,38 @@
       <xsl:attribute name="idref">
         <xsl:value-of select="@type"/>
       </xsl:attribute>
+      <xsl:variable name="Cardinal">
+        <xsl:call-template name="Cardinal"/>
+      </xsl:variable>
       <xsl:attribute name="level">0</xsl:attribute>
       <xsl:attribute name="cardinal">
-        <xsl:call-template name="Cardinal"/>
+        <xsl:value-of select="$Cardinal"/>
       </xsl:attribute>
       <xsl:text>
-</xsl:text>
-      <xsl:element name="get">
-        <xsl:attribute name="by">val</xsl:attribute>
-        <xsl:attribute name="modifier">var</xsl:attribute>
-        <xsl:attribute name="range">no</xsl:attribute>
-      </xsl:element>
-      <xsl:text>
-</xsl:text>
-      <xsl:element name="set">
-        <xsl:attribute name="by">val</xsl:attribute>
-        <xsl:attribute name="range">no</xsl:attribute>
-      </xsl:element>
+      </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$Cardinal='0n' or $Cardinal='1n'">
+          <xsl:element name="list">
+            <xsl:attribute name="iterator">no</xsl:attribute>
+            <xsl:attribute name="type">simple</xsl:attribute>
+            <xsl:attribute name="desc">undef_template</xsl:attribute>
+            <xsl:attribute name="level">0</xsl:attribute>
+          </xsl:element>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:element name="get">
+            <xsl:attribute name="by">val</xsl:attribute>
+            <xsl:attribute name="modifier">var</xsl:attribute>
+            <xsl:attribute name="range">no</xsl:attribute>
+          </xsl:element>
+          <xsl:text>
+          </xsl:text>
+          <xsl:element name="set">
+            <xsl:attribute name="by">val</xsl:attribute>
+            <xsl:attribute name="range">no</xsl:attribute>
+          </xsl:element>
+        </xsl:otherwise>
+      </xsl:choose>
       <!--xsl:copy-of select="."/-->
     </xsl:element>
   </xsl:template>
@@ -632,6 +647,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
