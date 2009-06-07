@@ -14,24 +14,6 @@ Imports ClassXmlProject.UmlNodesManager
 
 Public Class UmlCodeGenerator
 
-    Public Class CodeInfo
-        Public Property Filename() As String
-            Get
-                Return strFilename
-            End Get
-            Set(ByVal value As String)
-                strFilename = ComputeRelativePath(value, strReleaseFile)
-            End Set
-        End Property
-
-        Private strFilename As String
-
-        Public strTempFile As String
-        Public strReleaseFile As String
-        Public bCodeMerge As Boolean
-        Public bSourceExists As Boolean
-    End Class
-
 #Region "Class declarations"
 
     Private Const cstFolderElement As String = "package"
@@ -632,7 +614,7 @@ Public Class UmlCodeGenerator
                     If fileInfo.bSourceExists Then
                         ' User can choose between automatic and manual external merger
                         If My.Settings.VbMergeTool Then
-                            VbCodeMerger.Merge(Path.GetDirectoryName(fileInfo.strReleaseFile), fileInfo.strTempFile, cstTempExport)
+                            VbCodeMerger.Merge(fileInfo, cstTempExport)
                             bResult = False
 
                         ElseIf bExternalMerger Then

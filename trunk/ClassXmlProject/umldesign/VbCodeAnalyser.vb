@@ -18,11 +18,13 @@ Public Class VbCodeAnalyser
     Private Const cstNamespace As String = "([a-zA-Z09_\.]{1,})"
     Private Const cstMustOverride As String = "MustOverride"
     Private Const cstAllText As String = "(.*.|)"
+    Private Const cstArraySize As String = "(\(.*.\)|\(\)|)"
     Private Const cstEvent As String = "Event"
     Private Const cstOperators As String = "(-|&\b|\*\b|/\b|\\\b|\^\b|\+\b|<\b|<<|<=|<>|=|>\b|>=|>>|And|CType|IsFalse|IsTrue|Like|Mod|Not|Or|Xor)"
     Private Const cstStringDeclaration As String = Chr(34) + "[^" + Chr(34) + "\\]*(?:\\.[^" + Chr(34) + "\\]*)*" + Chr(34)
     Private Const cstStringReplace As String = Chr(34) + "[REPLACE]" + Chr(34)
-    Private Const cstParameter As String = cstVarTypeFuncClassName + " " + cstLineFeed + "As " + cstLineFeed + cstNamespace
+    Private Const cstInOutParam As String = "(ByVal |ByRef )"
+    Private Const cstParameter As String = cstVarTypeFuncClassName + cstLineFeedWithBlank + cstArraySize + " " + cstLineFeed + "As " + cstLineFeed + cstNamespace + cstLineFeedWithBlank + cstArraySize
     Private Const cstEndStatement As String = "(End )" + cstLineFeed + "({0})"
     Private Const cstImportsDeclaration As String = "(Imports )" + cstLineFeed + cstNamespace
     Private Const cstRegionDeclaration As String = "(\#Region )" + cstLineFeed + "(" + cstStringDeclaration + ")"
@@ -34,11 +36,12 @@ Public Class VbCodeAnalyser
     Private Const cstAttributeDeclaration As String = cstAccessModifier + cstLineFeed + cstParameter
     Private Const cstAbstractMethod As String = "(Function |Sub |" + cstEvent + " )" + cstLineFeed + cstVarTypeFuncClassName
     Private Const cstMethodDeclaration As String = cstAccessModifier + cstAllText + "(" + cstMustOverride + " |)" + cstAllText + cstAbstractMethod + cstLineFeed + "\(" + cstAllText + "\)"
+    Private Const cstMethodArgument As String = cstInOutParam + cstLineFeed + cstParameter
     Private Const cstTypedef As String = cstAccessModifier + cstAllText + "(Structure |Enum )" + cstLineFeed + cstVarTypeFuncClassName
     Private Const cstOperatorDeclaration As String = cstAccessModifier + cstAllText + "Shared " + cstAllText + "Operator " + cstLineFeed + cstOperators
 
     ' Properties
-    Private Const cstPropertyDeclaration As String = cstAccessModifier + cstAllText + "Property " + cstLineFeed + cstVarTypeFuncClassName
+    Private Const cstPropertyDeclaration As String = cstAccessModifier + cstAllText + "Property " + cstLineFeed + cstVarTypeFuncClassName + cstLineFeedWithBlank + "(\(\)) " + cstLineFeed + "As " + cstLineFeed + cstNamespace + cstLineFeedWithBlank + cstArraySize
     Private Const cstAccessorGetDeclaration As String = "Get"
     Private Const cstAccessorSetDeclaration As String = "Set"
 
@@ -59,7 +62,7 @@ Public Class VbCodeAnalyser
     Private Shared regOperatorDeclaration As New Regex(cstOperatorDeclaration)
     Private Shared regAbstractMethod As New Regex(cstAbstractMethod)
     Private Shared regTypedefDeclaration As New Regex(cstTypedef)
-    Private Shared regParamDeclaration As New Regex(cstParameter)
+    Private Shared regParamDeclaration As New Regex(cstMethodArgument)
     Private Shared regRegionDeclaration As New Regex(cstRegionDeclaration)
 
 #End Region
@@ -138,7 +141,7 @@ Public Class VbCodeAnalyser
                                             + vbCrLf + "cstOperatorDeclaration=" + cstOperatorDeclaration _
                                             + vbCrLf + "cstImportsDeclaration=" + cstImportsDeclaration _
                                             + vbCrLf + "cstRegionDeclaration=" + cstRegionDeclaration _
-                                            + vbCrLf + "cstParameter=" + cstParameter + vbCrLf
+                                            + vbCrLf + "cstMethodArgument=" + cstMethodArgument + vbCrLf
 
                 textWriter.WriteComment(strComment)
 
@@ -714,6 +717,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
             m_textWriter.WriteAttributeString("name", split(4).Trim())
+            m_textWriter.WriteAttributeString("type", split(9).Trim() + split(11).Trim())
 
             Return ClassMember.PropertyElt
 
@@ -831,6 +835,8 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
             m_textWriter.WriteAttributeString("name", split(3).Trim())
+            m_textWriter.WriteAttributeString("size", split(5).Trim())
+            m_textWriter.WriteAttributeString("type", split(8).Trim())
             m_textWriter.WriteEndElement()
 
             Return ClassMember.AttributeElt
@@ -848,13 +854,12 @@ Public Class VbCodeAnalyser
         Dim strParams As String = ""
         Dim strTypes As String = ""
         For Each param As Match In listParams
-            If strParams = "" Then
-                strParams = param.Groups(1).ToString
-                strTypes = param.Groups(4).ToString
-            Else
-                strParams += ", " + param.Groups(1).ToString
-                strTypes += ", " + param.Groups(4).ToString
+            If strParams.Length > 0 Then
+                strParams += ", "
+                strTypes += ", "
             End If
+            strParams += param.Groups(3).ToString + param.Groups(5).ToString
+            strTypes += param.Groups(8).ToString
         Next
         m_textWriter.WriteAttributeString("params", strParams)
         m_textWriter.WriteAttributeString("types", strTypes)
