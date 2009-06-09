@@ -32,6 +32,7 @@ Public Class dlgExternalTools
                 Me.Close()
             End If
 
+
             OK_Button.Enabled = False
             btnApply.Enabled = False
 
@@ -59,12 +60,16 @@ Public Class dlgExternalTools
                 SelectItemControl(txtDiffTool, menuItem, "DiffTool")
                 SelectItemControl(txtDiffToolArguments, menuItem, "DiffArguments")
 
+                EnableControls(True)
+
                 If txtCommand.Text.Length = 0 Then
                     chkCommand.Checked = False
+                    chkCommand_CheckedChanged(sender, e)
                 Else
                     chkCommand.Checked = True
                 End If
                 If txtDiffTool.Text.Length = 0 Then
+                    chkDiffTool_CheckedChanged(sender, e)
                     chkDiffTool.Checked = False
                 Else
                     chkDiffTool.Checked = True
@@ -77,6 +82,9 @@ Public Class dlgExternalTools
                 m_xmlBindingsList.RemoveBinding(txtArguments, "ToolArguments")
                 m_xmlBindingsList.RemoveBinding(txtDiffTool, "DiffTool")
                 m_xmlBindingsList.RemoveBinding(txtDiffToolArguments, "DiffArguments")
+
+                EnableControls(False)
+                ClearControls()
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -191,6 +199,35 @@ Public Class dlgExternalTools
         Finally
             m_bInitOk = False
         End Try
+    End Sub
+
+    Private Sub EnableControls(Optional ByVal bEnabled As Boolean = True)
+        txtName.Enabled = bEnabled
+        txtStylesheet.Enabled = bEnabled
+        txtXslParams.Enabled = bEnabled
+        txtCommand.Enabled = bEnabled
+        txtArguments.Enabled = bEnabled
+        txtDiffTool.Enabled = bEnabled
+        txtDiffToolArguments.Enabled = bEnabled
+        chkCommand.Enabled = bEnabled
+        chkDiffTool.Enabled = bEnabled
+        btnArguments.Enabled = bEnabled
+        btnCommandPath.Enabled = bEnabled
+        btnDiffArgs.Enabled = bEnabled
+        btnDiffPath.Enabled = bEnabled
+        btnStylesheetPath.Enabled = bEnabled
+        btnXslParams.Enabled = bEnabled
+        btnXslStylesheet.Enabled = bEnabled
+    End Sub
+
+    Private Sub ClearControls()
+        txtName.Text = ""
+        txtStylesheet.Text = ""
+        txtXslParams.Text = ""
+        txtCommand.Text = ""
+        txtArguments.Text = ""
+        txtDiffTool.Text = ""
+        txtDiffToolArguments.Text = ""
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
@@ -367,11 +404,15 @@ Public Class dlgExternalTools
 
     Private Sub chkCommand_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkCommand.CheckedChanged
         If chkCommand.Checked = False Then
+            btnCommandPath.Enabled = False
+            btnArguments.Enabled = False
             txtCommand.Text = ""
             txtArguments.Text = ""
             txtCommand.Enabled = False
             txtArguments.Enabled = False
         Else
+            btnCommandPath.Enabled = True
+            btnArguments.Enabled = True
             txtCommand.Enabled = True
             txtArguments.Enabled = True
         End If
@@ -379,11 +420,15 @@ Public Class dlgExternalTools
 
     Private Sub chkDiffTool_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkDiffTool.CheckedChanged
         If chkDiffTool.Checked = False Then
+            btnDiffPath.Enabled = False
+            btnDiffArgs.Enabled = False
             txtDiffTool.Text = ""
             txtDiffToolArguments.Text = ""
             txtDiffTool.Enabled = False
             txtDiffToolArguments.Enabled = False
         Else
+            btnDiffPath.Enabled = True
+            btnDiffArgs.Enabled = True
             txtDiffTool.Enabled = True
             txtDiffToolArguments.Enabled = True
         End If

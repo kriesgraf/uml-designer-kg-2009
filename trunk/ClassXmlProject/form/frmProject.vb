@@ -71,6 +71,7 @@ Public Class frmProject
                 xmlcpnt = lvwProjectMembers.Binding.Parent
             End If
 
+
             If xmlcpnt IsNot Nothing Then
                 Dim strTransformation As String = ""
 
@@ -78,6 +79,8 @@ Public Class frmProject
                 Then
                     Me.docvwProjectDisplay.Display = strTransformation
                 End If
+            Else
+                MsgBox("Select first an objet or click in an empty zone", MsgBoxStyle.Exclamation)
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)

@@ -67,6 +67,7 @@ Partial Class dlgExternalTools
         Me.SecondElementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.NinthElementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ProjectFolderToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
@@ -83,7 +84,7 @@ Partial Class dlgExternalTools
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 47.61905!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 52.38095!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 101.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 102.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnApply, 2, 0)
@@ -111,14 +112,14 @@ Partial Class dlgExternalTools
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(67, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
-        Me.Cancel_Button.Size = New System.Drawing.Size(65, 23)
+        Me.Cancel_Button.Size = New System.Drawing.Size(64, 23)
         Me.Cancel_Button.TabIndex = 1
         Me.Cancel_Button.Text = "Cancel"
         '
         'btnApply
         '
         Me.btnApply.Enabled = False
-        Me.btnApply.Location = New System.Drawing.Point(138, 3)
+        Me.btnApply.Location = New System.Drawing.Point(137, 3)
         Me.btnApply.Name = "btnApply"
         Me.btnApply.Size = New System.Drawing.Size(72, 23)
         Me.btnApply.TabIndex = 2
@@ -273,6 +274,7 @@ Partial Class dlgExternalTools
         Me.btnStylesheetPath.TabIndex = 12
         Me.btnStylesheetPath.Tag = "1"
         Me.btnStylesheetPath.Text = "..."
+        Me.ToolTip1.SetToolTip(Me.btnStylesheetPath, "Press here to find a style sheet on disk")
         Me.btnStylesheetPath.UseVisualStyleBackColor = True
         '
         'btnCommandPath
@@ -285,6 +287,7 @@ Partial Class dlgExternalTools
         Me.btnCommandPath.TabIndex = 13
         Me.btnCommandPath.Tag = "0"
         Me.btnCommandPath.Text = "..."
+        Me.ToolTip1.SetToolTip(Me.btnCommandPath, "Press here to find an external command (.exe or .bat)")
         Me.btnCommandPath.UseVisualStyleBackColor = True
         '
         'btnDiffPath
@@ -297,6 +300,7 @@ Partial Class dlgExternalTools
         Me.btnDiffPath.TabIndex = 14
         Me.btnDiffPath.Tag = "0"
         Me.btnDiffPath.Text = "..."
+        Me.ToolTip1.SetToolTip(Me.btnDiffPath, "Press here to find an file external merger")
         Me.btnDiffPath.UseVisualStyleBackColor = True
         '
         'btnArguments
@@ -307,6 +311,7 @@ Partial Class dlgExternalTools
         Me.btnArguments.Size = New System.Drawing.Size(24, 24)
         Me.btnArguments.TabIndex = 15
         Me.btnArguments.Text = "Parameters"
+        Me.ToolTip1.SetToolTip(Me.btnArguments, "Press here to add arguments")
         Me.btnArguments.UseVisualStyleBackColor = True
         '
         'btnDiffArgs
@@ -317,6 +322,7 @@ Partial Class dlgExternalTools
         Me.btnDiffArgs.Size = New System.Drawing.Size(24, 25)
         Me.btnDiffArgs.TabIndex = 16
         Me.btnDiffArgs.Text = "Parameters"
+        Me.ToolTip1.SetToolTip(Me.btnDiffArgs, "Press here to add arguments for file merger")
         Me.btnDiffArgs.UseVisualStyleBackColor = True
         '
         'chkCommand
@@ -368,6 +374,7 @@ Partial Class dlgExternalTools
         Me.btnXslParams.Size = New System.Drawing.Size(24, 24)
         Me.btnXslParams.TabIndex = 21
         Me.btnXslParams.Text = "Parameters"
+        Me.ToolTip1.SetToolTip(Me.btnXslParams, "Press here to add an XSL param")
         Me.btnXslParams.UseVisualStyleBackColor = True
         '
         'btnXslStylesheet
@@ -378,6 +385,7 @@ Partial Class dlgExternalTools
         Me.btnXslStylesheet.Size = New System.Drawing.Size(93, 24)
         Me.btnXslStylesheet.TabIndex = 22
         Me.btnXslStylesheet.Text = "XSL stylesheet"
+        Me.ToolTip1.SetToolTip(Me.btnXslStylesheet, "Press here to create/edit style sheet")
         Me.btnXslStylesheet.UseVisualStyleBackColor = True
         '
         'TableLayoutPanel4
@@ -434,6 +442,7 @@ Partial Class dlgExternalTools
         Me.btnAdd.Size = New System.Drawing.Size(98, 24)
         Me.btnAdd.TabIndex = 0
         Me.btnAdd.Text = "Add"
+        Me.ToolTip1.SetToolTip(Me.btnAdd, "Press here first to enable form")
         Me.btnAdd.UseVisualStyleBackColor = True
         '
         'btnDelete
@@ -579,5 +588,6 @@ Partial Class dlgExternalTools
     Friend WithEvents btnXslParams As System.Windows.Forms.Button
     Friend WithEvents NinthElementToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents btnXslStylesheet As System.Windows.Forms.Button
+    Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
 
 End Class
