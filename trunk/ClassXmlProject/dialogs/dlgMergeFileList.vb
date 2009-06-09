@@ -32,6 +32,11 @@ Public Class dlgMergeFileList
         End Set
     End Property
 
+    Private Sub dlgMergeFileList_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
+        m_lstFilesToMerge.Clear()
+        m_lstFilesToMerge = Nothing
+    End Sub
+
     Private Sub dlgMergeFileList_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Me.lsbFileList.DisplayMember = "Filename"
         Me.lsbFileList.DataSource = m_lstFilesToMerge
