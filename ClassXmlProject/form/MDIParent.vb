@@ -219,16 +219,22 @@ Public Class MDIParent
 
     ' Handling managed by MenuItemCommand class
     Private Sub ExternalTool1_Click(ByVal sender As ToolStripMenuItem, ByVal e As EventArgs)
-        Debug.Print(sender.Tag.ToString)
-        Dim item As MenuItemNode = m_ctrlExternalTools.Find(CInt(sender.Tag))
-        If item IsNot Nothing Then
-            Dim fen As frmProject = TryCast(Me.ActiveMdiChild, frmProject)
-            If fen IsNot Nothing Then
-                fen.GenerateExternalTool(item)
+        Try
+            Debug.Print(sender.Tag.ToString)
+            Dim item As MenuItemNode = m_ctrlExternalTools.Find(CInt(sender.Tag))
+            If item IsNot Nothing Then
+                Dim fen As frmProject = TryCast(Me.ActiveMdiChild, frmProject)
+                If fen IsNot Nothing Then
+                    fen.GenerateExternalTool(item)
+                Else
+                    MsgBox("Please open first a project.", MsgBoxStyle.Exclamation)
+                End If
+            Else
+                Throw New Exception("Can't find external tool: " + sender.Text + "(Id=" + sender.Tag.ToString + ")")
             End If
-        Else
-            MsgBox("Please open a project", MsgBoxStyle.Critical, "Command " + sender.Text)
-        End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub ExternalTools_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) Handles ExternalTools.Click
@@ -519,6 +525,9 @@ Public Class MDIParent
 
     Private Sub DebugToolStripOption_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DebugToolStripOption.Click
         Me.DebugToolStripOption.Checked = Not (Me.DebugToolStripOption.Checked)
+        If Me.DebugToolStripOption.Checked Then
+            MsgBox("Close all projects to apply command", MsgBoxStyle.Information)
+        End If
         XmlProjectTools.DEBUG_COMMANDS_ACTIVE = Me.DebugToolStripOption.Checked
     End Sub
 #End Region
