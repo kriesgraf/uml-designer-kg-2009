@@ -98,8 +98,15 @@ Public Class UmlCodeGenerator
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim argList As New Dictionary(Of String, String)
 
+            Try
+                argList.Add("ToolsFolder", Path.GetDirectoryName(ExternalCommand.Stylesheet))
+
+            Catch ex1 As Exception
+                MsgExceptionBox(New Exception("Failed to extract directory path from file:" + vbCrLf + ExternalCommand.Stylesheet, ex1))
+                Return False
+            End Try
+
             argList.Add("ProjectFolder", strProgramFolder)
-            argList.Add("ToolsFolder", Path.GetDirectoryName(ExternalCommand.Stylesheet))
             argList.Add("LanguageFolder", Application.LocalUserAppDataPath.ToString)
             argList.Add("InputClass", strClassId)
             argList.Add("InputPackage", strPackageId)
@@ -113,7 +120,7 @@ Public Class UmlCodeGenerator
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
-        Return bResult
+            Return bResult
     End Function
 #End Region
 
@@ -597,8 +604,7 @@ Public Class UmlCodeGenerator
                 fen.FileList = lstFilesToMerge
                 fen.ExternalMerger = strExternalMerger
                 fen.Arguments = strArguments
-                fen.ShowDialog()
-                lstFilesToMerge.Clear()
+                fen.Show()
             End If
         Catch ex As Exception
             Throw ex

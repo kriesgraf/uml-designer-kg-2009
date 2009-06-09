@@ -22,6 +22,7 @@ Partial Class dlgMergeFileList
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(dlgMergeFileList))
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
         Me.lblFolder = New System.Windows.Forms.Label
         Me.lsbFileList = New System.Windows.Forms.ListBox
@@ -82,6 +83,7 @@ Partial Class dlgMergeFileList
         Me.ClientSize = New System.Drawing.Size(350, 257)
         Me.Controls.Add(Me.TableLayoutPanel1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "dlgMergeFileList"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Merge generated code..."
