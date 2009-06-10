@@ -121,24 +121,32 @@ Public Class dlgExternalTools
 
     Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) _
             Handles txtName.Validated, txtStylesheet.Validated
-        Me.errorProvider.SetError(sender, "")
+        Try
+            Me.errorProvider.SetError(sender, "")
+        Catch ex As Exception
+            Throw ex
+        End Try
     End Sub
 
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
             Handles txtName.Validating, txtStylesheet.Validating
 
-        e.Cancel = False
+        Try
+            e.Cancel = False
 
-        If m_bInitOk Or m_bSelectionChanges Then Exit Sub
+            If m_bInitOk Or m_bSelectionChanges Then Exit Sub
 
-        If sender.Text.Length = 0 Then
-            sender.Select(0, sender.Text.Length)
+            If sender.Text.Length = 0 Then
+                sender.Select(0, sender.Text.Length)
 
-            errorProvider.SetIconPadding(sender, 0)
-            errorProvider.SetIconAlignment(sender, ErrorIconAlignment.BottomLeft)
-            errorProvider.SetError(sender, "Name can't be empty!")
-            e.Cancel = True
-        End If
+                errorProvider.SetIconPadding(sender, 0)
+                errorProvider.SetIconAlignment(sender, ErrorIconAlignment.BottomLeft)
+                errorProvider.SetError(sender, "Name can't be empty!" + vbCrLf + "Press on left button to create one from a predefined template." + vbCrLf + "Press on right button to select exsiting one." + vbCrLf + "Press on Cancel button to quit.")
+                e.Cancel = True
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
