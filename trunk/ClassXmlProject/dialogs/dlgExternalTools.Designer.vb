@@ -81,10 +81,11 @@ Partial Class dlgExternalTools
         'TableLayoutPanel1
         '
         Me.TableLayoutPanel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.TableLayoutPanel1.CausesValidation = False
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 47.61905!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 52.38095!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 102.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 103.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnApply, 2, 0)
@@ -101,7 +102,7 @@ Partial Class dlgExternalTools
         Me.OK_Button.Enabled = False
         Me.OK_Button.Location = New System.Drawing.Point(3, 3)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(58, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(57, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Tag = "false"
         Me.OK_Button.Text = "OK"
@@ -109,8 +110,9 @@ Partial Class dlgExternalTools
         'Cancel_Button
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.CausesValidation = False
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(67, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(66, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(64, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -119,7 +121,7 @@ Partial Class dlgExternalTools
         'btnApply
         '
         Me.btnApply.Enabled = False
-        Me.btnApply.Location = New System.Drawing.Point(137, 3)
+        Me.btnApply.Location = New System.Drawing.Point(136, 3)
         Me.btnApply.Name = "btnApply"
         Me.btnApply.Size = New System.Drawing.Size(72, 23)
         Me.btnApply.TabIndex = 2
@@ -128,6 +130,7 @@ Partial Class dlgExternalTools
         '
         'TableLayoutPanel2
         '
+        Me.TableLayoutPanel2.CausesValidation = False
         Me.TableLayoutPanel2.ColumnCount = 1
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 0, 2)
@@ -145,6 +148,7 @@ Partial Class dlgExternalTools
         '
         'TableLayoutPanel3
         '
+        Me.TableLayoutPanel3.CausesValidation = False
         Me.TableLayoutPanel3.ColumnCount = 3
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105.0!))
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
@@ -266,6 +270,7 @@ Partial Class dlgExternalTools
         '
         'btnStylesheetPath
         '
+        Me.btnStylesheetPath.CausesValidation = False
         Me.btnStylesheetPath.Dock = System.Windows.Forms.DockStyle.Fill
         Me.btnStylesheetPath.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnStylesheetPath.Location = New System.Drawing.Point(391, 33)
@@ -379,6 +384,7 @@ Partial Class dlgExternalTools
         '
         'btnXslStylesheet
         '
+        Me.btnXslStylesheet.CausesValidation = False
         Me.btnXslStylesheet.Dock = System.Windows.Forms.DockStyle.Right
         Me.btnXslStylesheet.Location = New System.Drawing.Point(9, 33)
         Me.btnXslStylesheet.Name = "btnXslStylesheet"

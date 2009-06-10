@@ -1789,7 +1789,8 @@ Public Class XmlProjectTools
             Then
                 If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
                 Then
-                    strErrorMsg = "Must contains characters compliant with project name"
+                    strErrorMsg = "Must contains characters compliant with project name:" + vbCrLf + _
+                                  "name1 or name1.name2"
                     bResult = True
                 End If
 
@@ -1799,7 +1800,8 @@ Public Class XmlProjectTools
 
             ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
             Then
-                strErrorMsg = "Must contains characters compliant with project name"
+                strErrorMsg = "Must contains characters compliant with project name:" + vbCrLf + _
+                                  "name1 or name1::name2"
                 bResult = True
             End If
 
