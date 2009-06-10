@@ -28,8 +28,8 @@ Partial Class dlgUpgradeProject
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel
         Me.FlowLayoutPanel2 = New System.Windows.Forms.FlowLayoutPanel
         Me.btnInfo = New System.Windows.Forms.Button
-        Me.lblMessage = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
+        Me.lblMessage = New System.Windows.Forms.Label
         Me.TableLayoutPanel2.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         Me.FlowLayoutPanel2.SuspendLayout()
@@ -40,7 +40,7 @@ Partial Class dlgUpgradeProject
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.OK_Button.Location = New System.Drawing.Point(3, 3)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(67, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(67, 26)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
@@ -50,7 +50,7 @@ Partial Class dlgUpgradeProject
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
-        Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
+        Me.Cancel_Button.Size = New System.Drawing.Size(67, 25)
         Me.Cancel_Button.TabIndex = 1
         Me.Cancel_Button.Text = "Cancel"
         '
@@ -96,10 +96,21 @@ Partial Class dlgUpgradeProject
         '
         Me.btnInfo.Location = New System.Drawing.Point(3, 3)
         Me.btnInfo.Name = "btnInfo"
-        Me.btnInfo.Size = New System.Drawing.Size(73, 23)
+        Me.btnInfo.Size = New System.Drawing.Size(73, 26)
         Me.btnInfo.TabIndex = 1
         Me.btnInfo.Text = "More info"
         Me.btnInfo.UseVisualStyleBackColor = True
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Dock = System.Windows.Forms.DockStyle.Left
+        Me.Label1.Location = New System.Drawing.Point(82, 0)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(147, 32)
+        Me.Label1.TabIndex = 2
+        Me.Label1.Text = "<--Click here to see exception"
+        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'lblMessage
         '
@@ -111,17 +122,6 @@ Partial Class dlgUpgradeProject
         Me.lblMessage.Size = New System.Drawing.Size(410, 85)
         Me.lblMessage.TabIndex = 4
         Me.lblMessage.Text = "lblMessage"
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Dock = System.Windows.Forms.DockStyle.Left
-        Me.Label1.Location = New System.Drawing.Point(82, 0)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(147, 29)
-        Me.Label1.TabIndex = 2
-        Me.Label1.Text = "<--Click here to see exception"
-        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'dlgUpgradeProject
         '
