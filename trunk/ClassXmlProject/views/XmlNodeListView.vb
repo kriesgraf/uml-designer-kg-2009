@@ -263,7 +263,8 @@ Public Class XmlNodeListView
     Public Shared Sub AddNodeList(ByVal document As XmlComponent, ByRef myList As ArrayList, _
                                   ByVal xpath As String, Optional ByVal refobj As XmlComponent = Nothing)
 
-        Dim iterator As IEnumerator = document.SelectNodes(xpath).GetEnumerator
+        Dim list As XmlNodeList = document.SelectNodes(xpath)
+        Dim iterator As IEnumerator = list.GetEnumerator
         iterator.Reset()
 
         'Debug.Print("xPath=" + xpath)
@@ -493,14 +494,19 @@ Public Class XmlNodeListView
                 strName = blocks(blocks.Length - 1)
             End If
             Dim strID As String = GetID(child)
-            Dim strQuery As String = "//*[(@name='" + strName + "' or contains(@name,'" + separator + strName + "')) and @id!='" + strID + "']"
+            Dim strQuery As String = "//*[(@name='" + strName + "' or type/@desc='" + strName + "' or contains(type/@desc,'" + separator + strName + "') or contains(@name,'" + separator + strName + "')) and @id!='" + strID + "']"
 
             If listResult Is Nothing Then
                 Dim listNode As XmlNodeList = parent.SelectNodes(strQuery)
                 Return (listNode.Count > 0)
             End If
 
+            strQuery = "//*[(@name='" + strName + "' or contains(@name,'" + separator + strName + "')) and @id!='" + strID + "']"
             AddNodeList(parent, listResult, strQuery)
+
+            strQuery = "//*[type/@desc='" + strName + "' or contains(type/@desc,'" + separator + strName + "')]"
+            AddNodeList(parent, listResult, strQuery)
+
             Return (listResult.Count > 0)
 
         Catch ex As Exception
