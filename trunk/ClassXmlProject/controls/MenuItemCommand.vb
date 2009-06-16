@@ -73,6 +73,7 @@ Public Class MenuItemCommand
                 ChangeReferences()
                 Me.Name = "Menu item name"
                 Me.Stylesheet = "<Left button to create/edit one, right to find it>"
+                Me.XslParams = "-Param=value"
                 Me.Tool = "C:\WINDOWS\system32\cmd.exe"
                 Me.ToolArguments = "/k dir " + cstProjectFolder
                 Me.DiffTool = My.Settings.DiffTool
