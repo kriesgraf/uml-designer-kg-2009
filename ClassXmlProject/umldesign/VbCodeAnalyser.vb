@@ -11,8 +11,8 @@ Public Class VbCodeAnalyser
 #Region "Constants"
 
     ' General declarations
-    Private Const cstLineFeed As String = "(_\r\n\s{0,}|)"
-    Private Const cstLineFeedWithBlank As String = "( _\r\n\s{0,}|)"
+    Private Const cstLineFeed As String = ""
+    Private Const cstLineFeedWithBlank As String = ""
     Private Const cstAccessModifier As String = "(Protected Friend |Protected |Public |Private |)"  ' Nothing for intertface declaration
     Private Const cstVarTypeFuncClassName As String = "(\b[a-zA-Z_][a-zA-Z0-9_]{0,}\b)"
     Private Const cstNamespace As String = "([a-zA-Z09_\.]{1,})"
@@ -35,8 +35,9 @@ Public Class VbCodeAnalyser
     ' Members
     Private Const cstAttributeDeclaration As String = cstAccessModifier + cstLineFeed + cstParameter
     Private Const cstAbstractMethod As String = "(Function |Sub |" + cstEvent + " )" + cstLineFeed + cstVarTypeFuncClassName
-    Private Const cstMethodDeclaration As String = cstAccessModifier + cstAllText + "(" + cstMustOverride + " |)" + cstAllText + cstAbstractMethod + cstLineFeed + "\(" + cstAllText + "\)"
     Private Const cstMethodArgument As String = cstInOutParam + cstLineFeed + cstParameter
+    Private Const cstParenthesis As String = "\(" + cstLineFeedWithBlank + "(" + cstMethodArgument + cstLineFeedWithBlank + "(\,|)" + cstLineFeedWithBlank + "){0,}\)"
+    Private Const cstMethodDeclaration As String = cstAccessModifier + cstAllText + "(" + cstMustOverride + " |)" + cstAllText + cstAbstractMethod + cstLineFeed + "\(" + cstAllText + "\)"
     Private Const cstTypedef As String = cstAccessModifier + cstAllText + "(Structure |Enum )" + cstLineFeed + cstVarTypeFuncClassName
     Private Const cstOperatorDeclaration As String = cstAccessModifier + cstAllText + "Shared " + cstAllText + "Operator " + cstLineFeed + cstOperators
 
@@ -110,6 +111,7 @@ Public Class VbCodeAnalyser
     End Enum
 
     Private Enum ProcessState
+        StartOfInstruction
         EndOfFile
         Instruction
         WaitData
@@ -118,7 +120,8 @@ Public Class VbCodeAnalyser
 #End Region
 
 #Region "Public methods"
-    Public Function Analyse(ByVal strFolder As String, ByVal strName As String, Optional ByVal strSuffix As String = "", Optional ByVal strTempFolder As String = "") As String
+    Public Function Analyse(ByVal strFolder As String, ByVal strName As String, _
+                            Optional ByVal strSuffix As String = "", Optional ByVal strTempFolder As String = "") As String
         Dim strXmlBase As String = My.Computer.FileSystem.CombinePath(strFolder, strTempFolder)
         strXmlBase = My.Computer.FileSystem.CombinePath(strXmlBase, strName + strSuffix + ".xml")
         Try
@@ -156,13 +159,14 @@ Public Class VbCodeAnalyser
                     Dim strReadLine As String = Nothing
                     Dim strInstruction As String = ""
                     Dim strStatement As String = ""
+                    Dim eState As ProcessState = ProcessState.StartOfInstruction
                     Do
                         m_iNbLine += 1
                         'm_listLines.Add(m_iNbLine, streamReader.BaseStream.Position)
                         strReadLine = streamReader.ReadLine()
                         'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-                        If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+                        If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
                         Then
                             If CheckClassInstruction(iStartLine, strInstruction, strStatement) _
                             Then
@@ -270,6 +274,7 @@ Public Class VbCodeAnalyser
         Dim iStopLine As Integer = 0
         Dim strReadLine As String
         Dim strInstruction As String = ""
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
 
         Do
             m_iNbLine += 1
@@ -277,7 +282,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
             Then
                 If regImportsDeclaration.IsMatch(strInstruction) = False _
                 Then
@@ -308,6 +313,7 @@ Public Class VbCodeAnalyser
         Dim strInstruction As String = ""
         Dim strStatement As String = ""
         Dim regex As New Regex("(End )" + cstLineFeed + "(Namespace)")
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
 
         Do
             m_iNbLine += 1
@@ -315,7 +321,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
             Then
                 If regex.IsMatch(strInstruction) _
                 Then
@@ -354,6 +360,7 @@ Public Class VbCodeAnalyser
         Dim strInstruction As String = ""
         Dim strStatement As String = ""
         Dim regex As New Regex("(End )" + cstLineFeed + "(Region)")
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
 
         Do
             m_iNbLine += 1
@@ -361,7 +368,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
             Then
                 If regex.IsMatch(strInstruction) Then
                     Exit Do
@@ -401,6 +408,7 @@ Public Class VbCodeAnalyser
         Dim strInstruction As String = ""
         Dim regex As New Regex("(End )" + cstLineFeed + "(" + strStatement + ")")
         Dim bInterface As Boolean = (strStatement = "Interface")
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
 
         Do
             m_iNbLine += 1
@@ -415,7 +423,7 @@ Public Class VbCodeAnalyser
                 ElseIf InStr(strReadLine, "Inherits") > 0 And iStopClassDeclaration > 0 Then
                     iStopClassDeclaration = m_iNbLine
 
-                ElseIf ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+                ElseIf ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
                 Then
                     If iStopClassDeclaration > 0 Then
                         m_textWriter.WriteAttributeString("end", iStopClassDeclaration.ToString)
@@ -475,6 +483,7 @@ Public Class VbCodeAnalyser
         Dim strReadLine As String
         Dim strInstruction As String = ""
         Dim regex As New Regex("(End )" + cstLineFeed + "(" + strStatement + ")")
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
 
         Do
             m_iNbLine += 1
@@ -482,7 +491,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
                 Then
                 If regex.IsMatch(strInstruction) Then
                     Exit Do
@@ -506,6 +515,7 @@ Public Class VbCodeAnalyser
         Dim iStopLine As Integer = 0
         Dim strReadLine As String
         Dim strInstruction As String = ""
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
 
         Do
             m_iNbLine += 1
@@ -513,7 +523,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
                 Then
                 If regEndProperty.IsMatch(strInstruction) Then
                     Exit Do
@@ -544,6 +554,7 @@ Public Class VbCodeAnalyser
         Dim strReadLine As String
         Dim strInstruction As String = ""
         Dim regex As New Regex("(End )" + cstLineFeed + "(" + strStatement + ")")
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
 
         Do
             m_iNbLine += 1
@@ -551,7 +562,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(strReadLine, strInstruction, iStartLine, iStopLine, bCheckComment) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, bCheckComment) = ProcessState.Instruction _
                 Then
                 If regex.IsMatch(strInstruction) Then
                     Exit Do
@@ -566,41 +577,47 @@ Public Class VbCodeAnalyser
         m_textWriter.WriteEndElement()
     End Sub
 
-    Private Function ParseLine(ByRef strReadLine As String, ByRef strInstruction As String, _
+    Private Function ParseLine(ByRef eStateResult As ProcessState, _
+                               ByRef strReadLine As String, ByRef strInstruction As String, _
                                ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
                                Optional ByVal bCheckComment As Boolean = True) As ProcessState
 
         If strReadLine IsNot Nothing Then
+            If eStateResult = ProcessState.WaitData Then
+                strReadLine = Strings.LTrim(strReadLine)
+            End If
             If CheckComment(strReadLine, bCheckComment) = False Then
-                Return ProcessState.EndOfFile
+
+                eStateResult = ProcessState.EndOfFile
 
             ElseIf iStartLine > 0 Then
 
                 If Strings.Right(strReadLine, 1) = "_" Then
 
-                    strInstruction += strReadLine + vbCrLf
+                    strInstruction += strReadLine.Substring(0, strReadLine.Length - 1)
+                    eStateResult = ProcessState.WaitData
                 Else
                     iStopLine = m_iNbLine
                     strInstruction += strReadLine
-                    Return ProcessState.Instruction
+                    eStateResult = ProcessState.Instruction
                 End If
 
             ElseIf Strings.Right(strReadLine, 1) = "_" Then
 
                 iStartLine = m_iNbLine
-                strInstruction += strReadLine + vbCrLf
+                strInstruction += strReadLine.Substring(0, strReadLine.Length - 1)
+                eStateResult = ProcessState.WaitData
 
             Else
                 strInstruction = strReadLine
                 iStartLine = m_iNbLine
                 iStopLine = m_iNbLine
-                Return ProcessState.Instruction
+                eStateResult = ProcessState.Instruction
             End If
         Else
-            Return ProcessState.EndOfFile
+            eStateResult = ProcessState.EndOfFile
         End If
-
-        Return ProcessState.WaitData
+        Return eStateResult
     End Function
 
     Private Function CheckImportsInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
