@@ -1,15 +1,16 @@
 ﻿Imports System
 Imports System.Xml
-Imports System.Windows.Forms
 Imports System.IO
 Imports System.Collections
-Imports ClassXmlProject.XmlProjectTools
-Imports ClassXmlProject.XmlReferenceNodeCounter
 Imports System.Text
 Imports Microsoft.VisualBasic
 
 #If _APP_UML = "1" Then
+Imports System.Windows.Forms
+Imports ClassXmlProject.XmlProjectTools
+Imports ClassXmlProject.XmlReferenceNodeCounter
 Imports ClassXmlProject.UmlCodeGenerator
+Imports ClassXmlProject.XmlNodeCounter
 #End If
 
 
@@ -24,6 +25,7 @@ Public Class UmlNodesManager
 
     Public Const cstXmlFileHeader As String = "<?xml version='1.0' encoding='iso-8859-1'?>"
 
+#Region "Public Methods"
 #If _APP_UML = "1" Then
 
     Public Shared Function ImportNodes(ByVal form As Form, _
@@ -460,7 +462,94 @@ Public Class UmlNodesManager
         fen.CodeLanguage = eLang
         fen.ShowDialog()
     End Sub
+#End If
 
+    Public Shared Sub RenumberProject(ByRef node As XmlNode, Optional ByVal bChangeRelation As Boolean = False)
+        Try
+            Dim listID As XmlNodeList
+            Dim child As XmlNode
+            Dim strID As String
+
+            Dim iClassIndex As Integer = 1
+            listID = node.SelectNodes("//*[@id]")
+
+            For Each child In listID
+                Select Case child.Name
+                    Case "class", "typedef", "reference", "interface", "model"
+                        RenumberElement(child, iClassIndex, "class")
+                        iClassIndex += 1
+                End Select
+            Next child
+
+            Dim iPackage As Integer = 1
+            listID = node.SelectNodes("//package")
+
+            For Each child In listID
+                SetID(child, "package" + CStr(iPackage))
+                iPackage += 1
+            Next child
+
+
+            listID = node.SelectNodes("//param | // method | //property | //element")
+
+            For Each child In listID
+                If child.ParentNode Is Nothing Then
+                    Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
+                End If
+                strID = GenerateNumericId(child.ParentNode, child.Name, "", "num-id", False)
+                AddAttributeValue(child, "num-id", strID)
+            Next
+
+            listID = node.SelectNodes("//*[enumvalue or type/enumvalue]")
+
+            For Each child In listID
+                Dim strPrefix As String = ""
+                Select Case child.Name
+                    Case "reference"
+                        strPrefix = GetID(child)
+
+                    Case "property"
+                        If child.ParentNode Is Nothing Then
+                            Throw New Exception("Node 'property' with name '" + GetName(child) + "' has not parent.")
+                        End If
+                        strPrefix = GetAttributeValue(child, "num-id")
+                        strPrefix = GetID(child.ParentNode) + "_" + strPrefix
+                    Case Else
+                        strPrefix = GetID(child)
+                End Select
+
+                Dim szOldID As String
+                strPrefix = "enum" + AfterStr(strPrefix, "class")
+
+                For Each enumalue As XmlNode In child.SelectNodes("descendant::enumvalue")
+                    szOldID = GetID(enumalue)
+                    strID = GenerateNumericId(child, "descendant::enumvalue", strPrefix, "id", False)
+                    AddAttributeValue(enumalue, "id", strID)
+                    RenumberRefElement(node, "valref", szOldID, strID)
+                    RenumberRefElement(node, "sizeref", szOldID, strID)
+                Next
+            Next child
+
+
+            If bChangeRelation Then
+                listID = node.SelectNodes("//relationship")
+                iClassIndex = 1
+
+                For Each child In listID
+                    RenumberElement(child, iClassIndex, "relation")
+                    iClassIndex += 1
+                Next child
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+#End Region
+
+#Region "Private methods"
+
+#If _APP_UML = "1" Then
     Private Shared Function CheckExportedReferences(ByVal source As XmlDocument) As Boolean
         Dim bResult As Boolean = False
         Try
@@ -692,7 +781,6 @@ Public Class UmlNodesManager
             End If
         Next
     End Sub
-#End If
 
     Public Shared Function RenameType(ByVal eLang As ELanguage, ByRef nodeDoxygen As XmlNode) As Boolean
         Dim bResult As Boolean = False
@@ -753,88 +841,6 @@ Public Class UmlNodesManager
         End Try
         Return bResult
     End Function
-
-    Public Shared Sub RenumberProject(ByRef node As XmlNode, Optional ByVal bChangeRelation As Boolean = False)
-        Try
-            Dim listID As XmlNodeList
-            Dim child As XmlNode
-            Dim strID As String
-
-            Dim iClassIndex As Integer = 1
-            listID = SelectNodes(node, "//*[@id]")
-
-            For Each child In listID
-                Select Case child.Name
-                    Case "class", "typedef", "reference", "interface", "model"
-                        RenumberElement(child, iClassIndex, "class")
-                        iClassIndex += 1
-                End Select
-            Next child
-
-            Dim iPackage As Integer = 1
-            listID = SelectNodes(node, "//package")
-
-            For Each child In listID
-                SetID(child, "package" + CStr(iPackage))
-                iPackage += 1
-            Next child
-
-
-            listID = SelectNodes(node, "//param | // method | //property | //element")
-
-            For Each child In listID
-                If child.ParentNode Is Nothing Then
-                    Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
-                End If
-                strID = GenerateNumericId(child.ParentNode, child.Name, "", "num-id", False)
-                AddAttributeValue(child, "num-id", strID)
-            Next
-
-            listID = SelectNodes(node, "//*[enumvalue or type/enumvalue]")
-
-            For Each child In listID
-                Dim strPrefix As String = ""
-                Select Case child.Name
-                    Case "reference"
-                        strPrefix = GetID(child)
-
-                    Case "property"
-                        If child.ParentNode Is Nothing Then
-                            Throw New Exception("Node 'property' with name '" + GetName(child) + "' has not parent.")
-                        End If
-                        strPrefix = GetAttributeValue(child, "num-id")
-                        strPrefix = GetID(child.ParentNode) + "_" + strPrefix
-                    Case Else
-                        strPrefix = GetID(child)
-                End Select
-
-                Dim szOldID As String
-                strPrefix = "enum" + XmlNodeCounter.AfterStr(strPrefix, "class")
-
-                For Each enumalue As XmlNode In child.SelectNodes("descendant::enumvalue")
-                    szOldID = GetID(enumalue)
-                    strID = GenerateNumericId(child, "descendant::enumvalue", strPrefix, "id", False)
-                    AddAttributeValue(enumalue, "id", strID)
-                    RenumberRefElement(node, "valref", szOldID, strID)
-                    RenumberRefElement(node, "sizeref", szOldID, strID)
-                Next
-            Next child
-
-
-            If bChangeRelation Then
-                listID = SelectNodes(node, "//relationship")
-                iClassIndex = 1
-
-                For Each child In listID
-                    RenumberElement(child, iClassIndex, "relation")
-                    iClassIndex += 1
-                Next child
-            End If
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
 
     Public Shared Function ExportElementClass(ByVal node As XmlNode, ByVal strCurrentPackage As String) As String
 
@@ -952,35 +958,6 @@ Public Class UmlNodesManager
         End While
         Return result
     End Function
-
-    Private Shared Sub RenumberElement(ByRef node As XmlNode, ByVal index As Integer, ByVal Prefix As String)
-        Try
-            Dim szOldID As String = GetID(node)
-            Dim szNewID As String = Prefix + CStr(index)
-            SetID(node, szNewID)
-
-            RenumberRefElement(node, "overrides", szOldID, szNewID)
-            RenumberRefElement(node, "idref", szOldID, szNewID)
-            RenumberRefElement(node, "index-idref", szOldID, szNewID)
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
-    Private Shared Sub RenumberRefElement(ByRef node As XmlNode, ByVal szIDREF As String, ByVal szOldID As String, ByVal szNewID As String)
-        Try
-            Dim listIDREF As XmlNodeList
-            Dim child As XmlNode
-
-            listIDREF = SelectNodes(node, "//@" + szIDREF + "[.='" + szOldID + "']")
-            For Each child In listIDREF
-                child.Value = szNewID
-            Next child
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
 
     Private Shared Function AnalyzeSimpleType(ByVal eLang As ELanguage, ByVal strType As String, _
                                         ByRef tInfo As TSimpleDeclaration) As Boolean
@@ -1213,5 +1190,35 @@ Public Class UmlNodesManager
         End Try
         Return strResult
     End Function
+#End If
 
+    Private Shared Sub RenumberElement(ByRef node As XmlNode, ByVal index As Integer, ByVal Prefix As String)
+        Try
+            Dim szOldID As String = GetID(node)
+            Dim szNewID As String = Prefix + CStr(index)
+            SetID(node, szNewID)
+
+            RenumberRefElement(node, "overrides", szOldID, szNewID)
+            RenumberRefElement(node, "idref", szOldID, szNewID)
+            RenumberRefElement(node, "index-idref", szOldID, szNewID)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
+    Private Shared Sub RenumberRefElement(ByRef node As XmlNode, ByVal szIDREF As String, ByVal szOldID As String, ByVal szNewID As String)
+        Try
+            Dim listIDREF As XmlNodeList
+            Dim child As XmlNode
+
+            listIDREF = node.SelectNodes("//@" + szIDREF + "[.='" + szOldID + "']")
+            For Each child In listIDREF
+                child.Value = szNewID
+            Next child
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+#End Region
 End Class
