@@ -71,12 +71,19 @@ Public Class XmlRefRedundancyView
 
                     For Each child As XmlNodeListView In myList
                         If child.CheckedView = False Then
-                            If XmlProjectTools.ChangeID(child.Node, m_xmlProjectNode.Node, .Id) Then
-                                bResult = True
-                            End If
-                            If child.RemoveMe() Then
-                                bResult = True
-                            End If
+                            Select Case child.NodeName
+                                Case "typedef", "property", "return"
+                                    If XmlProjectTools.ChangeTypeDesc(child.Node, .Id) Then
+                                        bResult = True
+                                    End If
+                                Case Else
+                                    If XmlProjectTools.ChangeID(child.Node, m_xmlProjectNode.Node, .Id) Then
+                                        bResult = True
+                                    End If
+                                    If child.RemoveMe() Then
+                                        bResult = True
+                                    End If
+                            End Select
                         End If
                     Next
                 End With
