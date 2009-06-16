@@ -1,5 +1,4 @@
 ﻿Imports System
-Imports System.Windows.Forms
 Imports System.Collections.Generic
 Imports System.Collections
 Imports System.Xml
@@ -7,10 +6,11 @@ Imports System.Xml.Schema
 Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
-Imports ClassXmlProject.UmlNodesManager
 Imports Microsoft.VisualBasic
 
 #If _APP_UML = "1" Then
+Imports System.Windows.Forms
+Imports ClassXmlProject.UmlNodesManager
 Imports ClassXmlProject.UmlCodeGenerator
 #End If
 
@@ -110,6 +110,7 @@ Public Class XmlProjectTools
 
 #Region "Public shared methods"
 
+#If _APP_UML = "1" Then
     Public Shared Function CompactPath(ByVal control As Control, ByVal strFullPathFilename As String) As String
         Dim strTempo As New StringBuilder(strFullPathFilename)
         shlwapi.PathCompactPath(user32.GetWindowDC(control.Handle), strTempo, control.ClientSize.Width)
@@ -449,7 +450,7 @@ Public Class XmlProjectTools
                                                                      My.Settings.ToolsFolder + cstIbmXmi2ProjectStyle))
             End Select
             observer.Increment(1)
-            Dim argList As New Dictionary(Of String, String)
+            Dim argList As New XslSimpleTransform.Arguments
             argList.Add("FolderDTD", Application.LocalUserAppDataPath.ToString + Path.DirectorySeparatorChar)
 
             ' This transformation generates a metafile 85% compliant with end-generated file
@@ -555,7 +556,7 @@ Public Class XmlProjectTools
                                                              My.Settings.ToolsFolder + cstDoxygen2ProjectStyle))
             observer.Increment(1)
 
-            Dim argList As New Dictionary(Of String, String)
+            Dim argList As New XslSimpleTransform.Arguments
             argList.Add("DoxFolder", GetProjectPath(strFilename) + Path.DirectorySeparatorChar.ToString)
 
             ' This transformation generates a metafile 80% compliant with end-generated file
@@ -826,22 +827,6 @@ Public Class XmlProjectTools
         Return xmlresult
     End Function
 
-    Public Shared Sub AddAttributeValue(ByRef node As XmlNode, ByVal strAttribute As String, Optional ByVal strValue As String = "")
-        Try
-            Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
-
-            If attrib Is Nothing Then
-                attrib = node.OwnerDocument.CreateAttribute(strAttribute)
-                node.Attributes.SetNamedItem(attrib)
-            End If
-
-            attrib.Value = strValue
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
     Public Shared Sub RemoveAttribute(ByRef node As XmlNode, ByVal strAttribute As String)
         Try
             Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
@@ -1029,15 +1014,6 @@ Public Class XmlProjectTools
         End Try
     End Function
 
-    Public Shared Function GetNode(ByVal node As XmlNode, ByVal strElement As String) As XmlNode
-        Try
-            Return node.SelectSingleNode(strElement)
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
     Public Shared Sub SetNodeString(ByRef node As XmlNode, ByVal strValue As String)
         Try
             If strValue IsNot Nothing Then
@@ -1072,10 +1048,6 @@ Public Class XmlProjectTools
         Catch ex As Exception
             Throw ex
         End Try
-    End Function
-
-    Public Shared Function GetName(ByVal node As XmlNode) As String
-        Return GetAttributeValue(node, "name")
     End Function
 
     Public Shared Function GetPackage(ByVal node As XmlNode) As String
@@ -1124,21 +1096,6 @@ Public Class XmlProjectTools
 
     Public Shared Function GetCurrentName(ByVal iterator As IEnumerator) As String
         Return GetAttributeValue(CType(iterator.Current, XmlNode), "name")
-    End Function
-
-    Public Shared Function GetAttributeValue(ByVal nodeXml As XmlNode, ByVal name As String) As String
-        Dim strResult As String = Nothing
-        Try
-            If nodeXml IsNot Nothing Then
-                nodeXml = nodeXml.Attributes.ItemOf(name)
-                If nodeXml IsNot Nothing Then
-                    strResult = nodeXml.Value
-                End If
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return strResult
     End Function
 
     Public Shared Function SelectNodeId(ByVal nodeXML As XmlNode, Optional ByVal TreeNodeXML As XmlNode = Nothing, Optional ByVal strIdref As String = "@idref") As XmlNode
@@ -1613,6 +1570,16 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
+
+    Public Shared Function ChangeTypeDesc(ByVal nodeReference As XmlNode, ByVal szNewID As String) As Boolean
+        Dim child As XmlNode = nodeReference.SelectSingleNode("type")
+        If child IsNot Nothing Then
+            RemoveAttribute(child, "desc")
+            AddAttributeValue(child, "idref", szNewID)
+            Return True
+        End If
+        Return False
+    End Function
 
     Public Shared Function ChangeID(ByVal nodeReference As XmlNode, ByVal treeNode As XmlNode, ByVal szNewID As String) As Boolean
         Dim bResult As Boolean = False
@@ -2121,10 +2088,83 @@ Public Class XmlProjectTools
         Return strResult
     End Function
 
+    Public Shared Function GetName(ByVal node As XmlNode) As String
+        Return GetAttributeValue(node, "name")
+    End Function
+
+    Public Shared Function GetAttributeValue(ByVal nodeXml As XmlNode, ByVal name As String) As String
+        Dim strResult As String = Nothing
+        Try
+            If nodeXml IsNot Nothing Then
+                nodeXml = nodeXml.Attributes.ItemOf(name)
+                If nodeXml IsNot Nothing Then
+                    strResult = nodeXml.Value
+                End If
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return strResult
+    End Function
+
+    Public Shared Function GetNode(ByVal node As XmlNode, ByVal strElement As String) As XmlNode
+        Try
+            Return node.SelectSingleNode(strElement)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Shared Sub AddAttributeValue(ByRef node As XmlNode, ByVal strAttribute As String, Optional ByVal strValue As String = "")
+        Try
+            Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
+
+            If attrib Is Nothing Then
+                attrib = node.OwnerDocument.CreateAttribute(strAttribute)
+                node.Attributes.SetNamedItem(attrib)
+            End If
+
+            attrib.Value = strValue
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+#End If
+
+    Public Shared Sub MergeAccessorProperties(ByVal document As XmlDocument, _
+                                               Optional ByVal prefixGet As String = "Get", _
+                                               Optional ByVal prefixSet As String = "Set")
+        Try
+            Dim Accessor As XmlNode = Nothing
+
+            For Each prop As XmlNode In document.SelectNodes("//property")
+                Accessor = prop.ParentNode.SelectSingleNode("method[@name='" + prefixGet + GetName(prop) + "']")
+                If Accessor IsNot Nothing Then
+                    AddAttributeValue(GetNode(prop, "get"), "range", GetAttributeValue(GetNode(Accessor, "descendant::return/variable"), "range"))
+                    AddAttributeValue(GetNode(prop, "get"), "by", GetAttributeValue(GetNode(Accessor, "descendant::return/type"), "by"))
+                    AddAttributeValue(GetNode(prop, "get"), "modifier", GetAttributeValue(GetNode(Accessor, "descendant::return/type"), "modifier"))
+                    prop.ParentNode.RemoveChild(Accessor)
+                End If
+                Accessor = prop.ParentNode.SelectSingleNode("method[@name='" + prefixSet + GetName(prop) + "']")
+                If Accessor IsNot Nothing Then
+                    AddAttributeValue(GetNode(prop, "set"), "range", GetAttributeValue(GetNode(Accessor, "descendant::return/variable"), "range"))
+                    AddAttributeValue(GetNode(prop, "get"), "by", GetAttributeValue(GetNode(Accessor, "descendant::param/type"), "by"))
+                    prop.ParentNode.RemoveChild(Accessor)
+                End If
+            Next
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
 #End Region
 
 #Region "Private shared methods"
 
+#If _APP_UML = "1" Then
     Private Shared Function ConvertAndCorrectErrors(ByVal form As Form, ByVal document As XmlDocument, _
                                                     ByVal strFilename As String, ByRef bDtdError As Boolean, _
                                                     ByVal currentException As Exception) As EResult
@@ -2224,34 +2264,7 @@ Public Class XmlProjectTools
         Next
     End Sub
 
-    Private Shared Sub MergeAccessorProperties(ByVal document As XmlDocument, _
-                                               Optional ByVal prefixGet As String = "Get", _
-                                               Optional ByVal prefixSet As String = "Set")
-        Try
-            Dim Accessor As XmlNode = Nothing
-
-            For Each prop As XmlNode In document.SelectNodes("//property")
-                Accessor = prop.ParentNode.SelectSingleNode("method[@name='" + prefixGet + GetName(prop) + "']")
-                If Accessor IsNot Nothing Then
-                    AddAttributeValue(GetNode(prop, "get"), "range", GetAttributeValue(GetNode(Accessor, "descendant::return/variable"), "range"))
-                    AddAttributeValue(GetNode(prop, "get"), "by", GetAttributeValue(GetNode(Accessor, "descendant::return/type"), "by"))
-                    AddAttributeValue(GetNode(prop, "get"), "modifier", GetAttributeValue(GetNode(Accessor, "descendant::return/type"), "modifier"))
-                    prop.ParentNode.RemoveChild(Accessor)
-                End If
-                Accessor = prop.ParentNode.SelectSingleNode("method[@name='" + prefixSet + GetName(prop) + "']")
-                If Accessor IsNot Nothing Then
-                    AddAttributeValue(GetNode(prop, "set"), "range", GetAttributeValue(GetNode(Accessor, "descendant::return/variable"), "range"))
-                    AddAttributeValue(GetNode(prop, "get"), "by", GetAttributeValue(GetNode(Accessor, "descendant::param/type"), "by"))
-                    prop.ParentNode.RemoveChild(Accessor)
-                End If
-            Next
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
-    Private Shared Sub CleanPrefixProperties(ByVal document As XmlDocument, _
+     Shared Sub CleanPrefixProperties(ByVal document As XmlDocument, _
                                              Optional ByVal regexPrefixMember As String = "([a-z]{1,2}|[a-z]{0,1}str)([A-Z])", _
                                              Optional ByVal prefixMember As String = "m_")
         Dim regex As New Regex(regexPrefixMember, RegexOptions.Compiled)
@@ -2593,6 +2606,6 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Function
-
+#End If
 #End Region
 End Class

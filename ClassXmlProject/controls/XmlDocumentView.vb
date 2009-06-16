@@ -143,7 +143,7 @@ Public Class XmlDocumentView
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strTmpFolder As String = Application.LocalUserAppDataPath.ToString
 
-            Dim argList As New Dictionary(Of String, String)
+            Dim argList As New XslSimpleTransform.Arguments
             Dim sep As String = Path.DirectorySeparatorChar.ToString
 
             Select Case m_eCurrentView
