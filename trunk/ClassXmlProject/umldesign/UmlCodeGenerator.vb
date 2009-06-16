@@ -44,7 +44,7 @@ Public Class UmlCodeGenerator
         Try
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
-            Dim argList As New Dictionary(Of String, String)
+            Dim argList As New XslSimpleTransform.Arguments
 
             argList.Add("ProjectFolder", strProgramFolder)
             argList.Add("ToolsFolder", strUmlFolder)
@@ -96,7 +96,7 @@ Public Class UmlCodeGenerator
         Try
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
-            Dim argList As New Dictionary(Of String, String)
+            Dim argList As New XslSimpleTransform.Arguments
 
             Try
                 argList.Add("ToolsFolder", Path.GetDirectoryName(ExternalCommand.Stylesheet))

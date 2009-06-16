@@ -8,6 +8,11 @@ Imports System.Xml.XPath
 Imports Microsoft.VisualBasic
 
 Public Class XslSimpleTransform
+
+    Public Class Arguments
+        Inherits Dictionary(Of String, String)
+    End Class
+
     Private m_oStylesheet As XslCompiledTransform
     Private m_oResolver As XmlResolver
 
@@ -17,7 +22,7 @@ Public Class XslSimpleTransform
     ''' <param name="stylesheetUri">The URI of the style sheet. </param>
     ''' <param name="bRedirectException">Ask to encapsulate exception inside new one. </param>
     ''' <param name="resolver">The XmlResolver used to resolve specific style sheet URI. This argument is optional.</param>
-    ''' <remarks>This class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace. 
+    ''' <remarks>This class supports the XSLT 1.0/2.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace. 
     ''' Supports XSLT import, include elements, the XSLT document() function and embedded script blocks.</remarks>
     Public Sub Load(ByVal stylesheetUri As String, Optional ByVal bRedirectException As Boolean = True, _
                     Optional ByVal resolver As XmlResolver = Nothing)
@@ -68,7 +73,7 @@ Public Class XslSimpleTransform
     '''</remarks>
     Public Overloads Sub Transform(ByVal inputUri As String, _
                          ByVal resultsFile As String, _
-                         Optional ByVal arguments As Dictionary(Of String, String) = Nothing)
+                         Optional ByVal arguments As Arguments = Nothing)
         Try
             Dim argList As XsltArgumentList = Nothing
             If arguments IsNot Nothing Then
@@ -107,7 +112,7 @@ Public Class XslSimpleTransform
     '''</remarks>
     Public Overloads Sub Transform(ByVal input As XmlNode, _
                          ByVal resultsFile As String, _
-                         Optional ByVal arguments As Dictionary(Of String, String) = Nothing)
+                         Optional ByVal arguments As Arguments = Nothing)
         Try
             Dim argList As XsltArgumentList = Nothing
 
