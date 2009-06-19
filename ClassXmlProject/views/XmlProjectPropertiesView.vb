@@ -2,6 +2,7 @@
 Imports System.Windows.Forms
 Imports System.Collections.Generic
 Imports Microsoft.VisualBasic.Compatibility.VB6
+Imports Microsoft.VisualBasic
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlProjectPropertiesView
@@ -21,10 +22,16 @@ Public Class XmlProjectPropertiesView
         m_xmlBindingsList.Init()
     End Sub
 
-    Public Sub UpdateValues()
-        Me.GenerationFolder = m_controlPath.Text
+    Public Function UpdateValues() As Boolean
+        If My.Computer.FileSystem.DirectoryExists(m_controlPath.Text) = False Then
+            MsgBox("Sources location folder doesn't exist !", MsgBoxStyle.Exclamation)
+            Return False
+        Else
+            Me.GenerationFolder = m_controlPath.Text
+        End If
         m_xmlBindingsList.UpdateValues()
-    End Sub
+        Return True
+    End Function
 
     Public Sub InitBindingName(ByVal dataControl As Control)
         Try
