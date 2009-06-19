@@ -73,10 +73,16 @@ Public Class dlgPackage
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
         Try
-            Me.DialogResult = DialogResult.OK
-            m_xmlView.UpdateValues()
-            Me.Tag = True
-            Me.Close()
+
+            If My.Computer.FileSystem.DirectoryExists(txtFolder.Text) = False Then
+                MsgBox("Package folder doesn't exist !", MsgBoxStyle.Exclamation)
+            Else
+                txtFolder.Text = ComputeRelativePath(m_strProjectFolder, txtFolder.Text)
+                m_xmlView.UpdateValues()
+                Me.DialogResult = DialogResult.OK
+                Me.Tag = True
+                Me.Close()
+            End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -269,15 +275,4 @@ Public Class dlgPackage
         End Try
     End Sub
 #End Region
-
-    Private Sub txtFolder_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtFolder.TextChanged
-        Try
-            txtFolder.Enabled = False
-            txtFolder.Text = ComputeRelativePath(m_strProjectFolder, txtFolder.Text)
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        Finally
-            txtFolder.Enabled = True
-        End Try
-    End Sub
 End Class

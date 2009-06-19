@@ -10,10 +10,11 @@ Public Class dlgProjectProperties
     Private m_bDriveLock As Boolean = False
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
-        m_xmlView.UpdateValues()
-        Me.Tag = True
-        Me.DialogResult = DialogResult.OK
-        Me.Close()
+        If m_xmlView.UpdateValues() Then
+            Me.Tag = True
+            Me.DialogResult = DialogResult.OK
+            Me.Close()
+        End If
     End Sub
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
@@ -65,7 +66,7 @@ Public Class dlgProjectProperties
     Private Sub btnPath_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnPath.Click
         FolderBrowserDialog1.Description = "Select the project root folder..."
         FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop
-        FolderBrowserDialog1.SelectedPath = fileListBox.Path
+        FolderBrowserDialog1.SelectedPath = txtPath.Text
         If FolderBrowserDialog1.ShowDialog() = Windows.Forms.DialogResult.OK Then
             txtPath.Text = FolderBrowserDialog1.SelectedPath
         End If
@@ -73,10 +74,9 @@ Public Class dlgProjectProperties
 
     Private Sub txtPath_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtPath.TextChanged
         Try
-            If My.Computer.FileSystem.DirectoryExists(txtPath.Text) = False Then
-                txtPath.Text = My.Computer.FileSystem.SpecialDirectories.MyDocuments
+            If My.Computer.FileSystem.DirectoryExists(txtPath.Text) Then
+                fileListBox.Path = txtPath.Text
             End If
-            fileListBox.Path = txtPath.Text
 
         Catch ex As Exception
             MsgExceptionBox(ex)
