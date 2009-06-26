@@ -1508,6 +1508,13 @@ Public Class XmlProjectTools
                     Case "model"
                         strResult = "Model " + GetName(current)
 
+                    Case "param"
+                        strResult = GetName(current)
+                        current = current.ParentNode
+                        strResult = GetMethodName(current, eTag) + "(" + strResult + ")"
+                        current = current.ParentNode
+                        strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
+
                     Case "method"
                         strResult = GetMethodName(current, eTag)
                         current = current.ParentNode
