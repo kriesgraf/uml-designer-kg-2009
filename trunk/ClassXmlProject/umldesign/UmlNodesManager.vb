@@ -782,6 +782,54 @@ Public Class UmlNodesManager
         Next
     End Sub
 
+    Public Shared Function AddArgument(ByVal eLang As ELanguage, ByRef method As XmlNode, ByVal strArgument As String) As Boolean
+        Dim bResult As Boolean = False
+        Try
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
+    Public Shared Function RenameType(ByVal eLang As ELanguage, ByRef nodeDoxygen As XmlNode, ByVal strType As String) As Boolean
+        Dim bResult As Boolean = False
+        Try
+            Dim tData As New TSimpleDeclaration
+            Dim tIndex As New TSimpleDeclaration
+            Dim tContainer As New TSimpleDeclaration
+            Dim child As XmlNode
+
+            If AnalyzeContainerType(eLang, strType, tData, tIndex, tContainer, False) Then
+
+                child = CreateNewContainer(nodeDoxygen, tData, tIndex, tContainer)
+                nodeDoxygen.RemoveAll()
+                nodeDoxygen.AppendChild(nodeDoxygen.OwnerDocument.ImportNode(child, True))
+                child = nodeDoxygen.OwnerDocument.CreateNode(XmlNodeType.Element, "variable", "")
+                nodeDoxygen.AppendChild(child)
+                AddAttributeValue(child, "range", "public")
+                child = nodeDoxygen.OwnerDocument.CreateNode(XmlNodeType.Element, "comment", "")
+                nodeDoxygen.AppendChild(child)
+                bResult = True
+
+            ElseIf AnalyzeSimpleType(eLang, strType, tData) Then
+
+                child = CreateSimpletype(nodeDoxygen, tData)
+                nodeDoxygen.RemoveAll()
+                nodeDoxygen.AppendChild(nodeDoxygen.OwnerDocument.ImportNode(child, True))
+                child = nodeDoxygen.OwnerDocument.CreateNode(XmlNodeType.Element, "variable", "")
+                nodeDoxygen.AppendChild(child)
+                AddAttributeValue(child, "range", "public")
+                child = nodeDoxygen.OwnerDocument.CreateNode(XmlNodeType.Element, "comment", "")
+                nodeDoxygen.AppendChild(child)
+                bResult = True
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
     Public Shared Function RenameType(ByVal eLang As ELanguage, ByRef nodeDoxygen As XmlNode) As Boolean
         Dim bResult As Boolean = False
         Try
@@ -1017,13 +1065,13 @@ Public Class UmlNodesManager
 
             Select Case eLang
 
-                Case ELanguage.Language_CplusPlus
+                Case ELanguage.Language_CplusPlus, ELanguage.Language_Java
                     Dim reg As New RegularExpressions.Regex("\<.*\>", RegularExpressions.RegexOptions.Compiled)
 
                     If reg.IsMatch(strType) = False _
                     Then
                         If bAlertOk Then
-                            MsgBox("Sorry but, doesn't describe a C++ implemented template", MsgBoxStyle.Exclamation, "Convert Doxygen file index")
+                            MsgBox("Sorry but, doesn't describe a " + eLang.ToString + " implemented template", MsgBoxStyle.Exclamation, "Convert Doxygen file index")
                         End If
 
                         bResult = False
