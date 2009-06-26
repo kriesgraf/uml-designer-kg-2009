@@ -93,11 +93,11 @@
       <xsl:attribute name="constructor">no</xsl:attribute>
       <xsl:attribute name="destructor">no</xsl:attribute>
       <xsl:attribute name="inline">none</xsl:attribute>
-      <xsl:attribute name="id">class
-        <xsl:value-of select="generate-id()"/>
+      <xsl:attribute name="id">
+        <xsl:value-of select="concat('class',generate-id())"/>
       </xsl:attribute>
-      <xsl:attribute name="name">enum_
-        <xsl:value-of select="$PackageName"/>
+      <xsl:attribute name="name">
+        <xsl:value-of select="concat('enum',$PackageName)"/>
       </xsl:attribute>
       <xsl:attribute name="destructor">no</xsl:attribute>
       <xsl:element name="comment">
@@ -158,6 +158,9 @@
         <xsl:element name="model">
           <xsl:attribute name="name">
             <xsl:value-of select="substring-after(.,'class ')"/>
+          </xsl:attribute>
+          <xsl:attribute name="id">
+            <xsl:value-of select="concat('class',generate-id())"/>
           </xsl:attribute>
         </xsl:element>
       </xsl:for-each>
@@ -260,6 +263,8 @@
       </xsl:when>
       <xsl:when test="@kind='variable'">
         <xsl:element name="property">
+          <xsl:attribute name="overridable">no</xsl:attribute>
+          <xsl:attribute name="attribute">yes</xsl:attribute>
           <xsl:attribute name="name">
             <xsl:value-of select="name"/>
           </xsl:attribute>
@@ -613,6 +618,8 @@
   </xsl:template>
   <!--  ================================================================== -->
 </xsl:stylesheet>
+
+
 
 
 
