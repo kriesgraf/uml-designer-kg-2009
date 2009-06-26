@@ -784,10 +784,13 @@ Public Class frmProject
 
     Private Sub mnuProjectImportReferences_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
             Handles mnuProjectImportReferences.Click, mnuPackageImportReference.Click
-
-        If m_xmlProject.ImportReferences(Me.Mainframe, lvwProjectMembers.Binding.Parent) Then
-            RefreshUpdatedPath(True)
-        End If
+        Try
+            If m_xmlProject.ImportReferences(Me.Mainframe, lvwProjectMembers.Binding.Parent) Then
+                RefreshUpdatedPath(True)
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub mnuFileNewOmgRhpXmiFile_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
