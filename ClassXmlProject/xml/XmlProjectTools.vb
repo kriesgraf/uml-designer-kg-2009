@@ -31,6 +31,8 @@ Public Class XmlProjectTools
 #Region "Class declarations"
     Public Shared DEBUG_COMMANDS_ACTIVE As Boolean = False
 
+    Private Shared PrefixNameDocument As New XmlDocument
+
     Public Const cstMsgYesNoExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgYesNoCancelExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNoCancel + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgYesNoQuestion As MsgBoxStyle = CType(MsgBoxStyle.Question + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
@@ -39,6 +41,7 @@ Public Class XmlProjectTools
     Public Const cstMaxCircularReferences As Integer = 20
     Public Const cstExternalToolsFileVersion As String = "1.0"
     Public Const cstXslTemplate As String = "uml2template.xsl"
+    Public Const cstPrefixNameFilename As String = "language.xml"
 
     Private Const cstSchemaName As String = "class-model"
     Private Const cstSchemaVersion As String = "1.3"
@@ -137,6 +140,23 @@ Public Class XmlProjectTools
 
     Public Shared Function GetDestinationDtdFile(ByVal strDestinationFolder As String) As String
         Return My.Computer.FileSystem.CombinePath(strDestinationFolder, GetDocTypeDeclarationFile())
+    End Function
+
+    Public Shared Sub ReloadPrefixNameDocument(ByVal filename As String)
+        Try
+            PrefixNameDocument.Load(filename)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
+
+    Public Shared Function GetPrefixName(ByVal name As String) As String
+        Dim node As XmlNode = PrefixNameDocument.SelectSingleNode("//" + name)
+        If node IsNot Nothing Then
+            Return node.InnerText
+        End If
+        Return Nothing
     End Function
 
     Public Shared Function CheckVersionDtdFile(ByVal strDestinationFolder As String) As Boolean
@@ -486,8 +506,8 @@ Public Class XmlProjectTools
             MergeIteratorContainer(document)
             observer.Increment(1)
 
-            stage = "Find template C++ class"
-            FindTemplateClasses(document)
+            stage = "Find template class"
+            FindTemplateClasses(document, ELanguage.Language_CplusPlus)
             observer.Increment(1)
 
             ' Temporary saving to check result before renumber
@@ -503,7 +523,9 @@ Public Class XmlProjectTools
             observer.Increment(1)
 
             stage = "Merge properties and accessors"
-            MergeAccessorProperties(document)
+            Dim strGetter As String = GetPrefixName("GetName")
+            Dim strSetter As String = GetPrefixName("SetName")
+            MergeAccessorProperties(document, strGetter, strSetter)
             observer.Increment(1)
 
             stage = "Update nodes collabration"
@@ -536,7 +558,15 @@ Public Class XmlProjectTools
         Return bResult
     End Function
 
-    Public Shared Function ConvertDoxygenIndexFile(ByVal form As Form, ByVal strFilename As String, ByRef strTempFile As String) As Boolean
+    Public Shared Function ConvertDoxygenIndexFile(ByVal form As Form, ByVal strFilename As String, _
+                                                   ByRef strTempFile As String) As Boolean
+        Dim eLanguage As ELanguage
+
+        If MsgBox("Do you want to convert file to C++ language (Yes) or Java (No) ?", cstMsgYesNoQuestion, "Doxygen Tag file import") = MsgBoxResult.Yes Then
+            eLanguage = eLanguage.Language_CplusPlus
+        Else
+            eLanguage = eLanguage.Language_Java
+        End If
 
         Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim bResult As Boolean = False
@@ -593,9 +623,9 @@ Public Class XmlProjectTools
             ChangeDoxygenTypeReferences(document)
             observer.Increment(1)
 
-            ' Some doxygen types remain as simple C++ declaration, we must translate them to UML design Xml elements
-            stage = "Rename simple C++ declaration"
-            RenameTypeDoxygenResultFile(ELanguage.Language_CplusPlus, document)
+            ' Some doxygen types remain as simple declaration, we must translate them to UML design Xml elements
+            stage = "Rename simple " + eLanguage.ToString + " declaration"
+            RenameTypeDoxygenResultFile(eLanguage, document)
             observer.Increment(1)
 
 
@@ -603,8 +633,8 @@ Public Class XmlProjectTools
             MergeIteratorContainer(document)
             observer.Increment(1)
 
-            stage = "Find template C++ class"
-            FindTemplateClasses(document)
+            stage = "Find template class"
+            FindTemplateClasses(document, eLanguage)
             observer.Increment(1)
 
             ' Temporary saving to check result before renumber
@@ -630,8 +660,10 @@ Public Class XmlProjectTools
             CleanPrefixProperties(document)
             observer.Increment(1)
 
-            stage = "Merge properties and acessors"
-            MergeAccessorProperties(document)
+            stage = "Merge properties and accessors"
+            Dim strGetter As String = GetPrefixName("GetName")
+            Dim strSetter As String = GetPrefixName("SetName")
+            MergeAccessorProperties(document, strGetter, strSetter)
             observer.Increment(1)
 
             stage = "update Doxygen comments"
@@ -719,11 +751,18 @@ Public Class XmlProjectTools
     Public Shared Sub ConvertDoxygenTagFile(ByVal form As Form, ByVal document As XmlDocument, ByVal strFilename As String)
         Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim oldCursor As Cursor = form.Cursor
+        Dim strTempFile As String = ""
+        Dim eLanguage As ELanguage
         Try
+            If MsgBox("Do you can't convert file to C++ language (Yes) or Java (No)", cstMsgYesNoQuestion, "Doxygen Tag file import") = MsgBoxResult.Yes Then
+                eLanguage = ELanguage.Language_CplusPlus
+            Else
+                eLanguage = ELanguage.Language_Java
+            End If
             form.Cursor = Cursors.WaitCursor
 
             observer.Minimum = 0
-            observer.Maximum = 6
+            observer.Maximum = 14
             observer.ProgressBarVisible = True
 
             Dim styleXsl As New XslSimpleTransform(True)
@@ -732,16 +771,71 @@ Public Class XmlProjectTools
             observer.Increment(2)
             form.Cursor = oldCursor
 
-            Dim strTempFile As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
+            strTempFile = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                                            cstTempDoxygenFile + ".ximp")
-            styleXsl.Transform(strFilename, strTempFile)
-            observer.Increment(2)
 
-            LoadDocument(form, document, strTempFile, True)
+            Dim argList As New XslSimpleTransform.Arguments
+
+            argList.Add("Language", CInt(eLanguage).ToString)
+
+            ' This transformation generates a metafile 80% compliant with end-generated file
+            styleXsl.Transform(strFilename, strTempFile)
             observer.Increment(2)
 
         Catch ex As Exception
             Throw ex
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
+
+        Dim stage As String = "Format final project to UML Designer"
+
+        Try
+            observer.ProgressBarVisible = True
+            LoadDocument(form, document, strTempFile, True)
+            observer.Increment(2)
+
+            ' Some doxygen types remain as simple declaration, we must translate them to UML design Xml elements
+            stage = "Rename simple " + eLanguage.ToString + " declaration"
+            RenameTypeDoxygenTagFile(eLanguage, document)
+            observer.Increment(2)
+
+            stage = "Merge properties and accessors"
+            Dim strGetter As String = GetPrefixName("GetName")
+            Dim strSetter As String = GetPrefixName("SetName")
+            MergeAccessorProperties(document, strGetter, strSetter, True)
+            observer.Increment(2)
+
+            Dim tempo As String = Path.GetFileNameWithoutExtension(strFilename)
+            AddAttributeValue(document.DocumentElement, "name", tempo)
+
+            ' We insert the external DTD file declaration to be sure that generated file is full compliant
+            stage = "Insert the external DTD file declaration"
+            Dim docType As XmlDocumentType = document.CreateDocumentType("export", Nothing, "class-model.dtd", "")
+            observer.Increment(2)
+            document.InsertBefore(docType, document.FirstChild.NextSibling)
+
+            stage = "Final saving"
+            ' Now document is no more "Standalone"
+            CType(document.FirstChild, XmlDeclaration).Standalone = "no"
+            document.Save(strTempFile)
+            observer.Increment(2)
+
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
+
+        Try
+            observer.ProgressBarVisible = True
+            stage = "Reload to check DTD"
+            LoadDocument(form, document, strTempFile, True)
+
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
             form.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -2134,39 +2228,178 @@ Public Class XmlProjectTools
 #End If
 
     Public Shared Sub MergeAccessorProperties(ByVal document As XmlDocument, _
-                                               Optional ByVal prefixGet As String = "Get", _
-                                               Optional ByVal prefixSet As String = "Set")
+                                               ByVal prefixGet As String, _
+                                               ByVal prefixSet As String, _
+                                               Optional ByVal bFilterImports As Boolean = False)
         Try
-            Dim Accessor As XmlNode = Nothing
+            'Dim Accessor As XmlNode = Nothing
+            Dim nodeProperty As XmlNode = Nothing
+            Dim Getter, Setter As XmlNode
+            Dim node, child As XmlNode
+            Dim numID As Integer = 1
 
-            For Each prop As XmlNode In document.SelectNodes("//property")
-                Accessor = prop.ParentNode.SelectSingleNode("method[@name='" + prefixGet + GetName(prop) + "']")
-                If Accessor IsNot Nothing Then
-                    AddAttributeValue(GetNode(prop, "get"), "range", GetAttributeValue(GetNode(Accessor, "descendant::return/variable"), "range"))
-                    AddAttributeValue(GetNode(prop, "get"), "by", GetAttributeValue(GetNode(Accessor, "descendant::return/type"), "by"))
-                    AddAttributeValue(GetNode(prop, "get"), "modifier", GetAttributeValue(GetNode(Accessor, "descendant::return/type"), "modifier"))
-                    prop.ParentNode.RemoveChild(Accessor)
+            If bFilterImports Then
+                For Each node In document.SelectNodes("//interface[method[starts-with(@name,'" + prefixGet + "')]]")
+
+                    For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixGet + "')]")
+
+                        nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "yes", numID, child)
+
+                        Dim strRange As String = "public"
+
+                        If child.SelectSingleNode("return") IsNot Nothing Then
+                            strRange = child.SelectSingleNode("return/variable/@range").Value
+                        End If
+
+                        Getter = nodeProperty.SelectSingleNode("get")
+                        AddAttributeValue(Getter, "range", strRange)
+
+                        node.RemoveChild(child)
+                        numID += 1
+
+                    Next
+                Next
+            End If
+
+            Dim strName As String = ""
+            numID = 1
+
+            For Each node In document.SelectNodes("//class[(method[starts-with(@name,'" + prefixGet + "') or starts-with(@name,'" + prefixSet + "')])]")
+                For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixGet + "')]")
+                    strName = GetName(child).Substring(prefixGet.Length)
+                    nodeProperty = node.SelectSingleNode("property[@name='" + strName + "']")
+
+                    If nodeProperty Is Nothing Then
+                        nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixGet.Length), "no", "no", numID, child)
+                        numID += 1
+                    End If
+                Next
+                For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixSet + "')]")
+                    strName = GetName(child).Substring(prefixGet.Length)
+                    nodeProperty = node.SelectSingleNode("property[@name='" + strName + "']")
+                    If nodeProperty Is Nothing Then
+                        nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "no", numID, child)
+                        numID += 1
+                    End If
+                Next
+            Next
+
+            Dim strImplementation As String = Nothing
+
+            For Each child In document.SelectNodes("//property")
+                Getter = child.ParentNode.SelectSingleNode("method[@name='" + prefixGet + GetName(child) + "']")
+                If Getter IsNot Nothing Then
+                    Select Case ConvertDtdToEnumImpl(GetAttributeValue(Getter, "implementation"))
+                        Case EImplementation.Interf, EImplementation.Node, EImplementation.Root
+                            strImplementation = "yes"
+                        Case Else
+                            strImplementation = "no"
+                    End Select
+
+                    AddAttributeValue(child, "overridable", strImplementation)
+                    AddAttributeValue(GetNode(child, "get"), "range", GetAttributeValue(GetNode(Getter, "descendant::return/variable"), "range"))
+                    AddAttributeValue(GetNode(child, "get"), "by", GetAttributeValue(GetNode(Getter, "descendant::return/type"), "by"))
+                    AddAttributeValue(GetNode(child, "get"), "modifier", GetAttributeValue(GetNode(Getter, "descendant::return/type"), "modifier"))
+                    child.ParentNode.RemoveChild(Getter)
                 End If
-                Accessor = prop.ParentNode.SelectSingleNode("method[@name='" + prefixSet + GetName(prop) + "']")
-                If Accessor IsNot Nothing Then
-                    AddAttributeValue(GetNode(prop, "set"), "range", GetAttributeValue(GetNode(Accessor, "descendant::return/variable"), "range"))
-                    AddAttributeValue(GetNode(prop, "get"), "by", GetAttributeValue(GetNode(Accessor, "descendant::param/type"), "by"))
-                    prop.ParentNode.RemoveChild(Accessor)
+                Setter = child.ParentNode.SelectSingleNode("method[@name='" + prefixSet + GetName(child) + "']")
+                If Setter IsNot Nothing Then
+                    If strImplementation Is Nothing Then
+                        Select Case ConvertDtdToEnumImpl(GetAttributeValue(Getter, "implementation"))
+                            Case EImplementation.Interf, EImplementation.Node, EImplementation.Root
+                                strImplementation = "yes"
+                            Case Else
+                                strImplementation = "no"
+                        End Select
+                        AddAttributeValue(child, "overridable", strImplementation)
+                    End If
+
+                    AddAttributeValue(GetNode(child, "set"), "range", GetAttributeValue(GetNode(Setter, "descendant::return/variable"), "range"))
+                    AddAttributeValue(GetNode(child, "get"), "by", GetAttributeValue(GetNode(Setter, "descendant::param/type"), "by"))
+                    child.ParentNode.RemoveChild(Setter)
                 End If
             Next
+
+            If bFilterImports Then
+                numID = 1
+                For Each node In document.SelectNodes("//interface[method[starts-with(@name,'" + prefixSet + "')]]")
+
+                    For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixSet + "')]")
+
+                        '                    Debug.Print(child.OuterXml)
+
+                        nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "yes", numID, child)
+
+                        Dim strRange As String = "public"
+
+                        If child.SelectSingleNode("return") IsNot Nothing Then
+                            strRange = child.SelectSingleNode("return/variable/@range").Value
+                        End If
+
+                        Setter = nodeProperty.SelectSingleNode("set")
+                        AddAttributeValue(Setter, "range", strRange)
+
+                        node.RemoveChild(child)
+                        numID += 1
+
+                    Next
+                Next
+            End If
 
         Catch ex As Exception
             Throw ex
         End Try
     End Sub
 
+    Private Shared Function AddNewProperty(ByVal node As XmlNode, ByVal name As String, _
+                                    ByVal attribute As String, ByVal strOverridable As String, _
+                                    ByVal numID As Integer, ByVal method As XmlNode) As XmlNode
+
+        Dim xmlResult As XmlNode = Nothing
+        Try
+            xmlResult = node.OwnerDocument.CreateNode(XmlNodeType.Element, "property", "")
+            AddAttributeValue(xmlResult, "attribute", attribute)
+            AddAttributeValue(xmlResult, "overridable", strOverridable)
+            AddAttributeValue(xmlResult, "name", name)
+            AddAttributeValue(xmlResult, "member", "object")
+            AddAttributeValue(xmlResult, "num-id", numID.ToString)
+
+            If method.SelectSingleNode("return") IsNot Nothing Then
+                Dim element As XmlNode = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/type"), True)
+                xmlResult.AppendChild(element)
+                element = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/variable"), True)
+                xmlResult.AppendChild(element)
+                element = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/comment"), True)
+                xmlResult.AppendChild(element)
+            End If
+
+            Dim Getter As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, "get", "")
+            AddAttributeValue(Getter, "inline", "no")
+            AddAttributeValue(Getter, "by", "val")
+            AddAttributeValue(Getter, "modifier", "var")
+            AddAttributeValue(Getter, "range", "no")
+            xmlResult.AppendChild(Getter)
+
+            Dim Setter As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, "set", "")
+            AddAttributeValue(Setter, "inline", "no")
+            AddAttributeValue(Setter, "by", "val")
+            AddAttributeValue(Setter, "range", "no")
+            xmlResult.AppendChild(Setter)
+
+            node.InsertBefore(xmlResult, node.SelectSingleNode("method"))
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return xmlResult
+    End Function
+
 #End Region
 
 #Region "Private shared methods"
 
 #If _APP_UML = "1" Then
-    Private Shared Function ConvertAndCorrectErrors(ByVal form As Form, ByVal document As XmlDocument, _
-                                                    ByVal strFilename As String, ByRef bDtdError As Boolean, _
+    Private Shared Function ConvertAndCorrectErrors(ByVal form As Form, ByVal document As XmlDocument, ByVal strFilename As String, ByRef bDtdError As Boolean, _
                                                     ByVal currentException As Exception) As EResult
         Dim oldCursor As Cursor = form.Cursor
         Dim eResult As EResult
@@ -2241,8 +2474,10 @@ Public Class XmlProjectTools
         Return parent.AppendNode(collaboration)
     End Function
 
-    Private Shared Sub FindTemplateClasses(ByVal document As XmlDocument)
+    Private Shared Sub FindTemplateClasses(ByVal document As XmlDocument, ByVal eLanguage As ELanguage)
         Try
+            If eLanguage = ClassXmlProject.ELanguage.Language_Vbasic Then Return
+
             Dim i As Integer
             For Each classNode As XmlNode In document.SelectNodes("//class[@implementation='container']")
                 i = 1
@@ -2264,9 +2499,9 @@ Public Class XmlProjectTools
         Next
     End Sub
 
-     Shared Sub CleanPrefixProperties(ByVal document As XmlDocument, _
-                                             Optional ByVal regexPrefixMember As String = "([a-z]{1,2}|[a-z]{0,1}str)([A-Z])", _
-                                             Optional ByVal prefixMember As String = "m_")
+    Shared Sub CleanPrefixProperties(ByVal document As XmlDocument, _
+                                            Optional ByVal regexPrefixMember As String = "([a-z]{1,2}|[a-z]{0,1}str)([A-Z])", _
+                                            Optional ByVal prefixMember As String = "m_")
         Dim regex As New Regex(regexPrefixMember, RegexOptions.Compiled)
 
         Try
@@ -2510,6 +2745,26 @@ Public Class XmlProjectTools
         Next
     End Sub
 
+    Private Shared Sub RenameTypeDoxygenTagFile(ByVal eLang As ELanguage, ByVal document As XmlDocument)
+        Dim regArguments As New Regex("\((.*.|)\)")
+        Dim arguments As String()
+        Dim regReturnType As New Regex("(abstract|virtual|)(.*.)")
+        Dim returnType As String = ""
+        Dim child As XmlNode
+
+        For Each method As XmlNode In document.SelectNodes("//method")
+            child = method.SelectSingleNode("return")
+            arguments = regReturnType.Split(child.InnerText)
+            returnType = arguments(2)
+            RenameType(eLang, child, returnType)
+            arguments = regArguments.Split(method.SelectSingleNode("arglist").InnerText)
+            arguments = arguments(1).Split(",")
+            For Each value As String In arguments
+                AddArgument(eLang, method, value)
+            Next
+        Next
+    End Sub
+
     Private Shared Sub RenameTypeDoxygenResultFile(ByVal eLang As ELanguage, ByVal document As XmlDocument)
         Try
             Dim list As XmlNodeList
@@ -2565,6 +2820,8 @@ Public Class XmlProjectTools
             Else
                 File.Copy(srcFile, dstFile, True)
             End If
+
+            ReloadPrefixNameDocument(dstFile)
 
         Catch ex As Exception
             Throw ex
