@@ -85,6 +85,8 @@ Public Class XmlNodeListView
                     name = """" + GetAttribute("action") + """"
                 Case "param"
                     name = """argument"" " + Me.Name
+                Case "property"
+                    name = """property"" " + Me.Name
                 Case "return", "method"
                     name = """method/return value"" " + Me.Name
                 Case Else
@@ -102,6 +104,8 @@ Public Class XmlNodeListView
                     name = """" + GetAttribute("action") + """"
                 Case "param"
                     name = """argument"" " + Me.Name
+                Case "property"
+                    name = """property"" " + Me.Name
                 Case "return", "method"
                     name = """method/return value"" " + Me.Name
                 Case Else
@@ -533,9 +537,10 @@ Public Class XmlNodeListView
                     Return tempo
 
                 Case "class", "interface"
-                    tempo = ""
+                    Dim component2 As XmlClassSpec = Me.CreateDocument(Me.Node)
+                    tempo = ConvertEnumImplToView(XmlProjectTools.ConvertDtdToEnumImpl(component2.Implementation))
                     For Each child In Me.SelectNodes("typedef | property | method")
-                        tempo += GetName(child) + ", "
+                        tempo += ", " + GetName(child)
                     Next
                     Return tempo
 
@@ -545,6 +550,16 @@ Public Class XmlNodeListView
                         tempo += GetName(child) + ", "
                     Next
                     Return tempo
+
+                Case "param"
+                    Dim component3 As XmlParamSpec = Me.CreateDocument(Me.Node)
+                    component3.Tag = Me.Tag
+                    Return component3.TypeVarDefinition.DetailedDescription
+
+                Case "property"
+                    Dim component2 As XmlPropertySpec = Me.CreateDocument(Me.Node)
+                    component2.Tag = Me.Tag
+                    Return component2.TypeVarDefinition.DetailedDescription
 
                 Case "typedef"
                     Dim component As XmlTypedefSpec = Me.CreateDocument(Me.Node)
