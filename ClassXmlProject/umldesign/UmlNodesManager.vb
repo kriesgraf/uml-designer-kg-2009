@@ -3,6 +3,7 @@ Imports System.Xml
 Imports System.IO
 Imports System.Collections
 Imports System.Text
+Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic
 
 #If _APP_UML = "1" Then
@@ -782,10 +783,21 @@ Public Class UmlNodesManager
         Next
     End Sub
 
-    Public Shared Function AddArgument(ByVal eLang As ELanguage, ByRef method As XmlNode, ByVal strArgument As String) As Boolean
+    Public Shared Function AddArgument(ByVal eLang As ELanguage, ByRef method As XmlNode, _
+                                       ByVal strArgument As String, ByVal index As Integer) As Boolean
         Dim bResult As Boolean = False
+        Dim reg As New Regex("(\w+[\s|\t|\n]+)")
         Try
-
+            Dim split As String() = reg.Split(strArgument)
+            If split.Length > 1 Then
+                Dim strParam As String = split(split.Length - 1)
+                Dim param As XmlNode = CreateNode(method, "param")
+                AddAttributeValue(param, "name", strParam)
+                AddAttributeValue(param, "num-id", index.ToString)
+                Dim strType As String = strArgument.Substring(0, strArgument.Length - strParam.Length).Trim()
+                RenameType(eLang, param, strType)
+                method.AppendChild(param)
+            End If
         Catch ex As Exception
             Throw ex
         End Try
@@ -803,24 +815,24 @@ Public Class UmlNodesManager
             If AnalyzeContainerType(eLang, strType, tData, tIndex, tContainer, False) Then
 
                 child = CreateNewContainer(nodeDoxygen, tData, tIndex, tContainer)
-                nodeDoxygen.RemoveAll()
+                RemoveNode(nodeDoxygen, "node()")
                 nodeDoxygen.AppendChild(nodeDoxygen.OwnerDocument.ImportNode(child, True))
-                child = nodeDoxygen.OwnerDocument.CreateNode(XmlNodeType.Element, "variable", "")
+                child = CreateNode(nodeDoxygen, "variable")
                 nodeDoxygen.AppendChild(child)
                 AddAttributeValue(child, "range", "public")
-                child = nodeDoxygen.OwnerDocument.CreateNode(XmlNodeType.Element, "comment", "")
+                child = CreateNode(nodeDoxygen, "comment")
                 nodeDoxygen.AppendChild(child)
                 bResult = True
 
             ElseIf AnalyzeSimpleType(eLang, strType, tData) Then
 
                 child = CreateSimpletype(nodeDoxygen, tData)
-                nodeDoxygen.RemoveAll()
+                RemoveNode(nodeDoxygen, "node()")
                 nodeDoxygen.AppendChild(nodeDoxygen.OwnerDocument.ImportNode(child, True))
-                child = nodeDoxygen.OwnerDocument.CreateNode(XmlNodeType.Element, "variable", "")
+                child = CreateNode(nodeDoxygen, "variable")
                 nodeDoxygen.AppendChild(child)
                 AddAttributeValue(child, "range", "public")
-                child = nodeDoxygen.OwnerDocument.CreateNode(XmlNodeType.Element, "comment", "")
+                child = CreateNode(nodeDoxygen, "comment")
                 nodeDoxygen.AppendChild(child)
                 bResult = True
             End If

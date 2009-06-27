@@ -1509,11 +1509,11 @@ Public Class XmlProjectTools
                         strResult = "Model " + GetName(current)
 
                     Case "param"
-                        strResult = GetName(current)
+                        Dim tempo As String = GetName(current)
                         current = current.ParentNode
-                        strResult = GetMethodName(current, eTag) + "(" + strResult + ")"
+                        strResult = GetMethodName(current, eTag)
                         current = current.ParentNode
-                        strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
+                        strResult = tempo + " in method " + GetFullpathDescription(current, eTag) + strSeparator + strResult
 
                     Case "method"
                         strResult = GetMethodName(current, eTag)
@@ -2766,9 +2766,11 @@ Public Class XmlProjectTools
             RenameType(eLang, child, returnType)
             arguments = regArguments.Split(method.SelectSingleNode("arglist").InnerText)
             arguments = arguments(1).Split(",")
+            Dim i As Integer
             For Each value As String In arguments
-                AddArgument(eLang, method, value)
+                AddArgument(eLang, method, value, i)
             Next
+            method.RemoveChild(method.SelectSingleNode("arglist"))
         Next
     End Sub
 
