@@ -118,14 +118,26 @@ Public Class XmlNodeListView
     Public ReadOnly Property FullpathClassName() As String
         Get
             Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
-            Dim strResult As String = Me.Name
+            Dim strResult As String = ""
 
             Dim parent As XmlImportView = TryCast(m_xmlComponent, XmlImportView)
+
+            Select Case Me.NodeName
+                Case "relationship"
+                    strResult = """" + GetAttribute("action") + """"
+                Case "param"
+                    strResult = """argument"" "
+                Case "property"
+                    strResult = """property"" "
+                Case "return", "method"
+                    strResult = """method/return value"" "
+            End Select
+
             If parent IsNot Nothing _
             Then
-                strResult = GetFullpathDescription(Me.Node, eLang, parent.CurrentParameter)
+                strResult += GetFullpathDescription(Me.Node, eLang, parent.CurrentParameter)
             Else
-                strResult = GetFullpathDescription(Me.Node, eLang)
+                strResult += GetFullpathDescription(Me.Node, eLang)
             End If
             strResult += m_strName
             If DEBUG_COMMANDS_ACTIVE And m_strName.Length = 0 Then strResult += " (" + eLang.ToString + ")"
