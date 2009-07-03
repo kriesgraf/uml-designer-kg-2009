@@ -168,15 +168,24 @@ Public Class XmlExportSpec
     End Function
 
     Protected Friend Function LoadImport(ByVal form As Form, ByVal projectNode As XmlComponent, _
-                                         ByVal strFilename As String, Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
+                                         ByVal strFilename As String, _
+                                         Optional ByVal bDoxygenTagFile As Boolean = False) As Boolean
         Dim bResult As Boolean = False
         Try
             ' the following call to Validate succeeds.
             Dim document As New XmlDocument
             Dim strSource As String = GetProjectPath(strFilename)
 
+            Dim eLanguage As ELanguage = CType(Me.Tag, ELanguage)
+
+            Select Case eLanguage
+                Case ClassXmlProject.ELanguage.Language_Tools, ClassXmlProject.ELanguage.Language_Vbasic
+                    Dim lang As String = XmlProjectTools.GetLanguage(eLanguage)
+                    MsgBox("Cant import Tag file into project with language " + lang + " !", MsgBoxStyle.Exclamation, "Import Doxygen TAG file")
+            End Select
+
             If bDoxygenTagFile Then
-                XmlProjectTools.ConvertDoxygenTagFile(form, document, strFilename)
+                XmlProjectTools.ConvertDoxygenTagFile(form, document, strFilename, eLanguage)
             Else
                 If UseDocTypeDeclarationFileForImport(strSource) = False Then
                     Return False
