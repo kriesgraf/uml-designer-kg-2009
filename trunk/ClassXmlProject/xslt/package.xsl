@@ -9,8 +9,7 @@
 	<xsl:variable name="Separator">
 	  <xsl:choose>
     	<xsl:when test="/root/generation/@language='0'">::</xsl:when>
-	    <xsl:when test="/root/generation/@language='2'">.</xsl:when>
-    	<xsl:otherwise/>
+    	<xsl:otherwise>.</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
 	<!-- ======================================================================= -->
@@ -1138,6 +1137,7 @@ border-left: 1px solid gray;
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
