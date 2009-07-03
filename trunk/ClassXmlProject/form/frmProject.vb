@@ -813,8 +813,8 @@ Public Class frmProject
                 dlgSaveFile.InitialDirectory = My.Settings.CurrentFolder
             End If
 
-            dlgSaveFile.Title = "Save the project file..."
-            dlgSaveFile.Filter = "UML project (*.xprj)|*.xprj"
+            dlgSaveFile.Title = "Export to OMG UML XMI 2.1 file..."
+            dlgSaveFile.Filter = "OMG UML XMI 2.1 model (*.xmi)|*.xmi"
 
             Dim strFilename As String = m_xmlProject.Name
             If XmlProjectTools.GetValidFilename(strFilename) Then
