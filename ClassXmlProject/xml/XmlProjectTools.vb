@@ -50,6 +50,7 @@ Public Class XmlProjectTools
     Private Const cstTag2ImportStyle As String = "tag2imp.xsl"
     Private Const cstDoxygen2ProjectStyle As String = "dox2prj.xsl"
     Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
+    Private Const cstProject2XmiStyle As String = "xprj2xmi.xsl"
     Private Const cstIbmXmi2ProjectStyle As String = "rhp-xmi2prj.xsl"
     Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xsl"
 
@@ -444,6 +445,37 @@ Public Class XmlProjectTools
             collaboration = CreateAppendCollaboration(node)
             AddAttributeValue(collaboration, "idref", strID)
         Next
+    End Sub
+
+    Public Shared Sub ExportOmgUmlFile(ByVal form As Form, ByVal document As XmlDocument, ByVal fileName As String)
+        Dim oldCursor As Cursor = form.Cursor
+        Dim observer As InterfProgression = CType(form, InterfProgression)
+
+        Try
+            form.Cursor = Cursors.WaitCursor
+
+            observer.Minimum = 0
+            observer.Maximum = 4
+            observer.ProgressBarVisible = True
+
+            Dim styleXsl As New XslSimpleTransform(True)
+            styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
+                                                                     My.Settings.ToolsFolder + cstProject2XmiStyle))
+
+            observer.Increment(2)
+
+            Dim argList As New XslSimpleTransform.Arguments
+            argList.Add("LanguageFolder", Application.LocalUserAppDataPath.ToString)
+
+            styleXsl.Transform(document.DocumentElement, fileName, argList)
+            observer.Increment(2)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
     End Sub
 
     Public Shared Function ConvertOmgUmlModel(ByVal form As Form, ByVal strFilename As String, _

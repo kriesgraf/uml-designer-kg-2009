@@ -84,6 +84,7 @@ Partial Class frmProject
         Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuFileNewOmgRhpXmiFile = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuFileNewOmgBoomlXmiFile = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuFileExportOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuApplyPatch = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditDatabase = New System.Windows.Forms.ToolStripMenuItem
@@ -206,7 +207,7 @@ Partial Class frmProject
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.docvwProjectDisplay)
-        Me.SplitContainer1.Size = New System.Drawing.Size(897, 610)
+        Me.SplitContainer1.Size = New System.Drawing.Size(897, 586)
         Me.SplitContainer1.SplitterDistance = 267
         Me.SplitContainer1.TabIndex = 0
         '
@@ -225,7 +226,7 @@ Partial Class frmProject
         Me.lvwProjectMembers.Name = "lvwProjectMembers"
         Me.lvwProjectMembers.ShowGroups = False
         Me.lvwProjectMembers.ShowItemToolTips = True
-        Me.lvwProjectMembers.Size = New System.Drawing.Size(267, 610)
+        Me.lvwProjectMembers.Size = New System.Drawing.Size(267, 586)
         Me.lvwProjectMembers.SmallImageList = Me.SmallIconList
         Me.lvwProjectMembers.TabIndex = 1
         Me.lvwProjectMembers.TileSize = New System.Drawing.Size(160, 90)
@@ -436,14 +437,14 @@ Partial Class frmProject
         Me.docvwProjectDisplay.Location = New System.Drawing.Point(0, 0)
         Me.docvwProjectDisplay.MinimumSize = New System.Drawing.Size(20, 20)
         Me.docvwProjectDisplay.Name = "docvwProjectDisplay"
-        Me.docvwProjectDisplay.Size = New System.Drawing.Size(626, 610)
+        Me.docvwProjectDisplay.Size = New System.Drawing.Size(626, 586)
         Me.docvwProjectDisplay.TabIndex = 0
         Me.docvwProjectDisplay.View = ClassXmlProject.XmlDocumentViewMode.Unknown
         '
         'tlstrpNavigation
         '
         Me.tlstrpNavigation.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btnHome, Me.btnUp, Me.ToolStripSeparator30, Me.btnProjectView, Me.ToolStripSeparator31, Me.btnCopy, Me.btnCut, Me.btnPaste, Me.ToolStripSeparator32, Me.btnDocView, Me.btnZoomIn, Me.btnZoomOut})
-        Me.tlstrpNavigation.Location = New System.Drawing.Point(0, 0)
+        Me.tlstrpNavigation.Location = New System.Drawing.Point(0, 24)
         Me.tlstrpNavigation.Name = "tlstrpNavigation"
         Me.tlstrpNavigation.Size = New System.Drawing.Size(897, 25)
         Me.tlstrpNavigation.TabIndex = 1
@@ -607,13 +608,13 @@ Partial Class frmProject
         'ToolStripContainer1.ContentPanel
         '
         Me.ToolStripContainer1.ContentPanel.Controls.Add(Me.SplitContainer1)
-        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(897, 610)
+        Me.ToolStripContainer1.ContentPanel.Size = New System.Drawing.Size(897, 586)
         Me.ToolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ToolStripContainer1.LeftToolStripPanelVisible = False
-        Me.ToolStripContainer1.Location = New System.Drawing.Point(0, 25)
+        Me.ToolStripContainer1.Location = New System.Drawing.Point(0, 49)
         Me.ToolStripContainer1.Name = "ToolStripContainer1"
         Me.ToolStripContainer1.RightToolStripPanelVisible = False
-        Me.ToolStripContainer1.Size = New System.Drawing.Size(897, 610)
+        Me.ToolStripContainer1.Size = New System.Drawing.Size(897, 586)
         Me.ToolStripContainer1.TabIndex = 2
         Me.ToolStripContainer1.Text = "ToolStripContainer1"
         Me.ToolStripContainer1.TopToolStripPanelVisible = False
@@ -630,7 +631,7 @@ Partial Class frmProject
         '
         'mnuFile
         '
-        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNew, Me.mnuFileOpen, Me.ToolStripSeparator18, Me.mnuFileNewDoxygenFile, Me.mnuFileNewOmgUmlFile, Me.ToolStripMenuItem1, Me.ToolStripSeparator3, Me.mnuFileSave, Me.mnuFileSaveAs, Me.ToolStripSeparator4, Me.mnuFileClose, Me.ToolStripSeparator9, Me.mnuFilePrint, Me.mnuFilePrintPreview, Me.ToolStripSeparator5, Me.mnuFileExit})
+        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNew, Me.mnuFileOpen, Me.ToolStripSeparator18, Me.mnuFileNewDoxygenFile, Me.mnuFileNewOmgUmlFile, Me.mnuFileExportOmgUmlFile, Me.ToolStripMenuItem1, Me.ToolStripSeparator3, Me.mnuFileSave, Me.mnuFileSaveAs, Me.ToolStripSeparator4, Me.mnuFileClose, Me.ToolStripSeparator9, Me.mnuFilePrint, Me.mnuFilePrintPreview, Me.ToolStripSeparator5, Me.mnuFileExit})
         Me.mnuFile.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder
         Me.mnuFile.MergeAction = System.Windows.Forms.MergeAction.Replace
         Me.mnuFile.MergeIndex = 0
@@ -672,7 +673,7 @@ Partial Class frmProject
         Me.mnuFileNewOmgUmlFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNewOmgRhpXmiFile, Me.mnuFileNewOmgBoomlXmiFile})
         Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
         Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(228, 22)
-        Me.mnuFileNewOmgUmlFile.Text = "Import OMG UML XMI 2.1file"
+        Me.mnuFileNewOmgUmlFile.Text = "Import OMG UML XMI 2.1 file"
         '
         'mnuFileNewOmgRhpXmiFile
         '
@@ -687,6 +688,12 @@ Partial Class frmProject
         Me.mnuFileNewOmgBoomlXmiFile.Size = New System.Drawing.Size(171, 22)
         Me.mnuFileNewOmgBoomlXmiFile.Tag = "0"
         Me.mnuFileNewOmgBoomlXmiFile.Text = "From Booml UML 2.1"
+        '
+        'mnuFileExportOmgUmlFile
+        '
+        Me.mnuFileExportOmgUmlFile.Name = "mnuFileExportOmgUmlFile"
+        Me.mnuFileExportOmgUmlFile.Size = New System.Drawing.Size(228, 22)
+        Me.mnuFileExportOmgUmlFile.Text = "Export to OMG UML XMI 2.1file"
         '
         'ToolStripMenuItem1
         '
@@ -1549,4 +1556,5 @@ Partial Class frmProject
     Friend WithEvents mnuFileNewOmgRhpXmiFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuFileNewOmgBoomlXmiFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuUpdatePrefixNames As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuFileExportOmgUmlFile As System.Windows.Forms.ToolStripMenuItem
 End Class

@@ -163,6 +163,10 @@ Public Class XmlProjectView
         Return bResult
     End Function
 
+    Public Sub ExportOmgUmlFile(ByVal form As Form, ByVal fileName As String)
+        XmlProjectTools.ExportOmgUmlFile(form, Me.Document, fileName)
+    End Sub
+
     Public Function EditProperties() As Boolean
         If m_xmlProperties.Edit() Then
             ' We go home to be sure that language info is reflected back to all tree nodes
