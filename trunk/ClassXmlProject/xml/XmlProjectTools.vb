@@ -748,17 +748,13 @@ Public Class XmlProjectTools
         Return False
     End Function
 
-    Public Shared Sub ConvertDoxygenTagFile(ByVal form As Form, ByVal document As XmlDocument, ByVal strFilename As String)
+    Public Shared Sub ConvertDoxygenTagFile(ByVal form As Form, ByVal document As XmlDocument, _
+                                            ByVal strFilename As String, ByVal eLanguage As ELanguage)
         Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim oldCursor As Cursor = form.Cursor
         Dim strTempFile As String = ""
-        Dim eLanguage As ELanguage
+
         Try
-            If MsgBox("Do you can't convert file to C++ language (Yes) or Java (No)", cstMsgYesNoQuestion, "Doxygen Tag file import") = MsgBoxResult.Yes Then
-                eLanguage = ELanguage.Language_CplusPlus
-            Else
-                eLanguage = ELanguage.Language_Java
-            End If
             form.Cursor = Cursors.WaitCursor
 
             observer.Minimum = 0
@@ -797,8 +793,8 @@ Public Class XmlProjectTools
             observer.Increment(2)
 
             ' Some doxygen types remain as simple declaration, we must translate them to UML design Xml elements
-            stage = "Rename simple " + eLanguage.ToString + " declaration"
-            RenameTypeDoxygenTagFile(eLanguage, document)
+            stage = "Rename simple " + ELanguage.ToString + " declaration"
+            RenameTypeDoxygenTagFile(ELanguage, document)
             observer.Increment(2)
 
             stage = "Merge properties and accessors"
@@ -1326,6 +1322,8 @@ Public Class XmlProjectTools
                 Return "Java"
             Case ELanguage.Language_Vbasic
                 Return "Vb.NET"
+            Case ELanguage.Language_Tools
+                Return "External style sheet"
             Case Else
                 Return "Unknown"
         End Select

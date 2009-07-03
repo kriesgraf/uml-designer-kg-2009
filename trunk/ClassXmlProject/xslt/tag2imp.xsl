@@ -36,6 +36,9 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:element name="{$ClassNode}">
+      <xsl:if test="$ClassNode='interface'">
+        <xsl:attribute name="root">no</xsl:attribute>
+      </xsl:if>
       <xsl:attribute name="name">
         <xsl:choose>
           <xsl:when test="contains($ClassName,$Separator)">
@@ -74,7 +77,9 @@
         <xsl:otherwise><xsl:value-of select="name"/></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <reference name="{$TypeName}" type="typedef">
+    <xsl:element name="reference">
+      <xsl:attribute name="name"><xsl:value-of select="$TypeName"/></xsl:attribute>
+      <xsl:attribute name="type">typedef</xsl:attribute>
       <xsl:if test="parent::compound[@kind='class']">
         <xsl:apply-templates select="parent::compound/name"/>
       </xsl:if>
@@ -84,16 +89,24 @@
       <xsl:attribute name="id">
         <xsl:value-of select="generate-id()"/>
       </xsl:attribute>
-    </reference>
+    </xsl:element>
   </xsl:template>
   <!-- =============================================================================== -->
   <xsl:template match="member" mode="Method">
-    <method modifier="var" inline="no" name="{name}" constructor="no"
-            member="object" implementation="abstract" num-id="{position()}">
-      <return><xsl:value-of select="type"/></return>
-      <comment/>
+    <xsl:element name="method">
+      <xsl:attribute name="modifier">var</xsl:attribute>
+      <xsl:attribute name="inline">no</xsl:attribute>
+      <xsl:attribute name="name"><xsl:value-of select="name"/></xsl:attribute>
+      <xsl:attribute name="constructor">no</xsl:attribute>
+      <xsl:attribute name="member">object</xsl:attribute>
+      <xsl:attribute name="implementation">abstract</xsl:attribute>
+      <xsl:attribute name="num-id"><xsl:value-of select="position()"/></xsl:attribute>
+      <xsl:element name="return">
+        <xsl:value-of select="type"/>
+      </xsl:element>
+      <xsl:element name="comment"/>
       <xsl:copy-of select="arglist"/>
-    </method>
+    </xsl:element>
   </xsl:template>
   <!-- =============================================================================== -->
   <xsl:template match="name">
@@ -121,4 +134,5 @@
   </xsl:template>
   <!-- =============================================================================== -->
 </xsl:stylesheet>
+
 
