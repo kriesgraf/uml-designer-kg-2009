@@ -40,7 +40,7 @@
     <SupportUrl>http://code.google.com/p/uml-designer-kg-2009/</SupportUrl>
     <ProductName>ClassXmlProject</ProductName>
     <PublisherName>ClassXmlProject</PublisherName>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.3.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -687,7 +687,9 @@
     <Content Include="xslt\uml2template.xsl" />
     <Content Include="xslt\uml2vbnet.xsl" />
     <Content Include="xslt\vbnet-types.xsl" />
+    <Content Include="xslt\xmi-types.xsl" />
     <Content Include="xslt\xmi2prj.xsl" />
+    <Content Include="xslt\xprj2xmi.xsl" />
     <Content Include="xslt\xsl-idle.xsl" />
   </ItemGroup>
   <ItemGroup>

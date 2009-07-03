@@ -802,5 +802,33 @@ Public Class frmProject
     Private Sub mnuUpdatePrefixNames_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuUpdatePrefixNames.Click
         m_xmlProject.UpdatePrefixNames()
     End Sub
+
+    Private Sub mnuFileExportOmgUmlFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileExportOmgUmlFile.Click
+        Try
+            Dim dlgSaveFile As New SaveFileDialog
+
+            If My.Settings.CurrentFolder = "." + Path.DirectorySeparatorChar.ToString Then
+                dlgSaveFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
+            Else
+                dlgSaveFile.InitialDirectory = My.Settings.CurrentFolder
+            End If
+
+            dlgSaveFile.Title = "Save the project file..."
+            dlgSaveFile.Filter = "UML project (*.xprj)|*.xprj"
+
+            Dim strFilename As String = m_xmlProject.Name
+            If XmlProjectTools.GetValidFilename(strFilename) Then
+                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "'Save as' command")
+            End If
+            dlgSaveFile.FileName = strFilename
+
+            If (dlgSaveFile.ShowDialog(Me) = DialogResult.OK) Then
+                My.Settings.ImportFolder = XmlProjectTools.GetProjectPath(dlgSaveFile.FileName)
+                m_xmlProject.ExportOmgUmlFile(Me.ParentForm, dlgSaveFile.FileName)
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
 #End Region
 End Class
