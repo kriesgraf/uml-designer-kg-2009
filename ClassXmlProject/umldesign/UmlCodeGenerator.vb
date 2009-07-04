@@ -16,6 +16,7 @@ Public Class UmlCodeGenerator
 
 #Region "Class declarations"
 
+    Private Const cstDocumentElement As String = "document"
     Private Const cstFolderElement As String = "package"
     Private Const cstFileElement As String = "code"
     Private Const cstUpdate As String = "_codegen"
@@ -371,10 +372,10 @@ Public Class UmlCodeGenerator
                 Dim lstFileList As New ArrayList
                 Dim bPostGeneration As Boolean = Not (String.IsNullOrEmpty(ExternalTool.Tool))
 
-                ExtractCode(observer, strTransformation, strProgramFolder, _
-                            ELanguage.Language_Tools, lstFileList)
+                ExtractCode(observer, strTransformation, strProgramFolder, ELanguage.Language_Tools, lstFileList)
+
                 MergeCode(ELanguage.Language_Tools, strProgramFolder, ExternalTool.DiffTool, _
-                          strDiffArguments, lstFileList, bPostGeneration)
+                              strDiffArguments, lstFileList, bPostGeneration)
 
                 If bPostGeneration Then
                     LaunchProcess(ExternalTool.Tool, strToolArguments, strProgramFolder, lstFileList)
@@ -453,6 +454,7 @@ Public Class UmlCodeGenerator
     Private Shared Sub ExtractCode(ByVal observer As InterfProgression, _
                                    ByVal strTransformation As String, ByVal strFolder As String, _
                                    ByVal eLang As ELanguage, ByVal lstFileList As ArrayList)
+
         Try
             ' Load the reader with the data file and ignore all white space nodes.         
             Using reader As XmlTextReader = New XmlTextReader(strTransformation)
@@ -479,9 +481,50 @@ Public Class UmlCodeGenerator
                 reader.Close()
             End Using
         Catch ex As Exception
+            Throw New Exception("Code extraction failed, see inner exception and temporary file bellow:" + vbCrLf + vbCrLf + strTransformation, ex)
             Throw ex
         End Try
     End Sub
+
+    Private Shared Function ReadFileDescriptor(ByVal reader As XmlTextReader, ByVal currentFolder As String) As CodeInfo
+        Dim fileDescriptor As New CodeInfo
+        Try
+            fileDescriptor.bCodeMerge = False
+            fileDescriptor.bCodeMerge = False
+            fileDescriptor.bSourceExists = False
+
+            reader.MoveToFirstAttribute()
+            Do
+                Select Case reader.Name
+                    Case "name"
+                        fileDescriptor.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, reader.Value)
+                    Case "Merge"
+                        fileDescriptor.bCodeMerge = (reader.Value = "yes")
+                End Select
+            Loop While reader.MoveToNextAttribute
+
+            If String.IsNullOrEmpty(fileDescriptor.strTempFile) = False _
+            Then
+                'Debug.Print("ExtractClass:=" + currentFolder + strNewFile)
+                Dim strNewFile As String = Path.GetFileName(fileDescriptor.strTempFile)
+                fileDescriptor.strReleaseFile = fileDescriptor.strTempFile
+                fileDescriptor.bSourceExists = My.Computer.FileSystem.FileExists(fileDescriptor.strReleaseFile)
+
+                If fileDescriptor.bSourceExists Then
+                    fileDescriptor.strTempFile = My.Computer.FileSystem.CombinePath(CreateTempFolder(currentFolder), _
+                                                                                    strNewFile + ".new")
+                End If
+            Else
+                Throw New Exception("Attribute 'name' missed in a 'code' node !")
+            End If
+
+            reader.MoveToElement()
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return fileDescriptor
+    End Function
 
     Private Shared Sub ExtractPackageFolder(ByVal observer As InterfProgression, _
                                       ByVal currentFolder As String, ByVal reader As XmlTextReader, _
@@ -528,26 +571,8 @@ Public Class UmlCodeGenerator
         Try
             observer.Increment(1)
 
-            reader.MoveToFirstAttribute()
             Dim bCodeMerge As Boolean = False
-
-            Dim fileInfo As New CodeInfo
-            If reader.Name <> "name" Then
-                fileInfo.bCodeMerge = (reader.Value = "yes")
-                reader.MoveToNextAttribute()
-            End If
-
-            Dim strNewFile As String = reader.Value
-            reader.MoveToElement()
-
-            'Debug.Print("ExtractClass:=" + currentFolder + strNewFile)
-            fileInfo.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, strNewFile)
-            fileInfo.strReleaseFile = fileInfo.strTempFile
-            fileInfo.bSourceExists = My.Computer.FileSystem.FileExists(fileInfo.strReleaseFile)
-
-            If fileInfo.bSourceExists Then
-                fileInfo.strTempFile = My.Computer.FileSystem.CombinePath(CreateTempFolder(currentFolder), strNewFile + ".new")
-            End If
+            Dim fileInfo As CodeInfo = ReadFileDescriptor(reader, currentFolder)
 
             Using streamWriter As StreamWriter = New StreamWriter(fileInfo.strTempFile)
                 While reader.Read()

@@ -1012,8 +1012,10 @@ Public Class UmlNodesManager
             indexR += 1
         End While
         ' Complete final path
-        While indexF < splitFinal.Length And splitFinal(indexF).Length > 0
-            result += splitFinal(indexF) + Path.DirectorySeparatorChar
+        While indexF < splitFinal.Length
+            If splitFinal(indexF).Length > 0 Then
+                result += splitFinal(indexF) + Path.DirectorySeparatorChar
+            End If
             indexF += 1
         End While
         Return result
