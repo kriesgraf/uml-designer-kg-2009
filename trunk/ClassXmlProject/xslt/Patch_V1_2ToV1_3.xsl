@@ -700,6 +700,7 @@
   <xsl:template name="RangePublic">
     <xsl:attribute name="range">
       <xsl:choose>
+        <xsl:when test="self::child and @range='no'">public</xsl:when>
         <xsl:when test="not(@range)">public</xsl:when>
         <xsl:when test="string-length(@range)=0">public</xsl:when>
         <xsl:otherwise>
@@ -916,6 +917,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
