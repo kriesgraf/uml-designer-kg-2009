@@ -338,7 +338,11 @@ Public Class XmlRelationView
     Private Sub InitBindingParentRange(ByVal xmlParent As XmlRelationParentSpec, ByVal control As ComboBox)
         Try
             control.DropDownStyle = ComboBoxStyle.DropDownList
-            control.Items.AddRange(New Object() {"no", "private", "protected", "public"})
+            If xmlParent.NodeName = "child" Then
+                control.Items.AddRange(New Object() {"private", "protected", "public"})
+            Else
+                control.Items.AddRange(New Object() {"no", "private", "protected", "public"})
+            End If
 
             m_xmlBindingsList.AddBinding(control, xmlParent, "Range")
 

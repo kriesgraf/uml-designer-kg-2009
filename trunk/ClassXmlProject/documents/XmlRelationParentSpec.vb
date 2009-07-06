@@ -199,9 +199,9 @@ Public Class XmlRelationParentSpec
         End Get
         Set(ByVal value As Boolean)
             If value Then
-                SetAttribute("member", "class")
+                AddAttribute("member", "class")
             Else
-                SetAttribute("member", "object")
+                AddAttribute("member", "object")
             End If
         End Set
     End Property
