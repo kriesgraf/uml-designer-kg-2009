@@ -9,6 +9,9 @@
   <xsl:variable name="LanguageValue" select="//generation/@language"/>
   <!-- ======================================================================= -->
   <xsl:variable name="LanguageFile">
+    <xsl:if test="$LanguageFolder=''">
+      <xsl:message terminate="yes">XSLT parameter 'LanguageFolder' is empty!</xsl:message>
+    </xsl:if>
     <xsl:value-of select="$LanguageFolder"/>
     <xsl:choose>
       <xsl:when test="$LanguageValue='0'">\LanguageCplusPlus.xml</xsl:when>
@@ -16,6 +19,7 @@
       <xsl:otherwise>\LanguageJava.xml</xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
+  <!-- ======================================================================= -->
   <xsl:variable name="PredefinedTypes2">
     <xsl:apply-templates select="document($LanguageFile)//type" mode="PredefinedTypes"/>
     <xsl:variable name="List">
@@ -32,7 +36,8 @@
             </xsl:apply-templates>
           </xsl:when>
           <xsl:otherwise>
-            <packagedElement xmi:type="uml:DataType" name="{.}" xmi:label="{.}"/>
+            <packagedElement xmi:type="uml:DataType" name="{.}"/>
+            <!-- xmi:label="{.}"/-->
           </xsl:otherwise>
         </xsl:choose>
       </xsl:if>
@@ -40,32 +45,36 @@
   </xsl:variable>
   <!-- ======================================================================= -->
   <xsl:variable name="PredefinedTypes">
-    <xsl:for-each select="msxsl:node-set($PredefinedTypes2)/*">
-      <xsl:copy>
-        <xsl:copy-of select="@*"/>
-        <xsl:attribute name="xmi:id"><xsl:value-of select="generate-id()"/></xsl:attribute>
-        <xsl:for-each select="*">
-          <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:attribute name="xmi:id"><xsl:value-of select="generate-id()"/></xsl:attribute>
-          </xsl:copy>
-        </xsl:for-each>
-      </xsl:copy>
-    </xsl:for-each>
+    <!--  We separate interface and reference because we must maintain UIDs for reference solve -->
+    <xsl:apply-templates select="//interface | //reference" mode="PredefinedTypes"/>
+    <xsl:apply-templates select="msxsl:node-set($PredefinedTypes2)/*" mode="Renumber"/>
   </xsl:variable>
   <!-- ======================================================================= -->
-  <xsl:template match="type" mode="PredefinedTypes">
-    <xsl:element name="packagedElement">
-      <xsl:attribute name="xmi:type">uml:DataType</xsl:attribute>
-      <xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
-      <xsl:attribute name="xmi:label"><xsl:value-of select="@implementation"/></xsl:attribute>
-      <xsl:if test="@import">
-        <xsl:element name="packageImport">
-          <xsl:attribute name="xmi:type">uml:PackageImport</xsl:attribute>
-          <xsl:attribute name="xmi:label"><xsl:value-of select="@import"/></xsl:attribute>
-        </xsl:element>
-      </xsl:if>
-    </xsl:element>
+  <xsl:template match="packagedElement" mode="Renumber">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:attribute name="xmi:id">
+        <xsl:value-of select="generate-id()"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="*" mode="Renumber">
+        <xsl:with-param name="ClassID" select="generate-id()"/>
+      </xsl:apply-templates>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="ownedTemplateSignature" mode="Renumber">
+    <xsl:param name="ClassID"/>
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:attribute name="template">
+        <xsl:value-of select="$ClassID"/>
+      </xsl:attribute>
+      <xsl:copy-of select="*"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="nestedClassifier" mode="Renumber">
+    <xsl:copy-of select="."/>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:variable name="FileLanguage">
@@ -91,56 +100,74 @@
     <xsl:value-of select="msxsl:node-set($PredefinedTypes)//*[@name='void']/@xmi:id"/>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template name="ImplementTemplate">
-    <xsl:param name="ListID"/>
-    <xsl:param name="Parameter"/>
-    <xsl:param name="Idref"/>
-    <xsl:choose>
-      <xsl:when test="id($ListID)[self::class]">
-        <xsl:variable name="Position">
+  <xsl:template match="list" mode="ImplementTemplate">
+    <xsl:param name="TypeID"/>
+    <xsl:param name="TypedefID"/>
+    <xsl:variable name="ListID">
+      <xsl:choose>
+        <xsl:when test="@desc">
+          <xsl:apply-templates select="@desc" mode="Code"/>
+        </xsl:when>
+        <xsl:when test="@idref">
+          <xsl:value-of select="@idref"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="NodeList">
+      <xsl:choose>
+        <xsl:when test="id($ListID)[self::class]">
+          <xsl:apply-templates select="id($ListID)" mode="TemplateSignature"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:copy-of select="msxsl:node-set($PredefinedTypes)//*[@xmi:id=$ListID]/ownedTemplateSignature"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="SignatureID" select="msxsl:node-set($NodeList)//ownedTemplateSignature/@xmi:id"/>
+    <xsl:variable name="ValueID" select="msxsl:node-set($NodeList)//ownedParameter[1]/@xmi:id"/>
+    <xsl:element name="templateBinding">
+      <xsl:attribute name="xmi:type">uml:TemplateBinding</xsl:attribute>
+      <xsl:attribute name="xmi:id">
+        <xsl:value-of select="generate-id()"/>
+        <xsl:text>_tmpl</xsl:text>
+      </xsl:attribute>
+      <xsl:attribute name="signature">
+        <xsl:value-of select="$SignatureID"/>
+      </xsl:attribute>
+      <xsl:attribute name="boundElement">
+        <xsl:value-of select="$TypedefID"/>
+      </xsl:attribute>
+      <xsl:call-template name="TemplateBinding">
+        <xsl:with-param name="Index">1</xsl:with-param>
+        <xsl:with-param name="TypeID" select="$TypeID"/>
+        <xsl:with-param name="ValueID" select="$ValueID"/>
+      </xsl:call-template>
+      <xsl:if test="@type='indexed'">
+        <xsl:variable name="IndexID">
           <xsl:choose>
-            <xsl:when test="$Parameter='value'">A</xsl:when>
-            <xsl:when test="$Parameter='key'">B</xsl:when>
-            <xsl:otherwise><xsl:value-of select="$Parameter"/></xsl:otherwise>
+            <xsl:when test="@index-desc">
+              <xsl:apply-templates select="@index-desc" mode="Code"/>
+            </xsl:when>
+            <xsl:when test="@index-idref">
+              <xsl:value-of select="@index-idref"/>
+            </xsl:when>
           </xsl:choose>
         </xsl:variable>
-        <xsl:if test="not(id($ListID)/model[@name=$Position])">
-          <xsl:message terminate="yes">Can't find for "<xsl:value-of select="$ListID"/>" container parameter "<xsl:value-of select="$Parameter"/>"</xsl:message>
-        </xsl:if>
-        <xsl:apply-templates select="id($ListID)/model[@name=$Position]" mode="ImplementTemplateParameter">
-          <xsl:with-param name="Idref" select="$Idref"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <xsl:when test="msxsl:node-set($PredefinedTypes)//packagedElement[@xmi:id=$ListID]">
-        <xsl:apply-templates select="msxsl:node-set($PredefinedTypes)//packagedElement[@xmi:id=$ListID]" mode="ImplementTemplateParameter">
-          <xsl:with-param name="Parameter" select="$Parameter"/>
-          <xsl:with-param name="Idref" select="$Idref"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:message terminate="no">Can't find container "<xsl:value-of select="$ListID"/>"</xsl:message>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-  <!-- ======================================================================= -->
-  <xsl:template match="model" mode="ImplementTemplateParameter">
-  <xsl:param name="Idref"/>
-    <xsl:element name="templateParameter">
-      <xsl:attribute name="xmi:type">uml:TemplateParameter</xsl:attribute>
-      <xsl:attribute name="xmi:idref"><xsl:value-of select="@id"/></xsl:attribute>
-      <xsl:attribute name="xmi:label"><xsl:value-of select="@name"/></xsl:attribute>
-      <xsl:element name="parameteredElement">
-        <xsl:attribute name="xmi:type">uml:ParameterableElement</xsl:attribute>
-        <xsl:attribute name="xmi:id"><xsl:value-of select="concat(generate-id(),'_',$Idref)"/></xsl:attribute>
-        <xsl:attribute name="xmi:idref"><xsl:value-of select="$Idref"/></xsl:attribute>
-      </xsl:element>
+        <xsl:variable name="KeyID" select="msxsl:node-set($NodeList)//ownedParameter[2]/@xmi:id"/>
+        <xsl:call-template name="TemplateBinding">
+          <xsl:with-param name="Index">2</xsl:with-param>
+          <xsl:with-param name="TypeID" select="$IndexID"/>
+          <xsl:with-param name="ValueID" select="$KeyID"/>
+        </xsl:call-template>
+      </xsl:if>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="packagedElement" mode="ImplementTemplateParameter">
     <xsl:param name="Idref"/>
     <xsl:param name="Parameter"/>
-    <xsl:apply-templates select="templateParameter[@xmi:label=$Parameter]" mode="ImplementTemplateParameter">
+    <!--xsl:apply-templates select="templateParameter[@xmi:label=$Parameter]" mode="ImplementTemplateParameter"-->
+    <xsl:apply-templates select="templateParameter[@name=$Parameter]" mode="ImplementTemplateParameter">
       <xsl:with-param name="Idref" select="$Idref"/>
     </xsl:apply-templates>
   </xsl:template>
@@ -149,16 +176,35 @@
     <xsl:param name="Idref"/>
     <xsl:copy>
       <xsl:copy-of select="@xmi:type"/>
-      <xsl:copy-of select="@xmi:label"/>
-      <xsl:attribute name="xmi:idref"><xsl:value-of select="@xmi:id"/></xsl:attribute>
+      <xsl:copy-of select="@name"/>
+      <!--xsl:copy-of select="@xmi:label"/-->
+      <xsl:attribute name="xmi:idref">
+        <xsl:value-of select="@xmi:id"/>
+      </xsl:attribute>
       <xsl:element name="parameteredElement">
         <xsl:attribute name="xmi:type">uml:ParameterableElement</xsl:attribute>
-        <xsl:attribute name="xmi:id"><xsl:value-of select="concat(generate-id(),'_',$Idref)"/></xsl:attribute>
-        <xsl:attribute name="xmi:idref"><xsl:value-of select="$Idref"/></xsl:attribute>
+        <xsl:attribute name="xmi:id">
+          <xsl:value-of select="concat(generate-id(),'_',$Idref)"/>
+        </xsl:attribute>
+        <xsl:attribute name="xmi:idref">
+          <xsl:value-of select="$Idref"/>
+        </xsl:attribute>
       </xsl:element>
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
