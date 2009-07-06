@@ -21,10 +21,7 @@ Public Class dlgAlertException
     Private Sub dlgAlertException_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Me.Text = TypeName(m_Exception)
         Me.Opacity = 0.8
-        If m_strIssueMessage = "" Then
-            Me.lblComment.Text = "Click on text message to copy 'error stacktrace' to clipboard." + vbCrLf _
-                                + "Click on link to send a new issue and paste 'stracktrace'."
-        Else
+        If m_strIssueMessage <> "" Then
             Me.lblComment.Text = m_strIssueMessage
         End If
         lblMessage.Text = m_Exception.Message
