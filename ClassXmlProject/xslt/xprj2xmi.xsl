@@ -5,7 +5,8 @@
                 xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
 >
 <!-- ======================================================================= -->
-  <xsl:output method="xml" encoding="ISO-8859-1" media-type="xmi" indent="yes"/><!--doctype-system="xmi2-1-uml2-1.dtd" standalone="no"/-->
+  <xsl:output method="xml" encoding="ISO-8859-1" media-type="xmi" indent="yes"/>
+  <!--xsl:output method="xml" encoding="ISO-8859-1" media-type="xmi" indent="yes" doctype-system="xmi2-1-uml2-1.dtd" standalone="no"/-->
   <!-- ======================================================================= -->
   <xsl:param name="LanguageFolder"/>
   <!-- ======================================================================= -->
@@ -14,12 +15,12 @@
   <xsl:template name="GetRoot" match="/root">
     <xmi:XMI xmi:version="2.1">
       <uml:Model xmi:type="uml:Model" xmi:id="themodel" name="{@name}">
-        <xsl:apply-templates select="class" mode="Code"/>
-        <xsl:apply-templates select="package" mode="Code"/>
-        <xsl:apply-templates select="relationship" mode="Code"/>
         <packagedElement xmi:type="uml:Package" xmi:id="{generate-id()}" name="PredefinedTypes">
           <xsl:copy-of select="$PredefinedTypes"/>
         </packagedElement>
+        <xsl:apply-templates select="class" mode="Code"/>
+        <xsl:apply-templates select="package" mode="Code"/>
+        <xsl:apply-templates select="relationship" mode="Code"/>
       </uml:Model>
     </xmi:XMI>
   </xsl:template>
@@ -36,8 +37,28 @@
     </packagedElement>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template name="GetClass" match="class" mode="Code">
+  <xsl:template name="GetTypePredefinedTypes" match="type" mode="PredefinedTypes">
+    <packagedElement xmi:type="uml:DataType" name="{@name}" xmi:label="{@implementation}">
+      <xsl:if test="@import">
+        <packageImport xmi:id="{generate-id()}_imp" xmi:type="uml:PackageImport" name="{@import}"/>
+      </xsl:if>
+    </packagedElement>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="interface | reference" mode="PredefinedTypes">
     <packagedElement xmi:type="uml:Class" name="{@name}" xmi:id="{@id}">
+      <xsl:if test="@package">
+        <packageImport xmi:id="{generate-id()}_imp" xmi:type="uml:PackageImport" name="{@package}"/>
+      </xsl:if>
+      <xsl:apply-templates select="collaboration" mode="Code"/>
+    </packagedElement>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="GetClass" match="class" mode="Code">
+    <xsl:variable name="ClassID">
+      <xsl:value-of select="@id"/>
+    </xsl:variable>
+    <packagedElement xmi:type="uml:Class" name="{@name}" xmi:id="{$ClassID}">
       <xsl:attribute name="visibility">
         <xsl:choose>
           <xsl:when test="@visibility='package'">package</xsl:when>
@@ -57,6 +78,12 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:apply-templates select="comment"/>
+      <xsl:if test="model">
+        <xsl:apply-templates select="." mode="TemplateSignature"/>
+        <xsl:for-each select="model">
+          <nestedClassifier xmi:type="uml:Class" xmi:id="{@id}" name="{@name}"/>
+        </xsl:for-each>
+      </xsl:if>
       <xsl:apply-templates select="model" mode="Class"/>
       <xsl:apply-templates select="inherited" mode="Code"/>
       <xsl:apply-templates select="property[type/@modifier='const']" mode="Code"/>
@@ -66,12 +93,35 @@
     </packagedElement>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template name="GetModel" match="model" mode="Class">
-    <templateParameter xmi:type="uml:TemplateParameter" xmi:label="{@name}" xmi:id="{@id}"/>
-  </xsl:template>
-  <!-- ======================================================================= -->
   <xsl:template name="GetInherited" match="inherited" mode="Code">
     <generalization xmi:type="uml:Generalization" xmi:id="{generate-id()}" general="{@idref}" specific="{parent::class/@id}"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="GetCollaboration" match="collaboration" mode="Code">
+    <xsl:variable name="ClassID" select="parent::*/@id"/>
+    <xsl:variable name="RefID" select="@idref"/>
+    <xsl:variable name="Implementation">
+      <xsl:choose>
+        <xsl:when test="parent::class">
+          <xsl:value-of select="@implementation"/>
+        </xsl:when>
+        <xsl:when test="parent::reference">simple</xsl:when>
+        <xsl:when test="parent::interface">
+          <xsl:choose>
+            <xsl:when test="@root='yes'">root</xsl:when>
+            <xsl:otherwise>abstract</xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:apply-templates select="id($RefID)" mode="Property">
+      <xsl:with-param name="ClassID" select="$ClassID"/>
+      <xsl:with-param name="Implementation" select="$Implementation"/>
+    </xsl:apply-templates>
+    <xsl:apply-templates select="id($RefID)" mode="Access">
+      <xsl:with-param name="ClassID" select="$ClassID"/>
+      <xsl:with-param name="Implementation" select="$Implementation"/>
+    </xsl:apply-templates>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Properties">
@@ -137,10 +187,20 @@
           <xsl:otherwise>uml:Class</xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <xsl:apply-templates select="comment"/>
-      <xsl:apply-templates select="type" mode="Code">
-        <xsl:with-param name="TypedefID" select="@id"/>
-      </xsl:apply-templates>
+      <xsl:choose>
+        <xsl:when test="type/@desc">
+          <xsl:apply-templates select="comment"/>
+          <xsl:apply-templates select="type" mode="Code">
+            <xsl:with-param name="TypedefID" select="@id"/>
+          </xsl:apply-templates>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="comment"/>
+          <xsl:apply-templates select="type" mode="Code">
+            <xsl:with-param name="TypedefID" select="@id"/>
+          </xsl:apply-templates>
+        </xsl:otherwise>
+      </xsl:choose>
     </nestedClassifier>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -231,7 +291,7 @@
     </xsl:variable>
     <xsl:choose>
       <xsl:when test="list">
-        <xsl:apply-templates select="list" mode="Code">
+        <xsl:apply-templates select="list" mode="ImplementTemplate">
           <xsl:with-param name="TypeID" select="$TypeID"/>
           <xsl:with-param name="TypedefID" select="$TypedefID"/>
         </xsl:apply-templates>
@@ -259,22 +319,22 @@
   <xsl:template name="GetVariable" match="variable" mode="Code">
     <xsl:choose>
       <xsl:when test="@value">
-        <defaultValue xmi:type="uml:LiteralSpecification" xmi:id="{generate-id()}_{position()}_1" value="{@value}"/>
+        <defaultValue xmi:type="uml:LiteralString" xmi:id="{generate-id()}_{position()}_1" value="{@value}"/>
       </xsl:when>
       <xsl:when test="@size">
-        <upperValue xmi:type="uml:LiteralSpecification" xmi:id="{generate-id()}_{position()}_1" value="{@size}"/>
+        <upperValue xmi:type="uml:LiteralString" xmi:id="{generate-id()}_{position()}_1" value="{@size}"/>
       </xsl:when>
       <xsl:when test="@valref">
-        <defaultValue xmi:type="uml:LiteralSpecification" xmi:id="{generate-id()}_{position()}_1" xmi:idref="{@valref}"/>
+        <defaultValue xmi:type="uml:LiteralString" xmi:id="{generate-id()}_{position()}_1" xmi:idref="{@valref}"/>
       </xsl:when>
       <xsl:when test="@sizeref">
-        <upperValue xmi:type="uml:LiteralSpecification" xmi:id="{generate-id()}_{position()}_1" xmi:idref="{@sizeref}"/>
+        <upperValue xmi:type="uml:LiteralString" xmi:id="{generate-id()}_{position()}_1" xmi:idref="{@sizeref}"/>
       </xsl:when>
     </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="GetParam" match="param" mode="Code">
-    <ownedParameter name="{@name}" xmi:id="{generate-id()}">
+    <ownedParameter xmi:type="uml:Parameter" name="{@name}" xmi:id="{generate-id()}">
       <xsl:attribute name="direction">
         <xsl:choose>
           <xsl:when test="@modifier='const'">in</xsl:when>
@@ -282,16 +342,26 @@
           <xsl:otherwise>in</xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <xsl:apply-templates select="comment"/>
-      <xsl:apply-templates select="type" mode="Code">
-        <xsl:with-param name="TypedefID" select="generate-id()"/>
-      </xsl:apply-templates>
+      <xsl:choose>
+        <xsl:when test="type/@desc">
+          <xsl:apply-templates select="comment"/>
+          <xsl:apply-templates select="type" mode="Code">
+            <xsl:with-param name="TypedefID" select="generate-id()"/>
+          </xsl:apply-templates>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="comment"/>
+          <xsl:apply-templates select="type" mode="Code">
+            <xsl:with-param name="TypedefID" select="generate-id()"/>
+          </xsl:apply-templates>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:apply-templates select="variable" mode="Code"/>
     </ownedParameter>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="return" mode="Code">
-    <ownedParameter name="return" xmi:id="{generate-id()}" direction="return">
+  <xsl:template name="GetReturn" match="return" mode="Code">
+    <ownedParameter xmi:type="uml:Parameter" name="return" xmi:id="{generate-id()}" direction="return">
       <xsl:apply-templates select="comment"/>
       <xsl:apply-templates select="type" mode="Code">
         <xsl:with-param name="TypedefID" select="generate-id()"/>
@@ -321,7 +391,7 @@
         </xsl:if>
         <xsl:apply-templates select="comment"/>
         <xsl:apply-templates select="type" mode="Code">
-        <xsl:with-param name="TypedefID" select="generate-id()"/>
+          <xsl:with-param name="TypedefID" select="generate-id()"/>
         </xsl:apply-templates>
         <xsl:apply-templates select="variable" mode="Code"/>
       </ownedAttribute>
@@ -340,7 +410,37 @@
     </xsl:apply-templates>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="child | father" mode="Access">
+  <xsl:template match="relationship" mode="Property">
+    <xsl:param name="ClassID"/>
+    <xsl:param name="Implementation"/>
+    <xsl:choose>
+      <xsl:when test="not(*[@idref!=$ClassID])">
+        <xsl:apply-templates select="*" mode="Relation">
+          <xsl:with-param name="Implementation" select="$Implementation"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="*[@idref!=$ClassID]" mode="Relation">
+          <xsl:with-param name="Implementation" select="$Implementation"/>
+        </xsl:apply-templates>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="relationship" mode="Access">
+    <xsl:param name="ClassID"/>
+    <xsl:param name="Implementation"/>
+    <xsl:choose>
+      <xsl:when test="not(*[@idref!=$ClassID])">
+        <xsl:apply-templates select="*" mode="Access"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="*[@idref!=$ClassID]" mode="Access"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="GetParentAccess" match="child | father" mode="Access">
     <xsl:param name="Implementation"/>
     <xsl:variable name="Id">
       <xsl:choose>
@@ -378,13 +478,15 @@
           </xsl:choose>
         </xsl:attribute>
         <xsl:attribute name="isLeaf">false</xsl:attribute>
-        <ownedParameter name="return" xmi:id="{$Id}_1" direction="return">
+        <ownedComment xmi:type="uml:Comment" xmi:id="{$Id}_comment" body="Get relation to class {id(@idref)/@name}"/>
+        <ownedParameter xmi:type="uml:Parameter" name="return" xmi:id="{$Id}_1" direction="return">
+          <ownedComment xmi:type="uml:Comment" xmi:id="{$Id}_1_comment" body="{id(@idref)/@name} instance"/>
           <type xmi:id="{$Id}_1_1" xmi:type="uml:Class" xmi:idref="{@idref}"/>
         </ownedParameter>
       </ownedOperation>
     </xsl:if>
     <xsl:if test="set[@range!='no']">
-      <ownedOperation xmi:type="uml:Operation" name="{$SetName}{$Name}" xmi:id="{$Id}_s1" visibility="{get/@range}">
+      <ownedOperation xmi:type="uml:Operation" name="{$SetName}{$Name}" xmi:id="{$Id}_s1" visibility="{set/@range}">
         <xsl:attribute name="isStatic">
           <xsl:choose>
             <xsl:when test="@member='class'">true</xsl:when>
@@ -398,14 +500,16 @@
           </xsl:choose>
         </xsl:attribute>
         <xsl:attribute name="isLeaf">false</xsl:attribute>
-        <ownedParameter name="return" xmi:id="{$Id}_s1_1" direction="return">
+        <ownedComment xmi:type="uml:Comment" xmi:id="{$Id}_s1_comment" body="Set relation to class {id(@idref)/@name}"/>
+        <ownedParameter xmi:type="uml:Parameter" name="return" xmi:id="{$Id}_s1_1" direction="return">
           <type xmi:id="{$Id}_s1_1_1" xmi:type="uml:Class">
             <xsl:attribute name="xmi:idref">
               <xsl:call-template name="Void"/>
             </xsl:attribute>
           </type>
         </ownedParameter>
-        <ownedParameter name="{$SetParam}" xmi:id="{$Id}_s1_2" direction="in">
+        <ownedParameter xmi:type="uml:Parameter" name="{$SetParam}" xmi:id="{$Id}_s1_2" direction="in">
+          <ownedComment xmi:type="uml:Comment" xmi:id="{$Id}_s1_2_comment" body="{id(@idref)/@name} instance"/>
           <type xmi:id="{$Id}_s1_2_1" xmi:type="uml:Class" xmi:idref="{@idref}"/>
         </ownedParameter>
       </ownedOperation>
@@ -414,13 +518,13 @@
     <xsl:if test="list"/>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="relationship" mode="Code">
+  <xsl:template name="GetRelation" match="relationship" mode="Code">
     <packagedElement xmi:type="uml:Association" xmi:id="{@id}" memberEnd="{father/@idref} {child/@idref}">
       <xsl:apply-templates select="child | father" mode="Code"/>
     </packagedElement>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="child | father" mode="Code">
+  <xsl:template name="GetParentCardinal" match="child | father" mode="Code">
     <xsl:variable name="Values">
       <xsl:choose>
         <xsl:when test="@cardinal='01'">
@@ -473,9 +577,9 @@
     </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="child | father" mode="Relation">
+  <xsl:template name="GetParentRelation" match="child | father" mode="Relation">
     <xsl:param name="Implementation"/>
-    <xsl:if test="$Implementation!='abstract'">
+    <xsl:if test="$Implementation!='abstract' and @range!='no'">
       <xsl:variable name="Position">
         <xsl:choose>
           <xsl:when test="self::child">2</xsl:when>
@@ -515,8 +619,13 @@
   <xsl:template name="Comment" match="comment">
     <xsl:variable name="Id">
       <xsl:choose>
-       <xsl:when test="self::comment"><xsl:value-of select="generate-id()"/></xsl:when>
-        <xsl:otherwise><xsl:value-of select="generate-id()"/>_comment</xsl:otherwise>
+        <xsl:when test="self::comment">
+          <xsl:value-of select="generate-id()"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="generate-id()"/>
+          <xsl:text>_comment</xsl:text>
+        </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:choose>
@@ -536,42 +645,34 @@
   <!-- ======================================================================= -->
   <xsl:template name="GetListTemplate" match="list" mode="Template">
     <xsl:param name="Name"/>
-    <packagedElement xmi:type="uml:Class" name="{$Name}" xmi:label="{$Name}">
-      <templateParameter xmi:type="uml:TemplateParameter" xmi:label="value"/>
+    <xsl:variable name="ClassID">
+      <xsl:value-of select="generate-id()"/>
+    </xsl:variable>
+    <xsl:variable name="Signature">_sign</xsl:variable>
+    <xsl:variable name="ValueId" select="concat($ClassID, '_1', $Signature)"/>
+    <xsl:variable name="KeyId" select="concat($ClassID, '_2', $Signature)"/>
+    <xsl:variable name="ModelIds">
+      <xsl:value-of select="$ValueId"/>
       <xsl:if test="@type='indexed'">
-        <templateParameter xmi:type="uml:TemplateParameter" xmi:label="key"/>
+        <xsl:value-of select="concat(' ', $KeyId)"/>
+      </xsl:if>
+    </xsl:variable>
+    <packagedElement xmi:type="uml:Class" name="{$Name}" xmi:id="{$ClassID}" visibility="package" isLeaf="false" isAbstract="false">
+      <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="{$ClassID}{$Signature}" parameter="{$ModelIds}" template="{$ClassID}">
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="{$ValueId}" signature="{$ClassID}{$Signature}" parameteredElement="{$ValueId}_1">
+          <ownedParameteredElement xmi:type="uml:DataType" xmi:id="{$ValueId}_1" name="value" owningTemplateParameter="{$ValueId}" templateParameter="{$ValueId}"/>
+        </ownedParameter>
+        <xsl:if test="@type='indexed'">
+          <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="{$KeyId}" signature="{$ClassID}{$Signature}" parameteredElement="{$KeyId}_1">
+            <ownedParameteredElement xmi:type="uml:DataType" xmi:id="{$KeyId}_1" name="key" owningTemplateParameter="{$KeyId}" templateParameter="{$KeyId}"/>
+          </ownedParameter>
+        </xsl:if>
+      </ownedTemplateSignature>
+      <nestedClassifier xmi:type="uml:Class" xmi:id="{$ValueId}_1_1" name="value"/>
+      <xsl:if test="@type='indexed'">
+        <nestedClassifier xmi:type="uml:Class" xmi:id="{$KeyId}_1_1" name="key"/>
       </xsl:if>
     </packagedElement>
-  </xsl:template>
-  <!-- ======================================================================= -->
-  <xsl:template match="list" mode="Code">
-    <xsl:param name="TypeID"/>
-    <xsl:variable name="ListID">
-      <xsl:apply-templates select="(@desc |@idref)" mode="Code"/>
-    </xsl:variable>
-    <redefinedClassifier xmi:type="uml:Classifier" xmi:id="{$ListID}_{generate-id()}" xmi:idref="{$ListID}">
-      <xsl:call-template name="ImplementTemplate">
-        <xsl:with-param name="ListID" select="$ListID"/>
-        <xsl:with-param name="Parameter">value</xsl:with-param>
-          <xsl:with-param name="Idref" select="$TypeID"/>
-      </xsl:call-template>
-      <!---templateParameter xmi:type="uml:TemplateParameter" xmi:id="{$TypeID}_1_1" xmi:idref="{$ListID}_1">
-        <parameteredElement xmi:type="uml:ParameterableElement" xmi:id="{$TypeID}_1_1_1" xmi:idref="{$TypeID}"/>
-      </templateParameter-->
-      <xsl:if test="@type='indexed'">
-        <xsl:variable name="IndexID">
-          <xsl:apply-templates select="(@index-desc |@index-idref)" mode="Code"/>
-        </xsl:variable>
-        <xsl:call-template name="ImplementTemplate">
-          <xsl:with-param name="ListID" select="$ListID"/>
-          <xsl:with-param name="Parameter">key</xsl:with-param>
-          <xsl:with-param name="Idref" select="$IndexID"/>
-        </xsl:call-template>
-        <!--templateParameter xmi:type="uml:TemplateParameter" xmi:id="{$TypeID}_1_2" xmi:idref="{$ListID}_2">
-          <parameteredElement xmi:type="uml:ParameterableElement" xmi:id="{$TypeID}_1_2_1" xmi:idref="{$IndexID}"/>
-        </templateParameter-->
-      </xsl:if>
-    </redefinedClassifier>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="get" mode="Code">
@@ -595,12 +696,19 @@
           <xsl:otherwise>false</xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <ownedParameter name="return" xmi:id="{generate-id()}_1" direction="return">
+      <ownedParameter xmi:type="uml:Parameter" name="return" xmi:id="{generate-id()}_1" direction="return">
         <xsl:apply-templates select="type" mode="Code">
           <xsl:with-param name="TypedefID" select="concat(generate-id(),'_1')"/>
         </xsl:apply-templates>
       </ownedParameter>
     </ownedOperation>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="model" mode="ImplementTemplateParameter">
+    <xsl:param name="Idref"/>
+    <templateParameter xmi:type="uml:TemplateParameter" xmi:idref="{@id}" name="{@name}">
+      <parameteredElement xmi:type="uml:ParameterableElement" xmi:id="{generate-id()}_{$Idref}" xmi:idref="{$Idref}"/>
+    </templateParameter>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="set" mode="Code">
@@ -619,45 +727,47 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:attribute name="isLeaf">false</xsl:attribute>
-      <ownedParameter name="return" xmi:id="{generate-id()}_1" direction="return">
+      <ownedParameter xmi:type="uml:Parameter" name="return" xmi:id="{generate-id()}_1" direction="return">
         <type xmi:type="uml:Class">
           <xsl:attribute name="xmi:idref">
             <xsl:call-template name="Void"/>
           </xsl:attribute>
         </type>
       </ownedParameter>
-      <ownedParameter name="{$SetParam}" xmi:id="{generate-id()}_2" direction="in">
+      <ownedParameter xmi:type="uml:Parameter" name="{$SetParam}" xmi:id="{generate-id()}_2" direction="in">
         <xsl:apply-templates select="type" mode="Code">
           <xsl:with-param name="TypedefID" select="concat(generate-id(),'_2')"/>
         </xsl:apply-templates>
       </ownedParameter>
     </ownedOperation>
   </xsl:template>
-</xsl:stylesheet>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <!-- ======================================================================= -->
+  <xsl:template name="TemplateBinding">
+    <xsl:param name="Index"/>
+    <xsl:param name="TypeID"/>
+    <xsl:param name="ValueID"/>
+    <parameterSubstitution xmi:type="uml:TemplateParameterSubstitution" xmi:id="{generate-id()}_tmpl_{$Index}"
+                             formal="{$ValueID}" actual="{$TypeID}" templateBinding="{generate-id()}_tmpl"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="class" mode="TemplateSignature">
+    <xsl:variable name="ClassID" select="@id"/>
+    <xsl:variable name="Signature">_sign</xsl:variable>
+    <xsl:variable name="ModelIds">
+      <xsl:for-each select="model">
+        <xsl:value-of select="concat(@id, $Signature, ' ')"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="{$ClassID}{$Signature}" parameter="{$ModelIds}" template="{$ClassID}">
+      <xsl:for-each select="model">
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="{@id}{$Signature}" signature="{$ClassID}_sign" parameteredElement="{generate-id()}">
+          <ownedParameteredElement xmi:type="uml:DataType" xmi:id="{generate-id()}" name="{@name}" owningTemplateParameter="{@id}_sign" templateParameter="{@id}{$Signature}"/>
+        </ownedParameter>
+      </xsl:for-each>
+    </ownedTemplateSignature>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  </xsl:stylesheet>
 
 
 
