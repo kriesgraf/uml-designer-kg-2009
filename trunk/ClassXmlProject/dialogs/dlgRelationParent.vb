@@ -133,4 +133,20 @@ Public Class dlgRelationParent
             lblIndexLevel.Enabled = False
         End If
     End Sub
+
+    Private Sub cmbContainer_Validated(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles cmbContainer.Validated, cmbIndex.Validated
+
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub cmbContainer_Validating(ByVal sender As ComboBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles cmbContainer.Validating
+
+        e.Cancel = IsInvalidType(sender, Me.errorProvider, ErrorIconAlignment.TopLeft)
+    End Sub
+
+    Private Sub cmbIndex_Validating(ByVal sender As ComboBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles cmbIndex.Validating
+
+        e.Cancel = IsInvalidType(sender, Me.errorProvider)
+    End Sub
 End Class

@@ -127,7 +127,17 @@ Public Class dlgContainer
         Me.errorProvider.SetError(sender, "")
     End Sub
 
+    Private Sub combo_Validated(ByVal sender As ComboBox, ByVal e As System.EventArgs) _
+            Handles cmbContainer.Validated, cmbIndex.Validated, cmbType.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
         e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+    End Sub
+
+    Private Sub combo_Validating(ByVal sender As ComboBox, ByVal e As System.ComponentModel.CancelEventArgs) _
+            Handles cmbContainer.Validating, cmbIndex.Validating, cmbType.Validating
+        e.Cancel = IsInvalidType(sender, Me.errorProvider)
     End Sub
 End Class

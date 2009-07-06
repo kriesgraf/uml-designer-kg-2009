@@ -172,4 +172,12 @@ Public Class dlgTypeVar
     Private Sub gridEnumeration_RowValuesChanged(ByVal sender As Object) Handles gridEnumeration.RowValuesChanged
         ' TODO: for future use
     End Sub
+
+    Private Sub cmbTypedefs_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbTypedefs.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub cmbTypedefs_Validating(ByVal sender As ComboBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles cmbTypedefs.Validating
+        e.Cancel = IsInvalidType(sender, Me.errorProvider)
+    End Sub
 End Class
