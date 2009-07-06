@@ -2041,6 +2041,45 @@ Public Class XmlProjectTools
         Return bResult
     End Function
 
+    Public Shared Function IsInvalidType(ByRef combo As ComboBox, ByVal provider As ErrorProvider, _
+                                         Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopRight) As Boolean
+
+        Dim bResult As Boolean = False
+        Try
+            If String.IsNullOrEmpty(combo.Text) = False _
+            Then
+                bResult = False
+
+            ElseIf String.IsNullOrEmpty(combo.SelectedText) = False _
+            Then
+                bResult = False
+
+            ElseIf combo.SelectedItem IsNot Nothing _
+            Then
+                bResult = False
+
+            ElseIf combo.SelectedValue IsNot Nothing _
+            Then
+                bResult = False
+            Else
+                bResult = True
+            End If
+
+            If bResult = True Then
+                combo.Select(0, combo.Text.Length)
+
+                ' Set the ErrorProvider error with the text to display. 
+                Dim errorMsg As String = "Data types can't be empty !"
+                provider.SetIconPadding(combo, 0)
+                provider.SetIconAlignment(combo, eAlignment)
+                provider.SetError(combo, errorMsg)
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bResult
+    End Function
+
     Public Shared Function IsInvalidOperator(ByRef name As TextBox, ByVal provider As ErrorProvider, _
                                              ByVal eLang As ELanguage, _
                                              Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
@@ -2493,7 +2532,7 @@ Public Class XmlProjectTools
                                 "LinePosition=" + ex.LinePosition.ToString + vbCrLf + _
                                 "Message=" + ex.Message + vbCrLf + _
                                 "SourceUri=" + ex.SourceUri, _
-                                ex), "Click on text message to copy 'error stacktrace' to clipboard." + vbCrLf _
+                                ex), "Click on icon to see inner exception." + vbCrLf + "Click on text message to copy 'error stacktrace' to clipboard." + vbCrLf _
                                 + "Click on link to send a new issue and paste 'stracktrace' and join mentioned temporary file.", 640)
 
         Catch ex As Exception

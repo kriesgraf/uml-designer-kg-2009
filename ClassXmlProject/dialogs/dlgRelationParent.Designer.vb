@@ -41,11 +41,13 @@ Partial Class dlgRelationParent
         Me.cmbArraySize = New System.Windows.Forms.ComboBox
         Me.lblContainer = New System.Windows.Forms.Label
         Me.optTypeArray = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
+        Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.flpIndex.SuspendLayout()
         Me.FlowLayoutPanel2.SuspendLayout()
         CType(Me.optTypeArray, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
@@ -254,6 +256,10 @@ Partial Class dlgRelationParent
         'optTypeArray
         '
         '
+        'errorProvider
+        '
+        Me.errorProvider.ContainerControl = Me
+        '
         'dlgRelationParent
         '
         Me.AcceptButton = Me.OK_Button
@@ -277,6 +283,7 @@ Partial Class dlgRelationParent
         Me.FlowLayoutPanel2.ResumeLayout(False)
         Me.FlowLayoutPanel2.PerformLayout()
         CType(Me.optTypeArray, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -298,5 +305,6 @@ Partial Class dlgRelationParent
     Friend WithEvents cmbIndexLevel As System.Windows.Forms.ComboBox
     Friend WithEvents lblContainer As System.Windows.Forms.Label
     Friend WithEvents optTypeArray As Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray
+    Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
 
 End Class

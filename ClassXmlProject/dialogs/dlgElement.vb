@@ -82,4 +82,12 @@ Public Class dlgElement
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
         e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
     End Sub
+
+    Private Sub cmbType_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbType.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub cmbType_Validating(ByVal sender As ComboBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles cmbType.Validating
+        e.Cancel = IsInvalidType(sender, Me.errorProvider)
+    End Sub
 End Class
