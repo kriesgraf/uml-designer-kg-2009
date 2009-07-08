@@ -23,7 +23,7 @@ Friend Class XMLTransformFilter
     Private m_strFileXML As String
     Private m_strFolderXML As String
 
-    Private m_dicoParamList As New Dictionary(Of String, String)
+    Private m_dicoParamList As New XslSimpleTransform.Arguments
 
     Private m_strFileName As String
     Private m_strMedia As String
@@ -89,6 +89,7 @@ Friend Class XMLTransformFilter
 
                         If Not node Is Nothing Then
                             m_strMedia = "." + node.Value
+                            m_eType = eOuputFormat.NONE
                         Else
                             m_strMedia = ".xml"
                         End If
@@ -102,6 +103,7 @@ Friend Class XMLTransformFilter
 
                         If Not node Is Nothing Then
                             m_strMedia = "." + node.Value
+                            m_eType = eOuputFormat.NONE
                         Else
                             m_strMedia = ".txt"
                         End If
@@ -346,7 +348,7 @@ Friend Class XMLTransformFilter
     Private Sub cmdSave_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdSave.Click
         Try
             Dim SaveDialogBoxSave As New SaveFileDialog
-            SaveDialogBoxSave.Title = "Enregistrer sous..."
+            SaveDialogBoxSave.Title = "Save as..."
             SaveDialogBoxSave.CheckPathExists = True
 
             Select Case m_eType

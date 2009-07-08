@@ -22,12 +22,14 @@ Partial Class dlgAlertException
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(dlgAlertException))
         Me.txtStackTrace = New System.Windows.Forms.TextBox
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
         Me.lblMessage = New System.Windows.Forms.TextBox
         Me.PictureBox1 = New System.Windows.Forms.PictureBox
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.TableLayoutPanel2.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -86,6 +88,7 @@ Partial Class dlgAlertException
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
         Me.PictureBox1.TabIndex = 2
         Me.PictureBox1.TabStop = False
+        Me.ToolTip1.SetToolTip(Me.PictureBox1, "Click on icon to display inner exception")
         '
         'SplitContainer1
         '
@@ -134,5 +137,6 @@ Partial Class dlgAlertException
     Friend WithEvents txtStackTrace As System.Windows.Forms.TextBox
     Friend WithEvents lblMessage As System.Windows.Forms.TextBox
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
+    Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
 
 End Class

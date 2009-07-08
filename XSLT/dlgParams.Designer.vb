@@ -118,7 +118,7 @@
         Me.btnValider.Name = "btnValider"
         Me.btnValider.Size = New System.Drawing.Size(109, 24)
         Me.btnValider.TabIndex = 7
-        Me.btnValider.Text = "Valider"
+        Me.btnValider.Text = "OK"
         Me.btnValider.UseVisualStyleBackColor = True
         '
         'btnXmlFolder
@@ -181,8 +181,7 @@
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(368, 32)
         Me.Label1.TabIndex = 9
-        Me.Label1.Text = "Appuyez sur 'Valider' pour chaque paramètre modifié, puis fermez la fenêtre pour " & _
-            "relancer la transformation..."
+        Me.Label1.Text = "Press' OK 'for each parameter changed, then close the window to restart the process ..."
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'dlgParams
@@ -201,7 +200,7 @@
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
-        Me.Text = "Modification des paramètres de la transformation XSL"
+        Me.Text = "Change XSLT parameters..."
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel1.PerformLayout()
         Me.TableLayoutPanel2.ResumeLayout(False)
