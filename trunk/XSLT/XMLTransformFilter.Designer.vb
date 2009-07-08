@@ -50,52 +50,58 @@
         Me.cmdSave = New System.Windows.Forms.Button
         Me.cmdRechargerXML = New System.Windows.Forms.Button
         Me.txtXMLFilter = New System.Windows.Forms.TextBox
+        Me.FileXSL = New Microsoft.VisualBasic.Compatibility.VB6.FileListBox
+        Me.FileXML = New Microsoft.VisualBasic.Compatibility.VB6.FileListBox
+        Me.txtMaskXSL = New System.Windows.Forms.TextBox
         Me.chkSynchronize = New System.Windows.Forms.CheckBox
         Me.WebBrowser = New System.Windows.Forms.WebBrowser
         Me.FrameXSL = New System.Windows.Forms.GroupBox
-        Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
+        Me.tblXsltPanel = New System.Windows.Forms.TableLayoutPanel
         Me.DriveXSL = New Microsoft.VisualBasic.Compatibility.VB6.DriveListBox
         Me.SplitFrameXSL = New System.Windows.Forms.SplitContainer
         Me.DirXSL = New Microsoft.VisualBasic.Compatibility.VB6.DirListBox
-        Me.FileXSL = New Microsoft.VisualBasic.Compatibility.VB6.FileListBox
         Me.FrameXML = New System.Windows.Forms.GroupBox
-        Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel
+        Me.tblXmlPanel = New System.Windows.Forms.TableLayoutPanel
         Me.DriveXML = New Microsoft.VisualBasic.Compatibility.VB6.DriveListBox
-        Me.SplitContainer2 = New System.Windows.Forms.SplitContainer
+        Me.SplitExplorers = New System.Windows.Forms.SplitContainer
         Me.DirXML = New Microsoft.VisualBasic.Compatibility.VB6.DirListBox
-        Me.FileXML = New Microsoft.VisualBasic.Compatibility.VB6.FileListBox
         Me.lblTransform = New System.Windows.Forms.Label
         Me.LabelXSL = New System.Windows.Forms.Label
         Me.LabelXML = New System.Windows.Forms.Label
-        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
-        Me.TableLayoutPanel4 = New System.Windows.Forms.TableLayoutPanel
-        Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel
+        Me.tblExplorersPanel = New System.Windows.Forms.TableLayoutPanel
+        Me.tblButtonsPanel = New System.Windows.Forms.TableLayoutPanel
+        Me.FlowLayoutFilters = New System.Windows.Forms.FlowLayoutPanel
         Me.Label1 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
-        Me.txtMaskXSL = New System.Windows.Forms.TextBox
         Me.cmdValidate = New System.Windows.Forms.Button
-        Me.TableLayoutPanel5 = New System.Windows.Forms.TableLayoutPanel
-        Me.TabControl1 = New System.Windows.Forms.TabControl
-        Me.TabPage1 = New System.Windows.Forms.TabPage
-        Me.TabPage2 = New System.Windows.Forms.TabPage
+        Me.TabOutputControl = New System.Windows.Forms.TabControl
+        Me.TabPageBrowser = New System.Windows.Forms.TabPage
+        Me.TabPageEditor = New System.Windows.Forms.TabPage
         Me.TextEditBox = New System.Windows.Forms.RichTextBox
+        Me.SplitMain = New System.Windows.Forms.SplitContainer
+        Me.SplitView = New System.Windows.Forms.SplitContainer
         Me.FrameXSL.SuspendLayout()
-        Me.TableLayoutPanel2.SuspendLayout()
+        Me.tblXsltPanel.SuspendLayout()
         Me.SplitFrameXSL.Panel1.SuspendLayout()
         Me.SplitFrameXSL.Panel2.SuspendLayout()
         Me.SplitFrameXSL.SuspendLayout()
         Me.FrameXML.SuspendLayout()
-        Me.TableLayoutPanel3.SuspendLayout()
-        Me.SplitContainer2.Panel1.SuspendLayout()
-        Me.SplitContainer2.Panel2.SuspendLayout()
-        Me.SplitContainer2.SuspendLayout()
-        Me.TableLayoutPanel1.SuspendLayout()
-        Me.TableLayoutPanel4.SuspendLayout()
-        Me.FlowLayoutPanel1.SuspendLayout()
-        Me.TableLayoutPanel5.SuspendLayout()
-        Me.TabControl1.SuspendLayout()
-        Me.TabPage1.SuspendLayout()
-        Me.TabPage2.SuspendLayout()
+        Me.tblXmlPanel.SuspendLayout()
+        Me.SplitExplorers.Panel1.SuspendLayout()
+        Me.SplitExplorers.Panel2.SuspendLayout()
+        Me.SplitExplorers.SuspendLayout()
+        Me.tblExplorersPanel.SuspendLayout()
+        Me.tblButtonsPanel.SuspendLayout()
+        Me.FlowLayoutFilters.SuspendLayout()
+        Me.TabOutputControl.SuspendLayout()
+        Me.TabPageBrowser.SuspendLayout()
+        Me.TabPageEditor.SuspendLayout()
+        Me.SplitMain.Panel1.SuspendLayout()
+        Me.SplitMain.Panel2.SuspendLayout()
+        Me.SplitMain.SuspendLayout()
+        Me.SplitView.Panel1.SuspendLayout()
+        Me.SplitView.Panel2.SuspendLayout()
+        Me.SplitView.SuspendLayout()
         Me.SuspendLayout()
         '
         'cmdRechargerXSL
@@ -105,13 +111,13 @@
         Me.cmdRechargerXSL.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmdRechargerXSL.Enabled = False
         Me.cmdRechargerXSL.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdRechargerXSL.Location = New System.Drawing.Point(93, 36)
+        Me.cmdRechargerXSL.Location = New System.Drawing.Point(101, 36)
         Me.cmdRechargerXSL.Name = "cmdRechargerXSL"
         Me.cmdRechargerXSL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdRechargerXSL.Size = New System.Drawing.Size(114, 27)
+        Me.cmdRechargerXSL.Size = New System.Drawing.Size(106, 27)
         Me.cmdRechargerXSL.TabIndex = 19
-        Me.cmdRechargerXSL.Text = "XSL Transformation"
-        Me.ToolTip1.SetToolTip(Me.cmdRechargerXSL, "Effectue la transformation XSL sélectionnée")
+        Me.cmdRechargerXSL.Text = "Reload XSLT"
+        Me.ToolTip1.SetToolTip(Me.cmdRechargerXSL, "Reload stylesheet and restart process")
         Me.cmdRechargerXSL.UseVisualStyleBackColor = False
         '
         'cmdNew
@@ -123,10 +129,10 @@
         Me.cmdNew.Location = New System.Drawing.Point(3, 3)
         Me.cmdNew.Name = "cmdNew"
         Me.cmdNew.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdNew.Size = New System.Drawing.Size(84, 27)
+        Me.cmdNew.Size = New System.Drawing.Size(92, 27)
         Me.cmdNew.TabIndex = 23
-        Me.cmdNew.Text = "Nouveau"
-        Me.ToolTip1.SetToolTip(Me.cmdNew, "Sélectionne le fichier pour sauvegarder le résultat de la transformation")
+        Me.cmdNew.Text = "New"
+        Me.ToolTip1.SetToolTip(Me.cmdNew, "Reset output file")
         Me.cmdNew.UseVisualStyleBackColor = False
         '
         'cmdParams
@@ -139,10 +145,10 @@
         Me.cmdParams.Location = New System.Drawing.Point(3, 69)
         Me.cmdParams.Name = "cmdParams"
         Me.cmdParams.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdParams.Size = New System.Drawing.Size(84, 27)
+        Me.cmdParams.Size = New System.Drawing.Size(92, 27)
         Me.cmdParams.TabIndex = 22
-        Me.cmdParams.Text = "Paramètres..."
-        Me.ToolTip1.SetToolTip(Me.cmdParams, "Modifie les variables globales définies dans le document XSL(T)")
+        Me.cmdParams.Text = "XSLT params..."
+        Me.ToolTip1.SetToolTip(Me.cmdParams, "Input external XSLT parameters")
         Me.cmdParams.UseVisualStyleBackColor = False
         '
         'cmdSave
@@ -155,10 +161,10 @@
         Me.cmdSave.Location = New System.Drawing.Point(3, 36)
         Me.cmdSave.Name = "cmdSave"
         Me.cmdSave.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdSave.Size = New System.Drawing.Size(84, 27)
+        Me.cmdSave.Size = New System.Drawing.Size(92, 27)
         Me.cmdSave.TabIndex = 11
-        Me.cmdSave.Text = "Enregistrer..."
-        Me.ToolTip1.SetToolTip(Me.cmdSave, "Sélectionne le fichier pour sauvegarder le résultat de la transformation")
+        Me.cmdSave.Text = "Save as..."
+        Me.ToolTip1.SetToolTip(Me.cmdSave, "Select file to save output")
         Me.cmdSave.UseVisualStyleBackColor = False
         '
         'cmdRechargerXML
@@ -168,13 +174,13 @@
         Me.cmdRechargerXML.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmdRechargerXML.Enabled = False
         Me.cmdRechargerXML.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdRechargerXML.Location = New System.Drawing.Point(93, 3)
+        Me.cmdRechargerXML.Location = New System.Drawing.Point(101, 3)
         Me.cmdRechargerXML.Name = "cmdRechargerXML"
         Me.cmdRechargerXML.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdRechargerXML.Size = New System.Drawing.Size(114, 27)
+        Me.cmdRechargerXML.Size = New System.Drawing.Size(106, 27)
         Me.cmdRechargerXML.TabIndex = 10
-        Me.cmdRechargerXML.Text = "Document XML"
-        Me.ToolTip1.SetToolTip(Me.cmdRechargerXML, "Effectue la transformation XSL sélectionnée")
+        Me.cmdRechargerXML.Text = "Reload XML"
+        Me.ToolTip1.SetToolTip(Me.cmdRechargerXML, "Reload XML document and restart process")
         Me.cmdRechargerXML.UseVisualStyleBackColor = False
         '
         'txtXMLFilter
@@ -191,6 +197,44 @@
         Me.txtXMLFilter.Size = New System.Drawing.Size(60, 20)
         Me.txtXMLFilter.TabIndex = 25
         Me.txtXMLFilter.Text = "*.xml"
+        Me.ToolTip1.SetToolTip(Me.txtXMLFilter, "XML document filters")
+        '
+        'FileXSL
+        '
+        Me.FileXSL.BackColor = System.Drawing.SystemColors.Window
+        Me.FileXSL.Cursor = System.Windows.Forms.Cursors.Default
+        Me.FileXSL.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.FileXSL.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.FileXSL.FormattingEnabled = True
+        Me.FileXSL.Location = New System.Drawing.Point(0, 0)
+        Me.FileXSL.Name = "FileXSL"
+        Me.FileXSL.Pattern = "*.xsl*"
+        Me.FileXSL.Size = New System.Drawing.Size(288, 147)
+        Me.FileXSL.TabIndex = 5
+        Me.ToolTip1.SetToolTip(Me.FileXSL, "Select a stylesheet")
+        '
+        'FileXML
+        '
+        Me.FileXML.BackColor = System.Drawing.SystemColors.Window
+        Me.FileXML.Cursor = System.Windows.Forms.Cursors.Default
+        Me.FileXML.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.FileXML.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.FileXML.FormattingEnabled = True
+        Me.FileXML.Location = New System.Drawing.Point(0, 0)
+        Me.FileXML.Name = "FileXML"
+        Me.FileXML.Pattern = "*.xml"
+        Me.FileXML.Size = New System.Drawing.Size(288, 121)
+        Me.FileXML.TabIndex = 3
+        Me.ToolTip1.SetToolTip(Me.FileXML, "Select an XML document")
+        '
+        'txtMaskXSL
+        '
+        Me.txtMaskXSL.Location = New System.Drawing.Point(203, 3)
+        Me.txtMaskXSL.Name = "txtMaskXSL"
+        Me.txtMaskXSL.Size = New System.Drawing.Size(61, 20)
+        Me.txtMaskXSL.TabIndex = 27
+        Me.txtMaskXSL.Text = "*.xsl"
+        Me.ToolTip1.SetToolTip(Me.txtMaskXSL, "Stylesheets filter")
         '
         'chkSynchronize
         '
@@ -198,12 +242,12 @@
         Me.chkSynchronize.Cursor = System.Windows.Forms.Cursors.Default
         Me.chkSynchronize.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chkSynchronize.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.chkSynchronize.Location = New System.Drawing.Point(3, 348)
+        Me.chkSynchronize.Location = New System.Drawing.Point(3, 351)
         Me.chkSynchronize.Name = "chkSynchronize"
         Me.chkSynchronize.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.chkSynchronize.Size = New System.Drawing.Size(240, 29)
+        Me.chkSynchronize.Size = New System.Drawing.Size(304, 29)
         Me.chkSynchronize.TabIndex = 15
-        Me.chkSynchronize.Text = "Synchroniser les 2 explorateurs de fichiers"
+        Me.chkSynchronize.Text = "Synchronize both explorers"
         Me.chkSynchronize.UseVisualStyleBackColor = False
         '
         'WebBrowser
@@ -211,38 +255,38 @@
         Me.WebBrowser.Dock = System.Windows.Forms.DockStyle.Fill
         Me.WebBrowser.Location = New System.Drawing.Point(3, 3)
         Me.WebBrowser.Name = "WebBrowser"
-        Me.WebBrowser.Size = New System.Drawing.Size(658, 553)
+        Me.WebBrowser.Size = New System.Drawing.Size(602, 561)
         Me.WebBrowser.TabIndex = 14
         '
         'FrameXSL
         '
         Me.FrameXSL.BackColor = System.Drawing.SystemColors.Control
-        Me.FrameXSL.Controls.Add(Me.TableLayoutPanel2)
+        Me.FrameXSL.Controls.Add(Me.tblXsltPanel)
         Me.FrameXSL.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FrameXSL.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.FrameXSL.Location = New System.Drawing.Point(3, 383)
+        Me.FrameXSL.Location = New System.Drawing.Point(3, 386)
         Me.FrameXSL.Name = "FrameXSL"
         Me.FrameXSL.Padding = New System.Windows.Forms.Padding(5)
         Me.FrameXSL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.FrameXSL.Size = New System.Drawing.Size(240, 339)
+        Me.FrameXSL.Size = New System.Drawing.Size(304, 342)
         Me.FrameXSL.TabIndex = 4
         Me.FrameXSL.TabStop = False
-        Me.FrameXSL.Text = "XSL Transformation"
+        Me.FrameXSL.Text = "XSLT Stylesheet"
         '
-        'TableLayoutPanel2
+        'tblXsltPanel
         '
-        Me.TableLayoutPanel2.ColumnCount = 1
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel2.Controls.Add(Me.DriveXSL, 0, 0)
-        Me.TableLayoutPanel2.Controls.Add(Me.SplitFrameXSL, 0, 1)
-        Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel2.Location = New System.Drawing.Point(5, 18)
-        Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
-        Me.TableLayoutPanel2.RowCount = 2
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(230, 316)
-        Me.TableLayoutPanel2.TabIndex = 0
+        Me.tblXsltPanel.ColumnCount = 1
+        Me.tblXsltPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblXsltPanel.Controls.Add(Me.DriveXSL, 0, 0)
+        Me.tblXsltPanel.Controls.Add(Me.SplitFrameXSL, 0, 1)
+        Me.tblXsltPanel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblXsltPanel.Location = New System.Drawing.Point(5, 18)
+        Me.tblXsltPanel.Name = "tblXsltPanel"
+        Me.tblXsltPanel.RowCount = 2
+        Me.tblXsltPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
+        Me.tblXsltPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblXsltPanel.Size = New System.Drawing.Size(294, 319)
+        Me.tblXsltPanel.TabIndex = 0
         '
         'DriveXSL
         '
@@ -253,7 +297,7 @@
         Me.DriveXSL.FormattingEnabled = True
         Me.DriveXSL.Location = New System.Drawing.Point(3, 3)
         Me.DriveXSL.Name = "DriveXSL"
-        Me.DriveXSL.Size = New System.Drawing.Size(224, 21)
+        Me.DriveXSL.Size = New System.Drawing.Size(288, 21)
         Me.DriveXSL.TabIndex = 7
         '
         'SplitFrameXSL
@@ -270,8 +314,8 @@
         'SplitFrameXSL.Panel2
         '
         Me.SplitFrameXSL.Panel2.Controls.Add(Me.FileXSL)
-        Me.SplitFrameXSL.Size = New System.Drawing.Size(224, 282)
-        Me.SplitFrameXSL.SplitterDistance = 131
+        Me.SplitFrameXSL.Size = New System.Drawing.Size(288, 285)
+        Me.SplitFrameXSL.SplitterDistance = 132
         Me.SplitFrameXSL.TabIndex = 8
         '
         'DirXSL
@@ -284,51 +328,38 @@
         Me.DirXSL.IntegralHeight = False
         Me.DirXSL.Location = New System.Drawing.Point(0, 0)
         Me.DirXSL.Name = "DirXSL"
-        Me.DirXSL.Size = New System.Drawing.Size(224, 131)
+        Me.DirXSL.Size = New System.Drawing.Size(288, 132)
         Me.DirXSL.TabIndex = 6
-        '
-        'FileXSL
-        '
-        Me.FileXSL.BackColor = System.Drawing.SystemColors.Window
-        Me.FileXSL.Cursor = System.Windows.Forms.Cursors.Default
-        Me.FileXSL.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FileXSL.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.FileXSL.FormattingEnabled = True
-        Me.FileXSL.Location = New System.Drawing.Point(0, 0)
-        Me.FileXSL.Name = "FileXSL"
-        Me.FileXSL.Pattern = "*.xsl*"
-        Me.FileXSL.Size = New System.Drawing.Size(224, 147)
-        Me.FileXSL.TabIndex = 5
         '
         'FrameXML
         '
         Me.FrameXML.BackColor = System.Drawing.SystemColors.Control
-        Me.FrameXML.Controls.Add(Me.TableLayoutPanel3)
+        Me.FrameXML.Controls.Add(Me.tblXmlPanel)
         Me.FrameXML.Dock = System.Windows.Forms.DockStyle.Fill
         Me.FrameXML.ForeColor = System.Drawing.SystemColors.ControlText
         Me.FrameXML.Location = New System.Drawing.Point(3, 3)
         Me.FrameXML.Name = "FrameXML"
         Me.FrameXML.Padding = New System.Windows.Forms.Padding(5)
         Me.FrameXML.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.FrameXML.Size = New System.Drawing.Size(240, 339)
+        Me.FrameXML.Size = New System.Drawing.Size(304, 342)
         Me.FrameXML.TabIndex = 0
         Me.FrameXML.TabStop = False
-        Me.FrameXML.Text = "Document XML"
+        Me.FrameXML.Text = "XML Document"
         '
-        'TableLayoutPanel3
+        'tblXmlPanel
         '
-        Me.TableLayoutPanel3.ColumnCount = 1
-        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel3.Controls.Add(Me.DriveXML, 0, 0)
-        Me.TableLayoutPanel3.Controls.Add(Me.SplitContainer2, 0, 1)
-        Me.TableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel3.Location = New System.Drawing.Point(5, 18)
-        Me.TableLayoutPanel3.Name = "TableLayoutPanel3"
-        Me.TableLayoutPanel3.RowCount = 2
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(230, 316)
-        Me.TableLayoutPanel3.TabIndex = 0
+        Me.tblXmlPanel.ColumnCount = 1
+        Me.tblXmlPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblXmlPanel.Controls.Add(Me.DriveXML, 0, 0)
+        Me.tblXmlPanel.Controls.Add(Me.SplitExplorers, 0, 1)
+        Me.tblXmlPanel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblXmlPanel.Location = New System.Drawing.Point(5, 18)
+        Me.tblXmlPanel.Name = "tblXmlPanel"
+        Me.tblXmlPanel.RowCount = 2
+        Me.tblXmlPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
+        Me.tblXmlPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblXmlPanel.Size = New System.Drawing.Size(294, 319)
+        Me.tblXmlPanel.TabIndex = 0
         '
         'DriveXML
         '
@@ -339,26 +370,26 @@
         Me.DriveXML.FormattingEnabled = True
         Me.DriveXML.Location = New System.Drawing.Point(3, 3)
         Me.DriveXML.Name = "DriveXML"
-        Me.DriveXML.Size = New System.Drawing.Size(224, 21)
+        Me.DriveXML.Size = New System.Drawing.Size(288, 21)
         Me.DriveXML.TabIndex = 1
         '
-        'SplitContainer2
+        'SplitExplorers
         '
-        Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer2.Location = New System.Drawing.Point(3, 31)
-        Me.SplitContainer2.Name = "SplitContainer2"
-        Me.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal
+        Me.SplitExplorers.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitExplorers.Location = New System.Drawing.Point(3, 31)
+        Me.SplitExplorers.Name = "SplitExplorers"
+        Me.SplitExplorers.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
-        'SplitContainer2.Panel1
+        'SplitExplorers.Panel1
         '
-        Me.SplitContainer2.Panel1.Controls.Add(Me.DirXML)
+        Me.SplitExplorers.Panel1.Controls.Add(Me.DirXML)
         '
-        'SplitContainer2.Panel2
+        'SplitExplorers.Panel2
         '
-        Me.SplitContainer2.Panel2.Controls.Add(Me.FileXML)
-        Me.SplitContainer2.Size = New System.Drawing.Size(224, 282)
-        Me.SplitContainer2.SplitterDistance = 157
-        Me.SplitContainer2.TabIndex = 2
+        Me.SplitExplorers.Panel2.Controls.Add(Me.FileXML)
+        Me.SplitExplorers.Size = New System.Drawing.Size(288, 285)
+        Me.SplitExplorers.SplitterDistance = 158
+        Me.SplitExplorers.TabIndex = 2
         '
         'DirXML
         '
@@ -370,21 +401,8 @@
         Me.DirXML.IntegralHeight = False
         Me.DirXML.Location = New System.Drawing.Point(0, 0)
         Me.DirXML.Name = "DirXML"
-        Me.DirXML.Size = New System.Drawing.Size(224, 157)
+        Me.DirXML.Size = New System.Drawing.Size(288, 158)
         Me.DirXML.TabIndex = 2
-        '
-        'FileXML
-        '
-        Me.FileXML.BackColor = System.Drawing.SystemColors.Window
-        Me.FileXML.Cursor = System.Windows.Forms.Cursors.Default
-        Me.FileXML.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FileXML.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.FileXML.FormattingEnabled = True
-        Me.FileXML.Location = New System.Drawing.Point(0, 0)
-        Me.FileXML.Name = "FileXML"
-        Me.FileXML.Pattern = "*.xml"
-        Me.FileXML.Size = New System.Drawing.Size(224, 121)
-        Me.FileXML.TabIndex = 3
         '
         'lblTransform
         '
@@ -395,7 +413,7 @@
         Me.lblTransform.Location = New System.Drawing.Point(213, 66)
         Me.lblTransform.Name = "lblTransform"
         Me.lblTransform.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblTransform.Size = New System.Drawing.Size(456, 33)
+        Me.lblTransform.Size = New System.Drawing.Size(400, 33)
         Me.lblTransform.TabIndex = 21
         Me.lblTransform.Text = "Ouput file"
         Me.lblTransform.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -409,7 +427,7 @@
         Me.LabelXSL.Location = New System.Drawing.Point(213, 33)
         Me.LabelXSL.Name = "LabelXSL"
         Me.LabelXSL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.LabelXSL.Size = New System.Drawing.Size(456, 33)
+        Me.LabelXSL.Size = New System.Drawing.Size(400, 33)
         Me.LabelXSL.TabIndex = 9
         Me.LabelXSL.Text = "XSL file"
         Me.LabelXSL.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -423,69 +441,68 @@
         Me.LabelXML.Location = New System.Drawing.Point(213, 0)
         Me.LabelXML.Name = "LabelXML"
         Me.LabelXML.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.LabelXML.Size = New System.Drawing.Size(456, 33)
+        Me.LabelXML.Size = New System.Drawing.Size(400, 33)
         Me.LabelXML.TabIndex = 8
         Me.LabelXML.Text = "XML file"
         Me.LabelXML.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
-        'TableLayoutPanel1
+        'tblExplorersPanel
         '
-        Me.TableLayoutPanel1.ColumnCount = 1
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel1.Controls.Add(Me.FrameXSL, 0, 2)
-        Me.TableLayoutPanel1.Controls.Add(Me.chkSynchronize, 0, 1)
-        Me.TableLayoutPanel1.Controls.Add(Me.FrameXML, 0, 0)
-        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 3)
-        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
-        Me.TableLayoutPanel1.RowCount = 3
-        Me.TableLayoutPanel5.SetRowSpan(Me.TableLayoutPanel1, 2)
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(246, 725)
-        Me.TableLayoutPanel1.TabIndex = 26
+        Me.tblExplorersPanel.ColumnCount = 1
+        Me.tblExplorersPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblExplorersPanel.Controls.Add(Me.FrameXSL, 0, 2)
+        Me.tblExplorersPanel.Controls.Add(Me.chkSynchronize, 0, 1)
+        Me.tblExplorersPanel.Controls.Add(Me.FrameXML, 0, 0)
+        Me.tblExplorersPanel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblExplorersPanel.Location = New System.Drawing.Point(0, 0)
+        Me.tblExplorersPanel.Name = "tblExplorersPanel"
+        Me.tblExplorersPanel.RowCount = 3
+        Me.tblExplorersPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.tblExplorersPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35.0!))
+        Me.tblExplorersPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.tblExplorersPanel.Size = New System.Drawing.Size(310, 731)
+        Me.tblExplorersPanel.TabIndex = 26
         '
-        'TableLayoutPanel4
+        'tblButtonsPanel
         '
-        Me.TableLayoutPanel4.ColumnCount = 3
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90.0!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120.0!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel4.Controls.Add(Me.cmdNew, 0, 0)
-        Me.TableLayoutPanel4.Controls.Add(Me.cmdRechargerXML, 1, 0)
-        Me.TableLayoutPanel4.Controls.Add(Me.cmdSave, 0, 1)
-        Me.TableLayoutPanel4.Controls.Add(Me.cmdRechargerXSL, 1, 1)
-        Me.TableLayoutPanel4.Controls.Add(Me.cmdParams, 0, 2)
-        Me.TableLayoutPanel4.Controls.Add(Me.LabelXML, 2, 0)
-        Me.TableLayoutPanel4.Controls.Add(Me.LabelXSL, 2, 1)
-        Me.TableLayoutPanel4.Controls.Add(Me.lblTransform, 2, 2)
-        Me.TableLayoutPanel4.Controls.Add(Me.FlowLayoutPanel1, 0, 3)
-        Me.TableLayoutPanel4.Controls.Add(Me.cmdValidate, 1, 2)
-        Me.TableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel4.Location = New System.Drawing.Point(255, 3)
-        Me.TableLayoutPanel4.Name = "TableLayoutPanel4"
-        Me.TableLayoutPanel4.RowCount = 4
-        Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33.0!))
-        Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33.0!))
-        Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33.0!))
-        Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle)
-        Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel4.Size = New System.Drawing.Size(672, 134)
-        Me.TableLayoutPanel4.TabIndex = 27
+        Me.tblButtonsPanel.ColumnCount = 3
+        Me.tblButtonsPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 98.0!))
+        Me.tblButtonsPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 112.0!))
+        Me.tblButtonsPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblButtonsPanel.Controls.Add(Me.cmdNew, 0, 0)
+        Me.tblButtonsPanel.Controls.Add(Me.cmdRechargerXML, 1, 0)
+        Me.tblButtonsPanel.Controls.Add(Me.cmdSave, 0, 1)
+        Me.tblButtonsPanel.Controls.Add(Me.cmdRechargerXSL, 1, 1)
+        Me.tblButtonsPanel.Controls.Add(Me.cmdParams, 0, 2)
+        Me.tblButtonsPanel.Controls.Add(Me.LabelXML, 2, 0)
+        Me.tblButtonsPanel.Controls.Add(Me.LabelXSL, 2, 1)
+        Me.tblButtonsPanel.Controls.Add(Me.lblTransform, 2, 2)
+        Me.tblButtonsPanel.Controls.Add(Me.FlowLayoutFilters, 0, 3)
+        Me.tblButtonsPanel.Controls.Add(Me.cmdValidate, 1, 2)
+        Me.tblButtonsPanel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblButtonsPanel.Location = New System.Drawing.Point(0, 0)
+        Me.tblButtonsPanel.Name = "tblButtonsPanel"
+        Me.tblButtonsPanel.RowCount = 4
+        Me.tblButtonsPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33.0!))
+        Me.tblButtonsPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33.0!))
+        Me.tblButtonsPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33.0!))
+        Me.tblButtonsPanel.RowStyles.Add(New System.Windows.Forms.RowStyle)
+        Me.tblButtonsPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.tblButtonsPanel.Size = New System.Drawing.Size(616, 134)
+        Me.tblButtonsPanel.TabIndex = 27
         '
-        'FlowLayoutPanel1
+        'FlowLayoutFilters
         '
-        Me.TableLayoutPanel4.SetColumnSpan(Me.FlowLayoutPanel1, 3)
-        Me.FlowLayoutPanel1.Controls.Add(Me.Label1)
-        Me.FlowLayoutPanel1.Controls.Add(Me.txtXMLFilter)
-        Me.FlowLayoutPanel1.Controls.Add(Me.Label2)
-        Me.FlowLayoutPanel1.Controls.Add(Me.txtMaskXSL)
-        Me.FlowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.FlowLayoutPanel1.Location = New System.Drawing.Point(3, 102)
-        Me.FlowLayoutPanel1.Name = "FlowLayoutPanel1"
-        Me.FlowLayoutPanel1.Size = New System.Drawing.Size(666, 29)
-        Me.FlowLayoutPanel1.TabIndex = 26
+        Me.tblButtonsPanel.SetColumnSpan(Me.FlowLayoutFilters, 3)
+        Me.FlowLayoutFilters.Controls.Add(Me.Label1)
+        Me.FlowLayoutFilters.Controls.Add(Me.txtXMLFilter)
+        Me.FlowLayoutFilters.Controls.Add(Me.Label2)
+        Me.FlowLayoutFilters.Controls.Add(Me.txtMaskXSL)
+        Me.FlowLayoutFilters.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.FlowLayoutFilters.Location = New System.Drawing.Point(3, 102)
+        Me.FlowLayoutFilters.Name = "FlowLayoutFilters"
+        Me.FlowLayoutFilters.Size = New System.Drawing.Size(610, 29)
+        Me.FlowLayoutFilters.TabIndex = 26
         '
         'Label1
         '
@@ -509,84 +526,94 @@
         Me.Label2.Text = "XSL mask:"
         Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'txtMaskXSL
-        '
-        Me.txtMaskXSL.Location = New System.Drawing.Point(203, 3)
-        Me.txtMaskXSL.Name = "txtMaskXSL"
-        Me.txtMaskXSL.Size = New System.Drawing.Size(61, 20)
-        Me.txtMaskXSL.TabIndex = 27
-        Me.txtMaskXSL.Text = "*.xsl"
-        '
         'cmdValidate
         '
         Me.cmdValidate.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.cmdValidate.Location = New System.Drawing.Point(93, 69)
+        Me.cmdValidate.Location = New System.Drawing.Point(101, 69)
         Me.cmdValidate.Name = "cmdValidate"
-        Me.cmdValidate.Size = New System.Drawing.Size(114, 27)
+        Me.cmdValidate.Size = New System.Drawing.Size(106, 27)
         Me.cmdValidate.TabIndex = 27
-        Me.cmdValidate.Text = "Valider destination"
+        Me.cmdValidate.Text = "Validate output"
         Me.cmdValidate.UseVisualStyleBackColor = True
         '
-        'TableLayoutPanel5
+        'TabOutputControl
         '
-        Me.TableLayoutPanel5.ColumnCount = 2
-        Me.TableLayoutPanel5.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.14286!))
-        Me.TableLayoutPanel5.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.85714!))
-        Me.TableLayoutPanel5.Controls.Add(Me.TableLayoutPanel4, 1, 0)
-        Me.TableLayoutPanel5.Controls.Add(Me.TableLayoutPanel1, 0, 0)
-        Me.TableLayoutPanel5.Controls.Add(Me.TabControl1, 1, 1)
-        Me.TableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel5.Location = New System.Drawing.Point(0, 0)
-        Me.TableLayoutPanel5.Name = "TableLayoutPanel5"
-        Me.TableLayoutPanel5.RowCount = 2
-        Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 140.0!))
-        Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel5.Size = New System.Drawing.Size(930, 731)
-        Me.TableLayoutPanel5.TabIndex = 28
+        Me.TabOutputControl.Alignment = System.Windows.Forms.TabAlignment.Bottom
+        Me.TabOutputControl.Controls.Add(Me.TabPageBrowser)
+        Me.TabOutputControl.Controls.Add(Me.TabPageEditor)
+        Me.TabOutputControl.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TabOutputControl.Location = New System.Drawing.Point(0, 0)
+        Me.TabOutputControl.Multiline = True
+        Me.TabOutputControl.Name = "TabOutputControl"
+        Me.TabOutputControl.SelectedIndex = 0
+        Me.TabOutputControl.Size = New System.Drawing.Size(616, 593)
+        Me.TabOutputControl.TabIndex = 28
         '
-        'TabControl1
+        'TabPageBrowser
         '
-        Me.TabControl1.Alignment = System.Windows.Forms.TabAlignment.Bottom
-        Me.TabControl1.Controls.Add(Me.TabPage1)
-        Me.TabControl1.Controls.Add(Me.TabPage2)
-        Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TabControl1.Location = New System.Drawing.Point(255, 143)
-        Me.TabControl1.Multiline = True
-        Me.TabControl1.Name = "TabControl1"
-        Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(672, 585)
-        Me.TabControl1.TabIndex = 28
+        Me.TabPageBrowser.Controls.Add(Me.WebBrowser)
+        Me.TabPageBrowser.Location = New System.Drawing.Point(4, 4)
+        Me.TabPageBrowser.Name = "TabPageBrowser"
+        Me.TabPageBrowser.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPageBrowser.Size = New System.Drawing.Size(608, 567)
+        Me.TabPageBrowser.TabIndex = 0
+        Me.TabPageBrowser.Text = "Browser"
+        Me.TabPageBrowser.UseVisualStyleBackColor = True
         '
-        'TabPage1
+        'TabPageEditor
         '
-        Me.TabPage1.Controls.Add(Me.WebBrowser)
-        Me.TabPage1.Location = New System.Drawing.Point(4, 4)
-        Me.TabPage1.Name = "TabPage1"
-        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(664, 559)
-        Me.TabPage1.TabIndex = 0
-        Me.TabPage1.Text = "Browser"
-        Me.TabPage1.UseVisualStyleBackColor = True
-        '
-        'TabPage2
-        '
-        Me.TabPage2.Controls.Add(Me.TextEditBox)
-        Me.TabPage2.Location = New System.Drawing.Point(4, 4)
-        Me.TabPage2.Name = "TabPage2"
-        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(664, 559)
-        Me.TabPage2.TabIndex = 1
-        Me.TabPage2.Text = "Editor"
-        Me.TabPage2.UseVisualStyleBackColor = True
+        Me.TabPageEditor.Controls.Add(Me.TextEditBox)
+        Me.TabPageEditor.Location = New System.Drawing.Point(4, 4)
+        Me.TabPageEditor.Name = "TabPageEditor"
+        Me.TabPageEditor.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPageEditor.Size = New System.Drawing.Size(608, 567)
+        Me.TabPageEditor.TabIndex = 1
+        Me.TabPageEditor.Text = "Editor"
+        Me.TabPageEditor.UseVisualStyleBackColor = True
         '
         'TextEditBox
         '
         Me.TextEditBox.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TextEditBox.Location = New System.Drawing.Point(3, 3)
         Me.TextEditBox.Name = "TextEditBox"
-        Me.TextEditBox.Size = New System.Drawing.Size(658, 553)
+        Me.TextEditBox.Size = New System.Drawing.Size(602, 561)
         Me.TextEditBox.TabIndex = 0
         Me.TextEditBox.Text = ""
+        '
+        'SplitMain
+        '
+        Me.SplitMain.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitMain.Location = New System.Drawing.Point(0, 0)
+        Me.SplitMain.Name = "SplitMain"
+        '
+        'SplitMain.Panel1
+        '
+        Me.SplitMain.Panel1.Controls.Add(Me.tblExplorersPanel)
+        '
+        'SplitMain.Panel2
+        '
+        Me.SplitMain.Panel2.Controls.Add(Me.SplitView)
+        Me.SplitMain.Size = New System.Drawing.Size(930, 731)
+        Me.SplitMain.SplitterDistance = 310
+        Me.SplitMain.TabIndex = 29
+        '
+        'SplitView
+        '
+        Me.SplitView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitView.Location = New System.Drawing.Point(0, 0)
+        Me.SplitView.Name = "SplitView"
+        Me.SplitView.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'SplitView.Panel1
+        '
+        Me.SplitView.Panel1.Controls.Add(Me.tblButtonsPanel)
+        '
+        'SplitView.Panel2
+        '
+        Me.SplitView.Panel2.Controls.Add(Me.TabOutputControl)
+        Me.SplitView.Size = New System.Drawing.Size(616, 731)
+        Me.SplitView.SplitterDistance = 134
+        Me.SplitView.TabIndex = 0
         '
         'XMLTransformFilter
         '
@@ -595,7 +622,7 @@
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(930, 731)
-        Me.Controls.Add(Me.TableLayoutPanel5)
+        Me.Controls.Add(Me.SplitMain)
         Me.Cursor = System.Windows.Forms.Cursors.Default
         Me.Location = New System.Drawing.Point(145, 54)
         Me.Name = "XMLTransformFilter"
@@ -604,41 +631,47 @@
         Me.Text = "XSL Transformation"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.FrameXSL.ResumeLayout(False)
-        Me.TableLayoutPanel2.ResumeLayout(False)
+        Me.tblXsltPanel.ResumeLayout(False)
         Me.SplitFrameXSL.Panel1.ResumeLayout(False)
         Me.SplitFrameXSL.Panel2.ResumeLayout(False)
         Me.SplitFrameXSL.ResumeLayout(False)
         Me.FrameXML.ResumeLayout(False)
-        Me.TableLayoutPanel3.ResumeLayout(False)
-        Me.SplitContainer2.Panel1.ResumeLayout(False)
-        Me.SplitContainer2.Panel2.ResumeLayout(False)
-        Me.SplitContainer2.ResumeLayout(False)
-        Me.TableLayoutPanel1.ResumeLayout(False)
-        Me.TableLayoutPanel4.ResumeLayout(False)
-        Me.FlowLayoutPanel1.ResumeLayout(False)
-        Me.FlowLayoutPanel1.PerformLayout()
-        Me.TableLayoutPanel5.ResumeLayout(False)
-        Me.TabControl1.ResumeLayout(False)
-        Me.TabPage1.ResumeLayout(False)
-        Me.TabPage2.ResumeLayout(False)
+        Me.tblXmlPanel.ResumeLayout(False)
+        Me.SplitExplorers.Panel1.ResumeLayout(False)
+        Me.SplitExplorers.Panel2.ResumeLayout(False)
+        Me.SplitExplorers.ResumeLayout(False)
+        Me.tblExplorersPanel.ResumeLayout(False)
+        Me.tblButtonsPanel.ResumeLayout(False)
+        Me.FlowLayoutFilters.ResumeLayout(False)
+        Me.FlowLayoutFilters.PerformLayout()
+        Me.TabOutputControl.ResumeLayout(False)
+        Me.TabPageBrowser.ResumeLayout(False)
+        Me.TabPageEditor.ResumeLayout(False)
+        Me.SplitMain.Panel1.ResumeLayout(False)
+        Me.SplitMain.Panel2.ResumeLayout(False)
+        Me.SplitMain.ResumeLayout(False)
+        Me.SplitView.Panel1.ResumeLayout(False)
+        Me.SplitView.Panel2.ResumeLayout(False)
+        Me.SplitView.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents TableLayoutPanel2 As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents tblXsltPanel As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents SplitFrameXSL As System.Windows.Forms.SplitContainer
-    Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents TableLayoutPanel3 As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents SplitContainer2 As System.Windows.Forms.SplitContainer
-    Friend WithEvents TableLayoutPanel4 As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents TableLayoutPanel5 As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents TabControl1 As System.Windows.Forms.TabControl
-    Friend WithEvents TabPage1 As System.Windows.Forms.TabPage
-    Friend WithEvents TabPage2 As System.Windows.Forms.TabPage
+    Friend WithEvents tblExplorersPanel As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents tblXmlPanel As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents SplitExplorers As System.Windows.Forms.SplitContainer
+    Friend WithEvents tblButtonsPanel As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents TabOutputControl As System.Windows.Forms.TabControl
+    Friend WithEvents TabPageBrowser As System.Windows.Forms.TabPage
+    Friend WithEvents TabPageEditor As System.Windows.Forms.TabPage
     Friend WithEvents TextEditBox As System.Windows.Forms.RichTextBox
-    Friend WithEvents FlowLayoutPanel1 As System.Windows.Forms.FlowLayoutPanel
+    Friend WithEvents FlowLayoutFilters As System.Windows.Forms.FlowLayoutPanel
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents txtMaskXSL As System.Windows.Forms.TextBox
     Friend WithEvents cmdValidate As System.Windows.Forms.Button
+    Friend WithEvents SplitMain As System.Windows.Forms.SplitContainer
+    Friend WithEvents SplitView As System.Windows.Forms.SplitContainer
 #End Region
 End Class
