@@ -250,7 +250,7 @@ Public Class XmlNodeListView
         Try
             Dim myList As New ArrayList
 
-            If bProperty Then
+            If bProperty And document.SelectNodes("enumvalue").Count > 0 Then
                 AddNodeList(document, myList, "descendant::enumvalue")
             Else
                 AddNodeList(document, myList, "//enumvalue[ancestor::typedef]")
