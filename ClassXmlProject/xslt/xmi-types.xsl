@@ -45,8 +45,6 @@
   </xsl:variable>
   <!-- ======================================================================= -->
   <xsl:variable name="PredefinedTypes">
-    <!--  We separate interface and reference because we must maintain UIDs for reference solve -->
-    <xsl:apply-templates select="//interface | //reference" mode="PredefinedTypes"/>
     <xsl:apply-templates select="msxsl:node-set($PredefinedTypes2)/*" mode="Renumber"/>
   </xsl:variable>
   <!-- ======================================================================= -->
@@ -194,6 +192,13 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
+
+
+
 
 
 
