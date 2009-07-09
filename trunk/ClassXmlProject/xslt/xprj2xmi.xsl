@@ -65,9 +65,11 @@
     <xsl:for-each select="export/*/@package[generate-id()=generate-id(key('package',.)[1])]">
       <xsl:sort select="."/>
       <xsl:variable name="Current" select="."/>
+      <packagedElement xmi:type="uml:Package" name="{.}" xmi:id="{generate-id()}">
       <xsl:for-each select="ancestor::export/*[@package=$Current]">
         <xsl:apply-templates select="." mode="PredefinedTypes"/>
       </xsl:for-each>
+      </packagedElement>
     </xsl:for-each>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -944,6 +946,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
   </xsl:stylesheet>
+
 
 
 
