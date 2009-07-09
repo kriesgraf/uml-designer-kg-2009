@@ -587,13 +587,13 @@
     <xsl:attribute name="idref">
       <xsl:choose>
         <xsl:when test="not(@idref)">
-          <xsl:value-of select="//class/@id"/>
+          <xsl:value-of select="//class[@id!='']/@id"/>
         </xsl:when>
         <xsl:when test="string-length(@idref)=0">
-          <xsl:value-of select="//class/@id"/>
+          <xsl:value-of select="//class[@id!='']/@id"/>
         </xsl:when>
         <xsl:when test="not(id(@idref))">
-          <xsl:value-of select="//class/@id"/>
+          <xsl:value-of select="//class[@id!='']/@id"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:value-of select="@idref"/>
@@ -792,7 +792,7 @@
       <xsl:otherwise>
         <xsl:copy-of select="@index-desc"/>
         <xsl:if test="@index-idref and not(@index-desc)">
-          <xsl:call-template name="IndexIDREF"/>
+          <xsl:copy-of select="@index-idref"/>
         </xsl:if>
       </xsl:otherwise>
     </xsl:choose>
@@ -820,13 +820,13 @@
       <xsl:attribute name="valref">
         <xsl:choose>
           <xsl:when test="not(@valref)">
-            <xsl:value-of select="//enumvalue/@id"/>
+            <xsl:value-of select="//enumvalue[@id!='']/@id"/>
           </xsl:when>
           <xsl:when test="string-length(@valref)=0">
-            <xsl:value-of select="//enumvalue/@id"/>
+            <xsl:value-of select="//enumvalue[@id!='']/@id"/>
           </xsl:when>
           <xsl:when test="not(id(@valref))">
-            <xsl:value-of select="//enumvalue/@id"/>
+            <xsl:value-of select="//enumvalue[@id!='']/@id"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:value-of select="@valref"/>
@@ -841,13 +841,13 @@
       <xsl:attribute name="sizeref">
         <xsl:choose>
           <xsl:when test="not(@sizeref)">
-            <xsl:value-of select="//enumvalue/@id"/>
+            <xsl:value-of select="//enumvalue[@id!='']/@id"/>
           </xsl:when>
           <xsl:when test="string-length(@sizeref)=0">
-            <xsl:value-of select="//enumvalue/@id"/>
+            <xsl:value-of select="//enumvalue[@id!='']/@id"/>
           </xsl:when>
           <xsl:when test="not(id(@sizeref))">
-            <xsl:value-of select="//enumvalue/@id"/>
+            <xsl:value-of select="//enumvalue[@id!='']/@id"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:value-of select="@sizeref"/>
@@ -861,13 +861,13 @@
     <xsl:attribute name="index-idref">
       <xsl:choose>
         <xsl:when test="not(@index-idref)">
-          <xsl:value-of select="//class/@id"/>
+          <xsl:value-of select="//class[@id!='']/@id"/>
         </xsl:when>
         <xsl:when test="string-length(@index-idref)=0">
-          <xsl:value-of select="//class/@id"/>
+          <xsl:value-of select="//class[@id!='']/@id"/>
         </xsl:when>
         <xsl:when test="not(id(@index-idref))">
-          <xsl:value-of select="//class/@id"/>
+          <xsl:value-of select="//class[@id!='']/@id"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:value-of select="@index-idref"/>
@@ -917,6 +917,9 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
 
 
 
