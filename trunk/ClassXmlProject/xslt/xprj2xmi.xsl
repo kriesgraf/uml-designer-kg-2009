@@ -17,6 +17,7 @@
   <xsl:template name="GetRoot" match="/root">
     <xmi:XMI xmi:version="2.1">
       <uml:Model xmi:type="uml:Model" xmi:id="themodel" name="{@name}">
+        <xsl:apply-templates select="comment"/>
         <xsl:apply-templates select="class" mode="Code"/>
         <xsl:apply-templates select="package" mode="Code"/>
         <xsl:apply-templates select="relationship" mode="Code"/>
@@ -74,7 +75,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="interface" mode="PredefinedTypes">
-    <packagedElement xmi:type="uml:Class" name="{@name}" xmi:id="{@id}">
+    <packagedElement xmi:type="uml:Interface" name="{@name}" xmi:id="{@id}">
       <xsl:apply-templates select="property | method" mode="Code"/>
     </packagedElement>
   </xsl:template>
@@ -92,7 +93,7 @@
             <xsl:value-of select="concat(' ', $KeyId)"/>
           </xsl:if>
         </xsl:variable>
-        <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="{$ClassID}{$Signature}" parameter="{$ModelIds}" template="{$ClassID}">
+        <ownedTemplateSignature name="{@name}_Signature" xmi:type="uml:RedefinableTemplateSignature" xmi:id="{$ClassID}{$Signature}" parameter="{$ModelIds}" template="{$ClassID}">
           <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="{$ValueId}" signature="{$ClassID}{$Signature}" parameteredElement="{$ValueId}_1">
             <ownedParameteredElement xmi:type="uml:DataType" xmi:id="{$ValueId}_1" name="value" owningTemplateParameter="{$ValueId}" templateParameter="{$ValueId}"/>
           </ownedParameter>
@@ -663,6 +664,7 @@
   <!-- ======================================================================= -->
   <xsl:template name="GetRelation" match="relationship" mode="Code">
     <packagedElement xmi:type="uml:Association" xmi:id="{@id}" memberEnd="{@id}_1 {@id}_2">
+      <xsl:call-template name="Comment"/>
       <xsl:apply-templates select="child | father" mode="Code"/>
     </packagedElement>
   </xsl:template>
@@ -801,6 +803,9 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:choose>
+      <xsl:when test="string-length(@action)!=0">
+        <ownedComment xmi:type="uml:Comment" xmi:id="{$Id}" body="{@action}"/>
+      </xsl:when>
       <xsl:when test="string-length(@brief)=0">
         <ownedComment xmi:type="uml:Comment" xmi:id="{$Id}" body="{text()}"/>
       </xsl:when>
@@ -830,7 +835,7 @@
       </xsl:if>
     </xsl:variable>
     <packagedElement xmi:type="uml:Class" name="{$Name}" xmi:id="{$ClassID}" visibility="package" isLeaf="false" isAbstract="false">
-      <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="{$ClassID}{$Signature}" parameter="{$ModelIds}" template="{$ClassID}">
+      <ownedTemplateSignature name="{$Name}_Signature" xmi:type="uml:RedefinableTemplateSignature" xmi:id="{$ClassID}{$Signature}" parameter="{$ModelIds}" template="{$ClassID}">
         <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="{$ValueId}" signature="{$ClassID}{$Signature}" parameteredElement="{$ValueId}_1">
           <ownedParameteredElement xmi:type="uml:DataType" xmi:id="{$ValueId}_1" name="value" owningTemplateParameter="{$ValueId}" templateParameter="{$ValueId}"/>
         </ownedParameter>
@@ -936,7 +941,7 @@
         <xsl:value-of select="concat(@id, $Signature, ' ')"/>
       </xsl:for-each>
     </xsl:variable>
-    <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="{$ClassID}{$Signature}" parameter="{$ModelIds}" template="{$ClassID}">
+    <ownedTemplateSignature name="{@name}_Signature" xmi:type="uml:RedefinableTemplateSignature" xmi:id="{$ClassID}{$Signature}" parameter="{$ModelIds}" template="{$ClassID}">
       <xsl:for-each select="model">
         <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="{@id}{$Signature}" signature="{$ClassID}_sign" parameteredElement="{generate-id()}">
           <ownedParameteredElement xmi:type="uml:DataType" xmi:id="{generate-id()}" name="{@name}" owningTemplateParameter="{@id}_sign" templateParameter="{@id}{$Signature}"/>
@@ -946,6 +951,11 @@
   </xsl:template>
   <!-- ======================================================================= -->
   </xsl:stylesheet>
+
+
+
+
+
 
 
 

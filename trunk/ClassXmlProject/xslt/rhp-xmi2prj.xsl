@@ -7,6 +7,8 @@
        >
 <!-- ======================================================================= -->
   <xsl:output indent="yes" method="xml" encoding="utf-8" media-type="xprj"/>
+  <!--xsl:output indent="yes" method="xml" encoding="utf-8" media-type="xprj" standalone="no" doctype-system="class-model.dtd"/-->
+  <!-- ============================================================================== -->
   <xsl:param name="FolderDTD"/>
   <!-- ============================================================================== -->
   <xsl:attribute-set name="Type">
@@ -39,31 +41,24 @@
     <xsl:if test="@xmi:version!='2.1'">
       <xsl:message terminate="yes">Expected XMI/UML 2.1 !</xsl:message>
     </xsl:if>
-    <xsl:text>
-</xsl:text>
-    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE root SYSTEM "</xsl:text>
-    <xsl:value-of select="$FolderDTD"/>
-    <xsl:text disable-output-escaping="yes">class-model.dtd"&gt;</xsl:text>
-    <xsl:text>
-</xsl:text>
     <xsl:element name="root">
 	  <!-- UML Designer DTD version -->
       <xsl:attribute name="version">1.3</xsl:attribute>
-      <xsl:attribute name="name"><xsl:value-of select="*[name()='uml:Model']/@name"/></xsl:attribute>
-      <xsl:text>
-</xsl:text>
+      <xsl:attribute name="name">
+        <xsl:value-of select="*[name()='uml:Model']/@name"/>
+      </xsl:attribute>
       <xsl:element name="generation">
         <xsl:attribute name="destination">C:\</xsl:attribute>
         <xsl:attribute name="language">0</xsl:attribute>
       </xsl:element>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="comment">
         <xsl:variable name="ID" select="*[name()='uml:Model']/@xmi:id"/>
-        <xsl:attribute name="brief"><xsl:value-of select="//*[@base_Package=$ID]/@description"/></xsl:attribute>
+        <xsl:attribute name="brief">
+          <xsl:value-of select="//*[@base_Package=$ID]/@description"/>
+        </xsl:attribute>
         <xsl:text>A detailed comment</xsl:text>
       </xsl:element>
-      <xsl:apply-templates select="*[name()='uml:Model']/packagedElement[@xmi:type='uml:Class' and @xmi:type='uml:Interface']"/>
+      <xsl:apply-templates select="*[name()='uml:Model']/packagedElement[@xmi:type='uml:Class' or @xmi:type='uml:Interface']"/>
       <xsl:apply-templates select="*[name()='uml:Model']/packagedElement[@xmi:type='uml:Package']"/>
       <xsl:apply-templates select="//packagedElement[@xmi:type='uml:Association']"/>
     </xsl:element>
@@ -90,11 +85,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="nestedClassifier">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="typedef" use-attribute-sets="Node">
-      <xsl:text>
-</xsl:text>
       <xsl:element name="type">
         <xsl:attribute name="level">0</xsl:attribute>
         <xsl:attribute name="by">val</xsl:attribute>
@@ -112,8 +103,6 @@
           </xsl:when>
         </xsl:choose>
       </xsl:element>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="variable">
         <xsl:attribute name="range">
           <xsl:choose>
@@ -127,8 +116,6 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="ownedLiteral" mode="Enumeration">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="enumvalue">
       <xsl:attribute name="id">
         <xsl:value-of select="@xmi:id"/>
@@ -136,7 +123,7 @@
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
       </xsl:attribute>
-      <xsl:if test="specification[string-length(@value)!=0]">
+      <xsl:if test="specification[string(number(@value))!='NaN']">
         <xsl:attribute name="value">
           <xsl:value-of select="specification/@value"/>
         </xsl:attribute>
@@ -146,8 +133,6 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="ownedAttribute" mode="Element">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="element" use-attribute-sets="Element">
       <xsl:apply-templates select="@type"/>
       <xsl:value-of select="ownedComment/@body"/>
@@ -198,9 +183,9 @@
   <xsl:template match="@type">
     <xsl:variable name="ID" select="."/>
     <xsl:choose>
-      <xsl:when test="//packagedElement[@xmi:type='uml:PrimitiveType' and @xmi:id=$ID]">
+      <xsl:when test="//packagedElement[(@xmi:type='uml:PrimitiveType' or @xmi:type='uml:DataType') and @xmi:id=$ID]">
         <xsl:attribute name="desc">
-          <xsl:value-of select="//packagedElement[@xmi:type='uml:PrimitiveType' and @xmi:id=$ID]/@name"/>
+          <xsl:value-of select="//packagedElement[@xmi:id=$ID]/@name"/>
         </xsl:attribute>
       </xsl:when>
       <xsl:when test="//*[@xmi:id=$ID]">
@@ -215,8 +200,6 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Package">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="package" use-attribute-sets="Node">
       <xsl:apply-templates select="." mode="Comment"/>
       <xsl:apply-templates select="packagedElement[@xmi:type!='uml:Association' and @xmi:type!='uml:Package']"/>
@@ -225,17 +208,30 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Association">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="relationship">
       <xsl:variable name="ID" select="@xmi:id"/>
       <xsl:attribute name="id">
         <xsl:value-of select="$ID"/>
       </xsl:attribute>
       <xsl:attribute name="action">
-        <xsl:apply-templates select="//ownedAttribute[@association=$ID][1]" mode="Action"/>
+        <xsl:value-of select="ownedComment/@body"/>
+        <xsl:if test="not(ownedComment)">
+          <xsl:apply-templates select="//ownedAttribute[@association=$ID][1]" mode="Action"/>
+        </xsl:if>
       </xsl:attribute>
-      <xsl:attribute name="type">assembl</xsl:attribute>
+      <xsl:attribute name="type">
+        <xsl:choose>
+          <xsl:when test="not(memberEnd) and not(ownedEnd)">
+            <xsl:apply-templates select="@memberEnd" mode="TypeAssociation"/>
+          </xsl:when>
+          <xsl:when test="memberEnd">
+            <xsl:apply-templates select="memberEnd" mode="TypeAssociation"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:apply-templates select="*[@aggregation]" mode="TypeAssociation"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
       <xsl:choose>
         <xsl:when test="not(ownedEnd)">
           <xsl:for-each select="//ownedAttribute[@association=$ID]">
@@ -266,6 +262,19 @@
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
+  <xsl:template match="@memberEnd" mode="TypeAssociation">
+    <xsl:variable name="IDs" select="."/>
+    <xsl:apply-templates select="//*[@xmi:id=substring-before($IDs,' ')]" mode="TypeAssociation"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="memberEnd | ownedEnd | ownedAttribute" mode="TypeAssociation">
+    <xsl:choose>
+      <xsl:when test="@aggregation='shared'">aggreg</xsl:when>
+      <xsl:when test="@aggregation='composite'">comp</xsl:when>
+      <xsl:otherwise>assembl</xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
   <xsl:template match="ownedEnd" mode="Association">
     <xsl:param name="Association"/>
     <xsl:param name="Father"/>
@@ -288,8 +297,6 @@
     <xsl:param name="ChildName"/>
     <xsl:variable name="ID" select="parent::*/@xmi:id"/>
     <xsl:variable name="IDREF" select="//ownedAttribute[$ID=@association]/parent::*/@xmi:id"/>
-    <xsl:text>
-</xsl:text>
     <xsl:element name="{$ChildName}">
       <xsl:attribute name="name">NotNavigable</xsl:attribute>
       <xsl:attribute name="range">no</xsl:attribute>
@@ -298,15 +305,11 @@
       </xsl:attribute>
       <xsl:attribute name="cardinal">1</xsl:attribute>
       <xsl:attribute name="level">0</xsl:attribute>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="get">
         <xsl:attribute name="by">val</xsl:attribute>
         <xsl:attribute name="modifier">var</xsl:attribute>
         <xsl:attribute name="range">no</xsl:attribute>
       </xsl:element>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="set">
         <xsl:attribute name="by">val</xsl:attribute>
         <xsl:attribute name="range">no</xsl:attribute>
@@ -325,6 +328,7 @@
   <xsl:template match="ownedAttribute" mode="Comment">
     <xsl:variable name="ID" select="@xmi:id"/>
     <xsl:element name="comment">
+      <xsl:value-of select="ownedComment/@body"/>
       <xsl:value-of select="//*[@base_Property=$ID]/@description"/>
     </xsl:element>
   </xsl:template>
@@ -338,12 +342,14 @@
   <!-- ======================================================================= -->
   <xsl:template match="ownedLiteral" mode="Comment">
     <xsl:variable name="ID" select="@xmi:id"/>
+    <xsl:value-of select="ownedComment/@body"/>
     <xsl:value-of select="//*[@base_EnumerationLiteral=$ID]/@description"/>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="ownedParameter" mode="Comment">
     <xsl:variable name="ID" select="@xmi:id"/>
     <xsl:element name="comment">
+      <xsl:value-of select="ownedComment/@body"/>
       <xsl:value-of select="//*[@base_Parameter=$ID]/@description"/>
     </xsl:element>
   </xsl:template>
@@ -366,9 +372,11 @@
     <xsl:element name="comment">
       <xsl:variable name="ID" select="@xmi:id"/>
       <xsl:attribute name="brief">
-       <xsl:value-of select="//*[@base_Operation=$ID]/@description"/>
+        <xsl:value-of select="ownedComment/@body"/>
+        <xsl:value-of select="//*[@base_Operation=$ID]/@description"/>
       </xsl:attribute>
-      <xsl:text>A detailed comment</xsl:text>
+      <xsl:value-of select="ownedComment/ownedComment/@body"/>
+      <xsl:if test="not(ownedComment/ownedComment)">Detailed comment</xsl:if>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -376,23 +384,24 @@
     <xsl:element name="comment">
       <xsl:variable name="ID" select="@xmi:id"/>
       <xsl:attribute name="brief">
-       <xsl:choose>
-         <xsl:when test="@xmi:type='uml:Class'">
-           <xsl:value-of select="//*[@base_Class=$ID]/@description"/>
-         </xsl:when>
-         <xsl:when test="@xmi:type='uml:Package'">
-           <xsl:value-of select="//*[@base_Package=$ID]/@description"/>
-         </xsl:when>
-       </xsl:choose>
+        <xsl:choose>
+          <xsl:when test="@xmi:type='uml:Class' or @xmi:type='uml:Interface'">
+            <xsl:value-of select="ownedComment/@body"/>
+            <xsl:value-of select="//*[@base_Class=$ID]/@description"/>
+          </xsl:when>
+          <xsl:when test="@xmi:type='uml:Package'">
+            <xsl:value-of select="ownedComment/@body"/>
+            <xsl:value-of select="//*[@base_Package=$ID]/@description"/>
+          </xsl:when>
+        </xsl:choose>
       </xsl:attribute>
-      <xsl:text>A detailed comment</xsl:text>
+      <xsl:value-of select="ownedComment/ownedComment/@body"/>
+      <xsl:if test="not(ownedComment/ownedComment)">Detailed comment</xsl:if>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="ownedAttribute" mode="Association">
     <xsl:param name="ChildName"/>
-    <xsl:text>
-</xsl:text>
     <xsl:element name="{$ChildName}">
       <xsl:attribute name="name">
         <xsl:if test="string-length(@name)=0">UnknownMember</xsl:if>
@@ -401,9 +410,17 @@
       <xsl:attribute name="range">
         <xsl:value-of select="@visibility"/>
       </xsl:attribute>
-      <xsl:attribute name="idref">
-        <xsl:value-of select="@type"/>
-      </xsl:attribute>
+      <xsl:choose>
+        <xsl:when test="@type">
+          <xsl:apply-templates select="@type" mode="Description"/>
+        </xsl:when>
+        <xsl:when test="type">
+          <xsl:apply-templates select="type/@xmi:idref" mode="Description"/>
+        </xsl:when>
+        <xsl:when test="templateBinding">
+          <xsl:apply-templates select="templateBinding/parameterSubstitution[1]/@actual" mode="Description"/>
+        </xsl:when>
+      </xsl:choose>
       <xsl:variable name="Cardinal">
         <xsl:call-template name="Cardinal"/>
       </xsl:variable>
@@ -411,9 +428,11 @@
       <xsl:attribute name="cardinal">
         <xsl:value-of select="$Cardinal"/>
       </xsl:attribute>
-      <xsl:text>
-      </xsl:text>
       <xsl:choose>
+        <xsl:when test="templateBinding">
+          <xsl:apply-templates select="templateBinding" mode="Type"/>
+          <!--xsl:copy-of select="templateBinding"/-->
+        </xsl:when>
         <xsl:when test="$Cardinal='0n' or $Cardinal='1n'">
           <xsl:element name="list">
             <xsl:attribute name="iterator">no</xsl:attribute>
@@ -428,8 +447,6 @@
             <xsl:attribute name="modifier">var</xsl:attribute>
             <xsl:attribute name="range">no</xsl:attribute>
           </xsl:element>
-          <xsl:text>
-          </xsl:text>
           <xsl:element name="set">
             <xsl:attribute name="by">val</xsl:attribute>
             <xsl:attribute name="range">no</xsl:attribute>
@@ -437,6 +454,58 @@
         </xsl:otherwise>
       </xsl:choose>
       <!--xsl:copy-of select="."/-->
+    </xsl:element>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="@type | @xmi:idref | @actual" mode="Description">
+    <xsl:variable name="ID" select="."/>
+    <xsl:choose>
+      <xsl:when test="//*[(@xmi:type='uml:PrimitiveType' or @xmi:type='uml:DataType') and @xmi:id=$ID]">
+        <xsl:attribute name="desc">
+          <xsl:value-of select="//*[@xmi:id=$ID]/@name"/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="idref">
+          <xsl:value-of select="$ID"/>
+        </xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="@actual" mode="Index">
+    <xsl:variable name="ID" select="."/>
+    <xsl:choose>
+      <xsl:when test="//*[(@xmi:type='uml:PrimitiveType' or @xmi:type='uml:DataType') and @xmi:id=$ID]">
+        <xsl:attribute name="index-desc">
+          <xsl:value-of select="//*[@xmi:id=$ID]/@name"/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="index-idref">
+          <xsl:value-of select="$ID"/>
+        </xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="templateBinding" mode="Type">
+    <xsl:element name="list">
+      <xsl:attribute name="iterator">no</xsl:attribute>
+      <xsl:choose>
+        <xsl:when test="parameterSubstitution[2]">
+          <xsl:attribute name="type">indexed</xsl:attribute>
+          <xsl:apply-templates select="parameterSubstitution[2]/@actual" mode="Index"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="type">simple</xsl:attribute>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:variable name="signatureID" select="@signature"/>
+      <xsl:attribute name="idref">
+        <xsl:value-of select="//ownedTemplateSignature[@xmi:id=$signatureID]/parent::*/@xmi:id"/>
+      </xsl:attribute>
+      <xsl:attribute name="level">0</xsl:attribute>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -477,8 +546,6 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Property">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="property">
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
@@ -490,23 +557,17 @@
       <xsl:element name="type" use-attribute-sets="Type">
         <xsl:apply-templates select="@type"/>
       </xsl:element>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="variable">
         <xsl:attribute name="range">
           <xsl:value-of select="@visibility"/>
         </xsl:attribute>
       </xsl:element>
       <xsl:apply-templates select="." mode="Comment"/>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="get">
         <xsl:attribute name="by">val</xsl:attribute>
         <xsl:attribute name="modifier">var</xsl:attribute>
         <xsl:attribute name="range">no</xsl:attribute>
       </xsl:element>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="set">
         <xsl:attribute name="by">val</xsl:attribute>
         <xsl:attribute name="range">no</xsl:attribute>
@@ -515,8 +576,6 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Parameter">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="param">
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
@@ -527,25 +586,19 @@
       <xsl:element name="type" use-attribute-sets="Type">
         <xsl:apply-templates select="@type"/>
       </xsl:element>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="variable">
         <xsl:attribute name="range">private</xsl:attribute>
       </xsl:element>
-        <xsl:apply-templates select="." mode="Comment"/>
+      <xsl:apply-templates select="." mode="Comment"/>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Return">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="return">
       <xsl:element name="type" use-attribute-sets="Type">
         <xsl:apply-templates select="@type"/>
       </xsl:element>
       <xsl:apply-templates/>
-      <xsl:text>
-</xsl:text>
       <xsl:element name="variable">
         <xsl:attribute name="range">
           <xsl:value-of select="parent::*/@visibility"/>
@@ -556,8 +609,6 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Method">
-    <xsl:text>
-</xsl:text>
     <xsl:element name="method">
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
@@ -581,13 +632,14 @@
   <!-- ======================================================================= -->
   <xsl:template name="Class">
     <xsl:variable name="Name" select="@name"/>
-    <xsl:text>
-</xsl:text>
     <xsl:element name="class" use-attribute-sets="Node">
-      <xsl:copy-of select="@visibility"/>
-      <xsl:if test="not(@visibility)">
-        <xsl:attribute name="visibility">package</xsl:attribute>
-      </xsl:if>
+      <xsl:attribute name="visibility">
+        <xsl:choose>
+          <xsl:when test="not(@visibility)">common</xsl:when>
+          <xsl:when test="@visibility='package'">package</xsl:when>
+          <xsl:otherwise>common</xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
       <xsl:attribute name="constructor">no</xsl:attribute>
       <xsl:attribute name="destructor">no</xsl:attribute>
       <xsl:apply-templates select="ownedOperation[@name=$Name]" mode="Constructor"/>
@@ -647,6 +699,23 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
