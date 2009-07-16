@@ -360,10 +360,11 @@ Friend Class XMLTransformFilter
                     SaveDialogBoxSave.Filter = "Specific Languages (*" & m_strMedia & ")|*" & m_strMedia
             End Select
 
-            SaveDialogBoxSave.InitialDirectory = FileXSL.Path
+            SaveDialogBoxSave.InitialDirectory = My.Settings.CurrentExportFolder
 
             If SaveDialogBoxSave.ShowDialog() = Windows.Forms.DialogResult.OK Then
                 SauvegarderSous(SaveDialogBoxSave.FileName)
+                My.Settings.CurrentExportFolder = Path.GetDirectoryName(SaveDialogBoxSave.FileName)
                 cmdNew.Enabled = True
             End If
 
@@ -482,6 +483,7 @@ Friend Class XMLTransformFilter
                     LabelXSL.Text = CompactPath(LabelXSL, m_strFileXSL)
                     cmdRechargerXML.Enabled = True
                     cmdRechargerXSL.Enabled = True
+                    cmdNew_Click(eventSender, eventArgs)
                     Transformer()
                 End If
             End If
@@ -589,10 +591,14 @@ Friend Class XMLTransformFilter
     End Sub
 
     Private Sub txtXMLFilter_TextChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles txtXMLFilter.TextChanged
-        FileXML.Pattern = txtXMLFilter.Text
-        If m_bInitializeComponent = False Then
-            My.Settings.CurrentExtension = txtXMLFilter.Text
-        End If
+        Try
+
+            FileXML.Pattern = txtXMLFilter.Text
+            If m_bInitializeComponent = False Then
+                My.Settings.CurrentExtension = txtXMLFilter.Text
+            End If
+        Catch ex As Exception
+        End Try
     End Sub
 
     Private Sub txtMaskXSL_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtMaskXSL.TextChanged
