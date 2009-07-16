@@ -6,10 +6,8 @@
      xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
        >
 <!-- ======================================================================= -->
-  <xsl:output indent="yes" method="xml" encoding="utf-8" media-type="xprj"/>
-  <!--xsl:output indent="yes" method="xml" encoding="utf-8" media-type="xprj" standalone="no" doctype-system="class-model.dtd"/-->
-  <!-- ============================================================================== -->
-  <xsl:param name="FolderDTD"/>
+  <!--xsl:output indent="yes" method="xml" encoding="utf-8" media-type="xprj"/-->
+  <xsl:output indent="yes" method="xml" encoding="utf-8" media-type="xprj" standalone="no" doctype-system="class-model.dtd"/>
   <!-- ============================================================================== -->
   <xsl:attribute-set name="Type">
     <xsl:attribute name="level">0</xsl:attribute>
@@ -17,9 +15,19 @@
     <xsl:attribute name="modifier">var</xsl:attribute>
   </xsl:attribute-set>
   <!--  ============================================================================== -->
+  <xsl:attribute-set name="Class">
+    <xsl:attribute name="name">Unknown</xsl:attribute>
+    <xsl:attribute name="visibility">common</xsl:attribute>
+    <xsl:attribute name="constructor">no</xsl:attribute>
+    <xsl:attribute name="destructor">no</xsl:attribute>
+    <xsl:attribute name="inline">none</xsl:attribute>
+    <xsl:attribute name="implementation">abstract</xsl:attribute>
+  </xsl:attribute-set>
+  <!--  ============================================================================== -->
   <xsl:attribute-set name="Element">
     <xsl:attribute name="name">
       <xsl:value-of select="@name"/>
+      <xsl:if test="not(@name) or @name=''"><xsl:value-of select="generate-id()"/></xsl:if>
     </xsl:attribute>
     <xsl:attribute name="num-id">
       <xsl:value-of select="position()"/>
@@ -31,6 +39,7 @@
   <xsl:attribute-set name="Node">
     <xsl:attribute name="name">
       <xsl:value-of select="@name"/>
+      <xsl:if test="not(@name) or @name=''"><xsl:value-of select="generate-id()"/></xsl:if>
     </xsl:attribute>
     <xsl:attribute name="id">
       <xsl:value-of select="@xmi:id"/>
@@ -58,6 +67,17 @@
         </xsl:attribute>
         <xsl:text>A detailed comment</xsl:text>
       </xsl:element>
+      <xsl:if test="//nestedClassifier/nestedClassifier">
+        <xsl:element name="class" use-attribute-sets="Class">
+          <xsl:attribute name="id">
+            <xsl:value-of select="concat(generate-id(),'_Unknown')"/>
+          </xsl:attribute>
+          <xsl:element name="comment">
+            <xsl:attribute name="brief">Unknown classes</xsl:attribute>
+          </xsl:element>
+          <xsl:apply-templates select="//nestedClassifier/nestedClassifier"/>
+        </xsl:element>
+      </xsl:if>
       <xsl:apply-templates select="*[name()='uml:Model']/packagedElement[@xmi:type='uml:Class' or @xmi:type='uml:Interface']"/>
       <xsl:apply-templates select="*[name()='uml:Model']/packagedElement[@xmi:type='uml:Package']"/>
       <xsl:apply-templates select="//packagedElement[@xmi:type='uml:Association']"/>
@@ -85,34 +105,37 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="nestedClassifier">
-    <xsl:element name="typedef" use-attribute-sets="Node">
-      <xsl:element name="type">
-        <xsl:attribute name="level">0</xsl:attribute>
-        <xsl:attribute name="by">val</xsl:attribute>
-        <xsl:attribute name="modifier">var</xsl:attribute>
-        <xsl:choose>
-          <xsl:when test="not(ownedAttribute) and not(ownedLiteral)">
-            <xsl:attribute name="desc">undef_typedef</xsl:attribute>
-          </xsl:when>
-          <xsl:when test="ownedAttribute">
-            <xsl:attribute name="struct">struct</xsl:attribute>
-            <xsl:apply-templates select="ownedAttribute" mode="Element"/>
-          </xsl:when>
-          <xsl:when test="ownedLiteral">
-            <xsl:apply-templates select="ownedLiteral" mode="Enumeration"/>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:element>
-      <xsl:element name="variable">
-        <xsl:attribute name="range">
+    <xsl:variable name="Name" select="@name"/>
+    <xsl:if test="not(parent::*/descendant::ownedParameteredElement[@name=$Name])">
+      <xsl:element name="typedef" use-attribute-sets="Node">
+        <xsl:element name="type">
+          <xsl:attribute name="level">0</xsl:attribute>
+          <xsl:attribute name="by">val</xsl:attribute>
+          <xsl:attribute name="modifier">var</xsl:attribute>
           <xsl:choose>
-            <xsl:when test="@visibility='package'">public</xsl:when>
-            <xsl:otherwise>private</xsl:otherwise>
+            <xsl:when test="not(ownedAttribute) and not(ownedLiteral)">
+              <xsl:attribute name="desc">undef_typedef</xsl:attribute>
+            </xsl:when>
+            <xsl:when test="ownedAttribute">
+              <xsl:attribute name="struct">struct</xsl:attribute>
+              <xsl:apply-templates select="ownedAttribute" mode="Element"/>
+            </xsl:when>
+            <xsl:when test="ownedLiteral">
+              <xsl:apply-templates select="ownedLiteral" mode="Enumeration"/>
+            </xsl:when>
           </xsl:choose>
-        </xsl:attribute>
+        </xsl:element>
+        <xsl:element name="variable">
+          <xsl:attribute name="range">
+            <xsl:choose>
+              <xsl:when test="@visibility='package'">public</xsl:when>
+              <xsl:otherwise>private</xsl:otherwise>
+            </xsl:choose>
+          </xsl:attribute>
+        </xsl:element>
+        <xsl:apply-templates select="." mode="CommentDataType"/>
       </xsl:element>
-      <xsl:apply-templates select="." mode="CommentDataType"/>
-    </xsl:element>
+    </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="ownedLiteral" mode="Enumeration">
@@ -122,6 +145,7 @@
       </xsl:attribute>
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
+      <xsl:if test="not(@name) or @name=''"><xsl:value-of select="generate-id()"/></xsl:if>
       </xsl:attribute>
       <xsl:if test="specification[string(number(@value))!='NaN']">
         <xsl:attribute name="value">
@@ -136,6 +160,7 @@
     <xsl:element name="element" use-attribute-sets="Element">
       <xsl:apply-templates select="@type"/>
       <xsl:value-of select="ownedComment/@body"/>
+      <xsl:value-of select="ownedComment/body"/>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -199,6 +224,25 @@
     </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
+  <xsl:template match="type">
+    <xsl:variable name="ID" select="@xmi:idref"/>
+    <xsl:choose>
+      <xsl:when test="//packagedElement[(@xmi:type='uml:PrimitiveType' or @xmi:type='uml:DataType') and @xmi:id=$ID]">
+        <xsl:attribute name="desc">
+          <xsl:value-of select="//packagedElement[@xmi:id=$ID]/@name"/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:when test="//*[@xmi:id=$ID]">
+        <xsl:attribute name="idref">
+          <xsl:value-of select="$ID"/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="idref">INCONNU</xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
   <xsl:template name="Package">
     <xsl:element name="package" use-attribute-sets="Node">
       <xsl:apply-templates select="." mode="Comment"/>
@@ -215,6 +259,7 @@
       </xsl:attribute>
       <xsl:attribute name="action">
         <xsl:value-of select="ownedComment/@body"/>
+        <xsl:value-of select="ownedComment/body"/>
         <xsl:if test="not(ownedComment)">
           <xsl:apply-templates select="//ownedAttribute[@association=$ID][1]" mode="Action"/>
         </xsl:if>
@@ -224,12 +269,10 @@
           <xsl:when test="not(memberEnd) and not(ownedEnd)">
             <xsl:apply-templates select="@memberEnd" mode="TypeAssociation"/>
           </xsl:when>
-          <xsl:when test="memberEnd">
-            <xsl:apply-templates select="memberEnd" mode="TypeAssociation"/>
+          <xsl:when test="*[@aggregation]">
+            <xsl:apply-templates select="*[@aggregation][1]" mode="TypeAssociation"/>
           </xsl:when>
-          <xsl:otherwise>
-            <xsl:apply-templates select="*[@aggregation]" mode="TypeAssociation"/>
-          </xsl:otherwise>
+          <xsl:otherwise>assembl</xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
       <xsl:choose>
@@ -329,6 +372,7 @@
     <xsl:variable name="ID" select="@xmi:id"/>
     <xsl:element name="comment">
       <xsl:value-of select="ownedComment/@body"/>
+      <xsl:value-of select="ownedComment/body"/>
       <xsl:value-of select="//*[@base_Property=$ID]/@description"/>
     </xsl:element>
   </xsl:template>
@@ -336,6 +380,8 @@
   <xsl:template match="nestedClassifier" mode="CommentDataType">
     <xsl:variable name="ID" select="@xmi:id"/>
     <xsl:element name="comment">
+      <xsl:value-of select="ownedComment/@body"/>
+      <xsl:value-of select="ownedComment/body"/>
       <xsl:value-of select="//*[@base_DataType=$ID]/@description"/>
     </xsl:element>
   </xsl:template>
@@ -343,6 +389,7 @@
   <xsl:template match="ownedLiteral" mode="Comment">
     <xsl:variable name="ID" select="@xmi:id"/>
     <xsl:value-of select="ownedComment/@body"/>
+    <xsl:value-of select="ownedComment/body"/>
     <xsl:value-of select="//*[@base_EnumerationLiteral=$ID]/@description"/>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -350,6 +397,7 @@
     <xsl:variable name="ID" select="@xmi:id"/>
     <xsl:element name="comment">
       <xsl:value-of select="ownedComment/@body"/>
+      <xsl:value-of select="ownedComment/body"/>
       <xsl:value-of select="//*[@base_Parameter=$ID]/@description"/>
     </xsl:element>
   </xsl:template>
@@ -357,6 +405,8 @@
   <xsl:template match="ownedParameter" mode="ReturnComment">
     <xsl:variable name="ID" select="@xmi:id"/>
     <xsl:element name="comment">
+      <xsl:value-of select="ownedComment/@body"/>
+      <xsl:value-of select="ownedComment/body"/>
       <xsl:value-of select="//*[@base_Parameter=$ID]/@description"/>
     </xsl:element>
   </xsl:template>
@@ -364,6 +414,8 @@
   <xsl:template match="ownedAttribute" mode="Action">
     <xsl:variable name="ID" select="@xmi:id"/>
     <xsl:if test="position()=1">
+      <xsl:value-of select="ownedComment/@body"/>
+      <xsl:value-of select="ownedComment/body"/>
       <xsl:value-of select="//*[@base_Property=$ID]/@description"/>
     </xsl:if>
   </xsl:template>
@@ -371,32 +423,61 @@
   <xsl:template match="ownedOperation" mode="Comment">
     <xsl:element name="comment">
       <xsl:variable name="ID" select="@xmi:id"/>
-      <xsl:attribute name="brief">
+      <xsl:variable name="Brief">
         <xsl:value-of select="ownedComment/@body"/>
-        <xsl:value-of select="//*[@base_Operation=$ID]/@description"/>
+        <xsl:value-of select="ownedComment/body"/>
+        <xsl:value-of select="//*[@base_Operations=$ID]/@description"/>
+      </xsl:variable>
+      <xsl:attribute name="brief">
+        <xsl:choose>
+          <xsl:when test="$Brief!=''">
+            <xsl:value-of select="$Brief"/>
+          </xsl:when>
+          <xsl:otherwise>Brief comment</xsl:otherwise>
+        </xsl:choose>
       </xsl:attribute>
-      <xsl:value-of select="ownedComment/ownedComment/@body"/>
-      <xsl:if test="not(ownedComment/ownedComment)">Detailed comment</xsl:if>
+      <xsl:call-template name="BodyComment"/>
     </xsl:element>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="BodyComment">
+    <xsl:choose>
+      <xsl:when test="ownedComment/ownedComment/@body">
+        <xsl:value-of select="ownedComment/ownedComment/@body"/>
+      </xsl:when>
+      <xsl:when test="ownedComment/body">
+        <xsl:value-of select="ownedComment/body"/>
+      </xsl:when>
+      <xsl:otherwise>Detailed comment</xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="packagedElement" mode="Comment">
     <xsl:element name="comment">
       <xsl:variable name="ID" select="@xmi:id"/>
-      <xsl:attribute name="brief">
+      <xsl:variable name="Brief">
         <xsl:choose>
           <xsl:when test="@xmi:type='uml:Class' or @xmi:type='uml:Interface'">
             <xsl:value-of select="ownedComment/@body"/>
+            <xsl:value-of select="ownedComment/body"/>
             <xsl:value-of select="//*[@base_Class=$ID]/@description"/>
           </xsl:when>
           <xsl:when test="@xmi:type='uml:Package'">
             <xsl:value-of select="ownedComment/@body"/>
+            <xsl:value-of select="ownedComment/body"/>
             <xsl:value-of select="//*[@base_Package=$ID]/@description"/>
           </xsl:when>
         </xsl:choose>
+      </xsl:variable>
+      <xsl:attribute name="brief">
+        <xsl:choose>
+          <xsl:when test="$Brief!=''">
+            <xsl:value-of select="$Brief"/>
+          </xsl:when>
+          <xsl:otherwise>Brief comment</xsl:otherwise>
+        </xsl:choose>
       </xsl:attribute>
-      <xsl:value-of select="ownedComment/ownedComment/@body"/>
-      <xsl:if test="not(ownedComment/ownedComment)">Detailed comment</xsl:if>
+      <xsl:call-template name="BodyComment"/>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -549,6 +630,7 @@
     <xsl:element name="property">
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
+      <xsl:if test="not(@name) or @name=''"><xsl:value-of select="generate-id()"/></xsl:if>
       </xsl:attribute>
       <xsl:attribute name="num-id">
         <xsl:value-of select="position()"/>
@@ -556,6 +638,7 @@
       <xsl:attribute name="member">object</xsl:attribute>
       <xsl:element name="type" use-attribute-sets="Type">
         <xsl:apply-templates select="@type"/>
+        <xsl:apply-templates select="type"/>
       </xsl:element>
       <xsl:element name="variable">
         <xsl:attribute name="range">
@@ -579,6 +662,7 @@
     <xsl:element name="param">
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
+      <xsl:if test="not(@name) or @name=''"><xsl:value-of select="generate-id()"/></xsl:if>
       </xsl:attribute>
       <xsl:attribute name="num-id">
         <xsl:value-of select="position()"/>
@@ -612,6 +696,7 @@
     <xsl:element name="method">
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
+      <xsl:if test="not(@name) or @name=''"><xsl:value-of select="generate-id()"/></xsl:if>
       </xsl:attribute>
       <xsl:attribute name="num-id">
         <xsl:value-of select="position()"/>
@@ -646,13 +731,25 @@
       <xsl:apply-templates select="ownedOperation[starts-with(@name,'~')]" mode="Destructor"/>
       <xsl:attribute name="inline">none</xsl:attribute>
       <xsl:call-template name="Implementation"/>
+      <xsl:apply-templates select="ownedTemplateSignature"/>
       <xsl:apply-templates select="generalization | interfaceRealization"/>
-      <xsl:apply-templates select="ownedComment"/>
       <xsl:apply-templates select="." mode="Comment"/>
       <xsl:apply-templates select="nestedClassifier"/>
       <xsl:apply-templates select="ownedAttribute"/>
       <xsl:apply-templates select="ownedOperation[@name!=$Name and not(starts-with(@name,'~'))]"/>
     </xsl:element>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="ownedTemplateSignature">
+    <xsl:for-each select="descendant::ownedParameteredElement">
+      <xsl:variable name="Name" select="@name"/>
+      <xsl:element name="model">
+        <xsl:copy-of select="@name"/>
+        <xsl:attribute name="id">
+          <xsl:value-of select="ancestor::ownedTemplateSignature/parent::*/nestedClassifier[@name=$Name]/@xmi:id"/>
+        </xsl:attribute>
+      </xsl:element>
+    </xsl:for-each>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="generalization">
@@ -692,6 +789,8 @@
   <xsl:template name="Implementation">
     <xsl:attribute name="implementation">
       <xsl:choose>
+        <xsl:when test="ownedTemplateSignature">container</xsl:when>
+        <xsl:when test="@isLeaf='true'">final</xsl:when>
         <xsl:when test="@isAbstract='true'">abstract</xsl:when>
         <xsl:otherwise>simple</xsl:otherwise>
       </xsl:choose>
@@ -699,6 +798,25 @@
   </xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
