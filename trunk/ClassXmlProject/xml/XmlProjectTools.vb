@@ -538,8 +538,8 @@ Public Class XmlProjectTools
             MergeIteratorContainer(document)
             observer.Increment(1)
 
-            stage = "Find template class"
-            FindTemplateClasses(document, ELanguage.Language_CplusPlus)
+            'stage = "Find template class"
+            'FindTemplateClasses(document, ELanguage.Language_CplusPlus)
             observer.Increment(1)
 
             ' Temporary saving to check result before renumber
