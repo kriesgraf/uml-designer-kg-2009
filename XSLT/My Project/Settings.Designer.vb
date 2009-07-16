@@ -89,6 +89,18 @@ Namespace My
                 Me("CurrentFolderXSL") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("c:\")>  _
+        Public Property CurrentExportFolder() As String
+            Get
+                Return CType(Me("CurrentExportFolder"),String)
+            End Get
+            Set
+                Me("CurrentExportFolder") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
