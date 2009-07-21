@@ -8,9 +8,23 @@ Imports System.Text.RegularExpressions
 Imports System.ComponentModel
 Imports System.IO
 Imports Microsoft.VisualBasic
+
+#If _APP_UML = "1" Then
+
 Imports ClassXmlProject.MenuItemCommand
 Imports ClassXmlProject.XmlProjectTools
 Imports ClassXmlProject.UmlNodesManager
+
+#Else
+
+Public Interface InterfProgression
+    WriteOnly Property Minimum() As Integer
+    WriteOnly Property Maximum() As Integer
+    WriteOnly Property ProgressBarVisible() As Boolean
+    Sub Increment(ByVal value As Integer)
+End Interface
+
+#End If
 
 Public Class UmlCodeGenerator
 
@@ -35,6 +49,8 @@ Public Class UmlCodeGenerator
 
 #Region "Public shared methods"
 
+#If _APP_UML = "1" Then
+
     Public Shared Function Generate(ByVal fen As System.Windows.Forms.Form, _
                                     ByVal node As XmlNode, ByVal strClassId As String, _
                                ByVal strPackageId As String, ByVal eLanguage As ELanguage, _
@@ -53,10 +69,13 @@ Public Class UmlCodeGenerator
             argList.Add("InputClass", strClassId)
             argList.Add("InputPackage", strPackageId)
 
+            ' strRootExtractionFolder could be changed downward
+            Dim strRootExtractionFolder As String = strProgramFolder
+
             Select Case eLanguage
                 Case eLanguage.Language_CplusPlus
                     If GenerateCppSourceHeader(fen, node.OwnerDocument.DocumentElement, _
-                                            strClassId, strPackageId, strProgramFolder, argList, _
+                                            strClassId, strPackageId, strRootExtractionFolder, argList, _
                                             strTransformation) _
                     Then
                         bResult = True
@@ -64,7 +83,7 @@ Public Class UmlCodeGenerator
 
                 Case eLanguage.Language_Vbasic
                     If GenerateVbClassModule(fen, node.OwnerDocument.DocumentElement, _
-                                            strClassId, strPackageId, strProgramFolder, argList, _
+                                            strClassId, strPackageId, strRootExtractionFolder, argList, _
                                             strTransformation) _
                     Then
                         bResult = True
@@ -72,7 +91,7 @@ Public Class UmlCodeGenerator
 
                 Case eLanguage.Language_Java
                     If GenerateJavaModule(fen, node.OwnerDocument.DocumentElement, _
-                                            strClassId, strPackageId, strProgramFolder, argList, _
+                                            strClassId, strPackageId, strRootExtractionFolder, argList, _
                                             strTransformation) _
                     Then
                         bResult = True
@@ -123,13 +142,16 @@ Public Class UmlCodeGenerator
         End Try
             Return bResult
     End Function
+#End If
 #End Region
 
 #Region "Private shared methods"
 
+#If _APP_UML = "1" Then
+
     Private Shared Function GenerateCppSourceHeader(ByVal fen As System.Windows.Forms.Form, _
                                                     ByVal node As XmlNode, ByVal strClassId As String, _
-                                                ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByVal strPackageId As String, ByRef strRootExtractionFolder As String, _
                                                 ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String) As Boolean
         Dim bResult As Boolean = False
@@ -142,19 +164,8 @@ Public Class UmlCodeGenerator
             If m_bTransformActive Then Return bResult
             m_bTransformActive = True
 
-            Dim count As Integer = 1    ' One step for XSLT transformation
-            If strClassId <> "" Then
-                count += 1
-            ElseIf strPackageId <> "" _
-            Then
-                Dim child As XmlNode = node.SelectSingleNode("//package[@id='" + strPackageId + "']")
-                count += child.SelectNodes("descendant::package | descendant::class").Count
-            Else
-                count += node.SelectNodes("descendant::package | descendant::class").Count
-            End If
-
             observer.Minimum = 0
-            observer.Maximum = count
+            observer.Maximum = 3
             observer.ProgressBarVisible = True
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
@@ -175,8 +186,8 @@ Public Class UmlCodeGenerator
                 m_xsltCppSourceHeaderStyleSheet.Transform(node, strTransformation, argList)
 
                 Dim lstFileList As New ArrayList
-                ExtractCode(observer, strTransformation, strPath, ELanguage.Language_CplusPlus, lstFileList)
-                MergeCode(ELanguage.Language_CplusPlus, strPath, My.Settings.DiffTool, _
+                ExtractCode(observer, strTransformation, strRootExtractionFolder, ELanguage.Language_CplusPlus, lstFileList)
+                MergeCode(ELanguage.Language_CplusPlus, strRootExtractionFolder, My.Settings.DiffTool, _
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
@@ -194,7 +205,7 @@ Public Class UmlCodeGenerator
 
     Private Shared Function GenerateVbClassModule(ByVal fen As System.Windows.Forms.Form, _
                                                   ByVal node As XmlNode, ByVal strClassId As String, _
-                                                ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByVal strPackageId As String, ByRef strRootExtractionFolder As String, _
                                                 ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String) As Boolean
         Dim bCodeMerge As Boolean = False
@@ -207,19 +218,8 @@ Public Class UmlCodeGenerator
             If m_bTransformActive Then Return bResult
             m_bTransformActive = True
 
-            Dim count As Integer = 1    ' One step for XSLT transformation
-            If strClassId <> "" Then
-                count += 1
-            ElseIf strPackageId <> "" _
-            Then
-                Dim child As XmlNode = node.SelectSingleNode("//package[@id='" + strPackageId + "']")
-                count += child.SelectNodes("descendant::package | descendant::class").Count
-            Else
-                count += node.SelectNodes("descendant::package | descendant::class").Count
-            End If
-
             observer.Minimum = 0
-            observer.Maximum = count
+            observer.Maximum = 3
             observer.ProgressBarVisible = True
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
@@ -242,8 +242,8 @@ Public Class UmlCodeGenerator
 
 
                 Dim lstFileList As New ArrayList
-                ExtractCode(observer, strTransformation, strPath, ELanguage.Language_Vbasic, lstFileList)
-                MergeCode(ELanguage.Language_Vbasic, strPath, My.Settings.DiffTool, _
+                ExtractCode(observer, strTransformation, strRootExtractionFolder, ELanguage.Language_Vbasic, lstFileList)
+                MergeCode(ELanguage.Language_Vbasic, strRootExtractionFolder, My.Settings.DiffTool, _
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
@@ -261,7 +261,7 @@ Public Class UmlCodeGenerator
 
     Private Shared Function GenerateJavaModule(ByVal fen As System.Windows.Forms.Form, _
                                                   ByVal node As XmlNode, ByVal strClassId As String, _
-                                                ByVal strPackageId As String, ByVal strPath As String, _
+                                                ByVal strPackageId As String, ByRef strRootExtractionFolder As String, _
                                                 ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String) As Boolean
         Dim bCodeMerge As Boolean = False
@@ -274,19 +274,8 @@ Public Class UmlCodeGenerator
             If m_bTransformActive Then Return bResult
             m_bTransformActive = True
 
-            Dim count As Integer = 1    ' One step for XSLT transformation
-            If strClassId <> "" Then
-                count += 1
-            ElseIf strPackageId <> "" _
-            Then
-                Dim child As XmlNode = node.SelectSingleNode("//package[@id='" + strPackageId + "']")
-                count += child.SelectNodes("descendant::package | descendant::class").Count
-            Else
-                count += node.SelectNodes("descendant::package | descendant::class").Count
-            End If
-
             observer.Minimum = 0
-            observer.Maximum = count
+            observer.Maximum = 3
             observer.ProgressBarVisible = True
 
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
@@ -308,8 +297,8 @@ Public Class UmlCodeGenerator
                 observer.Increment(1)
 
                 Dim lstFileList As New ArrayList
-                ExtractCode(observer, strTransformation, strPath, ELanguage.Language_Java, lstFileList)
-                MergeCode(ELanguage.Language_Java, strPath, My.Settings.DiffTool, _
+                ExtractCode(observer, strTransformation, strRootExtractionFolder, ELanguage.Language_Java, lstFileList)
+                MergeCode(ELanguage.Language_Java, strRootExtractionFolder, My.Settings.DiffTool, _
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
@@ -327,7 +316,7 @@ Public Class UmlCodeGenerator
 
     Private Shared Function GenerateAndLaunchExternalTool(ByVal fen As System.Windows.Forms.Form, _
                                                   ByVal node As XmlNode, ByVal strClassId As String, _
-                                                ByVal strPackageId As String, ByVal strProgramFolder As String, _
+                                                ByVal strPackageId As String, ByRef strRootExtractionFolder As String, _
                                                 ByVal argList As Dictionary(Of String, String), _
                                                 ByRef strTransformation As String, _
                                                 ByVal ExternalTool As MenuItemNode) As Boolean
@@ -340,19 +329,8 @@ Public Class UmlCodeGenerator
             If m_bTransformActive Then Return bResult
             m_bTransformActive = True
 
-            Dim count As Integer = 1    ' One step for XSLT transformation
-            If strClassId <> "" Then
-                count += 1
-            ElseIf strPackageId <> "" _
-            Then
-                Dim child As XmlNode = node.SelectSingleNode("//package[@id='" + strPackageId + "']")
-                count += child.SelectNodes("descendant::package | descendant::class").Count
-            Else
-                count += node.SelectNodes("descendant::package | descendant::class").Count
-            End If
-
             observer.Minimum = 0
-            observer.Maximum = count
+            observer.Maximum = 3
             observer.ProgressBarVisible = True
 
             strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
@@ -366,19 +344,19 @@ Public Class UmlCodeGenerator
                 xsltExternalToolStyleSheet.Transform(node, strTransformation, argList)
                 observer.Increment(1)
 
-                Dim strDiffArguments As String = ConvertArguments(ExternalTool.DiffArguments, strProgramFolder)
-                Dim strToolArguments As String = ConvertArguments(ExternalTool.ToolArguments, strProgramFolder)
+                Dim strDiffArguments As String = ConvertArguments(ExternalTool.DiffArguments, strRootExtractionFolder)
+                Dim strToolArguments As String = ConvertArguments(ExternalTool.ToolArguments, strRootExtractionFolder)
 
                 Dim lstFileList As New ArrayList
                 Dim bPostGeneration As Boolean = Not (String.IsNullOrEmpty(ExternalTool.Tool))
 
-                ExtractCode(observer, strTransformation, strProgramFolder, ELanguage.Language_Tools, lstFileList)
+                ExtractCode(observer, strTransformation, strRootExtractionFolder, ELanguage.Language_Tools, lstFileList)
 
-                MergeCode(ELanguage.Language_Tools, strProgramFolder, ExternalTool.DiffTool, _
+                MergeCode(ELanguage.Language_Tools, strRootExtractionFolder, ExternalTool.DiffTool, _
                               strDiffArguments, lstFileList, bPostGeneration)
 
                 If bPostGeneration Then
-                    LaunchProcess(ExternalTool.Tool, strToolArguments, strProgramFolder, lstFileList)
+                    LaunchProcess(ExternalTool.Tool, strToolArguments, strRootExtractionFolder, lstFileList)
                 End If
 
                 bResult = True
@@ -397,7 +375,7 @@ Public Class UmlCodeGenerator
 
     Private Shared Sub ConvertXslParams(ByVal argList As Dictionary(Of String, String), ByVal strArguments As String)
         Try
-            Dim regex As New Regex("\-(\w+)\=(\b\w+\b)")
+            Dim regex As New Regex("\-(\w+)\=(\b[a-zA-Z0-9.\-_]+\b)")
             If String.IsNullOrEmpty(strArguments) Then
                 Return
             ElseIf regex.IsMatch(strArguments) _
@@ -450,12 +428,61 @@ Public Class UmlCodeGenerator
         End Try
         Return strResult
     End Function
+#End If
 
-    Private Shared Sub ExtractCode(ByVal observer As InterfProgression, _
-                                   ByVal strTransformation As String, ByVal strFolder As String, _
-                                   ByVal eLang As ELanguage, ByVal lstFileList As ArrayList)
+    Public Shared Function GenerateSimpleTransformation(ByVal fen As System.Windows.Forms.Form, _
+                                                         ByRef strTransformation As String) As Boolean
+        Dim bResult As Boolean = False
+        Dim oldCursor As Cursor = fen.Cursor
+        Dim observer As InterfProgression = CType(fen, InterfProgression)
+
+        fen.Cursor = Cursors.WaitCursor
+        Dim strRootExtractionFolder As String = ""
 
         Try
+
+            observer.Minimum = 0
+            observer.Maximum = 3
+            observer.ProgressBarVisible = True
+
+            Dim lstFileList As New ArrayList
+            ExtractCode(observer, strTransformation, strRootExtractionFolder, lstFileList)
+            For Each node As CodeInfo In lstFileList
+                If node.bCodeMerge And node.bSourceExists Then
+                    MsgBox("Process has detected 'merged' files but doesn't assume it.", MsgBoxStyle.Exclamation)
+                    Exit For
+                End If
+            Next
+            bResult = True
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            observer.ProgressBarVisible = False
+            fen.Cursor = oldCursor
+            m_bTransformActive = False
+        End Try
+
+        Return bResult
+    End Function
+
+    Private Shared Sub ExtractCode(ByVal observer As InterfProgression, _
+                                   ByVal strTransformation As String, ByRef strRootExtractionFolder As String, _
+                                   ByVal lstFileList As ArrayList)
+
+        Try
+            ' This document is used only to count element to generate
+            Dim doc As New XmlDocument
+            doc.Load(strTransformation)
+            observer.Increment(1)
+
+            ' One for XSL transformation
+            Dim count As Integer = 1
+            count += doc.SelectNodes("descendant::package | descendant::code").Count
+            doc = Nothing
+
+            observer.Maximum = count
+
             ' Load the reader with the data file and ignore all white space nodes.         
             Using reader As XmlTextReader = New XmlTextReader(strTransformation)
 
@@ -466,11 +493,14 @@ Public Class UmlCodeGenerator
                     Select Case reader.NodeType
                         Case XmlNodeType.Element
                             Select Case reader.Name
+                                Case cstDocumentElement
+                                    ExtractRootFolder(strRootExtractionFolder, reader)
+
                                 Case cstFolderElement
-                                    ExtractPackageFolder(observer, strFolder, reader, eLang, lstFileList)
+                                    ExtractPackageFolder(observer, strRootExtractionFolder, reader, lstFileList)
 
                                 Case cstFileElement
-                                    ExtractFileNode(observer, strFolder, reader, eLang, lstFileList)
+                                    ExtractFileNode(observer, strRootExtractionFolder, reader, lstFileList)
                                 Case Else
                                     'Debug.Print("Node ignored:=" + reader.Name)
                             End Select
@@ -526,9 +556,20 @@ Public Class UmlCodeGenerator
         Return fileDescriptor
     End Function
 
+    Private Shared Sub ExtractRootFolder(ByRef rootFolder As String, ByVal reader As XmlTextReader)
+        reader.MoveToFirstAttribute()
+        Do
+            Select Case reader.Name
+                Case "project"
+                    rootFolder = reader.Value
+            End Select
+        Loop While reader.MoveToNextAttribute
+        reader.MoveToElement()
+    End Sub
+
     Private Shared Sub ExtractPackageFolder(ByVal observer As InterfProgression, _
                                       ByVal currentFolder As String, ByVal reader As XmlTextReader, _
-                                      ByVal eLang As ELanguage, ByVal lstFileList As ArrayList)
+                                      ByVal lstFileList As ArrayList)
         Try
             observer.Increment(1)
 
@@ -547,10 +588,10 @@ Public Class UmlCodeGenerator
                     Case XmlNodeType.Element
                         Select Case reader.Name
                             Case cstFolderElement
-                                ExtractPackageFolder(observer, strNewFolder, reader, eLang, lstFileList)
+                                ExtractPackageFolder(observer, strNewFolder, reader, lstFileList)
 
                             Case cstFileElement
-                                ExtractFileNode(observer, strNewFolder, reader, eLang, lstFileList)
+                                ExtractFileNode(observer, strNewFolder, reader, lstFileList)
 
                             Case Else
                                 'Debug.Print("Node ignored:=" + reader.Name)
@@ -567,7 +608,7 @@ Public Class UmlCodeGenerator
 
     Private Shared Sub ExtractFileNode(ByVal observer As InterfProgression, _
                                     ByVal currentFolder As String, ByVal reader As XmlTextReader, _
-                                    ByVal eLang As ELanguage, ByVal lstFileList As ArrayList)
+                                    ByVal lstFileList As ArrayList)
         Try
             observer.Increment(1)
 
@@ -599,6 +640,8 @@ Public Class UmlCodeGenerator
             Throw ex
         End Try
     End Sub
+
+#If _APP_UML = "1" Then
 
     Private Shared Sub MergeCode(ByVal eLang As ELanguage, ByVal strFolder As String, _
                                  ByVal strExternalMerger As String, _
@@ -684,6 +727,7 @@ Public Class UmlCodeGenerator
         End Try
         Return bResult
     End Function
+#End If
 
     Private Shared Function CreateBranch(ByVal ExistingPath As String, ByVal NewBranch As String) As String
         Dim strResult As String = My.Computer.FileSystem.CombinePath(ExistingPath, NewBranch)
@@ -726,6 +770,8 @@ Public Class UmlCodeGenerator
             Throw ex
         End Try
     End Sub
+
+#If _APP_UML = "1" Then
 
     Private Shared Sub LaunchProcess(ByVal strProcess As String, ByVal strArguments As String, _
                                      ByVal strProjectFolder As String, ByVal lstFileList As ArrayList)
@@ -791,6 +837,6 @@ Public Class UmlCodeGenerator
             Throw New Exception("External merger failed!" + vbCrLf + vbCrLf + "Command: " + strExternalMerger + vbCrLf + "Arguments: " + tempo, ex)
         End Try
     End Sub
-
+#End If
 #End Region
 End Class

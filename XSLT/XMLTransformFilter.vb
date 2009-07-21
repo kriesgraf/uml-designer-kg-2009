@@ -7,6 +7,7 @@ Imports System.Text
 
 Friend Class XMLTransformFilter
     Inherits Form
+    Implements InterfProgression
 
 #Region "Class declarations"
 
@@ -52,7 +53,51 @@ Friend Class XMLTransformFilter
     Private Const cstHTMLFilter As String = "HTML Language (*.html)|*.html"
 #End Region
 
-#Region "Methods"
+#Region "Public methods"
+
+    Public Class shlwapi
+        <System.Runtime.InteropServices.DllImport("shlwapi.dll", CharSet:=System.Runtime.InteropServices.CharSet.Auto)> _
+        Shared Function PathCompactPath(ByVal hDC As IntPtr, ByVal lpszPath As StringBuilder, ByVal dx As Integer) As Boolean
+        End Function
+    End Class
+
+    Public Class user32
+        <System.Runtime.InteropServices.DllImport("user32")> _
+        Shared Function GetWindowDC(ByVal hWnd As IntPtr) As IntPtr
+        End Function
+    End Class
+
+    Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
+        Set(ByVal value As Integer)
+            Me.strpProgressBar.Maximum = value
+            Debug.Print("Maximum=" + value.ToString)
+        End Set
+    End Property
+
+    Public WriteOnly Property Minimum() As Integer Implements InterfProgression.Minimum
+        Set(ByVal value As Integer)
+            Me.strpProgressBar.Minimum = value
+            Me.strpProgressBar.Value = value
+            Debug.Print("Minimum=" + value.ToString)
+        End Set
+    End Property
+
+    Public WriteOnly Property ProgressBarVisible() As Boolean Implements InterfProgression.ProgressBarVisible
+        Set(ByVal value As Boolean)
+            Me.strpProgressBar.Visible = value
+            Application.DoEvents()  ' To ose time to dispatch event
+        End Set
+    End Property
+
+    Public Sub Increment(ByVal value As Integer) Implements InterfProgression.Increment
+        Me.strpProgressBar.Increment(value)
+        Application.DoEvents()  ' To lose time to dispatch event
+        Debug.Print("Step=" + Me.strpProgressBar.Value.ToString)
+        System.Threading.Thread.Sleep(50)
+    End Sub
+#End Region
+
+#Region "Private methods"
 
     Private Function LoadParams() As Boolean
         Dim bNodes As Boolean = False
@@ -268,6 +313,48 @@ Friend Class XMLTransformFilter
         End Try
         Return (strResult)
     End Function
+
+    Private Sub LoadDocument(ByVal strFilename As String)
+        Try
+            ' the following to Validate succeeds.
+            Dim settings As XmlReaderSettings = New XmlReaderSettings()
+            settings.ProhibitDtd = False
+            settings.ValidationType = System.Xml.ValidationType.DTD
+
+            ' Using avoid to remain the file locked for another process
+            Dim strDTD As String = "<Standalone>"
+            Dim document As New XmlDocument
+            Using reader As XmlReader = XmlReader.Create(strFilename, settings)
+                document.Load(reader)
+                If document.DocumentType IsNot Nothing Then
+                    strDTD = document.DocumentType.SystemId
+                End If
+            End Using
+
+            MsgBox("Validation complete with DTD:" + vbCrLf + vbCrLf + strDTD, MsgBoxStyle.Information)
+
+        Catch ex As XmlSchemaException
+
+            Dim lines As String() = TextEditBox.Lines()
+            Dim location As String = ""
+
+            If ex.LineNumber - 2 > -1 Then
+                location += vbCrLf + "l" + CStr(ex.LineNumber - 1) + "=" + lines(ex.LineNumber - 2)
+            End If
+            If ex.LineNumber - 1 > 0 And ex.LineNumber - 1 < lines.Length Then
+                location += vbCrLf + "l" + CStr(ex.LineNumber) + "=" + lines(ex.LineNumber - 1)
+            End If
+
+            If ex.LineNumber < lines.Length Then
+                location += vbCrLf + "l" + CStr(ex.LineNumber + 1) + "=" + lines(ex.LineNumber)
+            End If
+            Dim message As String = "LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
+                                "LinePosition=" + ex.LinePosition.ToString + vbCrLf + _
+                                "Message=" + ex.Message + vbCrLf + _
+                                "SourceUri=" + ex.SourceUri + vbCrLf + vbCrLf + location
+            Throw New Exception(message, ex)
+        End Try
+    End Sub
 
 #End Region
 
@@ -632,19 +719,25 @@ Friend Class XMLTransformFilter
         lblTransform.Text = CompactPath(LabelXSL, m_strPath + m_strFileName + m_strMedia)
     End Sub
 
-#End Region
+    Private Sub SplitMain_MouseDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles SplitMain.MouseDoubleClick
+        SplitMain.SplitterDistance = 200
+    End Sub
 
-    Public Class shlwapi
-        <System.Runtime.InteropServices.DllImport("shlwapi.dll", CharSet:=System.Runtime.InteropServices.CharSet.Auto)> _
-        Shared Function PathCompactPath(ByVal hDC As IntPtr, ByVal lpszPath As StringBuilder, ByVal dx As Integer) As Boolean
-        End Function
-    End Class
+    Private Sub SplitMain_SplitterMoved(ByVal sender As Object, ByVal e As System.Windows.Forms.SplitterEventArgs) Handles SplitMain.SplitterMoved
+        Debug.Print(SplitMain.SplitterDistance)
+    End Sub
 
-    Public Class user32
-        <System.Runtime.InteropServices.DllImport("user32")> _
-        Shared Function GetWindowDC(ByVal hWnd As IntPtr) As IntPtr
-        End Function
-    End Class
+    Private Sub SplitView_MouseDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles SplitView.MouseDoubleClick
+        SplitView.SplitterDistance = 133
+    End Sub
+
+    Private Sub SplitView_SplitterMoved(ByVal sender As Object, ByVal e As System.Windows.Forms.SplitterEventArgs) Handles SplitView.SplitterMoved
+        Debug.Print(SplitView.SplitterDistance)
+    End Sub
+
+    Private Sub cmdCode_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCode.Click
+        UmlCodeGenerator.GenerateSimpleTransformation(Me, m_strPath + m_strFileName + m_strMedia)
+    End Sub
 
     Private Sub cmdValidate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdValidate.Click
         Try
@@ -654,46 +747,5 @@ Friend Class XMLTransformFilter
             MsgExceptionBox(ex)
         End Try
     End Sub
-
-    Private Sub LoadDocument(ByVal strFilename As String)
-        Try
-            ' the following to Validate succeeds.
-            Dim settings As XmlReaderSettings = New XmlReaderSettings()
-            settings.ProhibitDtd = False
-            settings.ValidationType = System.Xml.ValidationType.DTD
-
-            ' Using avoid to remain the file locked for another process
-            Dim strDTD As String = "<Standalone>"
-            Dim document As New XmlDocument
-            Using reader As XmlReader = XmlReader.Create(strFilename, settings)
-                document.Load(reader)
-                If document.DocumentType IsNot Nothing Then
-                    strDTD = document.DocumentType.SystemId
-                End If
-            End Using
-
-            MsgBox("Validation complete with DTD:" + vbCrLf + vbCrLf + strDTD, MsgBoxStyle.Information)
-
-        Catch ex As XmlSchemaException
-
-            Dim lines As String() = TextEditBox.Lines()
-            Dim location As String = ""
-
-            If ex.LineNumber - 2 > -1 Then
-                location += vbCrLf + "l" + CStr(ex.LineNumber - 1) + "=" + lines(ex.LineNumber - 2)
-            End If
-            If ex.LineNumber - 1 > 0 And ex.LineNumber - 1 < lines.Length Then
-                location += vbCrLf + "l" + CStr(ex.LineNumber) + "=" + lines(ex.LineNumber - 1)
-            End If
-
-            If ex.LineNumber < lines.Length Then
-                location += vbCrLf + "l" + CStr(ex.LineNumber + 1) + "=" + lines(ex.LineNumber)
-            End If
-            Dim message As String = "LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
-                                "LinePosition=" + ex.LinePosition.ToString + vbCrLf + _
-                                "Message=" + ex.Message + vbCrLf + _
-                                "SourceUri=" + ex.SourceUri + vbCrLf + vbCrLf + location 
-            Throw New Exception(message, ex)
-        End Try
-    End Sub
+#End Region
 End Class
