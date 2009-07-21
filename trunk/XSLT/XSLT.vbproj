@@ -35,7 +35,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/XSLT/</UpdateUrl>
-    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>3.0.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -138,6 +138,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="..\ClassXmlProject\xml\XslSimpleTransform.vb" />
+    <Compile Include="..\ClassXmlProject\umldesign\UmlCodeGenerator.vb" />
+    <Compile Include="..\ClassXmlProject\umldesign\CodeInfo.vb" />
     <EmbeddedResource Include="dlgAlertException.resx">
       <DependentUpon>dlgAlertException.vb</DependentUpon>
       <SubType>Designer</SubType>
