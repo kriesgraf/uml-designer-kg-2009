@@ -74,6 +74,7 @@
         Me.Label1 = New System.Windows.Forms.Label
         Me.Label2 = New System.Windows.Forms.Label
         Me.cmdCode = New System.Windows.Forms.Button
+        Me.strpProgressBar = New System.Windows.Forms.ProgressBar
         Me.cmdValidate = New System.Windows.Forms.Button
         Me.TabOutputControl = New System.Windows.Forms.TabControl
         Me.TabPageBrowser = New System.Windows.Forms.TabPage
@@ -81,7 +82,6 @@
         Me.TextEditBox = New System.Windows.Forms.RichTextBox
         Me.SplitMain = New System.Windows.Forms.SplitContainer
         Me.SplitView = New System.Windows.Forms.SplitContainer
-        Me.strpProgressBar = New System.Windows.Forms.ProgressBar
         Me.FrameXSL.SuspendLayout()
         Me.tblXsltPanel.SuspendLayout()
         Me.SplitFrameXSL.Panel1.SuspendLayout()
@@ -539,6 +539,14 @@
         Me.cmdCode.Text = "Generate code"
         Me.cmdCode.UseVisualStyleBackColor = True
         '
+        'strpProgressBar
+        '
+        Me.strpProgressBar.Location = New System.Drawing.Point(369, 3)
+        Me.strpProgressBar.Name = "strpProgressBar"
+        Me.strpProgressBar.Size = New System.Drawing.Size(93, 18)
+        Me.strpProgressBar.TabIndex = 29
+        Me.strpProgressBar.Visible = False
+        '
         'cmdValidate
         '
         Me.cmdValidate.Dock = System.Windows.Forms.DockStyle.Fill
@@ -631,14 +639,6 @@
         Me.SplitView.Size = New System.Drawing.Size(727, 731)
         Me.SplitView.SplitterDistance = 133
         Me.SplitView.TabIndex = 0
-        '
-        'strpProgressBar
-        '
-        Me.strpProgressBar.Location = New System.Drawing.Point(369, 3)
-        Me.strpProgressBar.Name = "strpProgressBar"
-        Me.strpProgressBar.Size = New System.Drawing.Size(93, 18)
-        Me.strpProgressBar.TabIndex = 29
-        Me.strpProgressBar.Visible = False
         '
         'XMLTransformFilter
         '

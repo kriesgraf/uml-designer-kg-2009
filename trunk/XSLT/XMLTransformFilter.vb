@@ -736,7 +736,12 @@ Friend Class XMLTransformFilter
     End Sub
 
     Private Sub cmdCode_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCode.Click
-        UmlCodeGenerator.GenerateSimpleTransformation(Me, m_strPath + m_strFileName + m_strMedia)
+        Try
+            UmlCodeGenerator.GenerateSimpleTransformation(Me, m_strPath + m_strFileName + m_strMedia)
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
     End Sub
 
     Private Sub cmdValidate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdValidate.Click
