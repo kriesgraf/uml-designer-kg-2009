@@ -119,9 +119,9 @@ Partial Class dlgAlertException
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "dlgAlertException"
-        Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Alert"
+        Me.TopMost = True
         Me.TableLayoutPanel2.ResumeLayout(False)
         Me.TableLayoutPanel2.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()

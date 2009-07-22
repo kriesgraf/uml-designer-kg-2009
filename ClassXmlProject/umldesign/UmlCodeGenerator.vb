@@ -186,7 +186,7 @@ Public Class UmlCodeGenerator
                 m_xsltCppSourceHeaderStyleSheet.Transform(node, strTransformation, argList)
 
                 Dim lstFileList As New ArrayList
-                ExtractCode(observer, strTransformation, strRootExtractionFolder, ELanguage.Language_CplusPlus, lstFileList)
+                ExtractCode(observer, strTransformation, strRootExtractionFolder, lstFileList)
                 MergeCode(ELanguage.Language_CplusPlus, strRootExtractionFolder, My.Settings.DiffTool, _
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
@@ -242,7 +242,7 @@ Public Class UmlCodeGenerator
 
 
                 Dim lstFileList As New ArrayList
-                ExtractCode(observer, strTransformation, strRootExtractionFolder, ELanguage.Language_Vbasic, lstFileList)
+                ExtractCode(observer, strTransformation, strRootExtractionFolder, lstFileList)
                 MergeCode(ELanguage.Language_Vbasic, strRootExtractionFolder, My.Settings.DiffTool, _
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
@@ -297,7 +297,7 @@ Public Class UmlCodeGenerator
                 observer.Increment(1)
 
                 Dim lstFileList As New ArrayList
-                ExtractCode(observer, strTransformation, strRootExtractionFolder, ELanguage.Language_Java, lstFileList)
+                ExtractCode(observer, strTransformation, strRootExtractionFolder, lstFileList)
                 MergeCode(ELanguage.Language_Java, strRootExtractionFolder, My.Settings.DiffTool, _
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
@@ -350,7 +350,7 @@ Public Class UmlCodeGenerator
                 Dim lstFileList As New ArrayList
                 Dim bPostGeneration As Boolean = Not (String.IsNullOrEmpty(ExternalTool.Tool))
 
-                ExtractCode(observer, strTransformation, strRootExtractionFolder, ELanguage.Language_Tools, lstFileList)
+                ExtractCode(observer, strTransformation, strRootExtractionFolder, lstFileList)
 
                 MergeCode(ELanguage.Language_Tools, strRootExtractionFolder, ExternalTool.DiffTool, _
                               strDiffArguments, lstFileList, bPostGeneration)
@@ -446,13 +446,21 @@ Public Class UmlCodeGenerator
             observer.ProgressBarVisible = True
 
             Dim lstFileList As New ArrayList
+            Dim bMergeOk As Boolean = False
+
             ExtractCode(observer, strTransformation, strRootExtractionFolder, lstFileList)
+
             For Each node As CodeInfo In lstFileList
+                If node.bSourceExists Then
+                    BackupFile(node.strTempFile, node.strReleaseFile)
+                End If
                 If node.bCodeMerge And node.bSourceExists Then
-                    MsgBox("Process has detected 'merged' files but doesn't assume it.", MsgBoxStyle.Exclamation)
-                    Exit For
+                    bMergeOk = True
                 End If
             Next
+            If bMergeOk Then
+                MsgBox("Process has detected 'merged' files but doesn't assume it.", MsgBoxStyle.Exclamation)
+            End If
             bResult = True
 
         Catch ex As Exception
@@ -527,9 +535,15 @@ Public Class UmlCodeGenerator
             Do
                 Select Case reader.Name
                     Case "name"
-                        fileDescriptor.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, reader.Value)
+                        Try
+                            fileDescriptor.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, reader.Value.Trim())
+
+                        Catch ex As Exception
+                            Throw New Exception("Filename '" + reader.Value + "' or current folder '" + currentFolder + "' is not available", ex)
+                        End Try
+
                     Case "Merge"
-                        fileDescriptor.bCodeMerge = (reader.Value = "yes")
+                        fileDescriptor.bCodeMerge = (reader.Value.Trim() = "yes")
                 End Select
             Loop While reader.MoveToNextAttribute
 
@@ -561,7 +575,7 @@ Public Class UmlCodeGenerator
         Do
             Select Case reader.Name
                 Case "project"
-                    rootFolder = reader.Value
+                    rootFolder = reader.Value.Trim()
             End Select
         Loop While reader.MoveToNextAttribute
         reader.MoveToElement()
@@ -578,7 +592,7 @@ Public Class UmlCodeGenerator
                 Exit Sub
             End If
 
-            Dim strNewFolder As String = reader.Value
+            Dim strNewFolder As String = reader.Value.Trim()
             reader.MoveToElement()
 
             strNewFolder = CreateBranch(currentFolder, strNewFolder)
@@ -730,8 +744,9 @@ Public Class UmlCodeGenerator
 #End If
 
     Private Shared Function CreateBranch(ByVal ExistingPath As String, ByVal NewBranch As String) As String
-        Dim strResult As String = My.Computer.FileSystem.CombinePath(ExistingPath, NewBranch)
+        Dim strResult As String = ""
         Try
+            strResult = My.Computer.FileSystem.CombinePath(ExistingPath, NewBranch)
 
             If My.Computer.FileSystem.DirectoryExists(strResult) = False _
             Then
@@ -739,14 +754,15 @@ Public Class UmlCodeGenerator
                 'Debug.Print("CreateBranch:=" + strResult)
             End If
         Catch ex As Exception
-            Throw ex
+            Throw New Exception("Can't create branch '" + NewBranch + "' at existing path '" + ExistingPath + "'", ex)
         End Try
         Return strResult
     End Function
 
     Private Shared Function CreateTempFolder(ByVal ExistingPath As String) As String
-        Dim strResult As String = My.Computer.FileSystem.CombinePath(ExistingPath, cstTempExport)
+        Dim strResult As String = ""
         Try
+            strResult = My.Computer.FileSystem.CombinePath(ExistingPath, cstTempExport)
 
             If My.Computer.FileSystem.DirectoryExists(strResult) = False _
             Then
@@ -756,7 +772,7 @@ Public Class UmlCodeGenerator
                 'Debug.Print("CreateTempFolder:=" + strResult)
             End If
         Catch ex As Exception
-            Throw ex
+            Throw New Exception("Can't create temporary folder '" + cstTempExport + "' at existing path '" + ExistingPath + "'", ex)
         End Try
         Return strResult
     End Function
