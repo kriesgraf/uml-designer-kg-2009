@@ -293,7 +293,7 @@
       <xsl:if test="$Implementation!='abstract'">
         <xsl:apply-templates select="return/variable/@range" mode="Code"/>
       </xsl:if>
-      <xsl:if test="not(contains($ImplementedMethods,concat(@overrides,';')))">
+      <xsl:if test="not(@overrides) or not(contains($ImplementedMethods,concat(@overrides,';')))">
         <xsl:apply-templates select="@implementation" mode="Code">
           <xsl:with-param name="Implementation" select="$Implementation"/>
         </xsl:apply-templates>
@@ -661,6 +661,7 @@
         ''' &lt;summary&gt;<xsl:value-of select="text()"/>&lt;/summary&gt;</xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
