@@ -8,7 +8,7 @@ Friend Class dlgParams
     Private m_strCurrentFolder As String
     Private m_strXmlFolder As String
     Private m_strCurrentParam As String
-    Private m_arrayList As Object
+    Private m_arrayList As XslSimpleTransform.Arguments
     Private m_bInitializeComponent As Boolean = False
     Private m_bListIndexLock As Boolean = False
     Private m_bValeurUpdated As Boolean = False
@@ -25,8 +25,8 @@ Friend Class dlgParams
         End Set
     End Property
 
-    Public WriteOnly Property ParamList() As Object
-        Set(ByVal value As Object)
+    Public WriteOnly Property ParamList() As XslSimpleTransform.Arguments
+        Set(ByVal value As XslSimpleTransform.Arguments)
             m_arrayList = value
         End Set
     End Property
@@ -162,5 +162,13 @@ Friend Class dlgParams
 
     Private Sub btnXmlFolder_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnXmlFolder.Click
         txtValeur.Text = m_strXmlFolder
+    End Sub
+
+    Private Sub btnReset_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnReset.Click
+        Dim keys As New ArrayList
+        keys.AddRange(m_arrayList.Keys)
+        For Each key As String In keys
+            m_arrayList(key) = ""
+        Next
     End Sub
 End Class
