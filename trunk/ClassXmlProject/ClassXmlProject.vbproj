@@ -319,6 +319,7 @@
     <Compile Include="umldesign\UmlNodesManager.vb" />
     <Compile Include="umldesign\VbCodeAnalyser.vb" />
     <Compile Include="umldesign\VbCodeMerger.vb" />
+    <Compile Include="umldesign\VbCodeReverse.vb" />
     <Compile Include="views\XmlClassOverrideMethodsView.vb" />
     <Compile Include="views\XmlClassOverridePropertiesView.vb" />
     <Compile Include="views\XmlInterfaceMemberView.vb" />
