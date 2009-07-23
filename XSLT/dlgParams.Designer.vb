@@ -36,6 +36,7 @@
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
         Me.Label1 = New System.Windows.Forms.Label
+        Me.btnReset = New System.Windows.Forms.Button
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.SuspendLayout()
@@ -143,6 +144,7 @@
         Me.TableLayoutPanel1.Controls.Add(Me.txtValeur, 1, 2)
         Me.TableLayoutPanel1.Controls.Add(Me.TableLayoutPanel2, 0, 2)
         Me.TableLayoutPanel1.Controls.Add(Me.Label1, 0, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.btnReset, 2, 0)
         Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel1.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
@@ -181,8 +183,19 @@
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(368, 32)
         Me.Label1.TabIndex = 9
-        Me.Label1.Text = "Press' OK 'for each parameter changed, then close the window to restart the process ..."
+        Me.Label1.Text = "Press' OK 'for each parameter changed, then close the window to restart the proce" & _
+            "ss ..."
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
+        'btnReset
+        '
+        Me.btnReset.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.btnReset.Location = New System.Drawing.Point(377, 3)
+        Me.btnReset.Name = "btnReset"
+        Me.btnReset.Size = New System.Drawing.Size(109, 26)
+        Me.btnReset.TabIndex = 10
+        Me.btnReset.Text = "Reset"
+        Me.btnReset.UseVisualStyleBackColor = True
         '
         'dlgParams
         '
@@ -214,5 +227,6 @@
     Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents TableLayoutPanel2 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents btnReset As System.Windows.Forms.Button
 #End Region 
 End Class
