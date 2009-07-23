@@ -15,7 +15,7 @@
   ============================================================================
   Don't remove attribute or change value of attributes in this node please.
   Exceptionally you can remove element 'code' from "cdata-section-elements" attibute
-  to debug your XSLT transform, but when you call it from external tools, please replace it.--> 
+  to debug your XSLT transform, but when you call it from external tools, please replace it.-->
   <xsl:output method="xml" cdata-section-elements="code" encoding="ISO-8859-1" indent="yes"/>
   <!-- ======================================================================= -->
   <!-- These parameters are mandatorybut you can add your own parameters and declare them in External tools form. -->
@@ -28,7 +28,9 @@
   <!-- Add below your own parameters
   =======================================================================
   these variables are mandatory. Application will upgrade this for you if necessary. -->
-  <xsl:variable name="FileLanguage"><xsl:value-of select="$LanguageFolder"/>\language.xml</xsl:variable>
+  <xsl:variable name="FileLanguage">
+    <xsl:value-of select="$LanguageFolder"/>\language.xml
+  </xsl:variable>
   <xsl:variable name="PrefixList" select="translate(document($FileLanguage)//PrefixList/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="PrefixTypeList" select="translate(document($FileLanguage)//PrefixTypeList/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="PrefixStructProperty" select="translate(document($FileLanguage)//PrefixStructProperty/text(),'&#32;&#10;&#13;','')"/>
@@ -43,13 +45,26 @@
     <!--  you can add here a log trace of your own parameters if you need.
     This comment is optional, you can remove it. -->
     <xsl:comment>
-Version   :=<xsl:value-of select="$Version"/>
-ToolsFolder   :=<xsl:value-of select="$ToolsFolder"/>
-LanguageFolder:=<xsl:value-of select="$LanguageFolder"/>
-InputClass    :=<xsl:value-of select="$InputClass"/>
-InputPackage  :=<xsl:value-of select="$InputPackage"/>
+      <xsl:text>
+Version       :=</xsl:text>
+      <xsl:value-of select="$Version"/>
+      <xsl:text>
+ProjectFolder :=</xsl:text>
+      <xsl:value-of select="$ProjectFolder"/>
+      <xsl:text>
+ToolsFolder   :=</xsl:text>
+      <xsl:value-of select="$ToolsFolder"/>
+      <xsl:text>
+LanguageFolder:=</xsl:text>
+      <xsl:value-of select="$LanguageFolder"/>
+      <xsl:text>
+InputClass    :=</xsl:text>
+      <xsl:value-of select="$InputClass"/>
+      <xsl:text>
+InputPackage  :=</xsl:text>
+      <xsl:value-of select="$InputPackage"/>
     </xsl:comment>
-	<!-- this element 'document' is mandatory-->
+    <!-- this element 'document' is mandatory-->
     <xsl:element name="document">
 	  <!-- this attribute 'project' is not used by process, but only for your information.-->
       <xsl:attribute name="project">
@@ -72,12 +87,12 @@ InputPackage  :=<xsl:value-of select="$InputPackage"/>
       </xsl:choose>
     </xsl:element>
   </xsl:template>
-<!-- ======================================================================= -->
+  <!-- ======================================================================= -->
   <!--  This "xsl:template" block is mandatory, don't remove it please -->
   <xsl:template match="package" mode="Node">
     <!-- this "xsl:element" block is mandatory, please don't change it.-->
     <xsl:element name="package">
-    <xsl:attribute name="name">
+      <xsl:attribute name="name">
         <xsl:value-of select="@folder"/>
         <xsl:if test="not(@folder)">
           <xsl:value-of select="@name"/>
@@ -107,7 +122,7 @@ InputPackage  :=<xsl:value-of select="$InputPackage"/>
       </xsl:choose>
     </xsl:element>
   </xsl:template>
-<!-- =======================================================================
+  <!-- =======================================================================
   *
   *
   * Bellow this line, "xsl:template" blocks are not mandatory, except if you need
@@ -124,8 +139,12 @@ InputPackage  :=<xsl:value-of select="$InputPackage"/>
            File is generated in a folder beneath current package folder.
            Note: you can add a different folder path than current package folder
            but declare only relative path please! -->
-      <xsl:attribute name="name"><xsl:value-of select="concat(@name,'.mak')"/></xsl:attribute>
-      An example of code for 'root' node "<xsl:value-of select="@name"/>".
+      <xsl:attribute name="name">
+        <xsl:value-of select="concat(@name,'.mak')"/>
+      </xsl:attribute>
+      <xsl:text>
+      An example of code for 'root' node "</xsl:text>
+      <xsl:value-of select="@name"/>".
     </xsl:element>
   </xsl:template>
   <!-- ============================================================================ -->
@@ -138,8 +157,14 @@ InputPackage  :=<xsl:value-of select="$InputPackage"/>
            File is generated in a folder beneath current package folder.
            Note: you can add a different folder path than current package folder
            but declare only relative path please! -->
-      <xsl:attribute name="name"><xsl:value-of select="concat(@name,'.inc')"/></xsl:attribute>
-      An example of code for 'package' node "<xsl:value-of select="@name"/>" with UID '<xsl:value-of select="@id"/>'.
+      <xsl:attribute name="name">
+        <xsl:value-of select="concat(@name,'.inc')"/>
+      </xsl:attribute>
+      <xsl:text>An example of code for 'package' node "</xsl:text>
+      <xsl:value-of select="@name"/>
+      <xsl:text>" with UID '</xsl:text>
+      <xsl:value-of select="@id"/>
+      <xsl:text>'.</xsl:text>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -152,10 +177,23 @@ InputPackage  :=<xsl:value-of select="$InputPackage"/>
            File is generated in a folder beneath current package folder.
            Note: you can add a different folder path than current package folder
            but declare only relative path please! -->
-      <xsl:attribute name="name"><xsl:value-of select="concat(@name,'.tmp')"/></xsl:attribute>
-      An example of code for 'class' node "<xsl:value-of select="@name"/>" with UID '<xsl:value-of select="@id"/>'.
+      <xsl:attribute name="name">
+        <xsl:value-of select="concat(@name,'.tmp')"/>
+      </xsl:attribute>
+      <xsl:text>
+      An example of code for 'class' node "</xsl:text>
+      <xsl:value-of select="@name"/>
+      <xsl:text>" with UID '</xsl:text>
+      <xsl:value-of select="@id"/>
+      <xsl:text>'.</xsl:text>
     </xsl:element>
   </xsl:template>
   <!-- ======================================================================= -->
   </xsl:stylesheet>
+
+
+
+
+
+
 
