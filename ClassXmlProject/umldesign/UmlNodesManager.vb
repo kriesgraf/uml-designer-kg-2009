@@ -501,7 +501,7 @@ Public Class UmlNodesManager
                 AddAttributeValue(child, "num-id", strID)
             Next
 
-            listID = node.SelectNodes("//*[enumvalue or type/enumvalue]")
+            listID = node.SelectNodes("//*[not(self::type) and (enumvalue or type/enumvalue)]")
 
             For Each child In listID
                 Dim strPrefix As String = ""
@@ -520,12 +520,12 @@ Public Class UmlNodesManager
                 End Select
 
                 Dim szOldID As String
-                strPrefix = "enum" + AfterStr(strPrefix, "class")
+                strPrefix = "enum" + AfterStr(strPrefix, "class") + "_"
 
-                For Each enumalue As XmlNode In child.SelectNodes("descendant::enumvalue")
-                    szOldID = GetID(enumalue)
+                For Each enumvalue As XmlNode In child.SelectNodes("descendant::enumvalue")
+                    szOldID = GetID(enumvalue)
                     strID = GenerateNumericId(child, "descendant::enumvalue", strPrefix, "id", False)
-                    AddAttributeValue(enumalue, "id", strID)
+                    AddAttributeValue(enumvalue, "id", strID)
                     RenumberRefElement(node, "valref", szOldID, strID)
                     RenumberRefElement(node, "sizeref", szOldID, strID)
                 Next
