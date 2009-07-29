@@ -11,23 +11,15 @@ Friend Class XMLTransformFilter
 
 #Region "Class declarations"
 
-    Private Enum eOuputFormat
-        NONE
-        HTML
-        XML
-        TEXT
-    End Enum
-
     Private m_styleXSL As New XslSimpleTransform(True)
 
     Private m_strFileXSL As String
     Private m_strFileXML As String
     Private m_strFolderXML As String
 
-    Private m_dicoParamList As New XslSimpleTransform.Arguments
+    Private m_dicoParamList As New XslArgumentManager
 
     Private m_strFileName As String
-    Private m_strMedia As String
     Private m_strPath As String
 
     Private m_bXmlSelected As Boolean
@@ -35,8 +27,6 @@ Friend Class XMLTransformFilter
     Private m_bXSLChange As Boolean
     Private m_bInitializeComponent As Boolean = False
     Private m_bValidTransform As Boolean
-
-    Private m_eType As eOuputFormat
 
     Private Const cstElmtFinal As String = "FINAL"
     Private Const cstVersionMethodesXSL As String = "1.0"
@@ -99,95 +89,6 @@ Friend Class XMLTransformFilter
 
 #Region "Private methods"
 
-    Private Function LoadParams() As Boolean
-        Dim bNodes As Boolean = False
-        Try
-            Dim doc As New XmlDocument
-            Dim node As XmlNode
-
-            doc.Load(m_strFileXSL)
-
-            Dim nsmgr As XmlNamespaceManager = New XmlNamespaceManager(doc.NameTable)
-            nsmgr.AddNamespace("xsl", "http://www.w3.org/1999/XSL/Transform")
-
-            If CompareParams(doc, nsmgr, bNodes) = False Then
-
-                bNodes = False
-                m_dicoParamList.Clear()
-
-                For Each node In doc.SelectNodes("//xsl:stylesheet/xsl:param", nsmgr)
-                    bNodes = True
-                    m_dicoParamList.Add(node.Attributes.GetNamedItem("name").Value, node.InnerText)
-                Next
-            End If
-
-            node = doc.SelectSingleNode("//xsl:output/@method", nsmgr)
-
-            ' On regarde si le format de code généré est du xml/text/html
-            If Not node Is Nothing Then
-                Select Case node.Value
-                    Case "xml"
-                        m_bValidTransform = True
-                        m_eType = eOuputFormat.XML
-
-                        node = doc.SelectSingleNode("//xsl:output/@media-type", nsmgr)
-
-                        If Not node Is Nothing Then
-                            m_strMedia = "." + node.Value
-                            m_eType = eOuputFormat.NONE
-                        Else
-                            m_strMedia = ".xml"
-                        End If
-
-                    Case "html"
-                        m_eType = eOuputFormat.HTML
-                        m_strMedia = ".html"
-
-                    Case Else
-                        node = doc.SelectSingleNode("//xsl:output/@media-type", nsmgr)
-
-                        If Not node Is Nothing Then
-                            m_strMedia = "." + node.Value
-                            m_eType = eOuputFormat.NONE
-                        Else
-                            m_strMedia = ".txt"
-                        End If
-                        m_eType = eOuputFormat.TEXT
-                End Select
-            Else
-                m_eType = eOuputFormat.XML
-                m_strMedia = ".xml"
-            End If
-
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return bNodes
-    End Function
-
-    Private Function CompareParams(ByVal doc As XmlDocument, ByVal nsmgr As XmlNamespaceManager, ByRef bNodes As Boolean) As Boolean
-        Dim bCompareOk As Boolean = True
-
-        For Each node As XmlNode In doc.SelectNodes("//xsl:stylesheet/xsl:param", nsmgr)
-            bNodes = True
-            If m_dicoParamList.ContainsKey(node.Attributes.GetNamedItem("name").Value) = False Then
-                bCompareOk = False
-                Exit For
-            End If
-        Next
-
-        If bCompareOk Then
-            For Each Text As String In m_dicoParamList.Keys
-                If doc.SelectNodes("//xsl:stylesheet/xsl:param[@name='" + Text + "']", nsmgr) Is Nothing Then
-                    bCompareOk = False
-                    Exit For
-                End If
-            Next
-        End If
-        Return bCompareOk
-    End Function
-
     Private Sub Transformer()
         If Len(LabelXSL.Text) = 0 Or Len(LabelXML.Text) = 0 Then Exit Sub
         If m_bXmlSelected = False Then Exit Sub
@@ -204,10 +105,10 @@ Friend Class XMLTransformFilter
                 m_bXSLChange = False
             End If
 
-            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_strMedia)
+            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_dicoParamList.Media)
             Dim doc As New XmlDocument
             doc.Load(m_strFileXML)
-            m_styleXSL.Transform(doc.DocumentElement, strFullPathFilename, m_dicoParamList)
+            m_styleXSL.Transform(doc.DocumentElement, strFullPathFilename, m_dicoParamList.ParamList)
 
             Afficher()
             cmdSave.Enabled = True
@@ -225,7 +126,7 @@ Friend Class XMLTransformFilter
 
             AfficherSauvegarde()
 
-            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_strMedia)
+            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_dicoParamList.Media)
             WebBrowser.Navigate(New System.Uri(strFullPathFilename))
 
         Catch ex As Exception
@@ -269,7 +170,8 @@ Friend Class XMLTransformFilter
                 MsgBox("Veuillez sélectionner un fichier XSL", MsgBoxStyle.Critical)
             Else
                 m_styleXSL.Load(m_strFileXSL, False)
-                cmdParams.Enabled = LoadParams()
+                m_dicoParamList.FileXSL = m_strFileXSL
+                cmdParams.Enabled = m_dicoParamList.LoadParams()
             End If
 
         Catch ex As Exception
@@ -285,7 +187,7 @@ Friend Class XMLTransformFilter
                 Throw New Exception("Filename is empty")
             End If
 
-            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_strMedia)
+            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_dicoParamList.Media)
             TextEditBox.LoadFile(strFullPathFilename, RichTextBoxStreamType.PlainText)
 
         Catch ex As Exception
@@ -294,7 +196,7 @@ Friend Class XMLTransformFilter
     End Sub
 
     Private Sub AfficherSauvegarde()
-        lblTransform.Text = CompactPath(lblTransform, m_strPath + m_strFileName + m_strMedia)
+        lblTransform.Text = CompactPath(lblTransform, m_strPath + m_strFileName + m_dicoParamList.Media)
     End Sub
 
     Private Function CompactPath(ByVal control As Control, ByVal strFullPathFilename As String) As String
@@ -438,13 +340,13 @@ Friend Class XMLTransformFilter
             SaveDialogBoxSave.Title = "Save as..."
             SaveDialogBoxSave.CheckPathExists = True
 
-            Select Case m_eType
-                Case eOuputFormat.XML
+            Select Case m_dicoParamList.MediaType
+                Case XslArgumentManager.eOuputFormat.XML
                     SaveDialogBoxSave.Filter = cstXMLFilter
-                Case eOuputFormat.HTML
+                Case XslArgumentManager.eOuputFormat.HTML
                     SaveDialogBoxSave.Filter = cstHTMLFilter
                 Case Else
-                    SaveDialogBoxSave.Filter = "Specific Languages (*" & m_strMedia & ")|*" & m_strMedia
+                    SaveDialogBoxSave.Filter = "Specific Languages (*" & m_dicoParamList.Media & ")|*" & m_dicoParamList.Media
             End Select
 
             SaveDialogBoxSave.InitialDirectory = My.Settings.CurrentExportFolder
@@ -530,7 +432,7 @@ Friend Class XMLTransformFilter
         Try
             Dim tempo As String
 
-            m_eType = eOuputFormat.NONE
+            m_dicoParamList.MediaType = XslArgumentManager.eOuputFormat.NONE
 
             If FileXML.SelectedIndex > -1 Then
                 tempo = My.Computer.FileSystem.CombinePath(FileXML.Path, FileXML.Items(FileXML.SelectedIndex))
@@ -591,7 +493,7 @@ Friend Class XMLTransformFilter
             End If
             txtXMLFilter.Text = My.Settings.CurrentExtension
 
-            m_strMedia = ".xml"
+            m_dicoParamList.Media = ".xml"
 
             m_bInitializeComponent = True
 
@@ -716,7 +618,7 @@ Friend Class XMLTransformFilter
     End Sub
 
     Private Sub lblTransform_ClientSizeChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles lblTransform.ClientSizeChanged
-        lblTransform.Text = CompactPath(LabelXSL, m_strPath + m_strFileName + m_strMedia)
+        lblTransform.Text = CompactPath(LabelXSL, m_strPath + m_strFileName + m_dicoParamList.Media)
     End Sub
 
     Private Sub SplitMain_MouseDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles SplitMain.MouseDoubleClick
@@ -737,7 +639,7 @@ Friend Class XMLTransformFilter
 
     Private Sub cmdCode_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCode.Click
         Try
-            UmlCodeGenerator.GenerateSimpleTransformation(Me, m_strPath + m_strFileName + m_strMedia)
+            UmlCodeGenerator.GenerateSimpleTransformation(Me, m_strPath + m_strFileName + m_dicoParamList.Media)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -746,7 +648,7 @@ Friend Class XMLTransformFilter
 
     Private Sub cmdValidate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdValidate.Click
         Try
-            LoadDocument(My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_strMedia))
+            LoadDocument(My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_dicoParamList.Media))
 
         Catch ex As Exception
             MsgExceptionBox(ex)

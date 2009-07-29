@@ -8,7 +8,7 @@ Friend Class dlgParams
     Private m_strCurrentFolder As String
     Private m_strXmlFolder As String
     Private m_strCurrentParam As String
-    Private m_arrayList As XslSimpleTransform.Arguments
+    Private m_argumentList As XslArgumentManager
     Private m_bInitializeComponent As Boolean = False
     Private m_bListIndexLock As Boolean = False
     Private m_bValeurUpdated As Boolean = False
@@ -25,9 +25,9 @@ Friend Class dlgParams
         End Set
     End Property
 
-    Public WriteOnly Property ParamList() As XslSimpleTransform.Arguments
-        Set(ByVal value As XslSimpleTransform.Arguments)
-            m_arrayList = value
+    Public WriteOnly Property ParamList() As XslArgumentManager
+        Set(ByVal value As XslArgumentManager)
+            m_argumentList = value
         End Set
     End Property
 
@@ -41,7 +41,7 @@ Friend Class dlgParams
             m_bValeurUpdated = True
 
             m_strCurrentParam = cmbListeParams.SelectedItem
-            txtValeur.Text = m_arrayList(m_strCurrentParam)
+            txtValeur.Text = m_argumentList.ParamList(m_strCurrentParam)
 
             If InStr(txtValeur.Text, "<xsl:") <> 0 _
             Then
@@ -113,11 +113,12 @@ Friend Class dlgParams
 
     Private Sub dlgParams_Load(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Load
         Try
-            For Each dico As KeyValuePair(Of String, String) In m_arrayList
+            cmbListeParams.Items.Clear()
+            For Each dico As KeyValuePair(Of String, String) In m_argumentList.ParamList
                 cmbListeParams.Items.Add(dico.Key)
             Next dico
 
-            If m_arrayList.Count > 0 Then
+            If m_argumentList.ParamList.Count > 0 Then
                 m_bListIndexLock = True
                 cmbListeParams.SelectedIndex = 0
                 m_bListIndexLock = False
@@ -130,7 +131,7 @@ Friend Class dlgParams
     Private Sub SaveCurrent()
         Try
             Debug.Print(m_strCurrentParam + "=" + txtValeur.Text)
-            m_arrayList(m_strCurrentParam) = txtValeur.Text
+            m_argumentList.ParamList(m_strCurrentParam) = txtValeur.Text
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -165,10 +166,7 @@ Friend Class dlgParams
     End Sub
 
     Private Sub btnReset_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnReset.Click
-        Dim keys As New ArrayList
-        keys.AddRange(m_arrayList.Keys)
-        For Each key As String In keys
-            m_arrayList(key) = ""
-        Next
+        m_argumentList.LoadParams(True)
+        dlgParams_Load(sender, e)
     End Sub
 End Class
