@@ -32,8 +32,6 @@ Partial Class MDIParent
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuFileNewDoxygenFile = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuFileNewOmgRhpXmiFile = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuFileNewOmgBoomlXmiFile = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPatchApply = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditDatabase = New System.Windows.Forms.ToolStripMenuItem
@@ -46,6 +44,8 @@ Partial Class MDIParent
         Me.DiffToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.VbMergeToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
+        Me.ExternalTools = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
         Me.DebugToolStripOption = New System.Windows.Forms.ToolStripMenuItem
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.WindowsMenu = New System.Windows.Forms.ToolStripMenuItem
@@ -74,8 +74,6 @@ Partial Class MDIParent
         Me.strpStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.strpProgressBar = New System.Windows.Forms.ToolStripProgressBar
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
-        Me.ExternalTools = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
         Me.StatusStrip.SuspendLayout()
@@ -131,24 +129,9 @@ Partial Class MDIParent
         '
         'mnuFileNewOmgUmlFile
         '
-        Me.mnuFileNewOmgUmlFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNewOmgRhpXmiFile, Me.mnuFileNewOmgBoomlXmiFile})
         Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
         Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(228, 22)
-        Me.mnuFileNewOmgUmlFile.Text = "Import OMG UML XMI 2.1 file"
-        '
-        'mnuFileNewOmgRhpXmiFile
-        '
-        Me.mnuFileNewOmgRhpXmiFile.Name = "mnuFileNewOmgRhpXmiFile"
-        Me.mnuFileNewOmgRhpXmiFile.Size = New System.Drawing.Size(171, 22)
-        Me.mnuFileNewOmgRhpXmiFile.Tag = "1"
-        Me.mnuFileNewOmgRhpXmiFile.Text = "From UML 2.1.1"
-        '
-        'mnuFileNewOmgBoomlXmiFile
-        '
-        Me.mnuFileNewOmgBoomlXmiFile.Name = "mnuFileNewOmgBoomlXmiFile"
-        Me.mnuFileNewOmgBoomlXmiFile.Size = New System.Drawing.Size(171, 22)
-        Me.mnuFileNewOmgBoomlXmiFile.Tag = "0"
-        Me.mnuFileNewOmgBoomlXmiFile.Text = "From Booml UML 2.1"
+        Me.mnuFileNewOmgUmlFile.Text = "Import OMG UML XMI 2.1 file..."
         '
         'ToolStripMenuItem1
         '
@@ -232,6 +215,17 @@ Partial Class MDIParent
         Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
         Me.ToolStripSeparator5.Size = New System.Drawing.Size(186, 6)
         '
+        'ExternalTools
+        '
+        Me.ExternalTools.Name = "ExternalTools"
+        Me.ExternalTools.Size = New System.Drawing.Size(189, 22)
+        Me.ExternalTools.Text = "External tools..."
+        '
+        'ToolStripSeparator6
+        '
+        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(186, 6)
+        '
         'DebugToolStripOption
         '
         Me.DebugToolStripOption.Name = "DebugToolStripOption"
@@ -256,31 +250,31 @@ Partial Class MDIParent
         'CascadeToolStripMenuItem
         '
         Me.CascadeToolStripMenuItem.Name = "CascadeToolStripMenuItem"
-        Me.CascadeToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.CascadeToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.CascadeToolStripMenuItem.Text = "&Cascade"
         '
         'TileVerticalToolStripMenuItem
         '
         Me.TileVerticalToolStripMenuItem.Name = "TileVerticalToolStripMenuItem"
-        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.TileVerticalToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.TileVerticalToolStripMenuItem.Text = "Tile &Vertically"
         '
         'TileHorizontalToolStripMenuItem
         '
         Me.TileHorizontalToolStripMenuItem.Name = "TileHorizontalToolStripMenuItem"
-        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.TileHorizontalToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.TileHorizontalToolStripMenuItem.Text = "Tile &Horizontally"
         '
         'CloseAllToolStripMenuItem
         '
         Me.CloseAllToolStripMenuItem.Name = "CloseAllToolStripMenuItem"
-        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.CloseAllToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.CloseAllToolStripMenuItem.Text = "C&lose all"
         '
         'ArrangeIconsToolStripMenuItem
         '
         Me.ArrangeIconsToolStripMenuItem.Name = "ArrangeIconsToolStripMenuItem"
-        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ArrangeIconsToolStripMenuItem.Size = New System.Drawing.Size(149, 22)
         Me.ArrangeIconsToolStripMenuItem.Text = "&Arange icons"
         '
         'HelpMenu
@@ -430,17 +424,6 @@ Partial Class MDIParent
         Me.strpProgressBar.Size = New System.Drawing.Size(100, 16)
         Me.strpProgressBar.Visible = False
         '
-        'ToolStripSeparator6
-        '
-        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
-        Me.ToolStripSeparator6.Size = New System.Drawing.Size(186, 6)
-        '
-        'ExternalTools
-        '
-        Me.ExternalTools.Name = "ExternalTools"
-        Me.ExternalTools.Size = New System.Drawing.Size(189, 22)
-        Me.ExternalTools.Text = "External tools..."
-        '
         'MDIParent
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -512,8 +495,6 @@ Partial Class MDIParent
     Friend WithEvents strpStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents strpProgressBar As System.Windows.Forms.ToolStripProgressBar
     Friend WithEvents DebugToolStripOption As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnuFileNewOmgRhpXmiFile As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnuFileNewOmgBoomlXmiFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator6 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ExternalTools As System.Windows.Forms.ToolStripMenuItem
 

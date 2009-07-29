@@ -82,8 +82,6 @@ Partial Class frmProject
         Me.ToolStripSeparator18 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuFileNewDoxygenFile = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuFileNewOmgRhpXmiFile = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuFileNewOmgBoomlXmiFile = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuFileExportOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuApplyPatch = New System.Windows.Forms.ToolStripMenuItem
@@ -670,30 +668,15 @@ Partial Class frmProject
         '
         'mnuFileNewOmgUmlFile
         '
-        Me.mnuFileNewOmgUmlFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNewOmgRhpXmiFile, Me.mnuFileNewOmgBoomlXmiFile})
         Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
-        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(228, 22)
-        Me.mnuFileNewOmgUmlFile.Text = "Import OMG UML XMI 2.1 file"
-        '
-        'mnuFileNewOmgRhpXmiFile
-        '
-        Me.mnuFileNewOmgRhpXmiFile.Name = "mnuFileNewOmgRhpXmiFile"
-        Me.mnuFileNewOmgRhpXmiFile.Size = New System.Drawing.Size(171, 22)
-        Me.mnuFileNewOmgRhpXmiFile.Tag = "1"
-        Me.mnuFileNewOmgRhpXmiFile.Text = "From UML 2.1.1"
-        '
-        'mnuFileNewOmgBoomlXmiFile
-        '
-        Me.mnuFileNewOmgBoomlXmiFile.Name = "mnuFileNewOmgBoomlXmiFile"
-        Me.mnuFileNewOmgBoomlXmiFile.Size = New System.Drawing.Size(171, 22)
-        Me.mnuFileNewOmgBoomlXmiFile.Tag = "0"
-        Me.mnuFileNewOmgBoomlXmiFile.Text = "From Booml UML 2.1"
+        Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(237, 22)
+        Me.mnuFileNewOmgUmlFile.Text = "Import OMG UML XMI 2.1 file..."
         '
         'mnuFileExportOmgUmlFile
         '
         Me.mnuFileExportOmgUmlFile.Name = "mnuFileExportOmgUmlFile"
-        Me.mnuFileExportOmgUmlFile.Size = New System.Drawing.Size(228, 22)
-        Me.mnuFileExportOmgUmlFile.Text = "Export to OMG UML XMI 2.1file"
+        Me.mnuFileExportOmgUmlFile.Size = New System.Drawing.Size(237, 22)
+        Me.mnuFileExportOmgUmlFile.Text = "Export to OMG UML XMI 2.1 file..."
         '
         'ToolStripMenuItem1
         '
@@ -1553,8 +1536,6 @@ Partial Class frmProject
     Friend WithEvents mnuProjectImportReferences As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuPackageImportReference As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuClassRedundancies As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnuFileNewOmgRhpXmiFile As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnuFileNewOmgBoomlXmiFile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuUpdatePrefixNames As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuFileExportOmgUmlFile As System.Windows.Forms.ToolStripMenuItem
 End Class
