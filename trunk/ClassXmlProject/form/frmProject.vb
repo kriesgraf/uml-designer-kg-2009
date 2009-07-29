@@ -793,12 +793,6 @@ Public Class frmProject
         End Try
     End Sub
 
-    Private Sub mnuFileNewOmgRhpXmiFile_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
-            Handles mnuFileNewOmgRhpXmiFile.Click, mnuFileNewOmgBoomlXmiFile.Click
-
-        Me.Mainframe.ImportFromOmgUmlModel(CType(sender.Tag, Integer))
-    End Sub
-
     Private Sub mnuUpdatePrefixNames_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuUpdatePrefixNames.Click
         m_xmlProject.UpdatePrefixNames()
     End Sub
@@ -807,10 +801,10 @@ Public Class frmProject
         Try
             Dim dlgSaveFile As New SaveFileDialog
 
-            If My.Settings.CurrentFolder = "." + Path.DirectorySeparatorChar.ToString Then
+            If My.Settings.ExportFolder = "." + Path.DirectorySeparatorChar.ToString Then
                 dlgSaveFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
-                dlgSaveFile.InitialDirectory = My.Settings.CurrentFolder
+                dlgSaveFile.InitialDirectory = My.Settings.ExportFolder
             End If
 
             dlgSaveFile.Title = "Export to OMG UML XMI 2.1 file..."
@@ -823,7 +817,7 @@ Public Class frmProject
             dlgSaveFile.FileName = strFilename
 
             If (dlgSaveFile.ShowDialog(Me) = DialogResult.OK) Then
-                My.Settings.ImportFolder = XmlProjectTools.GetProjectPath(dlgSaveFile.FileName)
+                My.Settings.ExportFolder = XmlProjectTools.GetProjectPath(dlgSaveFile.FileName)
                 m_xmlProject.ExportOmgUmlFile(Me.ParentForm, dlgSaveFile.FileName)
             End If
         Catch ex As Exception
@@ -831,4 +825,8 @@ Public Class frmProject
         End Try
     End Sub
 #End Region
+
+    Private Sub mnuFileNewOmgUmlFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileNewOmgUmlFile.Click
+        Me.Mainframe.ImportFromOmgUmlModel()
+    End Sub
 End Class

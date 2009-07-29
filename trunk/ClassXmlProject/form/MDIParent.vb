@@ -98,10 +98,10 @@ Public Class MDIParent
     Public Sub ImportFromOmgUmlModel(Optional ByVal iMode As Integer = 1)
         Try
             Dim dlgOpenFile As New OpenFileDialog
-            If My.Settings.CurrentFolder = m_strCurrentFolder Then
+            If My.Settings.ImportFolder = m_strCurrentFolder Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
-                dlgOpenFile.InitialDirectory = My.Settings.CurrentFolder
+                dlgOpenFile.InitialDirectory = My.Settings.ImportFolder
             End If
 
             dlgOpenFile.Title = "Select the OMG UML XMI 2.1 file..."
@@ -110,7 +110,7 @@ Public Class MDIParent
             If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
                 Dim strTempFile As String = ""
-                My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
+                My.Settings.ImportFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
 
                 XmlProjectTools.ConvertOmgUmlModel(Me, dlgOpenFile.FileName, strTempFile, iMode)
 
@@ -444,12 +444,6 @@ Public Class MDIParent
         ImportFromDoxygenIndex()
     End Sub
 
-    Private Sub mnuFileNewOmgXmiFile_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
-            Handles mnuFileNewOmgRhpXmiFile.Click, mnuFileNewOmgBoomlXmiFile.Click
-
-        ImportFromOmgUmlModel(CType(sender.Tag, Integer))
-    End Sub
-
     Private Sub mnuPatchApply_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuPatchApply.Click
         ApplyPatch()
     End Sub
@@ -531,4 +525,8 @@ Public Class MDIParent
         XmlProjectTools.DEBUG_COMMANDS_ACTIVE = Me.DebugToolStripOption.Checked
     End Sub
 #End Region
+
+    Private Sub mnuFileNewOmgUmlFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileNewOmgUmlFile.Click
+        ImportFromOmgUmlModel()
+    End Sub
 End Class
