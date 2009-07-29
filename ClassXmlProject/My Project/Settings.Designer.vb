@@ -125,13 +125,25 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute(".\")>  _
         Public Property ExternalToolsFolder() As String
             Get
                 Return CType(Me("ExternalToolsFolder"),String)
             End Get
             Set
                 Me("ExternalToolsFolder") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute(".\")>  _
+        Public Property ExportFolder() As String
+            Get
+                Return CType(Me("ExportFolder"),String)
+            End Get
+            Set
+                Me("ExportFolder") = value
             End Set
         End Property
     End Class

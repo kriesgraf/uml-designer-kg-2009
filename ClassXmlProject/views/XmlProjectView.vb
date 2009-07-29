@@ -237,10 +237,10 @@ Public Class XmlProjectView
             Dim nodeXml As XmlNode = component.Node
             Dim dlgSaveFile As New SaveFileDialog
 
-            If My.Settings.ImportFolder = m_strCurrentFolder Then
+            If My.Settings.ExportFolder = m_strCurrentFolder Then
                 dlgSaveFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
-                dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
+                dlgSaveFile.InitialDirectory = My.Settings.ExportFolder
             End If
 
             Dim strFilename As String = GetName(nodeXml)
@@ -360,10 +360,10 @@ Public Class XmlProjectView
             Dim dlgSaveFile As New SaveFileDialog
             Dim strFullPackage As String
 
-            If My.Settings.ImportFolder = m_strCurrentFolder Then
+            If My.Settings.ExportFolder = m_strCurrentFolder Then
                 dlgSaveFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
             Else
-                dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
+                dlgSaveFile.InitialDirectory = My.Settings.ExportFolder
             End If
 
             Dim strFilename As String = GetName(nodeXml)

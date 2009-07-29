@@ -128,7 +128,7 @@ Public Class XmlPackageView
             Dim dlgSaveFile As New SaveFileDialog
             Dim strFullPackage As String
 
-            dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
+            dlgSaveFile.InitialDirectory = My.Settings.ExportFolder
 
             Dim strFilename As String = component.Name
             If XmlProjectTools.GetValidFilename(strFilename) Then
@@ -144,7 +144,7 @@ Public Class XmlPackageView
                     strFilename += ".ximp"
                 End If
 
-                My.Settings.ImportFolder = Path.GetDirectoryName(strFilename)
+                My.Settings.ExportFolder = Path.GetDirectoryName(strFilename)
 
                 Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
 
@@ -214,7 +214,7 @@ Public Class XmlPackageView
 
             Dim dlgSaveFile As New SaveFileDialog
 
-            dlgSaveFile.InitialDirectory = My.Settings.ImportFolder
+            dlgSaveFile.InitialDirectory = My.Settings.ExportFolder
 
             Dim strFilename As String = component.Name
             If XmlProjectTools.GetValidFilename(strFilename) Then
@@ -226,7 +226,7 @@ Public Class XmlPackageView
 
             If dlgSaveFile.ShowDialog() = DialogResult.OK Then
 
-                My.Settings.ImportFolder = Path.GetDirectoryName(dlgSaveFile.FileName)
+                My.Settings.ExportFolder = Path.GetDirectoryName(dlgSaveFile.FileName)
 
                 Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
                 Dim strFullPackage As String
