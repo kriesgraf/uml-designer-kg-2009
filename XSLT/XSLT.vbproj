@@ -140,6 +140,7 @@
     <Compile Include="..\ClassXmlProject\xml\XslSimpleTransform.vb" />
     <Compile Include="..\ClassXmlProject\umldesign\UmlCodeGenerator.vb" />
     <Compile Include="..\ClassXmlProject\umldesign\CodeInfo.vb" />
+    <Compile Include="XslArgumentManager.vb" />
     <EmbeddedResource Include="dlgAlertException.resx">
       <DependentUpon>dlgAlertException.vb</DependentUpon>
       <SubType>Designer</SubType>
