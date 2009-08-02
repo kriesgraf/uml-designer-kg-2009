@@ -13,9 +13,10 @@ Public Class VbCodeAnalyser
     ' General declarations
 
 
-    Private Const cstAccessModifier As String = "\b(Protected Friend |Protected |Public |Private |)"  ' Nothing for intertface declaration
+    Private Const cstAccessModifier As String = "\b(Protected Friend |Protected |Public |Private |)"  ' Nothing for interface declaration
+    Private Const cstAccessModifier2 As String = "\b(Dim |Protected Friend |Protected Friend |Protected |Public |Private |)"  ' 
     Private Const cstVarTypeFuncClassName As String = "(\b[a-zA-Z_][a-zA-Z0-9_]{0,}\b)"
-    Private Const cstNamespace As String = "([a-zA-Z09_\.]{1,})"
+    Private Const cstNamespace As String = "([a-zA-Z0-9_\.]{1,})"
     Private Const cstMustOverride As String = "MustOverride"
     Private Const cstAllText As String = "(.*.|)"
     Private Const cstArraySize As String = "(\(.*.\)|\(\)|)"
@@ -27,6 +28,7 @@ Public Class VbCodeAnalyser
     Private Const cstParameter As String = cstVarTypeFuncClassName + cstArraySize + " As " + cstNamespace + cstArraySize
     Private Const cstParameter2 As String = cstVarTypeFuncClassName + cstArraySize + " As (New |)" + cstNamespace + cstArraySize
     Private Const cstEndStatement As String = "\b(End )({0})"
+    Private Const cstEnumDeclaration As String = "(\b\w+)( = (\d+))?"
 
     Private Const cstImportsDeclaration As String = "\bImports " + cstNamespace
     Private Const cstRegionDeclaration As String = "\#Region (" + cstStringDeclaration + ")"
@@ -38,6 +40,7 @@ Public Class VbCodeAnalyser
     Private Const cstInheritsDeclaration As String = "\b(Inherits |Implements )" + cstNamespace
     ' Members
     Private Const cstAttributeDeclaration As String = cstAccessModifier + cstAllText + cstParameter2
+    Private Const cstStructDeclaration As String = cstAccessModifier2 + cstAllText + cstParameter2
     Private Const cstFunction As String = "Function"
     Private Const cstAbstractMethod As String = "\b(" + cstFunction + " |Sub |" + cstEvent + " )" + cstVarTypeFuncClassName
     Private Const cstMethodDeclaration2 As String = "\(" + cstAllText + "\)"
@@ -76,6 +79,8 @@ Public Class VbCodeAnalyser
     Private Shared regTypedefDeclaration As New Regex(cstTypedef)
     Private Shared regParamDeclaration As New Regex(cstMethodArgument)
     Private Shared regRegionDeclaration As New Regex(cstRegionDeclaration)
+    Private Shared regEnumDeclaration As New Regex(cstEnumDeclaration)
+    Private Shared regStructDeclaration As New Regex(cstStructDeclaration)
 
 #End Region
 
@@ -186,13 +191,14 @@ Public Class VbCodeAnalyser
                     Dim strInstruction As String = ""
                     Dim strStatement As String = ""
                     Dim eState As ProcessState = ProcessState.StartOfInstruction
+                    Dim iStopDeclaration As Integer = 0
                     Do
                         m_iNbLine += 1
                         'm_listLines.Add(m_iNbLine, streamReader.BaseStream.Position)
                         strReadLine = streamReader.ReadLine()
                         'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-                        If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+                        If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
                         Then
                             If CheckClassInstruction(iStartLine, strInstruction, strStatement) _
                             Then
@@ -301,6 +307,7 @@ Public Class VbCodeAnalyser
         Dim strReadLine As String
         Dim strInstruction As String = ""
         Dim eState As ProcessState = ProcessState.StartOfInstruction
+        Dim iStopDeclaration As Integer = 0
 
         Do
             m_iNbLine += 1
@@ -308,7 +315,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
             Then
                 If regImportsDeclaration.IsMatch(strInstruction) = False _
                 Then
@@ -325,11 +332,11 @@ Public Class VbCodeAnalyser
             End If
         Loop Until strReadLine Is Nothing
 
-        m_textWriter.Flush()
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteElementString("end-imports", CStr(m_iNbLine - 1))
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteEndElement()
+        m_textWriter.Flush()
     End Sub
 
     Private Sub ParsePackageDeclaration(ByVal bParseInheritsDeclaration As Boolean)
@@ -340,6 +347,7 @@ Public Class VbCodeAnalyser
         Dim strStatement As String = ""
         Dim regex As New Regex("(End )(Namespace)")
         Dim eState As ProcessState = ProcessState.StartOfInstruction
+        Dim iStopDeclaration As Integer = 0
 
         Do
             m_iNbLine += 1
@@ -347,7 +355,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
             Then
                 If regex.IsMatch(strInstruction) _
                 Then
@@ -372,11 +380,11 @@ Public Class VbCodeAnalyser
             End If
         Loop Until strReadLine Is Nothing
 
-        m_textWriter.Flush()
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteElementString("end-package", m_iNbLine.ToString)
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteEndElement()
+        m_textWriter.Flush()
     End Sub
 
     Private Sub ParseRegionDeclaration(ByVal bInterface As Boolean, ByVal bParseInheritAndTypedef As Boolean, _
@@ -388,6 +396,7 @@ Public Class VbCodeAnalyser
         Dim strStatement As String = ""
         Dim regex As New Regex("(End )(Region)")
         Dim eState As ProcessState = ProcessState.StartOfInstruction
+        Dim iStopDeclaration As Integer = 0
 
         Do
             m_iNbLine += 1
@@ -395,7 +404,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
             Then
                 If regex.IsMatch(strInstruction) Then
                     Exit Do
@@ -425,11 +434,11 @@ Public Class VbCodeAnalyser
             End If
         Loop Until strReadLine Is Nothing
 
-        m_textWriter.Flush()
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteElementString("end-region", m_iNbLine.ToString)
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteEndElement()
+        m_textWriter.Flush()
     End Sub
 
     Private Sub ParseClassDeclaration(ByVal iStopClassDeclaration As Integer, _
@@ -455,7 +464,7 @@ Public Class VbCodeAnalyser
                 ElseIf InStr(strReadLine, "Inherits") > 0 And iStopClassDeclaration > 0 And bParseInheritAndTypedef = False Then
                     iStopClassDeclaration = m_iNbLine
 
-                ElseIf ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+                ElseIf ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopClassDeclaration) = ProcessState.Instruction _
                 Then
                     If iStopClassDeclaration > 0 Then
                         m_textWriter.WriteAttributeString("end", iStopClassDeclaration.ToString)
@@ -477,6 +486,10 @@ Public Class VbCodeAnalyser
                     ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
                     Then
                         ParseRegionDeclaration(bInterface, bParseInheritAndTypedef)
+
+                    ElseIf CheckClassInstruction(iStartLine, strInstruction, strStatement) _
+                    Then
+                        ParseClassDeclaration(iStopLine, strStatement, bParseInheritAndTypedef)
                     Else
                         ParseMemberInstruction(iStartLine, iStopLine, strInstruction, bInterface, bParseInheritAndTypedef)
                     End If
@@ -487,11 +500,11 @@ Public Class VbCodeAnalyser
             End If
         Loop Until strReadLine Is Nothing
 
-        m_textWriter.Flush()
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteElementString("end-class", m_iNbLine.ToString)
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteEndElement()
+        m_textWriter.Flush()
     End Sub
 
     Private Sub ParseInheritsDeclaration(ByVal bParseInheritsDeclaration As Boolean)
@@ -513,7 +526,11 @@ Public Class VbCodeAnalyser
                 ParseEndStatement(strStatement, "method", False)
 
             Case ClassMember.NestedClass
-                ParseEndStatement(strStatement, "class", False)
+                If bParseTypedef Then
+                    ParseClassDeclaration(0, strStatement, bParseTypedef)
+                Else
+                    ParseEndStatement(strStatement, "class", False)
+                End If
 
             Case ClassMember.TypedefElt
                 ParseTypedefBody(strStatement, bParseTypedef)
@@ -528,6 +545,7 @@ Public Class VbCodeAnalyser
         Dim strInstruction As String = ""
         Dim regex As New Regex("(End )(" + strStatement + ")")
         Dim eState As ProcessState = ProcessState.StartOfInstruction
+        Dim iStopDeclaration As Integer = 0
 
         Do
             m_iNbLine += 1
@@ -535,7 +553,7 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
                 Then
                 If regex.IsMatch(strInstruction) Then
                     Exit Do
@@ -547,55 +565,21 @@ Public Class VbCodeAnalyser
             End If
         Loop Until strReadLine Is Nothing
 
-        m_textWriter.Flush()
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteElementString("end-method", m_iNbLine.ToString)
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteEndElement()
+        m_textWriter.Flush()
     End Sub
 
     Private Sub ParseTypedefBody(ByVal strStatement As String, ByVal bParseTypedef As Boolean)
-        Dim iStartLine As Integer = 0
-        Dim iStopLine As Integer = 0
-        Dim strReadLine As String
-        Dim strInstruction As String = ""
-        Dim eState As ProcessState = ProcessState.StartOfInstruction
+        Select Case strStatement
+            Case "Enum"
+                ParseEnumStatement()
 
-        If bParseTypedef = False Then
-            ParseEndStatement(strStatement, "typedef", False)
-        Else
-            Do
-                m_iNbLine += 1
-                'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
-                strReadLine = m_streamReader.ReadLine()
-                'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
-
-                If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
-                    Then
-                    If regEndProperty.IsMatch(strInstruction) Then
-                        Exit Do
-                    End If
-
-                    Select Case CheckGetSetInstruction(iStartLine, iStopLine, strInstruction)
-                        Case ClassMember.GetterElt
-                            ParseEndStatement("Get", "get")
-                        Case ClassMember.SetterElt
-                            ParseEndStatement("Set", "set")
-                    End Select
-                    strInstruction = ""
-                    iStartLine = 0
-                    iStopLine = 0
-                End If
-            Loop Until strReadLine Is Nothing
-
-            m_textWriter.Flush()
-            m_textWriter.WriteString(vbCrLf)
-            m_textWriter.WriteElementString("end-property", m_iNbLine.ToString)
-            m_textWriter.WriteString(vbCrLf)
-        End If
-
-        m_textWriter.WriteEndElement()
-        m_textWriter.Flush()
+            Case "Structure"
+                ParseStructStatement()
+        End Select
     End Sub
 
     Private Sub ParsePropertyBody(ByVal bInterface As Boolean)
@@ -604,6 +588,7 @@ Public Class VbCodeAnalyser
         Dim strReadLine As String
         Dim strInstruction As String = ""
         Dim eState As ProcessState = ProcessState.StartOfInstruction
+        Dim iStopDeclaration As Integer = 0
 
         If bInterface = False Then
             Do
@@ -612,7 +597,7 @@ Public Class VbCodeAnalyser
                 strReadLine = m_streamReader.ReadLine()
                 'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
-                If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine) = ProcessState.Instruction _
+                If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
                     Then
                     If regEndProperty.IsMatch(strInstruction) Then
                         Exit Do
@@ -630,7 +615,6 @@ Public Class VbCodeAnalyser
                 End If
             Loop Until strReadLine Is Nothing
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteElementString("end-property", m_iNbLine.ToString)
             m_textWriter.WriteString(vbCrLf)
@@ -659,26 +643,128 @@ Public Class VbCodeAnalyser
                 If regex.IsMatch(strInstruction) Then
                     Exit Do
                 End If
+                iStartLine = 0
+                iStopLine = 0
+                strInstruction = ""
             End If
         Loop Until strReadLine Is Nothing
 
-        m_textWriter.Flush()
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteElementString("end-" + strElement, m_iNbLine.ToString)
         m_textWriter.WriteString(vbCrLf)
         m_textWriter.WriteEndElement()
+        m_textWriter.Flush()
+    End Sub
+
+    Private Sub ParseEnumStatement(Optional ByVal bCheckComment As Boolean = True)
+        Dim iStartLine As Integer = 0
+        Dim iStopLine As Integer = 0
+        Dim strReadLine As String
+        Dim strInstruction As String = ""
+        Dim regex As New Regex("(End )(Enum)")
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
+
+        Do
+            m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
+            strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
+
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, bCheckComment) = ProcessState.Instruction _
+                Then
+                If regex.IsMatch(strInstruction) Then
+                    Exit Do
+                ElseIf regEnumDeclaration.IsMatch(strInstruction) _
+                Then
+                    Dim groups As GroupCollection = regEnumDeclaration.Match(strInstruction).Groups
+
+                    For i As Integer = 0 To groups.Count - 1
+                        Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
+                    Next
+                    m_textWriter.WriteString(vbCrLf)
+                    m_textWriter.WriteStartElement("enumvalue")
+                    m_textWriter.WriteAttributeString("checked", "False")
+                    m_textWriter.WriteAttributeString("start", iStartLine.ToString)
+                    m_textWriter.WriteAttributeString("pos", iStopLine.ToString)
+                    m_textWriter.WriteAttributeString("name", groups(1).ToString.Trim)
+                    m_textWriter.WriteAttributeString("value", groups(3).ToString.Trim)
+                    m_textWriter.Flush()
+                End If
+                iStartLine = 0
+                iStopLine = 0
+                strInstruction = ""
+            End If
+        Loop Until strReadLine Is Nothing
+
+        m_textWriter.WriteString(vbCrLf)
+        m_textWriter.WriteElementString("end-typedef", m_iNbLine.ToString)
+        m_textWriter.WriteString(vbCrLf)
+        m_textWriter.WriteEndElement()
+        m_textWriter.Flush()
+    End Sub
+
+    Private Sub ParseStructStatement(Optional ByVal bCheckComment As Boolean = True)
+        Dim iStartLine As Integer = 0
+        Dim iStopLine As Integer = 0
+        Dim strReadLine As String
+        Dim strInstruction As String = ""
+        Dim regex As New Regex("(End )(Structure)")
+        Dim eState As ProcessState = ProcessState.StartOfInstruction
+
+        Do
+            m_iNbLine += 1
+            'm_listLines.Add(m_iNbLine, m_streamReader.BaseStream.Position)
+            strReadLine = m_streamReader.ReadLine()
+            'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
+
+            If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, bCheckComment) = ProcessState.Instruction _
+                Then
+                If regex.IsMatch(strInstruction) Then
+                    Exit Do
+                ElseIf regStructDeclaration.IsMatch(strInstruction) _
+                Then
+                    Dim groups As GroupCollection = regStructDeclaration.Match(strInstruction).Groups
+
+                    For i As Integer = 0 To groups.Count - 1
+                        Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
+                    Next
+                    m_textWriter.WriteString(vbCrLf)
+                    m_textWriter.WriteStartElement("element")
+                    m_textWriter.WriteAttributeString("checked", "False")
+                    m_textWriter.WriteAttributeString("start", iStartLine.ToString)
+                    m_textWriter.WriteAttributeString("end", iStopLine.ToString)
+                    m_textWriter.WriteAttributeString("visibility", groups(1).ToString.Trim)
+                    m_textWriter.WriteAttributeString("name", groups(3).ToString.Trim)
+                    m_textWriter.WriteAttributeString("other", groups(2).ToString.Trim)
+                    m_textWriter.WriteAttributeString("size", groups(4).ToString.Trim + groups(7).ToString.Trim)
+                    m_textWriter.WriteAttributeString("type", groups(6).ToString.Trim)
+                    m_textWriter.WriteEndElement()
+                    m_textWriter.Flush()
+                End If
+                iStartLine = 0
+                iStopLine = 0
+                strInstruction = ""
+            End If
+        Loop Until strReadLine Is Nothing
+
+        m_textWriter.WriteString(vbCrLf)
+        m_textWriter.WriteElementString("end-typedef", m_iNbLine.ToString)
+        m_textWriter.WriteString(vbCrLf)
+        m_textWriter.WriteEndElement()
+        m_textWriter.Flush()
     End Sub
 
     Private Function ParseLine(ByRef eStateResult As ProcessState, _
                                ByRef strReadLine As String, ByRef strInstruction As String, _
                                ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
+                               ByRef iStopClassDeclaration As Integer, _
                                Optional ByVal bCheckComment As Boolean = True) As ProcessState
 
         If strReadLine IsNot Nothing Then
             If eStateResult = ProcessState.WaitData Then
                 strReadLine = Strings.LTrim(strReadLine)
             End If
-            If CheckComment(strReadLine, bCheckComment) = False Then
+            If CheckComment(strReadLine, iStopClassDeclaration, bCheckComment) = False Then
 
                 eStateResult = ProcessState.EndOfFile
 
@@ -731,14 +817,13 @@ Public Class VbCodeAnalyser
                 Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
             Next
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("imports")
             m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
             m_textWriter.WriteAttributeString("name", groups(1).ToString.Trim)
-
+            m_textWriter.Flush()
             Return True
         End If
         Return False
@@ -757,7 +842,6 @@ Public Class VbCodeAnalyser
                 Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
             Next
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("package")
             m_textWriter.WriteAttributeString("checked", "False")
@@ -765,7 +849,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
             m_textWriter.WriteAttributeString("name", groups(1).ToString.Trim())
-
+            m_textWriter.Flush()
             Return True
         End If
         Return False
@@ -781,14 +865,13 @@ Public Class VbCodeAnalyser
                 Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
             Next
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("region")
             m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("name", groups(1).ToString.Trim)
-
+            m_textWriter.Flush()
             Return True
         End If
         Return False
@@ -808,7 +891,6 @@ Public Class VbCodeAnalyser
                 Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
             Next
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("class")
             m_textWriter.WriteAttributeString("checked", "False")
@@ -818,7 +900,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("visibility", groups(1).ToString.Trim)
             m_textWriter.WriteAttributeString("other", groups(2).ToString.Trim)
             m_textWriter.WriteAttributeString("kind", strStatement)
-
+            m_textWriter.Flush()
             Return True
         End If
         Return False
@@ -870,7 +952,6 @@ Public Class VbCodeAnalyser
                 Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
             Next
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("property")
             m_textWriter.WriteAttributeString("checked", "False")
@@ -881,7 +962,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("other", groups(1).ToString.Trim)
             m_textWriter.WriteAttributeString("type", groups(3).ToString.Trim())
             m_textWriter.WriteAttributeString("size", groups(4).ToString.Trim())
-
+            m_textWriter.Flush()
             Return ClassMember.PropertyElt
 
         ElseIf regPropertyDeclaration.IsMatch(strInstruction) Then
@@ -894,7 +975,6 @@ Public Class VbCodeAnalyser
                 Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
             Next
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("property")
             m_textWriter.WriteAttributeString("checked", "False")
@@ -906,7 +986,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("other", groups(2).ToString.Trim)
             m_textWriter.WriteAttributeString("type", groups(4).ToString.Trim())
             m_textWriter.WriteAttributeString("size", groups(5).ToString.Trim())
-
+            m_textWriter.Flush()
             Return ClassMember.PropertyElt
 
         ElseIf regTypedefDeclaration.IsMatch(strInstruction) Then
@@ -921,7 +1001,6 @@ Public Class VbCodeAnalyser
 
             strStatement = groups(3).ToString.Trim()
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("typedef")
             m_textWriter.WriteAttributeString("checked", "False")
@@ -932,7 +1011,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("name", groups(4).ToString.Trim())
             m_textWriter.WriteAttributeString("type", groups(3).ToString.Trim())
             m_textWriter.WriteAttributeString("other", groups(2).ToString.Trim())
-
+            m_textWriter.Flush()
             Return ClassMember.TypedefElt
 
         ElseIf bInterface Then
@@ -948,7 +1027,6 @@ Public Class VbCodeAnalyser
 
                 strStatement = groups(1).ToString.Trim()
 
-                m_textWriter.Flush()
                 m_textWriter.WriteString(vbCrLf)
                 m_textWriter.WriteStartElement("method")
                 m_textWriter.WriteAttributeString("checked", "False")
@@ -957,7 +1035,7 @@ Public Class VbCodeAnalyser
                 m_textWriter.WriteAttributeString("pos", iPos.ToString)
                 m_textWriter.WriteAttributeString("name", groups(2).ToString.Trim())
                 m_textWriter.WriteAttributeString("type", strStatement)
-
+                m_textWriter.Flush()
                 Dim tempo As String
 
                 If strStatement = cstFunction Then
@@ -978,6 +1056,7 @@ Public Class VbCodeAnalyser
                 CheckParamsInstruction(tempo)
 
                 m_textWriter.WriteEndElement()
+                m_textWriter.Flush()
 
                 Return ClassMember.AbstractMethod
 
@@ -997,7 +1076,6 @@ Public Class VbCodeAnalyser
             strStatement = groups(5).ToString.Trim()
             Dim tempo As String = groups(2).ToString.Trim() + " " + groups(3).ToString.Trim() + " " + groups(4).ToString.Trim()
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("method")
             m_textWriter.WriteAttributeString("checked", "False")
@@ -1008,7 +1086,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("other", tempo.Trim())
             m_textWriter.WriteAttributeString("type", strStatement)
             m_textWriter.WriteAttributeString("name", groups(6).ToString.Trim())
-
+            m_textWriter.Flush()
             tempo = groups(3).ToString.Trim()
 
             If strStatement = cstFunction Then
@@ -1028,10 +1106,12 @@ Public Class VbCodeAnalyser
 
             If strStatement = cstEvent Then
                 m_textWriter.WriteEndElement()
+                m_textWriter.Flush()
                 Return ClassMember.AbstractMethod
 
             ElseIf tempo = cstMustOverride Then
                 m_textWriter.WriteEndElement()
+                m_textWriter.Flush()
                 Return ClassMember.AbstractMethod
             End If
             Return ClassMember.ImplementedMethod
@@ -1048,7 +1128,6 @@ Public Class VbCodeAnalyser
             strStatement = "Operator"
             Dim tempo As String = groups(2).ToString.Trim() + " " + groups(3).ToString.Trim() + " " + groups(4).ToString.Trim()
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("method")
             m_textWriter.WriteAttributeString("checked", "False")
@@ -1060,9 +1139,10 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("size", groups(8).ToString.Trim())
             m_textWriter.WriteAttributeString("visibility", groups(1).ToString.Trim())
             m_textWriter.WriteAttributeString("other", tempo.Trim())
-
+            m_textWriter.Flush()
             If groups(3).ToString.Trim() = cstMustOverride Then
                 m_textWriter.WriteEndElement()
+                m_textWriter.Flush()
                 Return ClassMember.AbstractMethod
             End If
             CheckParamsInstruction(groups(7).ToString)
@@ -1078,7 +1158,6 @@ Public Class VbCodeAnalyser
                 Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
             Next
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("attribute")
             m_textWriter.WriteAttributeString("checked", "False")
@@ -1092,6 +1171,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("type", groups(6).ToString.Trim)
             m_textWriter.WriteAttributeString("default", groups(9).ToString.Trim)
             m_textWriter.WriteEndElement()
+            m_textWriter.Flush()
 
             Return ClassMember.AttributeElt
 
@@ -1136,39 +1216,40 @@ Public Class VbCodeAnalyser
 
             Dim iPos = InStr(strInstruction, "Get")
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("get")
             m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
-
+            m_textWriter.Flush()
             Return ClassMember.GetterElt
 
         ElseIf regAccessorSetDeclaration.IsMatch(strInstruction) Then
 
             Dim iPos = InStr(strInstruction, "Set")
 
-            m_textWriter.Flush()
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("set")
             m_textWriter.WriteAttributeString("checked", "False")
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
-
+            m_textWriter.Flush()
             Return ClassMember.SetterElt
         End If
 
         Return ClassMember.UnknownElt
     End Function
 
-    Private Function CheckComment(ByRef strReadLine As String, Optional ByVal bCheckComment As Boolean = True) As Boolean
+    Private Function CheckComment(ByRef strReadLine As String, _
+                                  ByRef iStopClassDeclaration As Integer, _
+                                    ByVal bCheckComment As Boolean) As Boolean
 
         Dim iPos As Integer = InStr(strReadLine, "'''")
+        Dim iComment As Integer = InStr(strReadLine, "''''")
 
-        If iPos = 0 Then
+        If iPos = 0 Or iComment > 0 Then
             If InStr(strReadLine, "'") > 0 Then
                 If regStringDeclaration.IsMatch(strReadLine) Then
                     strReadLine = regStringDeclaration.Replace(strReadLine, cstStringReplace)
@@ -1183,9 +1264,12 @@ Public Class VbCodeAnalyser
         Else
             ''Console.WriteLine("VB-Doc: " + strReadLine)
 
-            m_textWriter.Flush()
 
             If bCheckComment Then
+                If iStopClassDeclaration > 0 Then
+                    m_textWriter.WriteAttributeString("end", iStopClassDeclaration.ToString)
+                    iStopClassDeclaration = 0
+                End If
                 m_textWriter.WriteString(vbCrLf)
                 m_textWriter.WriteStartElement("vb-doc")
                 m_textWriter.WriteAttributeString("checked", "False")
@@ -1193,6 +1277,7 @@ Public Class VbCodeAnalyser
                 m_textWriter.WriteAttributeString("pos", iPos.ToString)
                 m_textWriter.WriteString(strReadLine)
             End If
+            m_textWriter.Flush()
 
             Do
                 m_iNbLine += 1
@@ -1202,15 +1287,15 @@ Public Class VbCodeAnalyser
 
                 If strReadLine IsNot Nothing Then
                     If InStr(strReadLine, "'''") = 0 Then
-                        m_textWriter.Flush()
 
                         If bCheckComment Then
                             m_textWriter.WriteElementString("end-vb-doc", CStr(m_iNbLine - 1))
                             m_textWriter.WriteString(vbCrLf)
                             m_textWriter.WriteEndElement()
+                            m_textWriter.Flush()
                         End If
-
-                        Return CheckComment(strReadLine, bCheckComment)
+                        m_textWriter.Flush()
+                        Return CheckComment(strReadLine, iStopClassDeclaration, bCheckComment)
                     Else
                         ''Console.WriteLine("VB-Doc: " + strReadLine)
                         If bCheckComment Then m_textWriter.WriteString(vbCrLf + strReadLine)
@@ -1219,6 +1304,7 @@ Public Class VbCodeAnalyser
             Loop Until strReadLine Is Nothing
 
             If bCheckComment Then m_textWriter.WriteEndElement()
+            m_textWriter.Flush()
 
             Return False
         End If
