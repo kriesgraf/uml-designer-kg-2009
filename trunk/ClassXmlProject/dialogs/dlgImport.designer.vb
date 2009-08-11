@@ -63,6 +63,8 @@ Partial Class dlgImport
         Me.txtInterface = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
+        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuConvertToReference = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
@@ -175,7 +177,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel4, 2)
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65.38461!))
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.61538!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 196.0!))
         Me.TableLayoutPanel4.Controls.Add(Me.lblVisibility, 1, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.cmbVisibility, 2, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.chkInterface, 0, 0)
@@ -193,7 +195,7 @@ Partial Class dlgImport
         Me.lblVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lblVisibility.Location = New System.Drawing.Point(108, 0)
         Me.lblVisibility.Name = "lblVisibility"
-        Me.lblVisibility.Size = New System.Drawing.Size(50, 23)
+        Me.lblVisibility.Size = New System.Drawing.Size(49, 23)
         Me.lblVisibility.TabIndex = 2
         Me.lblVisibility.Text = "Visibility:"
         Me.lblVisibility.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -202,9 +204,9 @@ Partial Class dlgImport
         '
         Me.cmbVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbVisibility.FormattingEnabled = True
-        Me.cmbVisibility.Location = New System.Drawing.Point(164, 3)
+        Me.cmbVisibility.Location = New System.Drawing.Point(163, 3)
         Me.cmbVisibility.Name = "cmbVisibility"
-        Me.cmbVisibility.Size = New System.Drawing.Size(190, 21)
+        Me.cmbVisibility.Size = New System.Drawing.Size(191, 21)
         Me.cmbVisibility.TabIndex = 5
         '
         'chkInterface
@@ -287,16 +289,16 @@ Partial Class dlgImport
         '
         'mnuEditReference
         '
-        Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator5, Me.EditReference, Me.mnuRenamePackage, Me.mnuMoveUp, Me.mnuImportParameters, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
+        Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator6, Me.mnuConvertToReference, Me.ToolStripSeparator5, Me.EditReference, Me.mnuRenamePackage, Me.mnuMoveUp, Me.mnuImportParameters, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
         Me.mnuEditReference.Name = "ContextMenuStrip1"
-        Me.mnuEditReference.Size = New System.Drawing.Size(246, 364)
+        Me.mnuEditReference.Size = New System.Drawing.Size(248, 392)
         '
         'NewReference
         '
         Me.NewReference.Image = Global.ClassXmlProject.My.Resources.Resources.Address_Book
         Me.NewReference.Name = "NewReference"
         Me.NewReference.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.R), System.Windows.Forms.Keys)
-        Me.NewReference.Size = New System.Drawing.Size(245, 22)
+        Me.NewReference.Size = New System.Drawing.Size(247, 22)
         Me.NewReference.Tag = "reference"
         Me.NewReference.Text = "New reference"
         '
@@ -304,54 +306,54 @@ Partial Class dlgImport
         '
         Me.NewInterface.Name = "NewInterface"
         Me.NewInterface.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.I), System.Windows.Forms.Keys)
-        Me.NewInterface.Size = New System.Drawing.Size(245, 22)
+        Me.NewInterface.Size = New System.Drawing.Size(247, 22)
         Me.NewInterface.Tag = "interface"
-        Me.NewInterface.Text = "New interface"
+        Me.NewInterface.Text = "New interface/root"
         '
         'ToolStripSeparator5
         '
         Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(242, 6)
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(244, 6)
         '
         'EditReference
         '
         Me.EditReference.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
         Me.EditReference.Name = "EditReference"
         Me.EditReference.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
-        Me.EditReference.Size = New System.Drawing.Size(245, 22)
+        Me.EditReference.Size = New System.Drawing.Size(247, 22)
         Me.EditReference.Text = "Edit..."
         '
         'mnuRenamePackage
         '
         Me.mnuRenamePackage.Name = "mnuRenamePackage"
-        Me.mnuRenamePackage.Size = New System.Drawing.Size(245, 22)
+        Me.mnuRenamePackage.Size = New System.Drawing.Size(247, 22)
         Me.mnuRenamePackage.Text = "Rename package..."
         '
         'mnuMoveUp
         '
         Me.mnuMoveUp.Image = Global.ClassXmlProject.My.Resources.Resources.up
         Me.mnuMoveUp.Name = "mnuMoveUp"
-        Me.mnuMoveUp.Size = New System.Drawing.Size(245, 22)
+        Me.mnuMoveUp.Size = New System.Drawing.Size(247, 22)
         Me.mnuMoveUp.Text = "Move up"
         '
         'mnuImportParameters
         '
         Me.mnuImportParameters.Name = "mnuImportParameters"
-        Me.mnuImportParameters.Size = New System.Drawing.Size(245, 22)
+        Me.mnuImportParameters.Size = New System.Drawing.Size(247, 22)
         Me.mnuImportParameters.Text = "Parameters..."
         Me.mnuImportParameters.Visible = False
         '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(242, 6)
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(244, 6)
         '
         'mnuCopy
         '
         Me.mnuCopy.Image = Global.ClassXmlProject.My.Resources.Resources.Copy
         Me.mnuCopy.Name = "mnuCopy"
         Me.mnuCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-        Me.mnuCopy.Size = New System.Drawing.Size(245, 22)
+        Me.mnuCopy.Size = New System.Drawing.Size(247, 22)
         Me.mnuCopy.Text = "Copy"
         '
         'mnuPaste
@@ -359,38 +361,38 @@ Partial Class dlgImport
         Me.mnuPaste.Image = Global.ClassXmlProject.My.Resources.Resources.Paste
         Me.mnuPaste.Name = "mnuPaste"
         Me.mnuPaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
-        Me.mnuPaste.Size = New System.Drawing.Size(245, 22)
+        Me.mnuPaste.Size = New System.Drawing.Size(247, 22)
         Me.mnuPaste.Text = "Paste"
         '
         'DuplicateReference
         '
         Me.DuplicateReference.Name = "DuplicateReference"
         Me.DuplicateReference.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
-        Me.DuplicateReference.Size = New System.Drawing.Size(245, 22)
+        Me.DuplicateReference.Size = New System.Drawing.Size(247, 22)
         Me.DuplicateReference.Text = "Duplicate"
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(242, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(244, 6)
         '
         'mnuRefDependencies
         '
         Me.mnuRefDependencies.Image = Global.ClassXmlProject.My.Resources.Resources.Search
         Me.mnuRefDependencies.Name = "mnuRefDependencies"
-        Me.mnuRefDependencies.Size = New System.Drawing.Size(245, 22)
+        Me.mnuRefDependencies.Size = New System.Drawing.Size(247, 22)
         Me.mnuRefDependencies.Text = "Search dependencies..."
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(242, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(244, 6)
         '
         'AddReferences
         '
         Me.AddReferences.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuReplace, Me.mnuMerge, Me.mnuConfirm})
         Me.AddReferences.Name = "AddReferences"
-        Me.AddReferences.Size = New System.Drawing.Size(245, 22)
+        Me.AddReferences.Size = New System.Drawing.Size(247, 22)
         Me.AddReferences.Text = "Import references"
         '
         'mnuReplace
@@ -417,14 +419,14 @@ Partial Class dlgImport
         'ToolStripSeparator2
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(242, 6)
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(244, 6)
         '
         'RemoveRedundant
         '
         Me.RemoveRedundant.Image = Global.ClassXmlProject.My.Resources.Resources._Stop
         Me.RemoveRedundant.Name = "RemoveRedundant"
         Me.RemoveRedundant.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Delete), System.Windows.Forms.Keys)
-        Me.RemoveRedundant.Size = New System.Drawing.Size(245, 22)
+        Me.RemoveRedundant.Size = New System.Drawing.Size(247, 22)
         Me.RemoveRedundant.Text = "Remove redundancy..."
         '
         'DeleteReference
@@ -432,14 +434,14 @@ Partial Class dlgImport
         Me.DeleteReference.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.DeleteReference.Name = "DeleteReference"
         Me.DeleteReference.ShortcutKeys = System.Windows.Forms.Keys.Delete
-        Me.DeleteReference.Size = New System.Drawing.Size(245, 22)
+        Me.DeleteReference.Size = New System.Drawing.Size(247, 22)
         Me.DeleteReference.Text = "Delete"
         '
         'RemoveAll
         '
         Me.RemoveAll.Image = Global.ClassXmlProject.My.Resources.Resources.Delete
         Me.RemoveAll.Name = "RemoveAll"
-        Me.RemoveAll.Size = New System.Drawing.Size(245, 22)
+        Me.RemoveAll.Size = New System.Drawing.Size(247, 22)
         Me.RemoveAll.Text = "Remove all"
         '
         'txtInterface
@@ -454,6 +456,17 @@ Partial Class dlgImport
         'errorProvider
         '
         Me.errorProvider.ContainerControl = Me
+        '
+        'ToolStripSeparator6
+        '
+        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(244, 6)
+        '
+        'mnuConvertToReference
+        '
+        Me.mnuConvertToReference.Name = "mnuConvertToReference"
+        Me.mnuConvertToReference.Size = New System.Drawing.Size(247, 22)
+        Me.mnuConvertToReference.Text = "Convert to reference/interface/root"
         '
         'dlgImport
         '
@@ -526,5 +539,7 @@ Partial Class dlgImport
     Friend WithEvents mnuRenamePackage As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
     Friend WithEvents mnuMoveUp As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator6 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents mnuConvertToReference As System.Windows.Forms.ToolStripMenuItem
 
 End Class

@@ -612,6 +612,18 @@ Public Class XmlComponent
         Return bResult
     End Function
 
+    Public Overridable Function ReplaceMe(ByVal addedNode As XmlComponent) As Boolean
+        Try
+            m_xmlNode.ParentNode.ReplaceChild(addedNode.Node, m_xmlNode)
+            addedNode.NotifyInsert()
+            m_xmlNode = Nothing
+            Return True
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Protected Friend Function ReplaceAttribute(ByVal Source As String, ByVal Dest As String, Optional ByVal xpath As String = "") As Boolean
         RemoveAttribute(Source, xpath)
         AddAttribute(Dest, "", xpath)

@@ -510,6 +510,17 @@ Public Class frmProject
         End Try
     End Sub
 
+    Private Sub mnuConvertNode_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) Handles ConvertToReference.Click
+
+        Try
+            m_xmlProject.ConvertImportElement(lvwProjectMembers.Binding.Parent, lvwProjectMembers.SelectedItem)
+            RefreshUpdatedPath(False)
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
     Private Sub mnuImportExport_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
         Handles mnuReplaceExport.Click, mnuMergeExport.Click, mnuConfirmExport.Click
         Try
@@ -824,9 +835,23 @@ Public Class frmProject
             MsgExceptionBox(ex)
         End Try
     End Sub
-#End Region
 
     Private Sub mnuFileNewOmgUmlFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileNewOmgUmlFile.Click
         Me.Mainframe.ImportFromOmgUmlModel()
     End Sub
+
+    Private Sub mnuTrimComments_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuTrimComments.Click
+        Dim oldCursor As Cursor = Me.Cursor
+        Me.Cursor = Cursors.WaitCursor
+        Try
+            m_xmlProject.TrimComments()
+            RefreshUpdatedPath(True)
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        Finally
+            Me.Cursor = oldCursor
+        End Try
+    End Sub
+#End Region
 End Class
