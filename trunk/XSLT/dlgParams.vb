@@ -155,7 +155,7 @@ Friend Class dlgParams
                 End If
             End If
         Catch ex As Exception
-            Throw ex
+            MsgExceptionBox(ex)
         Finally
             m_bValeurUpdated = False
         End Try

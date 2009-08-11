@@ -58,67 +58,63 @@ Public Class XslArgumentManager
 
     Public Function LoadParams(Optional ByVal bClear As Boolean = False) As Boolean
         Dim bNodes As Boolean = False
-        Try
-            Dim doc As New XmlDocument
-            Dim node As XmlNode
 
-            doc.Load(m_strFileXSL)
+        Dim doc As New XmlDocument
+        Dim node As XmlNode
 
-            Dim nsmgr As XmlNamespaceManager = New XmlNamespaceManager(doc.NameTable)
-            nsmgr.AddNamespace("xsl", "http://www.w3.org/1999/XSL/Transform")
+        doc.Load(m_strFileXSL)
 
-            If CompareParams(doc, nsmgr, bNodes) = False Or bClear Then
+        Dim nsmgr As XmlNamespaceManager = New XmlNamespaceManager(doc.NameTable)
+        nsmgr.AddNamespace("xsl", "http://www.w3.org/1999/XSL/Transform")
 
-                bNodes = False
-                m_dicoParamList.Clear()
+        If CompareParams(doc, nsmgr, bNodes) = False Or bClear Then
 
-                For Each node In doc.SelectNodes("//xsl:stylesheet/xsl:param", nsmgr)
-                    bNodes = True
-                    m_dicoParamList.Add(node.Attributes.GetNamedItem("name").Value, node.InnerText)
-                Next
-            End If
+            bNodes = False
+            m_dicoParamList.Clear()
 
-            node = doc.SelectSingleNode("//xsl:output/@method", nsmgr)
+            For Each node In doc.SelectNodes("//xsl:stylesheet/xsl:param", nsmgr)
+                bNodes = True
+                m_dicoParamList.Add(node.Attributes.GetNamedItem("name").Value, node.InnerText)
+            Next
+        End If
 
-            ' On regarde si le format de code généré est du xml/text/html
-            If Not node Is Nothing Then
-                Select Case node.Value
-                    Case "xml"
-                        m_eType = eOuputFormat.XML
+        node = doc.SelectSingleNode("//xsl:output/@method", nsmgr)
 
-                        node = doc.SelectSingleNode("//xsl:output/@media-type", nsmgr)
+        ' On regarde si le format de code généré est du xml/text/html
+        If Not node Is Nothing Then
+            Select Case node.Value
+                Case "xml"
+                    m_eType = eOuputFormat.XML
 
-                        If Not node Is Nothing Then
-                            m_strMedia = "." + node.Value
-                            m_eType = eOuputFormat.NONE
-                        Else
-                            m_strMedia = ".xml"
-                        End If
+                    node = doc.SelectSingleNode("//xsl:output/@media-type", nsmgr)
 
-                    Case "html"
-                        m_eType = eOuputFormat.HTML
-                        m_strMedia = ".html"
+                    If Not node Is Nothing Then
+                        m_strMedia = "." + node.Value
+                        m_eType = eOuputFormat.NONE
+                    Else
+                        m_strMedia = ".xml"
+                    End If
 
-                    Case Else
-                        node = doc.SelectSingleNode("//xsl:output/@media-type", nsmgr)
+                Case "html"
+                    m_eType = eOuputFormat.HTML
+                    m_strMedia = ".html"
 
-                        If Not node Is Nothing Then
-                            m_strMedia = "." + node.Value
-                            m_eType = eOuputFormat.NONE
-                        Else
-                            m_strMedia = ".txt"
-                        End If
-                        m_eType = eOuputFormat.TEXT
-                End Select
-            Else
-                m_eType = eOuputFormat.XML
-                m_strMedia = ".xml"
-            End If
+                Case Else
+                    node = doc.SelectSingleNode("//xsl:output/@media-type", nsmgr)
 
+                    If Not node Is Nothing Then
+                        m_strMedia = "." + node.Value
+                        m_eType = eOuputFormat.NONE
+                    Else
+                        m_strMedia = ".txt"
+                    End If
+                    m_eType = eOuputFormat.TEXT
+            End Select
+        Else
+            m_eType = eOuputFormat.XML
+            m_strMedia = ".xml"
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return bNodes
     End Function
 
