@@ -548,12 +548,25 @@ Public Class XmlNodeListView
                     Next
                     Return tempo
 
-                Case "class", "interface"
-                    Dim component2 As XmlClassSpec = Me.CreateDocument(Me.Node)
-                    tempo = ConvertEnumImplToView(XmlProjectTools.ConvertDtdToEnumImpl(component2.Implementation))
+                Case "class"
+                    Dim component1 As XmlClassSpec = Me.CreateDocument(Me.Node)
+                    tempo = ConvertEnumImplToView(XmlProjectTools.ConvertDtdToEnumImpl(component1.Implementation))
                     For Each child In Me.SelectNodes("typedef | property | method")
                         tempo += ", " + GetName(child)
                     Next
+                    Return tempo
+
+                Case "interface"
+                    Dim component2 As XmlInterfaceSpec = Me.CreateDocument(Me.Node)
+                    tempo = ConvertEnumImplToView(component2.Implementation)
+                    For Each child In Me.SelectNodes("typedef | property | method")
+                        tempo += ", " + GetName(child)
+                    Next
+                    Return tempo
+
+                Case "reference"
+                    Dim component3 As XmlReferenceSpec = Me.CreateDocument(Me.Node)
+                    tempo = ConvertEnumImplToView(component3.Implementation)
                     Return tempo
 
                 Case "import", "export"
@@ -564,14 +577,14 @@ Public Class XmlNodeListView
                     Return tempo
 
                 Case "param"
-                    Dim component3 As XmlParamSpec = Me.CreateDocument(Me.Node)
-                    component3.Tag = Me.Tag
-                    Return component3.TypeVarDefinition.DetailedDescription
+                    Dim component4 As XmlParamSpec = Me.CreateDocument(Me.Node)
+                    component4.Tag = Me.Tag
+                    Return component4.TypeVarDefinition.DetailedDescription
 
                 Case "property"
-                    Dim component2 As XmlPropertySpec = Me.CreateDocument(Me.Node)
-                    component2.Tag = Me.Tag
-                    Return component2.TypeVarDefinition.DetailedDescription
+                    Dim component5 As XmlPropertySpec = Me.CreateDocument(Me.Node)
+                    component5.Tag = Me.Tag
+                    Return component5.TypeVarDefinition.DetailedDescription
 
                 Case "typedef"
                     Dim component As XmlTypedefSpec = Me.CreateDocument(Me.Node)
