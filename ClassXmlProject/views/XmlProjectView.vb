@@ -651,6 +651,20 @@ Public Class XmlProjectView
         UmlNodesManager.UpdateSimpleTypes(eLang)
     End Sub
 
+    Public Sub TrimComments()
+        m_xmlProperties.TrimComments()
+        Me.Updated = True
+    End Sub
+
+    Public Sub ConvertImportElement(ByVal composite As XmlComposite, ByVal child As XmlComponent)
+        Dim parent As XmlImportSpec = TryCast(XmlNodeManager.GetInstance().CreateDocument(composite.Node), XmlImportSpec)
+        If parent IsNot Nothing Then
+            parent.ConvertComponent(child)
+            m_Control.Binding.ResetBindings(True)
+            Me.Updated = True
+        End If
+    End Sub
+
     Public Shared Function InitPrototypes() As Boolean
         Try
             ' Use XmlNodeManager.CreateDocument to clone this objects
@@ -730,7 +744,6 @@ Public Class XmlProjectView
         End Try
         Return True
     End Function
-
 #End Region
 
 #Region "Private methods"

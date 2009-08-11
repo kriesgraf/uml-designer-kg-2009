@@ -33,6 +33,12 @@ Public Class XmlReferenceSpec
         End Set
     End Property
 
+    Public ReadOnly Property Implementation() As EImplementation
+        Get
+            Return EImplementation.Simple
+        End Get
+    End Property
+
     Public Property ParentClass() As String
         Get
             Return GetAttribute("class")

@@ -173,7 +173,11 @@ Public Class XmlImportView
 
             If fen.ShowDialog() = DialogResult.OK Then
                 For Each element As XmlComponent In list.SelectedItems
-                    XmlProjectTools.AddAttributeValue(element.Node, "package", fen.Result)
+                    If fen.Result = "" Then
+                        XmlProjectTools.RemoveAttribute(element.Node, "package")
+                    Else
+                        XmlProjectTools.AddAttributeValue(element.Node, "package", fen.Result)
+                    End If
                     Me.Updated = True
                     bResult = True
                 Next

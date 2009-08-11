@@ -319,6 +319,38 @@ Public Class XmlImportSpec
         Return bResult
     End Function
 
+    Public Sub ConvertComponent(ByVal component As XmlComponent)
+        Try
+            If component Is Nothing Then Exit Sub
+
+            Dim ref As XmlReferenceSpec
+            Dim interf As XmlInterfaceSpec
+
+            Select Case component.NodeName
+                Case "reference"
+                    ref = CreateDocument(component.Node)
+                    interf = CreateDocument("interface")
+                    interf.Name = ref.Name
+                    interf.Id = ref.Id
+                    interf.Package = ref.Package
+                    interf.Tag = ref.Tag
+                    ref.ReplaceMe(interf)
+                    ref = Nothing
+
+                Case "interface"
+                    interf = CreateDocument(component.Node)
+                    ref = CreateDocument("reference")
+                    ref.Name = interf.Name
+                    ref.Id = interf.Id
+                    ref.Package = interf.Package
+                    ref.Tag = interf.Tag
+                    interf.ReplaceMe(ref)
+                    interf = Nothing
+            End Select
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
 #End Region
 
 #Region "Protected methods"

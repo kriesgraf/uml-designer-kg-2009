@@ -239,5 +239,10 @@ Public Class dlgImport
     Private Sub mnuMoveUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMoveUp.Click
         m_xmlView.MoveUpReference(lsbReferences)
     End Sub
+
+    Private Sub mnuConvertToReference_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuConvertToReference.Click
+        m_xmlView.ConvertComponent(lsbReferences.SelectedItem)
+        m_xmlView.InitBindingListReferences(lsbReferences, True)
+    End Sub
 #End Region
 End Class
