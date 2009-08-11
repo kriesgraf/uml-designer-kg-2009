@@ -55,6 +55,7 @@ Public Class VbCodeReverse
         Try
             Dim analyser As New VbCodeAnalyser
             analyser.InheritsDeclaration = True
+            analyser.TypedefsDeclaration = True
             analyser.Analyse(filename)
             package.AppendChild(package.OwnerDocument.ImportNode(analyser.Document.DocumentElement, True))
             analyser.Dispose()
