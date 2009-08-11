@@ -931,11 +931,13 @@ Public Class UmlNodesManager
                     If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
                     strXML += " id='" + GetID(node) + "'>"
 
-                    Dim myList As New ArrayList
+                    Dim myListProps As New ArrayList
 
                     Dim iteration As Integer = 0
                     Dim eImplementation As EImplementation = ConvertDtdToEnumImpl(strImplementation)
-                    SelectInheritedProperties(iteration, eImplementation, node, myList)
+                    SelectInheritedProperties(iteration, eImplementation, node, myListProps)
+
+                    Dim myList As New SortedList
 
                     iteration = 0
                     SelectInheritedMethods(iteration, eImplementation, node, myList)
