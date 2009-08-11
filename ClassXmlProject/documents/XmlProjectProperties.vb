@@ -20,12 +20,6 @@ Public Class XmlProjectProperties
         End Set
     End Property
 
-    Public Function Edit() As Boolean
-        Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me)
-        fen.ShowDialog()
-        Return CType(fen.Tag, Boolean)
-    End Function
-
     <CategoryAttribute("Code generation"), _
     DescriptionAttribute("Project workspace")> _
     Public Property GenerationFolder() As String
@@ -49,13 +43,11 @@ Public Class XmlProjectProperties
         End Set
     End Property
 
-
     Public ReadOnly Property Language() As String
         Get
             Return GetLanguage(GenerationLanguage)
         End Get
     End Property
-
 
     <CategoryAttribute("XmlComponent"), _
     Browsable(False), _
@@ -93,6 +85,12 @@ Public Class XmlProjectProperties
             Return "project"
         End Get
     End Property
+
+    Public Function Edit() As Boolean
+        Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(Me)
+        fen.ShowDialog()
+        Return CType(fen.Tag, Boolean)
+    End Function
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode, bLoadChildren)
@@ -158,6 +156,8 @@ Public Class XmlProjectProperties
                     Else
                         Return True
                     End If
+                Case "relationship"
+                    Return True
             End Select
         Catch ex As Exception
             Throw ex
@@ -169,6 +169,14 @@ Public Class XmlProjectProperties
         Dim bResult As Boolean = False
         Try
             Dim strName As String = removeNode.Name
+
+            If removeNode.NodeName = "relationship" Then
+                Dim element As XmlProjectMemberView = TryCast(removeNode, XmlProjectMemberView)
+                If element IsNot Nothing Then
+                    strName = "Relation '" + element.Label(0) + "'" + vbCrLf + element.ToolTipText
+                End If
+            End If
+
             If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
                        cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
             Then
@@ -183,6 +191,10 @@ Public Class XmlProjectProperties
         End Try
         Return bResult
     End Function
+
+    Public Sub TrimComments()
+        XmlProjectTools.TrimComments(Me.Document)
+    End Sub
 
     Protected Friend Overrides Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
         If component IsNot Nothing Then
@@ -234,5 +246,6 @@ Public Class XmlProjectProperties
             Return Me.Node.InsertBefore(child, before)
         End If
     End Function
+
 End Class
 
