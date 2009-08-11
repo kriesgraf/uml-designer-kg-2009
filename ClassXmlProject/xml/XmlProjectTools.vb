@@ -943,6 +943,32 @@ Public Class XmlProjectTools
         Return eResult
     End Function
 
+    Public Shared Function GetSignature(ByVal node As XmlNode) As String
+        Try
+            If node IsNot Nothing Then
+                Select Case node.Name
+                    Case "property"
+                        Return GetName(node) + "(" + GetAttributeValue(node.SelectSingleNode("type"), "desc") _
+                                + GetIDREF(node.SelectSingleNode("type")) + ")"
+                    Case "method"
+                        Dim tempo As String = ""
+                        For Each child As XmlNode In node.SelectNodes("param")
+                            tempo += " " + GetAttributeValue(child.SelectSingleNode("type"), "desc") _
+                                        + GetIDREF(child.SelectSingleNode("type"))
+                        Next
+                        tempo = GetName(node) + "(" + tempo.Trim + ")"
+                        Return tempo
+
+                    Case Else
+                        Return node.Name
+                End Select
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return node.Name
+    End Function
+
     Public Shared Function CreateAppendNode(ByVal node As XmlNode, ByVal szElement As String, Optional ByVal bInsertLf As Boolean = True) As XmlNode
         Dim xmlresult As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, szElement, "")
         node.AppendChild(xmlresult)
@@ -967,7 +993,7 @@ Public Class XmlProjectTools
         Try
             Dim strQuery As String = "//property[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
             If parentNode.SelectNodes(strQuery).Count > 0 Then
-                MsgBox("Sorry but this property is overrided", MsgBoxStyle.Critical, "'Remove' command")
+                MsgBox("Sorry but this property is overridden", MsgBoxStyle.Critical, "'Remove' command")
                 bResult = False
             End If
         Catch ex As Exception
@@ -981,7 +1007,7 @@ Public Class XmlProjectTools
         Try
             Dim strQuery As String = "//method[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
             If parentNode.SelectNodes(strQuery).Count > 0 Then
-                MsgBox("Sorry but this method is overrided", MsgBoxStyle.Critical, "'Remove' command")
+                MsgBox("Sorry but this method is overridden", MsgBoxStyle.Critical, "'Remove' command")
                 bResult = False
             End If
         Catch ex As Exception
@@ -1511,7 +1537,7 @@ Public Class XmlProjectTools
                             End If
                         End If
                         Dim strTempo As String = GetPackage(current)
-                        If strTempo IsNot Nothing _
+                        If String.IsNullOrEmpty(strTempo) = False _
                         Then
                             strResult = strTempo + strSeparator + strResult
                         End If
@@ -1788,7 +1814,7 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Sub SelectInheritedMethods(ByRef iteration As Integer, ByVal eImplementation As EImplementation, _
-                                             ByRef node As XmlNode, ByVal list As ArrayList)
+                                             ByRef node As XmlNode, ByVal list As SortedList)
         Try
             iteration += 1
             If iteration > cstMaxCircularReferences Then
@@ -1810,9 +1836,9 @@ Public Class XmlProjectTools
                     Case Else
                         bAddNode = True
                 End Select
-
-                If list.Contains(xmlcpnt) = False And bAddNode Then
-                    list.Add(xmlcpnt)
+                Dim signature As String = xmlcpnt.Signature
+                If list.ContainsKey(signature) = False And bAddNode Then
+                    list.Add(signature, xmlcpnt)
                 End If
             Next child
 
@@ -2301,7 +2327,19 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
-#End If
+
+    Public Shared Sub TrimComments(ByVal document As XmlDocument)
+        Dim tempo As String
+
+        For Each child As XmlNode In document.SelectNodes("//comment | //element | //enumvalue")
+            If child.Attributes.GetNamedItem("brief") IsNot Nothing Then
+                tempo = child.Attributes.GetNamedItem("brief").Value
+                child.Attributes.GetNamedItem("brief").Value = tempo.Trim
+            End If
+            tempo = child.InnerText
+            child.InnerText = tempo.Trim
+        Next
+    End Sub
 
     Public Shared Sub MergeAccessorProperties(ByVal document As XmlDocument, _
                                                ByVal prefixGet As String, _
@@ -2426,6 +2464,10 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
+#End If
+#End Region
+
+#Region "Private methods"
 
     Private Shared Function AddNewProperty(ByVal node As XmlNode, ByVal name As String, _
                                     ByVal attribute As String, ByVal strOverridable As String, _
@@ -2469,10 +2511,6 @@ Public Class XmlProjectTools
         End Try
         Return xmlResult
     End Function
-
-#End Region
-
-#Region "Private shared methods"
 
 #If _APP_UML = "1" Then
     Private Shared Function ConvertAndCorrectErrors(ByVal form As Form, ByVal document As XmlDocument, ByVal strFilename As String, ByRef bDtdError As Boolean, _
