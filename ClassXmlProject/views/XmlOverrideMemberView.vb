@@ -46,6 +46,12 @@ Public Class XmlOverrideMemberView
         End Get
     End Property
 
+    Public ReadOnly Property Signature() As String
+        Get
+            Return XmlProjectTools.GetSignature(Me.Node)
+        End Get
+    End Property
+
     Public Property InterfaceMember() As Boolean
         Get
             Select Case Me.NodeName

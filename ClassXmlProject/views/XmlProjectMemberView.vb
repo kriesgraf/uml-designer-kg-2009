@@ -119,7 +119,7 @@ Public Class XmlProjectMemberView
                     Dim xmlcpnt As XmlMethodSpec = New XmlMethodSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
                     xmlcpnt.Tag = Me.Tag
-                    Return New String() {xmlcpnt.Name, xmlcpnt.Comment, MyBase.NodeName}
+                    Return New String() {xmlcpnt.Name, xmlcpnt.BriefComment, MyBase.NodeName}
 
                 Case "class"
                     Return New String() {MyBase.Name, MyBase.GetAttribute("brief", "comment"), MyBase.NodeName}

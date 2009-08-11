@@ -39,9 +39,7 @@ Public Class dlgProperty
     End Sub
 
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
-        If m_xmlView.OverridesProperty <> "" Then
-            cmdType.Enabled = False
-        End If
+        ' Nothing
     End Sub
 
     Private Sub dlgMember_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load

@@ -57,6 +57,6 @@ Public Class dlgOverrideMethods
 
     Private Sub dlgOverrideMethods_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         m_xmlView.LoadMethods(lstOverrideMethods)
-        Me.Text = "Add overrided methods to class " + m_xmlView.Name
+        Me.Text = "Add overridden methods to class " + m_xmlView.Name
     End Sub
 End Class

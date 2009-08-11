@@ -11,6 +11,7 @@ Public Class XmlTypeView
     Inherits XmlTypeVarSpec
     Implements InterfViewForm
 
+    Private m_bIsNotOverriden As Boolean = True
     Private m_xmlBindingsList As XmlBindingsList
     Private m_xmlComboTypedef As XmlBindingCombo
     Private m_xmlComboValue As XmlBindingCombo
@@ -53,17 +54,30 @@ Public Class XmlTypeView
     Public Function UpdateValues() As Boolean
         Try
             m_xmlBindingsList.UpdateValues()
-            m_xmlComboTypedef.Update()
-            If m_ArrayRadioButtons.Item(0).Checked Then
-                Me.Kind = EKindDeclaration.EK_SimpleType
-            Else
-                Me.Kind = EKindDeclaration.EK_Enumeration
+
+            If m_bIsNotOverriden Then
+
+                m_xmlComboTypedef.Update()
+                If m_ArrayRadioButtons.Item(0).Checked Then
+                    Me.Kind = EKindDeclaration.EK_SimpleType
+                Else
+                    Me.Kind = EKindDeclaration.EK_Enumeration
+                End If
             End If
+
             If m_SizeCheckBox.Enabled = False Then
-                Me.Kind = EKindDeclaration.EK_Enumeration
+                If m_bIsNotOverriden _
+                Then
+                    Me.Kind = EKindDeclaration.EK_Enumeration
+
+                ElseIf Me.Node.ParentNode.Name = "property" _
+                Then
+                    m_xmlComboValue.Update()
+                End If
             ElseIf m_SizeCheckBox.Checked = False Then
                 Me.VarSize = ""
-                If Me.Node.ParentNode.Name = "property" Or Me.Node.ParentNode.Name = "param" Then
+                If Me.Node.ParentNode.Name = "property" Or Me.Node.ParentNode.Name = "param" _
+                Then
                     m_xmlComboValue.Update()
                 End If
             Else
@@ -106,7 +120,17 @@ Public Class XmlTypeView
         End Try
     End Sub
 
+    Public Function CheckOverridenProperty(ByVal group As GroupBox, ByVal box As CheckBox) As Boolean
+        m_bIsNotOverriden = MyBase.IsNotOverriden
+        group.Enabled = m_bIsNotOverriden
+        box.Enabled = m_bIsNotOverriden
+        Return m_bIsNotOverriden
+    End Function
+
     Public Function CheckOption(ByVal bSimpleType As Boolean, ByVal group As GroupBox) As Boolean
+
+        If m_bIsNotOverriden = False Then Exit Function
+
         If bSimpleType And Kind = EKindDeclaration.EK_Enumeration _
         Then
             If MsgBox("This operation is irreversible, would you want to continue ?" _
@@ -139,6 +163,9 @@ Public Class XmlTypeView
     End Function
 
     Public Sub UpdateOption(ByVal radioControl As RadioButtonArray, ByVal dataControl As XmlDataGridView, ByVal fen As Form)
+
+        If m_bIsNotOverriden = False Then Exit Sub
+
         If Me.Tag = ELanguage.Language_Vbasic _
         Then
             If GetNode("ancestor::typedef") IsNot Nothing _

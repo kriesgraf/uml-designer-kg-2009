@@ -94,18 +94,16 @@ Public Class XmlClassOverridePropertiesView
             Dim oldClassMember As XmlNode
             Dim newClassMember As XmlNode
 
-            oldClassMember = GetNode("property[@name='" + virtualClassMember.Name + "']")
-
-            newClassMember = virtualClassMember.Node.CloneNode(True)
-
-            AddAttributeValue(newClassMember, "overrides", virtualClassMember.ClassId)
+            oldClassMember = GetNode("property[@name='" + virtualClassMember.Name + "' and @overrides='" + virtualClassMember.ClassId + "']")
 
             If oldClassMember Is Nothing _
             Then
-                Me.AppendNode(newClassMember)
+                newClassMember = AppendNewProperty(virtualClassMember)
             Else
-                ReplaceVirtualProperty(oldClassMember, newClassMember)
+                newClassMember = ReplaceVirtualProperty(oldClassMember, virtualClassMember)
             End If
+
+            AddAttributeValue(newClassMember, "overrides", virtualClassMember.ClassId)
 
             Select Case m_eImplementation
                 Case EImplementation.Leaf
@@ -123,17 +121,31 @@ Public Class XmlClassOverridePropertiesView
         End Try
     End Sub
 
-    Private Sub ReplaceVirtualProperty(ByVal dstProperty As XmlNode, ByVal srcProperty As XmlNode)
-        Dim child As XmlNode
-        Dim xmlcpnt As XmlPropertySpec = CreateDocument(dstProperty)
-        xmlcpnt.Tag = Me.Tag
+    Private Function AppendNewProperty(ByVal virtualClassMember As XmlOverrideMemberView) As XmlNode
+        Dim oldClassMember As XmlNode = GetNode("property[@name='" + virtualClassMember.Name + "']")
+        Dim dstProperty As XmlNode = virtualClassMember.Node.CloneNode(True)
 
-        Dim list As XmlNodeList = SelectNodes(dstProperty, "param")
+        Me.Node.InsertBefore(dstProperty, Me.Node.SelectSingleNode("method"))
 
-        dstProperty.RemoveAll()
+        If oldClassMember IsNot Nothing Then
+            If MsgBox("Found a property with same name '" + virtualClassMember.Name + "' that is not an overridden-kind!" + vbCrLf + _
+                      "Please confirm erasing it.", cstMsgYesNoQuestion) _
+                = MsgBoxResult.Yes _
+            Then
+                AddAttributeValue(dstProperty, "num-id", GetAttributeValue(oldClassMember, "num-id"))
+                RemoveNode(oldClassMember)
+            End If
+        End If
+        Return dstProperty
+    End Function
 
-        For Each child In srcProperty.ChildNodes
-            xmlcpnt.AppendNode(child.CloneNode(True))
-        Next child
-    End Sub
+    Private Function ReplaceVirtualProperty(ByVal srcProperty As XmlNode, ByVal virtualClassMember As XmlOverrideMemberView) As XmlNode
+
+        Dim dstProperty As XmlNode = virtualClassMember.Node.CloneNode(True)
+
+        ' We change only the type if necessary
+        srcProperty.ReplaceChild(dstProperty.SelectSingleNode("type"), srcProperty.SelectSingleNode("type"))
+
+        Return srcProperty
+    End Function
 End Class
