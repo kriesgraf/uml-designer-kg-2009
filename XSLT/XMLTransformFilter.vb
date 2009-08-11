@@ -112,87 +112,71 @@ Friend Class XMLTransformFilter
 
             Afficher()
             cmdSave.Enabled = True
-
-        Catch ex As Exception
-            Throw ex
         Finally
             Me.Cursor = oldCursor
         End Try
     End Sub
 
     Private Sub Sauver()
-        Try
-            'If m_bSauverVerrou Then Exit Sub
 
-            AfficherSauvegarde()
+        'If m_bSauverVerrou Then Exit Sub
 
-            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_dicoParamList.Media)
-            WebBrowser.Navigate(New System.Uri(strFullPathFilename))
+        AfficherSauvegarde()
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_dicoParamList.Media)
+        WebBrowser.Navigate(New System.Uri(strFullPathFilename))
+
     End Sub
 
     Private Sub SauvegarderSous(ByRef StrCompleteFileName As String)
-        Try
-            Dim tempo As String
-            Dim i As Integer
 
-            tempo = RetirerChemin(StrCompleteFileName)
+        Dim tempo As String
+        Dim i As Integer
 
-            i = InStr(tempo, ".")
+        tempo = RetirerChemin(StrCompleteFileName)
 
-            If i > 0 Then
-                m_strFileName = Strings.Left(tempo, i - 1)
-            Else
-                m_strFileName = tempo
-            End If
+        i = InStr(tempo, ".")
 
-            i = InStr(StrCompleteFileName, m_strFileName)
+        If i > 0 Then
+            m_strFileName = Strings.Left(tempo, i - 1)
+        Else
+            m_strFileName = tempo
+        End If
 
-            If i > 0 Then
-                m_strPath = Strings.Left(StrCompleteFileName, i - 1)
-            Else
-                m_strPath = ""
-            End If
-            AfficherSauvegarde()
-            Transformer()
+        i = InStr(StrCompleteFileName, m_strFileName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If i > 0 Then
+            m_strPath = Strings.Left(StrCompleteFileName, i - 1)
+        Else
+            m_strPath = ""
+        End If
+        AfficherSauvegarde()
+        Transformer()
+
     End Sub
 
     Private Sub LoadXSL()
-        Try
-            If Len(LabelXSL.Text) = 0 Then
-                MsgBox("Veuillez sélectionner un fichier XSL", MsgBoxStyle.Critical)
-            Else
-                m_styleXSL.Load(m_strFileXSL, False)
-                m_dicoParamList.FileXSL = m_strFileXSL
-                cmdParams.Enabled = m_dicoParamList.LoadParams()
-            End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If Len(LabelXSL.Text) = 0 Then
+            MsgBox("Veuillez sélectionner un fichier XSL", MsgBoxStyle.Critical)
+        Else
+            m_styleXSL.Load(m_strFileXSL, False)
+            m_dicoParamList.FileXSL = m_strFileXSL
+            cmdParams.Enabled = m_dicoParamList.LoadParams()
+        End If
 
     End Sub
 
     Private Sub Afficher()
-        Try
-            Dim doc As New XmlDocument
-            If m_strFileName = "" Then
-                Throw New Exception("Filename is empty")
-            End If
 
-            Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_dicoParamList.Media)
-            TextEditBox.LoadFile(strFullPathFilename, RichTextBoxStreamType.PlainText)
+        Dim doc As New XmlDocument
+        If m_strFileName = "" Then
+            Throw New Exception("Filename is empty")
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim strFullPathFilename As String = My.Computer.FileSystem.CombinePath(m_strPath, m_strFileName + m_dicoParamList.Media)
+        TextEditBox.LoadFile(strFullPathFilename, RichTextBoxStreamType.PlainText)
+
     End Sub
 
     Private Sub AfficherSauvegarde()
@@ -207,12 +191,9 @@ Friend Class XMLTransformFilter
 
     Private Function RetirerChemin(ByRef strFullPathName As String) As String
         Dim strResult As String
-        Try
-            strResult = My.Computer.FileSystem.GetName(strFullPathName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        strResult = My.Computer.FileSystem.GetName(strFullPathName)
+
         Return (strResult)
     End Function
 
@@ -587,6 +568,7 @@ Friend Class XMLTransformFilter
                 My.Settings.CurrentExtension = txtXMLFilter.Text
             End If
         Catch ex As Exception
+            MsgExceptionBox(ex)
         End Try
     End Sub
 
