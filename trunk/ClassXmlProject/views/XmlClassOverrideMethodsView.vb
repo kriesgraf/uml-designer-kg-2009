@@ -8,7 +8,7 @@ Imports ClassXmlProject.XmlProjectTools
 Public Class XmlClassOverrideMethodsView
     Inherits XmlClassSpec
 
-    Private m_listArray As ArrayList = Nothing
+    Private m_list As SortedList = Nothing
     Private m_eImplementation As EImplementation
 
     Public Property CurrentClassImpl() As EImplementation
@@ -23,10 +23,10 @@ Public Class XmlClassOverrideMethodsView
     Public Sub LoadMethods(ByVal listbox As ListBox)
         Try
             listbox.DisplayMember = "FullDescription"
-            listbox.DataSource = m_listArray
+            listbox.DataSource = m_list.GetValueList
             listbox.SelectionMode = SelectionMode.MultiSimple
             Dim i As Integer = 0
-            For Each nodeXml As XmlOverrideMemberView In m_listArray
+            For Each nodeXml As XmlOverrideMemberView In m_list.GetValueList
                 If nodeXml.CheckedView Then
                     listbox.SetSelected(i, True)
                 End If
@@ -40,7 +40,7 @@ Public Class XmlClassOverrideMethodsView
 
     Public Function InitListMethods(ByVal strIgnoredClasses As String) As Boolean
         Try
-            m_listArray = New ArrayList
+            m_list = New SortedList
             Dim iteration As Integer = 0
             Dim nodeList As XmlNodeList
             If strIgnoredClasses = "" Then
@@ -49,17 +49,17 @@ Public Class XmlClassOverrideMethodsView
                 nodeList = SelectNodes("inherited[not(contains('" + strIgnoredClasses + "',concat(@idref,';')))]")
             End If
             For Each child As XmlNode In nodeList
-                SelectInheritedMethods(iteration, m_eImplementation, SelectNodeId(child), m_listArray)
+                SelectInheritedMethods(iteration, m_eImplementation, SelectNodeId(child), m_list)
             Next
 
             Dim i As Integer = 0
-            Dim jSecure As Integer = m_listArray.Count     ' Use to exit loop in case of errors
+            Dim jSecure As Integer = m_list.Count     ' Use to exit loop in case of errors
             While jSecure > 0
                 jSecure -= 1
-                If i < m_listArray.Count Then
-                    Dim xmlcpnt As XmlOverrideMemberView = CType(m_listArray.Item(i), XmlOverrideMemberView)
+                If i < m_list.Count Then
+                    Dim xmlcpnt As XmlOverrideMemberView = CType(m_list.GetValueList(i), XmlOverrideMemberView)
                     If xmlcpnt.OverridableMember = False Then
-                        m_listArray.Remove(xmlcpnt)
+                        m_list.Remove(xmlcpnt)
                     Else
                         i += 1
                     End If
@@ -68,7 +68,7 @@ Public Class XmlClassOverrideMethodsView
         Catch ex As Exception
             Throw ex
         End Try
-        Return (m_listArray.Count > 0)
+        Return (m_list.Count > 0)
     End Function
 
     Public Function AddMethods(ByVal listbox As ListBox) As Boolean
@@ -100,19 +100,24 @@ Public Class XmlClassOverrideMethodsView
                     AddUnknownParams(oldClassMember, virtualClassMember.Node)
                 End If
             Else
-                oldClassMember = GetNode("method[@name='" + virtualClassMember.Name + "']")
+                oldClassMember = Nothing
+                Dim signature As String = virtualClassMember.Signature
+                Dim motherId As String = virtualClassMember.ClassId
 
-                newClassMember = virtualClassMember.Node.CloneNode(True)
-
-                AddAttributeValue(newClassMember, "overrides", virtualClassMember.ClassId)
+                For Each child As XmlNode In SelectNodes("method[@name='" + virtualClassMember.Name + "' and @overrides='" + motherId + "']")
+                    If signature = XmlProjectTools.GetSignature(child) Then
+                        oldClassMember = child
+                    End If
+                Next
 
                 If oldClassMember Is Nothing _
                 Then
-                    Me.AppendNode(newClassMember)
+                    newClassMember = AppendNewMethod(virtualClassMember)
                 Else
-                    ReplaceVirtualMethod(oldClassMember, newClassMember)
+                    newClassMember = oldClassMember
                 End If
 
+                AddAttributeValue(newClassMember, "overrides", motherId)
                 AddAttributeValue(newClassMember, "implementation", ConvertEnumImplToDtd(m_eImplementation))
 
             End If
@@ -144,24 +149,30 @@ Public Class XmlClassOverrideMethodsView
         End Try
     End Sub
 
-    Private Sub ReplaceVirtualMethod(ByVal dstMethod As XmlNode, ByVal srcMethod As XmlNode)
-        Dim child As XmlNode
-        Dim xmlcpnt As XmlMethodSpec = CreateDocument(dstMethod)
-        xmlcpnt.Tag = Me.Tag
+    Private Function AppendNewMethod(ByVal virtualClassMember As XmlOverrideMemberView) As XmlNode
 
-        Dim list As XmlNodeList = SelectNodes(dstMethod, "param")
+        Dim oldClassMember As XmlNode = GetNode("method[@name='" + virtualClassMember.Name + "' and not(@overrides)]")
+        Dim dstMethod As XmlNode = virtualClassMember.Node.CloneNode(True)
 
-        For Each child In list
-            dstMethod.RemoveChild(child)
-        Next child
+        Me.Node.InsertBefore(dstMethod, Me.Node.SelectSingleNode("method"))
 
-        For Each child In SelectNodes(srcMethod, "param")
-            xmlcpnt.AppendNode(child.CloneNode(True))
-        Next child
+        If oldClassMember IsNot Nothing Then
+            Dim strParams As String = ""
+            For Each child As XmlNode In oldClassMember.SelectNodes("param")
+                strParams += " " + GetName(child)
+            Next
+            strParams = GetName(oldClassMember) + "(" + strParams.Trim + ")"
 
-        ReorderParams(dstMethod)
-
-    End Sub
+            If MsgBox("Found a method with same name '" + strParams + "' that is not an overridden-kind!" + vbCrLf + _
+                      "Please confirm erasing it.", cstMsgYesNoQuestion) _
+                = MsgBoxResult.Yes _
+            Then
+                AddAttributeValue(dstMethod, "num-id", GetAttributeValue(oldClassMember, "num-id"))
+                RemoveNode(oldClassMember)
+            End If
+        End If
+        Return dstMethod
+    End Function
 
     Private Sub ReorderParams(ByVal nodeXML As XmlNode)
         Dim child As XmlNode
@@ -171,7 +182,6 @@ Public Class XmlClassOverrideMethodsView
             AddAttributeValue(child, "num-id", CStr(numID))
             numID = numID + 1
         Next child
-
     End Sub
 
     Public Sub New(Optional ByVal nodeXml As XmlNode = Nothing)

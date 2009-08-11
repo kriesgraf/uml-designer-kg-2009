@@ -53,6 +53,12 @@ Public Class XmlTypeVarSpec
         End Get
     End Property
 
+    Public ReadOnly Property IsNotOverriden() As Boolean
+        Get
+            Return String.IsNullOrEmpty(GetAttribute("overrides", "parent::property"))
+        End Get
+    End Property
+
     Public ReadOnly Property FullpathTypeDescription() As String
         Get
             Dim strResult As String = ""

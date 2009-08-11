@@ -57,6 +57,6 @@ Public Class dlgOverrideProperties
 
     Private Sub dlgOverrideProperties_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         m_xmlView.LoadProperties(lstOverrideProperties)
-        Me.Text = "Add overrided Properties to class " + m_xmlView.Name
+        Me.Text = "Add overridden Properties to class " + m_xmlView.Name
     End Sub
 End Class

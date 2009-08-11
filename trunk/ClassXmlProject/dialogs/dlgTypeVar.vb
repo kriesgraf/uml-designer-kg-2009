@@ -61,6 +61,9 @@ Public Class dlgTypeVar
                 ' Load document values
                 .LoadValues()
 
+                'Check if parent is an overridden property and then locks fields
+                .CheckOverridenProperty(GroupType, chkArray)
+
                 ' Bind controls and document values
                 .InitCheckBoxArray(chkArray)
                 .InitBindingOption(optTypeArray)
