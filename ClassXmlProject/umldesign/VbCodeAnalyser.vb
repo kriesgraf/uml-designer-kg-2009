@@ -95,6 +95,7 @@ Public Class VbCodeAnalyser
     Private m_strVbSourceName As String
     Private m_bParseInheritsDeclaration As Boolean = False
     Private m_bParseTypedefsDeclaration As Boolean = False
+    Private m_bParseVbDocComment As Boolean = False
 
 #End Region
 
@@ -121,6 +122,12 @@ Public Class VbCodeAnalyser
     Public WriteOnly Property TypedefsDeclaration() As Boolean
         Set(ByVal value As Boolean)
             m_bParseTypedefsDeclaration = value
+        End Set
+    End Property
+
+    Public WriteOnly Property VbDocComment() As Boolean
+        Set(ByVal value As Boolean)
+            m_bParseVbDocComment = value
         End Set
     End Property
 
@@ -1291,7 +1298,11 @@ Public Class VbCodeAnalyser
                 m_textWriter.WriteAttributeString("checked", "False")
                 m_textWriter.WriteAttributeString("start", m_iNbLine.ToString)
                 m_textWriter.WriteAttributeString("pos", iPos.ToString)
-                m_textWriter.WriteString(strReadLine)
+                If m_bParseVbDocComment Then
+                    m_textWriter.WriteString(strReadLine.Split("'''").Last)
+                Else
+                    m_textWriter.WriteString(strReadLine)
+                End If
             End If
             m_textWriter.Flush()
 
@@ -1314,7 +1325,13 @@ Public Class VbCodeAnalyser
                         Return CheckComment(strReadLine, iStopClassDeclaration, bCheckComment)
                     Else
                         ''Console.WriteLine("VB-Doc: " + strReadLine)
-                        If bCheckComment Then m_textWriter.WriteString(vbCrLf + strReadLine)
+                        If bCheckComment Then
+                            If m_bParseVbDocComment Then
+                                m_textWriter.WriteString(strReadLine.Split("'''").Last)
+                            Else
+                                m_textWriter.WriteString(vbCrLf + strReadLine)
+                            End If
+                        End If
                     End If
                 End If
             Loop Until strReadLine Is Nothing

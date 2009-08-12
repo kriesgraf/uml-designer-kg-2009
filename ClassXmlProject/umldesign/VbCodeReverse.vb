@@ -9,8 +9,13 @@ Public Class VbCodeReverse
                                    Optional ByVal bRecursive As Boolean = True) As Boolean
         Dim bResult As String = False
         Try
+            Dim directory As String() = folder.Split(Path.DirectorySeparatorChar)
+
             document.AppendChild(document.CreateNode(XmlNodeType.Element, "project", ""))
+            document.DocumentElement.Attributes.SetNamedItem(document.CreateAttribute("name")).Value = directory.Last
             bResult = LoadFolders(folder, document.DocumentElement, bRecursive)
+
+            ' TODO: implements into workspace
             If bResult Then document.Save(My.Computer.FileSystem.CombinePath(folder, "example.xml"))
 
         Catch ex As Exception
@@ -25,20 +30,12 @@ Public Class VbCodeReverse
 
         Dim bResult As String = False
         Try
-            Dim child As XmlNode
-
-            package.Attributes.SetNamedItem(package.OwnerDocument.CreateAttribute("folder"))
-            package.Attributes.GetNamedItem("folder").Value = folder
-
             For Each foundFile As String In My.Computer.FileSystem.GetFiles(folder, FileIO.SearchOption.SearchTopLevelOnly, "*.vb")
                 LoadFile(foundFile, package)
             Next
             If bRecursive Then
                 For Each directory As String In My.Computer.FileSystem.GetDirectories(folder)
-
-                    child = package.AppendChild(package.OwnerDocument.CreateNode(XmlNodeType.Element, "package", ""))
-
-                    LoadFolders(My.Computer.FileSystem.CombinePath(folder, directory), child, bRecursive)
+                    LoadFolders(My.Computer.FileSystem.CombinePath(folder, directory), package, bRecursive)
                 Next
             End If
             bResult = True
@@ -54,11 +51,17 @@ Public Class VbCodeReverse
         Dim bResult As String = False
         Try
             Dim analyser As New VbCodeAnalyser
+
             analyser.InheritsDeclaration = True
             analyser.TypedefsDeclaration = True
+            analyser.VbDocComment = True
+
             analyser.Analyse(filename)
+
             package.AppendChild(package.OwnerDocument.ImportNode(analyser.Document.DocumentElement, True))
+
             analyser.Dispose()
+            analyser = Nothing
 
             bResult = True
 
