@@ -100,6 +100,21 @@
   </xsl:template>
 <!-- ======================================================================= -->
   <xsl:template match="class" mode="Code">
+    <xsl:variable name="Methods">
+      <xsl:apply-templates select="." mode="Signature"/>
+    </xsl:variable>
+    <xsl:variable name="ShouldInherit">
+      <xsl:for-each select="msxsl:node-set($Methods)//signature[@implementation='abstract']">
+        <xsl:variable name="Signature" select="@name"/>
+        <xsl:choose>
+          <xsl:when test="msxsl:node-set($Methods)//signature[@implementation!='abstract' and @name=$Signature]"/>
+          <xsl:otherwise>
+            <xsl:copy-of select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:copy-of select="$ShouldInherit"/>
     <xsl:element name="code">
       <!-- Possible "Merge" value: no, yes (To preserve your previous generated code) -->
       <xsl:attribute name="Merge">yes</xsl:attribute>
@@ -131,7 +146,7 @@ Namespace <xsl:value-of select="parent::package/@name"/>
     <xsl:if test="not(parent::package)">
 Public </xsl:if>
 	<xsl:if test="@behaviour"><xsl:value-of select="concat(@behaviour,' ')"/> </xsl:if>
-    <xsl:if test="@implementation!='abstract' and method[@implementation='abstract']">MustInherit </xsl:if>
+    <xsl:if test="msxsl:node-set($ShouldInherit)/*">MustInherit </xsl:if>
     <xsl:value-of select="concat($Implementation,@name)"/>
     <xsl:if test="model"><xsl:apply-templates select="model" mode="Class"/></xsl:if>
     <xsl:apply-templates select="inherited" mode="Code">
@@ -677,8 +692,39 @@ End Namespace
     <xsl:text>
     </xsl:text>
   </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="class" mode="Signature">
+    <xsl:copy>
+      <xsl:copy-of select="@name"/>
+      <xsl:copy-of select="@implementation"/>
+      <xsl:apply-templates select="method[id(@overrides)[@implementation='abstract' or @implementation='root' or @implementation='virtual']]" mode="Signature"/>
+      <xsl:apply-templates select="method[@implementation='abstract']" mode="Signature"/>
+      <xsl:apply-templates select="id(inherited/@idref)" mode="Signature"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="method" mode="Signature">
+    <xsl:variable name="Signature">
+      <xsl:value-of select="@name"/>
+      <xsl:text>(</xsl:text>
+      <xsl:for-each select="param">
+        <xsl:if test="position()!=1">,</xsl:if>
+        <xsl:value-of select="concat(type/@desc,type/@idref)"/>
+      </xsl:for-each>
+      <xsl:text>)</xsl:text>
+    </xsl:variable>
+    <signature name="{$Signature}">
+      <xsl:copy-of select="@implementation"/>
+      <xsl:if test="@overrides">
+        <xsl:attribute name="overrides">
+          <xsl:value-of select="@overrides"/>
+        </xsl:attribute>
+      </xsl:if>
+    </signature>
+  </xsl:template>
 <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
