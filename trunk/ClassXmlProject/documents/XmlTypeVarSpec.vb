@@ -59,6 +59,16 @@ Public Class XmlTypeVarSpec
         End Get
     End Property
 
+    Public ReadOnly Property IsStaticProperty() As Boolean
+        Get
+            Dim tempo As String = GetAttribute("member", "parent::property")
+            If String.IsNullOrEmpty(tempo) Then
+                Return False
+            End If
+            Return (tempo = "class")
+        End Get
+    End Property
+
     Public ReadOnly Property FullpathTypeDescription() As String
         Get
             Dim strResult As String = ""

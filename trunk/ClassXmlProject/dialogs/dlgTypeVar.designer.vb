@@ -205,7 +205,8 @@ Partial Class dlgTypeVar
         Me.chkTypeConst.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                     Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.chkTypeConst.AutoSize = True
-        Me.chkTypeConst.Location = New System.Drawing.Point(3, 3)
+        Me.chkTypeConst.Location = New System.Drawing.Point(14, 3)
+        Me.chkTypeConst.Margin = New System.Windows.Forms.Padding(14, 3, 3, 3)
         Me.chkTypeConst.Name = "chkTypeConst"
         Me.chkTypeConst.Size = New System.Drawing.Size(68, 21)
         Me.chkTypeConst.TabIndex = 7
@@ -217,7 +218,7 @@ Partial Class dlgTypeVar
         Me.chkReference.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                     Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.chkReference.AutoSize = True
-        Me.chkReference.Location = New System.Drawing.Point(77, 3)
+        Me.chkReference.Location = New System.Drawing.Point(88, 3)
         Me.chkReference.Name = "chkReference"
         Me.chkReference.Size = New System.Drawing.Size(86, 21)
         Me.chkReference.TabIndex = 6
@@ -228,7 +229,7 @@ Partial Class dlgTypeVar
         '
         Me.lblTypeLevel.Anchor = System.Windows.Forms.AnchorStyles.Right
         Me.lblTypeLevel.AutoSize = True
-        Me.lblTypeLevel.Location = New System.Drawing.Point(169, 7)
+        Me.lblTypeLevel.Location = New System.Drawing.Point(180, 7)
         Me.lblTypeLevel.Name = "lblTypeLevel"
         Me.lblTypeLevel.Size = New System.Drawing.Size(36, 13)
         Me.lblTypeLevel.TabIndex = 4
@@ -239,7 +240,7 @@ Partial Class dlgTypeVar
         '
         Me.cmbTypeLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbTypeLevel.FormattingEnabled = True
-        Me.cmbTypeLevel.Location = New System.Drawing.Point(211, 3)
+        Me.cmbTypeLevel.Location = New System.Drawing.Point(222, 3)
         Me.cmbTypeLevel.Name = "cmbTypeLevel"
         Me.cmbTypeLevel.Size = New System.Drawing.Size(97, 21)
         Me.cmbTypeLevel.TabIndex = 5

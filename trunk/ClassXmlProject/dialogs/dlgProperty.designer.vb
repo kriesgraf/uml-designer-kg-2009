@@ -100,7 +100,8 @@ Partial Class dlgProperty
         'cmbRange
         '
         Me.cmbRange.FormattingEnabled = True
-        Me.cmbRange.Location = New System.Drawing.Point(3, 3)
+        Me.cmbRange.Location = New System.Drawing.Point(14, 3)
+        Me.cmbRange.Margin = New System.Windows.Forms.Padding(14, 3, 3, 3)
         Me.cmbRange.Name = "cmbRange"
         Me.cmbRange.Size = New System.Drawing.Size(80, 21)
         Me.cmbRange.TabIndex = 6
@@ -121,9 +122,9 @@ Partial Class dlgProperty
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.OK_Button.Location = New System.Drawing.Point(404, 7)
+        Me.OK_Button.Location = New System.Drawing.Point(402, 7)
         Me.OK_Button.Name = "OK_Button"
-        Me.OK_Button.Size = New System.Drawing.Size(56, 23)
+        Me.OK_Button.Size = New System.Drawing.Size(55, 23)
         Me.OK_Button.TabIndex = 0
         Me.OK_Button.Text = "OK"
         '
@@ -168,7 +169,8 @@ Partial Class dlgProperty
         'cmbGetAccess
         '
         Me.cmbGetAccess.FormattingEnabled = True
-        Me.cmbGetAccess.Location = New System.Drawing.Point(3, 3)
+        Me.cmbGetAccess.Location = New System.Drawing.Point(14, 3)
+        Me.cmbGetAccess.Margin = New System.Windows.Forms.Padding(14, 3, 3, 3)
         Me.cmbGetAccess.Name = "cmbGetAccess"
         Me.cmbGetAccess.Size = New System.Drawing.Size(83, 21)
         Me.cmbGetAccess.TabIndex = 10
@@ -177,7 +179,7 @@ Partial Class dlgProperty
         '
         Me.lblGetBy.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom), System.Windows.Forms.AnchorStyles)
         Me.lblGetBy.AutoSize = True
-        Me.lblGetBy.Location = New System.Drawing.Point(92, 0)
+        Me.lblGetBy.Location = New System.Drawing.Point(103, 0)
         Me.lblGetBy.Name = "lblGetBy"
         Me.lblGetBy.Size = New System.Drawing.Size(22, 27)
         Me.lblGetBy.TabIndex = 13
@@ -187,7 +189,7 @@ Partial Class dlgProperty
         'cmbGetBy
         '
         Me.cmbGetBy.FormattingEnabled = True
-        Me.cmbGetBy.Location = New System.Drawing.Point(120, 3)
+        Me.cmbGetBy.Location = New System.Drawing.Point(131, 3)
         Me.cmbGetBy.Name = "cmbGetBy"
         Me.cmbGetBy.Size = New System.Drawing.Size(64, 21)
         Me.cmbGetBy.TabIndex = 11
@@ -196,18 +198,18 @@ Partial Class dlgProperty
         '
         Me.chkModifier.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom), System.Windows.Forms.AnchorStyles)
         Me.chkModifier.AutoSize = True
-        Me.chkModifier.Location = New System.Drawing.Point(190, 3)
+        Me.chkModifier.Location = New System.Drawing.Point(201, 3)
         Me.chkModifier.Name = "chkModifier"
-        Me.chkModifier.Size = New System.Drawing.Size(53, 21)
+        Me.chkModifier.Size = New System.Drawing.Size(68, 21)
         Me.chkModifier.TabIndex = 12
-        Me.chkModifier.Text = "Const"
+        Me.chkModifier.Text = "Constant"
         Me.chkModifier.UseVisualStyleBackColor = True
         '
         'chkGetInline
         '
         Me.chkGetInline.AutoSize = True
         Me.chkGetInline.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
-        Me.chkGetInline.Location = New System.Drawing.Point(249, 3)
+        Me.chkGetInline.Location = New System.Drawing.Point(275, 3)
         Me.chkGetInline.Name = "chkGetInline"
         Me.chkGetInline.Size = New System.Drawing.Size(115, 17)
         Me.chkGetInline.TabIndex = 14
@@ -242,7 +244,8 @@ Partial Class dlgProperty
         'cmbSetAccess
         '
         Me.cmbSetAccess.FormattingEnabled = True
-        Me.cmbSetAccess.Location = New System.Drawing.Point(3, 3)
+        Me.cmbSetAccess.Location = New System.Drawing.Point(14, 3)
+        Me.cmbSetAccess.Margin = New System.Windows.Forms.Padding(14, 3, 3, 3)
         Me.cmbSetAccess.Name = "cmbSetAccess"
         Me.cmbSetAccess.Size = New System.Drawing.Size(83, 21)
         Me.cmbSetAccess.TabIndex = 10
@@ -251,7 +254,7 @@ Partial Class dlgProperty
         '
         Me.lblSetBy.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom), System.Windows.Forms.AnchorStyles)
         Me.lblSetBy.AutoSize = True
-        Me.lblSetBy.Location = New System.Drawing.Point(92, 0)
+        Me.lblSetBy.Location = New System.Drawing.Point(103, 0)
         Me.lblSetBy.Name = "lblSetBy"
         Me.lblSetBy.Size = New System.Drawing.Size(22, 27)
         Me.lblSetBy.TabIndex = 13
@@ -261,7 +264,7 @@ Partial Class dlgProperty
         'cmbSetby
         '
         Me.cmbSetby.FormattingEnabled = True
-        Me.cmbSetby.Location = New System.Drawing.Point(120, 3)
+        Me.cmbSetby.Location = New System.Drawing.Point(131, 3)
         Me.cmbSetby.Name = "cmbSetby"
         Me.cmbSetby.Size = New System.Drawing.Size(64, 21)
         Me.cmbSetby.TabIndex = 11
@@ -270,7 +273,7 @@ Partial Class dlgProperty
         '
         Me.chkSetInline.AutoSize = True
         Me.chkSetInline.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
-        Me.chkSetInline.Location = New System.Drawing.Point(190, 3)
+        Me.chkSetInline.Location = New System.Drawing.Point(201, 3)
         Me.chkSetInline.Name = "chkSetInline"
         Me.chkSetInline.Size = New System.Drawing.Size(115, 17)
         Me.chkSetInline.TabIndex = 14
@@ -296,7 +299,7 @@ Partial Class dlgProperty
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 86.61972!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.38028!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 107.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -312,7 +315,7 @@ Partial Class dlgProperty
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.Location = New System.Drawing.Point(466, 7)
+        Me.Cancel_Button.Location = New System.Drawing.Point(463, 7)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -457,7 +460,7 @@ Partial Class dlgProperty
         '
         Me.lblBehaviour.AutoSize = True
         Me.lblBehaviour.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblBehaviour.Location = New System.Drawing.Point(89, 0)
+        Me.lblBehaviour.Location = New System.Drawing.Point(100, 0)
         Me.lblBehaviour.Name = "lblBehaviour"
         Me.lblBehaviour.Size = New System.Drawing.Size(58, 27)
         Me.lblBehaviour.TabIndex = 9
@@ -467,7 +470,7 @@ Partial Class dlgProperty
         'cmbBehaviour
         '
         Me.cmbBehaviour.FormattingEnabled = True
-        Me.cmbBehaviour.Location = New System.Drawing.Point(153, 3)
+        Me.cmbBehaviour.Location = New System.Drawing.Point(164, 3)
         Me.cmbBehaviour.Name = "cmbBehaviour"
         Me.cmbBehaviour.Size = New System.Drawing.Size(82, 21)
         Me.cmbBehaviour.TabIndex = 10
@@ -476,7 +479,7 @@ Partial Class dlgProperty
         '
         Me.chkMember.AutoSize = True
         Me.chkMember.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.chkMember.Location = New System.Drawing.Point(241, 3)
+        Me.chkMember.Location = New System.Drawing.Point(252, 3)
         Me.chkMember.Name = "chkMember"
         Me.chkMember.Size = New System.Drawing.Size(91, 21)
         Me.chkMember.TabIndex = 12
@@ -487,7 +490,7 @@ Partial Class dlgProperty
         '
         Me.chkOverridable.AutoSize = True
         Me.chkOverridable.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.chkOverridable.Location = New System.Drawing.Point(338, 3)
+        Me.chkOverridable.Location = New System.Drawing.Point(349, 3)
         Me.chkOverridable.Name = "chkOverridable"
         Me.chkOverridable.Size = New System.Drawing.Size(80, 21)
         Me.chkOverridable.TabIndex = 11
