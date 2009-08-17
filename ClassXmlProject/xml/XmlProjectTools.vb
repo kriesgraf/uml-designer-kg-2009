@@ -2328,10 +2328,10 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Public Shared Sub TrimComments(ByVal document As XmlDocument)
+    Public Shared Sub TrimComments(ByVal document As XmlNode)
         Dim tempo As String
 
-        For Each child As XmlNode In document.SelectNodes("//comment | //element | //enumvalue")
+        For Each child As XmlNode In document.SelectNodes("descendant::comment | descendant::element | descendant::enumvalue")
             If child.Attributes.GetNamedItem("brief") IsNot Nothing Then
                 tempo = child.Attributes.GetNamedItem("brief").Value
                 child.Attributes.GetNamedItem("brief").Value = tempo.Trim

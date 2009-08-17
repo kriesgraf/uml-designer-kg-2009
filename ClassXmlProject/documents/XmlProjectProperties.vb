@@ -193,7 +193,7 @@ Public Class XmlProjectProperties
     End Function
 
     Public Sub TrimComments()
-        XmlProjectTools.TrimComments(Me.Document)
+        XmlProjectTools.TrimComments(Me.Document.DocumentElement)
     End Sub
 
     Protected Friend Overrides Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
