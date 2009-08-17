@@ -211,4 +211,22 @@ Public Class dlgProperty
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
         e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
     End Sub
+
+    Private Sub cmbSetAccess_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSetAccess.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub cmbSetAccess_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles cmbSetAccess.Validating
+        e.Cancel = False
+        If m_xmlView.TypeVarDefinition.Modifier Then
+            If cmbSetAccess.SelectedItem.ToString <> "no" Then
+                ' Set the ErrorProvider error with the text to display. 
+                Me.errorProvider.SetIconPadding(cmbSetAccess, 0)
+                Me.errorProvider.SetIconAlignment(cmbSetAccess, ErrorIconAlignment.TopLeft)
+                Me.errorProvider.SetError(cmbSetAccess, "'Constant' property can't have setter!")
+
+                e.Cancel = True
+            End If
+        End If
+    End Sub
 End Class

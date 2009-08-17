@@ -183,4 +183,22 @@ Public Class dlgTypeVar
     Private Sub cmbTypedefs_Validating(ByVal sender As ComboBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles cmbTypedefs.Validating
         e.Cancel = IsInvalidType(sender, Me.errorProvider)
     End Sub
+
+    Private Sub chkTypeConst_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkTypeConst.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub chkTypeConst_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles chkTypeConst.Validating
+        e.Cancel = False
+        If CType(m_xmlView.Tag, ELanguage) = ELanguage.Language_Vbasic And chkTypeConst.Checked Then
+            If m_xmlView.IsStaticProperty Then
+                ' Set the ErrorProvider error with the text to display. 
+                Me.errorProvider.SetIconPadding(chkTypeConst, 0)
+                Me.errorProvider.SetIconAlignment(chkTypeConst, ErrorIconAlignment.TopLeft)
+                Me.errorProvider.SetError(chkTypeConst, "'Shared' property can't be 'Constant'!")
+
+                e.Cancel = True
+            End If
+        End If
+    End Sub
 End Class
