@@ -222,6 +222,8 @@ Public Class UmlCodeGenerator
             observer.Maximum = 3
             observer.ProgressBarVisible = True
 
+            XmlProjectTools.TrimComments(node)
+
             Dim strUmlFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strStyleSheet As String = My.Computer.FileSystem.CombinePath(strUmlFolder, cstCodeSourceVbDotNetStyleSheet)
             strTransformation = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, cstUpdate + ".xml")
