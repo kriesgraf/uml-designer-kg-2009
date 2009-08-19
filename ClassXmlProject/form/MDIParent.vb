@@ -23,6 +23,12 @@ Public Class MDIParent
 
 #Region "Properties"
 
+    Public WriteOnly Property Log() As String Implements InterfProgression.Log
+        Set(ByVal value As String)
+            Me.strpStatusLabel.Text = value
+        End Set
+    End Property
+
     Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
         Set(ByVal value As Integer)
             Me.strpProgressBar.Maximum = value
@@ -119,6 +125,37 @@ Public Class MDIParent
                 If ChildForm.OpenProject(Me, strTempFile) Then
                     ChildForm.MdiParent = Me
                     ChildForm.Text = "Project imported from XMI"
+                    ChildForm.Show()
+                End If
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Public Sub ImportFromVbCodeSource()
+        Try
+            Dim dlgOpenFolder As New FolderBrowserDialog
+            If My.Settings.ImportFolder = m_strCurrentFolder Then
+                dlgOpenFolder.RootFolder = My.Computer.FileSystem.SpecialDirectories.MyDocuments
+            Else
+                dlgOpenFolder.SelectedPath = My.Settings.ImportFolder
+            End If
+
+            dlgOpenFolder.Description = "Select the root folder of a VB.NET project..."
+
+            If (dlgOpenFolder.ShowDialog(Me) = DialogResult.OK) _
+            Then
+                Dim strTempFile As String = ""
+                My.Settings.ImportFolder = dlgOpenFolder.SelectedPath
+
+                XmlProjectTools.ConvertVbCodeSource(Me, dlgOpenFolder.SelectedPath, strTempFile)
+
+                Dim ChildForm As New frmProject
+                ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
+                If ChildForm.OpenProject(Me, strTempFile) Then
+                    ChildForm.MdiParent = Me
+                    ChildForm.Text = "VB.NET Reverse Engineering"
                     ChildForm.Show()
                 End If
             End If
@@ -524,9 +561,13 @@ Public Class MDIParent
         End If
         XmlProjectTools.DEBUG_COMMANDS_ACTIVE = Me.DebugToolStripOption.Checked
     End Sub
-#End Region
 
     Private Sub mnuFileNewOmgUmlFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileNewOmgUmlFile.Click
         ImportFromOmgUmlModel()
     End Sub
+
+    Private Sub VbCodeReverse_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VbCodeReverse.Click
+        ImportFromVbCodeSource()
+    End Sub
+#End Region
 End Class
