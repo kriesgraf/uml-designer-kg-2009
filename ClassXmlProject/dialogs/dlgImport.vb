@@ -29,6 +29,11 @@ Public Class dlgImport
         End Set
     End Property
 
+    Public WriteOnly Property Log() As String Implements InterfProgression.Log
+        Set(ByVal value As String)
+        End Set
+    End Property
+
     Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
         Set(ByVal value As Integer)
             Me.pgbLoadImport.Maximum = value
