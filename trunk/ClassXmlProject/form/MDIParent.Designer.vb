@@ -32,6 +32,8 @@ Partial Class MDIParent
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuFileNewDoxygenFile = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuFileNewOmgUmlFile = New System.Windows.Forms.ToolStripMenuItem
+        Me.VbCodeReverse = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator7 = New System.Windows.Forms.ToolStripSeparator
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPatchApply = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditDatabase = New System.Windows.Forms.ToolStripMenuItem
@@ -91,7 +93,7 @@ Partial Class MDIParent
         '
         'mnuFile
         '
-        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNew, Me.mnuFileOpen, Me.ToolStripSeparator3, Me.mnuFileNewDoxygenFile, Me.mnuFileNewOmgUmlFile, Me.ToolStripMenuItem1, Me.ToolStripSeparator4, Me.mnuFileExit})
+        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFileNew, Me.mnuFileOpen, Me.ToolStripSeparator3, Me.mnuFileNewDoxygenFile, Me.mnuFileNewOmgUmlFile, Me.VbCodeReverse, Me.ToolStripSeparator7, Me.ToolStripMenuItem1, Me.ToolStripSeparator4, Me.mnuFileExit})
         Me.mnuFile.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder
         Me.mnuFile.MergeIndex = 0
         Me.mnuFile.Name = "mnuFile"
@@ -132,6 +134,17 @@ Partial Class MDIParent
         Me.mnuFileNewOmgUmlFile.Name = "mnuFileNewOmgUmlFile"
         Me.mnuFileNewOmgUmlFile.Size = New System.Drawing.Size(228, 22)
         Me.mnuFileNewOmgUmlFile.Text = "Import OMG UML XMI 2.1 file..."
+        '
+        'VbCodeReverse
+        '
+        Me.VbCodeReverse.Name = "VbCodeReverse"
+        Me.VbCodeReverse.Size = New System.Drawing.Size(228, 22)
+        Me.VbCodeReverse.Text = "VB.NET Reverse Engineering..."
+        '
+        'ToolStripSeparator7
+        '
+        Me.ToolStripSeparator7.Name = "ToolStripSeparator7"
+        Me.ToolStripSeparator7.Size = New System.Drawing.Size(225, 6)
         '
         'ToolStripMenuItem1
         '
@@ -497,5 +510,7 @@ Partial Class MDIParent
     Friend WithEvents DebugToolStripOption As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator6 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ExternalTools As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents VbCodeReverse As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator7 As System.Windows.Forms.ToolStripSeparator
 
 End Class

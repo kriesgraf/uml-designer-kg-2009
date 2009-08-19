@@ -840,6 +840,10 @@ Public Class frmProject
         Me.Mainframe.ImportFromOmgUmlModel()
     End Sub
 
+    Private Sub VbCodeReverse_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VbCodeReverse.Click
+        Me.Mainframe.ImportFromVbCodeSource()
+    End Sub
+
     Private Sub mnuTrimComments_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuTrimComments.Click
         Dim oldCursor As Cursor = Me.Cursor
         Me.Cursor = Cursors.WaitCursor

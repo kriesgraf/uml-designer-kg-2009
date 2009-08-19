@@ -50,6 +50,7 @@ Public Class XmlProjectTools
     Private Const cstTag2ImportStyle As String = "tag2imp.xsl"
     Private Const cstDoxygen2ProjectStyle As String = "dox2prj.xsl"
     Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
+    Private Const cstVbCodeReverseEngineering As String = "vbnet2xprj.xsl"
     Private Const cstProject2XmiStyle As String = "xprj2xmi.xsl"
     Private Const cstIbmXmi2ProjectStyle As String = "rhp-xmi2prj.xsl"
     Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xsl"
@@ -478,6 +479,107 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
+    Public Shared Function ConvertVbCodeSource(ByVal form As Form, ByVal strRootFolder As String, ByRef strTempFile As String) As Boolean
+        Dim oldCursor As Cursor = form.Cursor
+        Dim observer As InterfProgression = CType(form, InterfProgression)
+        Dim bResult As Boolean = False
+        Dim document As New XmlDocument
+
+        strTempFile = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
+                                                         cstTempUmlFile + ".xprj")
+        Try
+            form.Cursor = Cursors.WaitCursor
+
+            observer.ProgressBarVisible = True
+
+            VbCodeReverse.Reverse(observer, strRootFolder, document)
+            observer.Log = ""
+            observer.Minimum = 0
+            observer.Maximum = 10
+            observer.Increment(1)
+
+            Dim styleXsl As New XslSimpleTransform(True)
+            styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
+                                        My.Settings.ToolsFolder + cstVbCodeReverseEngineering))
+            observer.Increment(1)
+
+            Dim argList As New XslSimpleTransform.Arguments
+            argList.Add("ProjectFolder", strRootFolder)
+            argList.Add("ToolsFolder", My.Settings.ToolsFolder)
+            argList.Add("LanguageFolder", Application.LocalUserAppDataPath.ToString)
+            argList.Add("LanguageID", CInt(ELanguage.Language_Vbasic).ToString)
+
+            ' This transformation generates a metafile 85% compliant with end-generated file
+            styleXsl.Transform(document.DocumentElement, strTempFile, argList)
+            observer.Increment(1)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
+
+        Dim stage As String = "Format final project to UML Designer"
+
+        Try
+            document = New XmlDocument
+            observer.ProgressBarVisible = True
+            LoadDocument(form, document, strTempFile, True)
+            observer.Increment(1)
+
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            observer.ProgressBarVisible = False
+        End Try
+
+        Try
+            form.Cursor = Cursors.WaitCursor
+            observer.ProgressBarVisible = True
+
+            stage = "Apply UML Designer element indexation"
+            RenumberProject(document.DocumentElement, True)
+            observer.Increment(1)
+
+            stage = "Remove prefix in properties"
+            CleanPrefixProperties(document)
+            observer.Increment(1)
+
+            stage = "Merge properties and attributes"
+            MergeAttributesProperties(document)
+            observer.Increment(1)
+
+            stage = "Update nodes collaboration"
+            UpdatesCollaborations(document)
+            observer.Increment(1)
+
+            stage = "Final saving"
+            document.Save(strTempFile)
+            observer.Increment(1)
+
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = False
+        End Try
+
+        Try
+            observer.ProgressBarVisible = True
+            stage = "Reload to check DTD"
+            LoadDocument(form, document, strTempFile, True)
+            observer.Increment(1)
+            bResult = True
+
+        Catch ex As Exception
+            Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
+        Finally
+            observer.ProgressBarVisible = False
+        End Try
+        Return bResult
+    End Function
+
     Public Shared Function ConvertOmgUmlModel(ByVal form As Form, ByVal strFilename As String, _
                                               ByRef strTempFile As String, Optional ByVal iMode As Integer = 1) As Boolean
         Dim oldCursor As Cursor = form.Cursor
@@ -560,7 +662,7 @@ Public Class XmlProjectTools
             MergeAccessorProperties(document, strGetter, strSetter)
             observer.Increment(1)
 
-            stage = "Update nodes collabration"
+            stage = "Update nodes collaboration"
             UpdatesCollaborations(document)
             observer.Increment(1)
 
@@ -825,8 +927,8 @@ Public Class XmlProjectTools
             observer.Increment(2)
 
             ' Some doxygen types remain as simple declaration, we must translate them to UML design Xml elements
-            stage = "Rename simple " + ELanguage.ToString + " declaration"
-            RenameTypeDoxygenTagFile(ELanguage, document)
+            stage = "Rename simple " + eLanguage.ToString + " declaration"
+            RenameTypeDoxygenTagFile(eLanguage, document)
             observer.Increment(2)
 
             stage = "Merge properties and accessors"
@@ -910,7 +1012,7 @@ Public Class XmlProjectTools
                 Using reader As XmlReader = XmlReader.Create(strFilename, settings)
                     Try
                         document.Load(reader)
-			            eResult = XmlProjectTools.EResult.Completed
+                        eResult = XmlProjectTools.EResult.Completed
 
                     Catch ex As XmlSchemaException
                         eResult = XmlProjectTools.EResult.Failed
@@ -2339,6 +2441,10 @@ Public Class XmlProjectTools
             tempo = child.InnerText
             child.InnerText = tempo.Trim
         Next
+    End Sub
+
+    Public Shared Sub MergeAttributesProperties(ByVal document As XmlDocument)
+
     End Sub
 
     Public Shared Sub MergeAccessorProperties(ByVal document As XmlDocument, _
