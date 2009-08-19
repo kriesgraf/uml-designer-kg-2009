@@ -9,6 +9,7 @@ Imports Microsoft.VisualBasic
 #Region "Interfaces"
 
 Public Interface InterfProgression
+    WriteOnly Property Log() As String
     WriteOnly Property Minimum() As Integer
     WriteOnly Property Maximum() As Integer
     WriteOnly Property ProgressBarVisible() As Boolean

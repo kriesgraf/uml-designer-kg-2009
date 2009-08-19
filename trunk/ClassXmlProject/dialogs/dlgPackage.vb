@@ -13,6 +13,11 @@ Public Class dlgPackage
     Private m_strProjectFolder As String
     Private m_bInvalideCell As Boolean = False
 
+    Public WriteOnly Property Log() As String Implements InterfProgression.Log
+        Set(ByVal value As String)
+        End Set
+    End Property
+
     Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
         Set(ByVal value As Integer)
             Me.strpProgressBar.Maximum = value

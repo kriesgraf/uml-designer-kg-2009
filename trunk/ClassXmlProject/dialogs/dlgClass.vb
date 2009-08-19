@@ -9,6 +9,7 @@ Public Class dlgClass
     Implements InterfNodeCounter
     Implements InterfProgression
 
+
 #Region "Class declarations"
 
     Private m_toolTip As ToolTip
@@ -18,6 +19,11 @@ Public Class dlgClass
 #End Region
 
 #Region "Public methods"
+
+    Public WriteOnly Property Log() As String Implements InterfProgression.Log
+        Set(ByVal value As String)
+        End Set
+    End Property
 
     Public WriteOnly Property Maximum() As Integer Implements InterfProgression.Maximum
         Set(ByVal value As Integer)
