@@ -658,10 +658,21 @@ Public Class XmlProjectView
 
     Public Sub ConvertImportElement(ByVal composite As XmlComposite, ByVal child As XmlComponent)
         Dim parent As XmlImportSpec = TryCast(XmlNodeManager.GetInstance().CreateDocument(composite.Node), XmlImportSpec)
+        parent.Tag = composite.Tag
         If parent IsNot Nothing Then
             parent.ConvertComponent(child)
             m_Control.Binding.ResetBindings(True)
             Me.Updated = True
+        End If
+    End Sub
+
+    Public Sub ExchangeImports(ByVal composite As XmlComposite)
+        Dim parent As XmlImportSpec = TryCast(XmlNodeManager.GetInstance().CreateDocument(composite.Node), XmlImportSpec)
+        parent.Tag = composite.Tag
+        If parent IsNot Nothing Then
+            If parent.ExchangeImports() Then
+                Me.Updated = True
+            End If
         End If
     End Sub
 
@@ -737,6 +748,7 @@ Public Class XmlProjectView
                 .AddView("class_override_properties", New XmlClassOverridePropertiesView)
                 .AddView("class_override_methods", New XmlClassOverrideMethodsView)
                 .AddView("reference_redundancy", New XmlRefRedundancyView)
+                .AddView("import_exchange", New XmlExchangeImportsView)
             End With
         Catch ex As Exception
             MsgExceptionBox(ex)
