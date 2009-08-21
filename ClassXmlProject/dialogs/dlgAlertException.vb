@@ -42,7 +42,14 @@ Public Class dlgAlertException
 
     Private Sub PictureBox1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox1.Click
         If m_Exception.InnerException IsNot Nothing Then
-            MsgBox(m_Exception.InnerException.Message + vbCrLf + vbCrLf + m_Exception.InnerException.StackTrace, MsgBoxStyle.Critical, TypeName(m_Exception))
+            Dim current As Exception = m_Exception.InnerException
+            Dim strMessage As String = ""
+            While current IsNot Nothing
+                strMessage += current.Message + vbCrLf + vbCrLf + current.StackTrace
+                current = current.InnerException
+                strMessage += vbCrLf + "------------------------------------------------------------" + vbCrLf
+            End While
+            MsgBox(strMessage, MsgBoxStyle.Critical, TypeName(m_Exception))
         Else
             MsgBox("No inner exception", MsgBoxStyle.Exclamation, "Inner exception")
         End If
