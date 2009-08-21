@@ -361,43 +361,70 @@
     <xsl:param name="Comments"/>
     <xsl:param name="ParamName"/>
     <xsl:if test="not(msxsl:node-set($Comments)/*)">
-    <xsl:element name="comment">Insert here a comment</xsl:element>
+      <xsl:element name="comment">Insert here a comment</xsl:element>
     </xsl:if>
     <xsl:apply-templates select="msxsl:node-set($Comments)/*" mode="Param">
       <xsl:with-param name="ParamName" select="$ParamName"/>
     </xsl:apply-templates>
   </xsl:template>
   <!-- ======================================================================= -->
+  <xsl:template match="class" mode="Signature">
+    <xsl:copy>
+      <xsl:copy-of select="@name"/>
+      <xsl:copy-of select="@kind"/>
+      <xsl:copy-of select="@other"/>
+      <xsl:apply-templates select="descendant::method[contains(@other,'MustOverride') or contains(@other,'Overridable')]" mode="Signature">
+        <xsl:with-param name="ClassID" select="generate-id()"/>
+      </xsl:apply-templates>
+      <xsl:if test="@kind='Interface'">
+        <xsl:apply-templates select="descendant::method" mode="Signature">
+          <xsl:with-param name="ClassID" select="generate-id()"/>
+        </xsl:apply-templates>
+      </xsl:if>
+      <xsl:apply-templates select="descendant::inherited" mode="Signature"/>
+    </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="inherited" mode="Signature">
+    <xsl:variable name="ClassName" select="@name"/>
+    <xsl:apply-templates select="//class[@name=$ClassName]" mode="Signature"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="method" mode="Signature">
+    <xsl:param name="ClassID"/>
+    <signature name="{concat(@name,'(',@types,')')}">
+      <xsl:copy-of select="@other"/>
+      <xsl:attribute name="id">
+        <xsl:value-of select="$ClassID"/>
+      </xsl:attribute>
+    </signature>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="class" mode="ShouldInherit">
+    <xsl:apply-templates select="descendant::inherited" mode="Signature"/>
+    <!--xsl:variable name="ShouldInherit">
+    </xsl:variable>
+    <xsl:for-each select="msxsl:node-set($ShouldInherit)//signature">
+      <xsl:copy-of select="."/>
+    </xsl:for-each-->
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="method" mode="Overrides">
+    <xsl:param name="ShouldInherit"/>
+    <xsl:if test="@implements or contains(@other,'Overrides')">
+      <xsl:variable name="Signature">
+        <xsl:variable name="Signature2">
+          <xsl:apply-templates select="." mode="Signature"/>
+        </xsl:variable>
+        <xsl:value-of select="msxsl:node-set($Signature2)//signature/@name"/>
+      </xsl:variable>
+      <xsl:value-of select="msxsl:node-set($ShouldInherit)//signature[@name=$Signature]/@id"/>
+    </xsl:if>
+  </xsl:template>
+  <!-- ======================================================================= -->
   <xsl:template match="text()"/>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

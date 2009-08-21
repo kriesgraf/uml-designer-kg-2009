@@ -496,11 +496,13 @@ Public Class XmlProjectTools
             observer.Log = ""
             observer.Minimum = 0
             observer.Maximum = 10
+            observer.Log = "Load XSLT converter".PadRight(40)
             observer.Increment(1)
 
             Dim styleXsl As New XslSimpleTransform(True)
             styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
                                         My.Settings.ToolsFolder + cstVbCodeReverseEngineering))
+            observer.Log = "Convert metadata".PadRight(40)
             observer.Increment(1)
 
             Dim argList As New XslSimpleTransform.Arguments
@@ -543,7 +545,7 @@ Public Class XmlProjectTools
             observer.Increment(1)
 
             stage = "Remove prefix in properties"
-            CleanPrefixProperties(document)
+            CleanPrefixPropertiesAndElements(document)
             observer.Increment(1)
 
             stage = "Merge properties and attributes"
@@ -556,6 +558,7 @@ Public Class XmlProjectTools
 
             stage = "Final saving"
             document.Save(strTempFile)
+            observer.Log = "Loading project".PadRight(40)
             observer.Increment(1)
 
         Catch ex As Exception
@@ -653,7 +656,7 @@ Public Class XmlProjectTools
             observer.Increment(1)
 
             stage = "Remove prefix in properties"
-            CleanPrefixProperties(document)
+            CleanPrefixPropertiesAndElements(document)
             observer.Increment(1)
 
             stage = "Merge properties and accessors"
@@ -791,7 +794,7 @@ Public Class XmlProjectTools
 
             ' Remove prefix in properties , accessors, convert doxygen comments
             stage = "Remove prefix in properties"
-            CleanPrefixProperties(document)
+            CleanPrefixPropertiesAndElements(document)
             observer.Increment(1)
 
             stage = "Merge properties and accessors"
@@ -2444,7 +2447,15 @@ Public Class XmlProjectTools
     End Sub
 
     Public Shared Sub MergeAttributesProperties(ByVal document As XmlDocument)
+        Dim attribute As XmlNode
 
+        For Each child As XmlNode In document.SelectNodes("//property[@attribute='no']")
+            attribute = child.ParentNode.SelectSingleNode("property[@name='" + GetName(child) + "' and @attribute='yes']")
+            If attribute IsNot Nothing Then
+                AddAttributeValue(child, "attribute", "yes")
+                child.ParentNode.RemoveChild(attribute)
+            End If
+        Next
     End Sub
 
     Public Shared Sub MergeAccessorProperties(ByVal document As XmlDocument, _
@@ -2719,9 +2730,10 @@ Public Class XmlProjectTools
         Next
     End Sub
 
-    Shared Sub CleanPrefixProperties(ByVal document As XmlDocument, _
-                                            Optional ByVal regexPrefixMember As String = "([a-z]{1,2}|[a-z]{0,1}str)([A-Z])", _
+    Shared Sub CleanPrefixPropertiesAndElements(ByVal document As XmlDocument, _
+                                            Optional ByVal regexPrefixMember As String = "[a-z0-9]{1,}([A-Z].*)", _
                                             Optional ByVal prefixMember As String = "m_")
+
         Dim regex As New Regex(regexPrefixMember, RegexOptions.Compiled)
 
         Try
@@ -2730,17 +2742,25 @@ Public Class XmlProjectTools
                 If strName.StartsWith(prefixMember) Then
                     strName = strName.Substring(Len(prefixMember))
                     If regex.IsMatch(strName) Then
-                        Dim groups As String() = regex.Split(strName)
-                        If groups.Length = 4 Then
-                            strName = groups(2) + groups(3)
-                        End If
+                        Dim groups As GroupCollection = regex.Match(strName).Groups
+                        strName = groups(1).ToString
                     End If
+                End If
+                If strName.Length > 0 Then
+                    name.InnerText = strName
+                End If
+            Next
+
+            For Each name As XmlNode In document.SelectNodes("//element/@name")
+                Dim strName As String = name.InnerText
+                If regex.IsMatch(strName) Then
+                    Dim groups As GroupCollection = regex.Match(strName).Groups
+                    strName = groups(1).ToString
                     If strName.Length > 0 Then
                         name.InnerText = strName
                     End If
                 End If
             Next
-
         Catch ex As Exception
             Throw ex
         End Try

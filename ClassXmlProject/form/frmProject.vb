@@ -857,5 +857,19 @@ Public Class frmProject
             Me.Cursor = oldCursor
         End Try
     End Sub
+
+    Private Sub mnuExchangeImports_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+        Handles mnuProjectExchangeImports.Click, mnuPackageExchangeImports.Click
+
+        Try
+            m_xmlProject.ExchangeImports(lvwProjectMembers.SelectedItem)
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+
+
 #End Region
 End Class

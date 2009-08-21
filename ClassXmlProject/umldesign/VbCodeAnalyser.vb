@@ -12,6 +12,7 @@ Public Class VbCodeAnalyser
 
     ' General declarations
 
+    Private Const cstNotManagedRegion As String = "Other declarations (Not managed)"
 
     Private Const cstAccessModifier As String = "\b(Protected Friend |Protected |Public |Private |)"  ' Nothing for interface declaration
     Private Const cstAccessModifier2 As String = "\b(Dim |Protected Friend |Protected Friend |Protected |Public |Private |)"  ' 
@@ -45,6 +46,7 @@ Public Class VbCodeAnalyser
     Private Const cstStructDeclaration As String = cstAccessModifier2 + cstAllText + cstParameter2
     Private Const cstFunction As String = "Function"
     Private Const cstAbstractMethod As String = "\b(" + cstFunction + " |Sub |" + cstEvent + " )" + cstVarTypeFuncClassName
+    Private Const cstMethodDeclaration3 As String = "\(" + cstAllText + "\)( As " + cstNamespace + cstArraySize + ")?( Implements (.*\b))?"
     Private Const cstMethodDeclaration2 As String = "\(" + cstAllText + "\)"
     Private Const cstMethodDeclaration1 As String = "\(" + cstAllText + "\) As " + cstNamespace + cstArraySize
     Private Const cstMethodArgument As String = "(Optional |)" + cstInOutParam + cstParameter + cstAttributeValue
@@ -93,6 +95,7 @@ Public Class VbCodeAnalyser
     Private m_streamReader As StreamReader = Nothing
     Private m_lineReader As StreamReader = Nothing
     Private m_xmlDocument As XmlDocument = Nothing
+    Private m_strDocument As String = Nothing
     '    Private m_listLines As New SortedList(Of Integer, Long)
     Private m_strVbSourceName As String
     Private m_bParseInheritsDeclaration As Boolean = False
@@ -158,10 +161,12 @@ Public Class VbCodeAnalyser
 
     Public Function Analyse(ByVal strFolder As String, ByVal strName As String, _
                             Optional ByVal strSuffix As String = "", Optional ByVal strTempFolder As String = "") As String
-        Dim strXmlBase As String = My.Computer.FileSystem.CombinePath(strFolder, strTempFolder)
-        strXmlBase = My.Computer.FileSystem.CombinePath(strXmlBase, strName + strSuffix + ".xml")
+
+        m_strDocument = My.Computer.FileSystem.CombinePath(strFolder, strTempFolder)
+        m_strDocument = My.Computer.FileSystem.CombinePath(m_strDocument, strName + strSuffix + ".xml")
+
         Try
-            Using textWriter As XmlTextWriter = New XmlTextWriter(strXmlBase, Nothing)
+            Using textWriter As XmlTextWriter = New XmlTextWriter(m_strDocument, Nothing)
                 textWriter.Formatting = Formatting.Indented
                 textWriter.Indentation = 4
                 textWriter.IndentChar = Chr(32)
@@ -210,6 +215,8 @@ Public Class VbCodeAnalyser
                         strReadLine = streamReader.ReadLine()
                         'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
+                        Dim bNotManaged As Boolean
+
                         If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
                         Then
                             If CheckClassInstruction(iStartLine, strInstruction, strStatement) _
@@ -220,9 +227,9 @@ Public Class VbCodeAnalyser
                             Then
                                 ParsePackageDeclaration()
 
-                            ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                            ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction, bNotManaged) _
                             Then
-                                ParseRegionDeclaration(False, False)
+                                ParseRegionDeclaration(bNotManaged, False, False)
 
                             ElseIf CheckImportsInstruction(iStartLine, iStopLine, strInstruction) _
                             Then
@@ -252,14 +259,14 @@ Public Class VbCodeAnalyser
 
         Try
             m_xmlDocument = New XmlDocument
-            m_xmlDocument.Load(strXmlBase)
+            m_xmlDocument.Load(m_strDocument)
 
         Catch xe As XmlException
-            Throw New Exception("Error in file:" + vbCrLf + "'" + strXmlBase + "'" + vbCrLf _
+            Throw New Exception("Error in file:" + vbCrLf + "'" + m_strDocument + "'" + vbCrLf _
                                 + "Line: " + xe.LineNumber.ToString + vbCrLf _
                                 + "Position: " + xe.LinePosition.ToString, xe)
         End Try
-        Return strXmlBase
+        Return m_strDocument
     End Function
 
     Public Function LoadLines(ByVal iStartLine As Integer, ByVal iStopLine As Integer) As String
@@ -324,11 +331,13 @@ Public Class VbCodeAnalyser
 
             If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
             Then
+                Dim bNotManaged As Boolean
+
                 If regImportsDeclaration.IsMatch(strInstruction) = False _
                 Then
                     Exit Do
 
-                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction, bNotManaged) _
                 Then
                     Throw New Exception("Do not defined Region inside 'Imports' declarations")
 
@@ -366,6 +375,8 @@ Public Class VbCodeAnalyser
             strReadLine = m_streamReader.ReadLine()
             'Debug.Print(m_iNbLine.ToString + "-" + strReadLine)
 
+            Dim bNotManaged As Boolean
+
             If ParseLine(eState, strReadLine, strInstruction, iStartLine, iStopLine, iStopDeclaration) = ProcessState.Instruction _
             Then
                 If regex.IsMatch(strInstruction) _
@@ -380,9 +391,9 @@ Public Class VbCodeAnalyser
                 Then
                     ParsePackageDeclaration()
 
-                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction, bNotManaged) _
                 Then
-                    ParseRegionDeclaration(False, False)
+                    ParseRegionDeclaration(bNotManaged, False, False)
                 End If
 
                 strInstruction = ""
@@ -398,7 +409,7 @@ Public Class VbCodeAnalyser
         m_textWriter.Flush()
     End Sub
 
-    Private Sub ParseRegionDeclaration(ByVal bInterface As Boolean, _
+    Private Sub ParseRegionDeclaration(ByVal bNotManaged As Boolean, ByVal bInterface As Boolean, _
                                        Optional ByVal bAcceptMembers As Boolean = True)
         Dim iStartLine As Integer = 0
         Dim iStopLine As Integer = 0
@@ -420,17 +431,21 @@ Public Class VbCodeAnalyser
                 If regex.IsMatch(strInstruction) Then
                     Exit Do
 
-                ElseIf CheckClassInstruction(iStartLine, strInstruction, strStatement) _
-                Then
-                    ParseClassDeclaration(iStopLine, strStatement)
-
                 ElseIf CheckPackageInstruction(iStartLine, iStopLine, strInstruction) _
                 Then
                     Throw New Exception("Do not defined 'Namespace' inside 'Region' declarations")
 
-                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction, bNotManaged) _
                 Then
                     Throw New Exception("Do not defined interlocked 'Region' declarations")
+
+                ElseIf bNotManaged Then
+                    ' Nothing to do
+                    Debug.Print("Region not managed!")
+
+                ElseIf CheckClassInstruction(iStartLine, strInstruction, strStatement) _
+                Then
+                    ParseClassDeclaration(iStopLine, strStatement)
 
                 ElseIf CheckInheritsInstruction(iStartLine, iStopLine, strInstruction, strStatement) _
                 Then
@@ -482,6 +497,8 @@ Public Class VbCodeAnalyser
                         iStopClassDeclaration = 0
                     End If
 
+                    Dim bNotManaged As Boolean
+
                     If regex.IsMatch(strInstruction) Then
                         If iStopClassDeclaration > 0 _
                         Then
@@ -494,9 +511,9 @@ Public Class VbCodeAnalyser
                     Then
                         ParseInheritsDeclaration()
 
-                    ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction) _
+                    ElseIf CheckRegionInstruction(iStartLine, iStopLine, strInstruction, bNotManaged) _
                     Then
-                        ParseRegionDeclaration(bInterface)
+                        ParseRegionDeclaration(bNotManaged, bInterface)
 
                     ElseIf CheckClassInstruction(iStartLine, strInstruction, strStatement) _
                     Then
@@ -830,9 +847,7 @@ Public Class VbCodeAnalyser
 
             Dim groups As GroupCollection = regImportsDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("imports")
@@ -855,9 +870,7 @@ Public Class VbCodeAnalyser
 
             Dim groups As GroupCollection = regPackageDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("package")
@@ -873,14 +886,12 @@ Public Class VbCodeAnalyser
     End Function
 
     Private Function CheckRegionInstruction(ByRef iStartLine As Integer, ByRef iStopLine As Integer, _
-                                            ByVal strInstruction As String) As Boolean
+                                            ByVal strInstruction As String, ByRef bNotManaged As Boolean) As Boolean
         If regRegionDeclaration.IsMatch(strInstruction) Then
 
             Dim groups As GroupCollection = regRegionDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("region")
@@ -888,6 +899,11 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("start", iStartLine.ToString)
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("name", groups(1).ToString.Trim)
+
+            If groups(1).ToString.Contains(cstNotManagedRegion) Then
+                bNotManaged = True
+            End If
+
             m_textWriter.Flush()
             Return True
         End If
@@ -904,9 +920,7 @@ Public Class VbCodeAnalyser
             Dim groups As GroupCollection = regClassDeclaration.Match(strInstruction).Groups
             strStatement = groups(3).ToString.Trim
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("class")
@@ -930,9 +944,7 @@ Public Class VbCodeAnalyser
         Then
             Dim groups As GroupCollection = regInheritsDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             If regInheritsDeclaration.Split(strInstruction)(0).Trim.Length = 0 _
             Then
@@ -975,9 +987,7 @@ Public Class VbCodeAnalyser
 
             Dim groups As GroupCollection = regAbstractProperty.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("property")
@@ -998,9 +1008,7 @@ Public Class VbCodeAnalyser
 
             Dim groups As GroupCollection = regPropertyDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("property")
@@ -1022,9 +1030,7 @@ Public Class VbCodeAnalyser
 
             Dim groups As GroupCollection = regTypedefDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             strStatement = groups(3).ToString.Trim()
 
@@ -1048,9 +1054,7 @@ Public Class VbCodeAnalyser
 
                 Dim groups As GroupCollection = regAbstractMethod.Match(strInstruction).Groups
 
-                For i = 0 To groups.Count - 1
-                    Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-                Next
+                DebugGroups(groups)
 
                 strStatement = groups(1).ToString.Trim()
 
@@ -1076,9 +1080,7 @@ Public Class VbCodeAnalyser
                     tempo = groups(1).ToString.Trim
                 End If
 
-                For i = 0 To groups.Count - 1
-                    Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-                Next
+                DebugGroups(groups)
 
                 CheckParamsInstruction(tempo)
 
@@ -1096,12 +1098,10 @@ Public Class VbCodeAnalyser
             Dim iPos = GetPosition(regMethodDeclaration, strInstruction, iStartLine)
             Dim groups As GroupCollection = regMethodDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             strStatement = groups(5).ToString.Trim()
-            Dim tempo As String = groups(2).ToString.Trim() + " " + groups(3).ToString.Trim() + " " + groups(4).ToString.Trim()
+            Dim strOther As String = groups(2).ToString.Trim() + " " + groups(3).ToString.Trim() + " " + groups(4).ToString.Trim()
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("method")
@@ -1110,12 +1110,11 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("end", iStopLine.ToString)
             m_textWriter.WriteAttributeString("pos", iPos.ToString)
             m_textWriter.WriteAttributeString("visibility", groups(1).ToString.Trim())
-            m_textWriter.WriteAttributeString("other", tempo.Trim())
+            m_textWriter.WriteAttributeString("other", strOther.Trim())
             m_textWriter.WriteAttributeString("type", strStatement)
             m_textWriter.WriteAttributeString("name", groups(6).ToString.Trim())
             m_textWriter.Flush()
-            tempo = groups(3).ToString.Trim()
-
+            
             If strStatement = cstFunction Then
                 groups = regMethodDeclaration1.Match(strInstruction).Groups
                 CheckParamsInstruction(groups(1).ToString.Trim)
@@ -1127,16 +1126,24 @@ Public Class VbCodeAnalyser
                 CheckParamsInstruction(groups(1).ToString.Trim)
             End If
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
-            If strStatement = cstEvent Then
+            If strInstruction.Contains(" Implements ") Then
+                Dim regex As New Regex(cstMethodDeclaration3)
+                groups = regex.Match(strInstruction).Groups
+                Dim tempo As String = groups(6).ToString.Trim()
+                tempo = tempo.Substring(0, tempo.LastIndexOf("."))
+                m_textWriter.WriteAttributeString("implements", tempo)
+            End If
+
+            DebugGroups(groups)
+
+            If strStatement.Contains(cstEvent) Then
                 m_textWriter.WriteEndElement()
                 m_textWriter.Flush()
                 Return ClassMember.AbstractMethod
 
-            ElseIf tempo = cstMustOverride Then
+            ElseIf strOther.Contains(cstMustOverride) Then
                 m_textWriter.WriteEndElement()
                 m_textWriter.Flush()
                 Return ClassMember.AbstractMethod
@@ -1148,9 +1155,7 @@ Public Class VbCodeAnalyser
             Dim iPos = GetPosition(regOperatorDeclaration, strInstruction, iStartLine)
             Dim groups As GroupCollection = regOperatorDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             strStatement = "Operator"
             Dim tempo As String = groups(2).ToString.Trim() + " " + groups(3).ToString.Trim() + " " + groups(4).ToString.Trim()
@@ -1181,9 +1186,7 @@ Public Class VbCodeAnalyser
 
             Dim groups As GroupCollection = regAttributeDeclaration.Match(strInstruction).Groups
 
-            For i = 0 To groups.Count - 1
-                Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
-            Next
+            DebugGroups(groups)
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("attribute")
@@ -1215,13 +1218,15 @@ Public Class VbCodeAnalyser
         Dim strParams As String = ""
         Dim strTypes As String = ""
         Dim strValues As String = ""
+        Dim bStringDeclaration As Boolean = regStringDeclaration.IsMatch(strListParams)
 
-        For Each brutParam As String In strListParams.Split(",")
-            Dim group As GroupCollection = regParamDeclaration.Match(brutParam).Groups
+        Dim tempo2 As String = regStringDeclaration.Replace(strListParams, cstStringReplace)
+        Dim group As GroupCollection
 
-            For i = 0 To group.Count - 1
-                Debug.Print(i.ToString + "-[" + group(i).ToString + "]")
-            Next
+        For Each brutParam As String In tempo2.Split(",")
+            group = regParamDeclaration.Match(brutParam).Groups
+
+            DebugGroups(group)
 
             If strParams.Length > 0 Then
                 strParams += ","
@@ -1236,6 +1241,21 @@ Public Class VbCodeAnalyser
             tempo = group(8).ToString.Trim
             strValues += tempo.Trim
         Next
+        If bStringDeclaration Then
+            Dim split As String() = strValues.Split(cstStringReplace)
+            Dim matches As MatchCollection = regStringDeclaration.Matches(strListParams)
+            Dim j As Integer = 0
+            strValues = split(j)
+            j += 2
+            For Each Match As Match In matches
+                group = Match.Groups
+                For i = 0 To group.Count - 1
+                    Debug.Print(i.ToString + "-[" + group(i).ToString + "]")
+                    strValues += group(i).ToString + split(j)
+                    j += 2
+                Next
+            Next
+        End If
         m_textWriter.WriteAttributeString("params", strParams.Trim)
         m_textWriter.WriteAttributeString("types", strTypes.Trim)
         m_textWriter.WriteAttributeString("values", strValues.Trim)
@@ -1277,6 +1297,7 @@ Public Class VbCodeAnalyser
                                   ByRef iStopClassDeclaration As Integer, _
                                     ByVal bCheckComment As Boolean) As Boolean
 
+        ' InStr Retourne un index de base 1 !
         Dim iPos As Integer = InStr(strReadLine, "'''")
         Dim iComment As Integer = InStr(strReadLine, "''''")
 
@@ -1307,7 +1328,8 @@ Public Class VbCodeAnalyser
                 m_textWriter.WriteAttributeString("start", m_iNbLine.ToString)
                 m_textWriter.WriteAttributeString("pos", iPos.ToString)
                 If m_bParseVbDocComment Then
-                    Dim split As String = strReadLine.Substring(iPos + 3)
+                    ' Substring utilise un index de base 0 !
+                    Dim split As String = strReadLine.Substring(iPos + 2)
                     m_strXmlComment += split.Trim
                 Else
                     m_textWriter.WriteString(strReadLine)
@@ -1340,7 +1362,8 @@ Public Class VbCodeAnalyser
                         ''Console.WriteLine("VB-Doc: " + strReadLine)
                         If bCheckComment Then
                             If m_bParseVbDocComment Then
-                                Dim split As String = strReadLine.Substring(iPos + 3)
+                                ' Substring utilise un index de base 0 !
+                                Dim split As String = strReadLine.Substring(iPos + 2)
                                 m_strXmlComment += split.Trim
                             Else
                                 m_textWriter.WriteString(vbCrLf + strReadLine)
@@ -1378,6 +1401,13 @@ Public Class VbCodeAnalyser
         m_strXmlComment = ""
     End Sub
 
+    Private Sub DebugGroups(ByVal groups As GroupCollection)
+#If DEBUG Then
+        For i As Integer = 0 To groups.Count - 1
+            Debug.Print(i.ToString + "-[" + groups(i).ToString + "]")
+        Next
+#End If
+    End Sub
 #End Region
 
 #Region " IDisposable Support "

@@ -351,6 +351,15 @@ Public Class XmlImportSpec
             Throw ex
         End Try
     End Sub
+
+    Public Function ExchangeImports() As Boolean
+        Dim xmlcpnt As XmlExchangeImportsView = CType(CreateView("import_exchange", Me.Node), XmlExchangeImportsView)
+        xmlcpnt.Tag = Me.Tag
+
+        Dim fen As Form = xmlcpnt.CreateForm(xmlcpnt)
+        fen.ShowDialog()
+        Return CType(fen.Tag, Boolean)
+    End Function
 #End Region
 
 #Region "Protected methods"

@@ -64,6 +64,12 @@
   </xsl:template>
   <!-- ============================================================================== -->
   <xsl:template match="class">
+    <xsl:variable name="ShouldInherit">
+      <xsl:apply-templates select="." mode="ShouldInherit"/>
+    </xsl:variable>
+    <!--ICI>
+      <xsl:copy-of select="$ShouldInherit"/>
+    </ICI-->
     <xsl:choose>
       <xsl:when test="ancestor::class">
         <xsl:variable name="Comment">
@@ -142,6 +148,7 @@
           </xsl:apply-templates>
           <xsl:apply-templates select="descendant::method">
             <xsl:with-param name="Implementation" select="$Implementation"/>
+            <xsl:with-param name="ShouldInherit" select="$ShouldInherit"/>
           </xsl:apply-templates>
         </class>
       </xsl:otherwise>
@@ -273,6 +280,7 @@
   <!-- ============================================================================== -->
   <xsl:template match="method">
     <xsl:param name="Implementation"/>
+    <xsl:param name="ShouldInherit"/>
     <xsl:variable name="Member">
       <xsl:choose>
         <xsl:when test="contains(@other,'Shared')">class</xsl:when>
@@ -297,6 +305,11 @@
         <xsl:otherwise>simple</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="Overrides">
+      <xsl:apply-templates select="." mode="Overrides">
+        <xsl:with-param name="ShouldInherit" select="$ShouldInherit"/>
+      </xsl:apply-templates>
+    </xsl:variable>
     <method modifier="var" inline="no" member="{$Member}" num-id="{position()}">
       <xsl:choose>
         <xsl:when test="@name!='New'">
@@ -315,6 +328,11 @@
           <xsl:attribute name="implementation">simple</xsl:attribute>
         </xsl:otherwise>
       </xsl:choose>
+      <xsl:if test="$Overrides!=''">
+        <xsl:attribute name="overrides">
+          <xsl:value-of select="$Overrides"/>
+        </xsl:attribute>
+      </xsl:if>
       <xsl:if test="@name!='New'">
         <return>
           <type level="0" by="val" modifier="var">
@@ -419,6 +437,8 @@
   </xsl:template>
   <!-- ============================================================================== -->
 </xsl:stylesheet>
+
+
 
 
 

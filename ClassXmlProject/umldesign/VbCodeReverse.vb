@@ -14,7 +14,8 @@ Public Class VbCodeReverse
 
         document.AppendChild(document.CreateNode(XmlNodeType.Element, "project", ""))
         document.DocumentElement.Attributes.SetNamedItem(document.CreateAttribute("name")).Value = directory(directory.Length - 1)
-        observer.Log = "Folder: " + directory(directory.Length - 1)
+        Dim tempo As String = "Folder: " + directory(directory.Length - 1)
+        observer.Log = tempo.PadRight(40)
         bResult = LoadFolders(observer, folder, document.DocumentElement, bRecursive)
 
 #If TARGET = "exe" Then
@@ -45,7 +46,8 @@ Public Class VbCodeReverse
                 split = directory.Split(Path.DirectorySeparatorChar)
                 Dim tempo As String = split(split.Length - 1)
                 If tempo.StartsWith(".") = False Then
-                    observer.Log = "Folder: " + tempo.PadRight(30)
+                    tempo = "Folder: " + tempo
+                    observer.Log = tempo.PadRight(40)
                     LoadFolders(observer, directory, root, bRecursive)
                 End If
             Next
@@ -62,7 +64,7 @@ Public Class VbCodeReverse
 
         analyser.IsCodeReverse = True
 
-        analyser.Analyse(filename)
+        Dim source As String = analyser.Analyse(filename)
 
         Dim node As XmlNode = analyser.Document.DocumentElement
         Dim package As XmlNode = node.SelectSingleNode("descendant::package")
@@ -90,10 +92,13 @@ Public Class VbCodeReverse
             Next
         End If
 
-
         analyser.Dispose()
         analyser = Nothing
 
+#If DEBUG Then
+#Else
+        My.Computer.FileSystem.DeleteFile(source)
+#End If
         bResult = True
 
         Return (bResult)
