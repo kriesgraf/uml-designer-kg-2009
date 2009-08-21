@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <!-- ======================================================================= -->
-  <xsl:param name="Language"><xsl:value-of select="$LanguageFolder"/>\LanguageVbasic.xml</xsl:param>
+  <xsl:variable name="Language">
+    <xsl:if test="$LanguageFolder=''">
+      <xsl:message terminate="yes">Parameter $LanguageFolder not yet filled!</xsl:message>
+    </xsl:if>
+    <xsl:value-of select="$LanguageFolder"/>
+    <xsl:text>\LanguageVbasic.xml</xsl:text>
+  </xsl:variable>
   <!-- ======================================================================= -->
   <xsl:template match="@desc | @index | @index-desc">
     <xsl:call-template name="PredefinedType">
@@ -661,6 +667,7 @@
         ''' &lt;summary&gt;<xsl:value-of select="text()"/>&lt;/summary&gt;</xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 

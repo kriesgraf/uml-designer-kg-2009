@@ -8,6 +8,8 @@
   <xsl:param name="LanguageFolder"/>
   <xsl:param name="InputClass"/>
   <xsl:param name="InputPackage"/>
+<!-- ======================================================================= -->
+  <xsl:include href="vbnet-types.xsl"/>
   <!-- ======================================================================= -->
   <xsl:variable name="FileLanguage"><xsl:value-of select="$LanguageFolder"/>\language.xml</xsl:variable>
   <xsl:variable name="PrefixList" select="translate(document($FileLanguage)//PrefixList/text(),'&#32;&#10;&#13;','')"/>
@@ -17,8 +19,6 @@
   <xsl:variable name="PrefixMember" select="translate(document($FileLanguage)//PrefixMember/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="PrefixArray" select="translate(document($FileLanguage)//PrefixArray/text(),'&#32;&#10;&#13;','')"/>
   <xsl:variable name="SetParam" select="translate(document($FileLanguage)//SetParam/text(),'&#32;&#10;&#13;','')"/>
-<!-- ======================================================================= -->
-  <xsl:include href="vbnet-types.xsl"/>
 <!-- ======================================================================= -->
   <xsl:key match="@package" name="package" use="."/>
   <xsl:key match="reference" name="class" use="@name"/>
@@ -101,21 +101,27 @@
 <!-- ======================================================================= -->
   <xsl:template match="class" mode="Code">
     <xsl:variable name="Methods">
-      <xsl:apply-templates select="." mode="Signature"/>
+      <xsl:if test="@implementation!='abstract'">
+        <xsl:apply-templates select="." mode="Signature"/>
+      </xsl:if>
     </xsl:variable>
     <xsl:variable name="ShouldInherit">
-      <xsl:for-each select="msxsl:node-set($Methods)//signature[@implementation='abstract']">
-        <xsl:variable name="Signature" select="@name"/>
-        <xsl:choose>
-          <xsl:when test="msxsl:node-set($Methods)//signature[@implementation!='abstract' and @name=$Signature]"/>
-          <xsl:otherwise>
-            <xsl:copy-of select="."/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:for-each>
+      <xsl:if test="@implementation!='abstract'">
+        <xsl:for-each select="msxsl:node-set($Methods)//signature[@implementation='abstract']">
+          <xsl:variable name="Signature" select="@name"/>
+          <xsl:choose>
+            <xsl:when test="msxsl:node-set($Methods)//signature[@implementation!='abstract' and @name=$Signature]"/>
+            <xsl:otherwise>
+              <xsl:copy-of select="."/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+      </xsl:if>
     </xsl:variable>
+    <!--
     <xsl:copy-of select="$ShouldInherit"/>
-    <xsl:element name="code">
+    -->
+     <xsl:element name="code">
       <!-- Possible "Merge" value: no, yes (To preserve your previous generated code) -->
       <xsl:attribute name="Merge">yes</xsl:attribute>
       <xsl:attribute name="name"><xsl:value-of select="@name"/>.vb</xsl:attribute>
@@ -724,6 +730,8 @@ End Namespace
   </xsl:template>
 <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
 
 
 
