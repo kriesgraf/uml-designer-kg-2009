@@ -154,6 +154,7 @@ Public Class MDIParent
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
                 If ChildForm.OpenProject(Me, strTempFile) Then
+                    ChildForm.IsVbCodeReverse = True
                     ChildForm.MdiParent = Me
                     ChildForm.Text = "VB.NET Reverse Engineering"
                     ChildForm.Show()

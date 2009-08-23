@@ -35,10 +35,10 @@ Public Class VbCodeAnalyser
     Private Const cstRegionDeclaration As String = "\#Region (" + cstStringDeclaration + ")"
     Private Const cstAttributeValue As String = "( = (.*.))?"
     Private Const cstTemplateSubstitution As String = "(\(Of *.*\))?"
-    Private Const cstTemplateSubstitution2 As String = "\(Of ([\w.]{2,})(, ([\w.]{2,}))?\)"
+    Private Const cstTemplateSubstitution2 As String = "\(Of ([\w\.]+)(, ([\w\.]+))?\)"
 
     ' Class & Package declarations
-    Private Const cstClassDeclaration As String = cstAccessModifier + cstAllText + "(Class |Interface )" + cstVarTypeFuncClassName
+    Private Const cstClassDeclaration As String = cstAccessModifier + cstAllText + "(Class |Interface )" + cstVarTypeFuncClassName + cstTemplateSubstitution
     Private Const cstPackageDeclaration As String = "\bNamespace " + cstVarTypeFuncClassName
     Private Const cstInheritsDeclaration As String = "\b(Inherits |Implements )" + cstNamespace + cstTemplateSubstitution
     ' Members
@@ -49,16 +49,16 @@ Public Class VbCodeAnalyser
     Private Const cstMethodDeclaration3 As String = "\(" + cstAllText + "\)( As " + cstNamespace + cstArraySize + ")?( Implements (.*\b))?"
     Private Const cstMethodDeclaration2 As String = "\(" + cstAllText + "\)"
     Private Const cstMethodDeclaration1 As String = "\(" + cstAllText + "\) As " + cstNamespace + cstArraySize
-    Private Const cstMethodArgument As String = "(Optional |)" + cstInOutParam + cstParameter + cstAttributeValue
+    Private Const cstMethodArgument As String = "\b(Optional |)" + cstInOutParam + cstParameter + cstAttributeValue
     Private Const cstMethodDeclaration As String = cstAccessModifier + cstAllText + "(" + cstMustOverride + " |)" + cstAllText + cstAbstractMethod
-    Private Const cstTypedef As String = cstAccessModifier + cstAllText + "(Structure |Enum )" + cstVarTypeFuncClassName
+    Private Const cstTypedef As String = cstAccessModifier + cstAllText + "\b(Structure |Enum )" + cstVarTypeFuncClassName
     Private Const cstOperatorDeclaration As String = cstAccessModifier + cstAllText + "Shared " + cstAllText + "(" + cstMustOverride + " |)" + "Operator " + cstOperators + "\(" + cstAllText + "\) As " + cstNamespace + cstArraySize
 
     ' Properties
-    Private Const cstAbstractProperty As String = cstAllText + "Property " + cstVarTypeFuncClassName + "\(\) As " + cstNamespace + cstArraySize
+    Private Const cstAbstractProperty As String = cstAllText + "\bProperty " + cstVarTypeFuncClassName + "\(\) As " + cstNamespace + cstArraySize
     Private Const cstPropertyDeclaration As String = cstAccessModifier + cstAbstractProperty
-    Private Const cstAccessorGetDeclaration As String = "Get"
-    Private Const cstAccessorSetDeclaration As String = "Set"
+    Private Const cstAccessorGetDeclaration As String = "\bGet"
+    Private Const cstAccessorSetDeclaration As String = "\bSet"
 
 #End Region
 
@@ -931,6 +931,9 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("visibility", groups(1).ToString.Trim)
             m_textWriter.WriteAttributeString("other", groups(2).ToString.Trim)
             m_textWriter.WriteAttributeString("kind", strStatement)
+            If groups(5).ToString <> "" Then
+                CheckTemplateInstruction(groups(5).ToString.Trim)
+            End If
             m_textWriter.Flush()
             Return True
         End If
@@ -959,19 +962,13 @@ Public Class VbCodeAnalyser
                 m_textWriter.WriteAttributeString("other", groups(1).ToString.Trim)
                 Dim tempo As String = groups(3).ToString.Trim
                 If tempo <> "" Then
-                    Dim regex As New Regex(cstTemplateSubstitution2)
-                    groups = regex.Match(tempo).Groups
-                    Dim template As String = groups(1).ToString.Trim
-                    If groups(3).ToString.Trim <> "" Then
-                        template += "," + groups(3).ToString.Trim
-                    End If
-                    m_textWriter.WriteAttributeString("template", template.Trim)
+                    CheckTemplateInstruction(tempo)
                 End If
-                    m_textWriter.WriteEndElement()
-                    m_textWriter.Flush()
-                    Return True
-                End If
+                m_textWriter.WriteEndElement()
+                m_textWriter.Flush()
+                Return True
             End If
+        End If
 
             Return False
     End Function
@@ -979,6 +976,7 @@ Public Class VbCodeAnalyser
     Private Function CheckMemberInstruction(ByRef iStartLine As Integer, ByVal iStopLine As Integer, _
                                             ByVal strInstruction As String, ByRef strStatement As String, _
                                             ByVal bInterface As Boolean) As ClassMember
+        Dim tempo As String
 
         ' The order of call regex is made to avoid complicated string
         If bInterface And regAbstractProperty.IsMatch(strInstruction) Then
@@ -1020,7 +1018,13 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("name", groups(3).ToString.Trim)
             m_textWriter.WriteAttributeString("other", groups(2).ToString.Trim)
             m_textWriter.WriteAttributeString("type", groups(4).ToString.Trim())
-            m_textWriter.WriteAttributeString("size", groups(5).ToString.Trim())
+            tempo = groups(5).ToString.Trim()
+            If tempo.StartsWith("(Of ") Then
+                CheckTemplateInstruction(tempo)
+                m_textWriter.WriteAttributeString("size", "")
+            Else
+                m_textWriter.WriteAttributeString("size", groups(5).ToString.Trim())
+            End If
             m_textWriter.Flush()
             Return ClassMember.PropertyElt
 
@@ -1067,7 +1071,6 @@ Public Class VbCodeAnalyser
                 m_textWriter.WriteAttributeString("name", groups(2).ToString.Trim())
                 m_textWriter.WriteAttributeString("type", strStatement)
                 m_textWriter.Flush()
-                Dim tempo As String
 
                 If strStatement = cstFunction Then
                     groups = regMethodDeclaration1.Match(strInstruction).Groups
@@ -1114,7 +1117,7 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("type", strStatement)
             m_textWriter.WriteAttributeString("name", groups(6).ToString.Trim())
             m_textWriter.Flush()
-            
+
             If strStatement = cstFunction Then
                 groups = regMethodDeclaration1.Match(strInstruction).Groups
                 CheckParamsInstruction(groups(1).ToString.Trim)
@@ -1131,7 +1134,7 @@ Public Class VbCodeAnalyser
             If strInstruction.Contains(" Implements ") Then
                 Dim regex As New Regex(cstMethodDeclaration3)
                 groups = regex.Match(strInstruction).Groups
-                Dim tempo As String = groups(6).ToString.Trim()
+                tempo = groups(6).ToString.Trim()
                 tempo = tempo.Substring(0, tempo.LastIndexOf("."))
                 m_textWriter.WriteAttributeString("implements", tempo)
             End If
@@ -1158,7 +1161,8 @@ Public Class VbCodeAnalyser
             DebugGroups(groups)
 
             strStatement = "Operator"
-            Dim tempo As String = groups(2).ToString.Trim() + " " + groups(3).ToString.Trim() + " " + groups(4).ToString.Trim()
+            tempo = groups(2).ToString.Trim() + " " + groups(3).ToString.Trim() _
+                                    + " " + groups(4).ToString.Trim() + " " + strStatement
 
             m_textWriter.WriteString(vbCrLf)
             m_textWriter.WriteStartElement("method")
@@ -1197,7 +1201,16 @@ Public Class VbCodeAnalyser
             m_textWriter.WriteAttributeString("visibility", groups(1).ToString.Trim)
             m_textWriter.WriteAttributeString("name", groups(3).ToString.Trim)
             m_textWriter.WriteAttributeString("other", groups(2).ToString.Trim)
-            m_textWriter.WriteAttributeString("size", groups(4).ToString.Trim + groups(7).ToString.Trim)
+
+            tempo = groups(4).ToString.Trim + groups(7).ToString.Trim
+
+            If tempo.StartsWith("(Of ") Then
+                CheckTemplateInstruction(tempo)
+                m_textWriter.WriteAttributeString("size", "")
+            Else
+                m_textWriter.WriteAttributeString("size", tempo)
+            End If
+
             m_textWriter.WriteAttributeString("type", groups(6).ToString.Trim)
             m_textWriter.WriteAttributeString("default", groups(9).ToString.Trim)
             m_textWriter.WriteEndElement()
@@ -1212,6 +1225,16 @@ Public Class VbCodeAnalyser
 
         Return ClassMember.UnknownElt
     End Function
+
+    Private Sub CheckTemplateInstruction(ByVal strTemplateInstruction As String)
+        Dim regex As New Regex(cstTemplateSubstitution2)
+        Dim groups As GroupCollection = regex.Match(strTemplateInstruction).Groups
+        Dim template As String = groups(1).ToString.Trim
+        If groups(3).ToString.Trim <> "" Then
+            template += "," + groups(3).ToString.Trim
+        End If
+        m_textWriter.WriteAttributeString("template", template.Trim)
+    End Sub
 
     Private Sub CheckParamsInstruction(ByVal strListParams As String)
 

@@ -38,6 +38,12 @@ Public Class XmlComposite
 
 #Region "Public functions"
 
+    Public Overridable Function AddNewComponent(ByVal strNodeName As String) As XmlComponent
+        Dim xmlResult As XmlComponent = CreateDocument(strNodeName)
+        Me.AppendComponent(xmlResult)
+        Return xmlResult
+    End Function
+
     Public Overridable Function DropAppendComponent(ByRef child As XmlComponent, ByRef bImportData As Boolean) As Boolean
         Try
             If child.Document IsNot Me.Document Then
@@ -80,7 +86,7 @@ Public Class XmlComposite
         Return False
     End Function
 
-    Public Overridable Function AddNewComponent(ByVal strDocName As String) As String
+    Public Overridable Function GetNameNewComponent(ByVal strDocName As String) As String
         Try
             If strDocName Is Nothing _
             Then

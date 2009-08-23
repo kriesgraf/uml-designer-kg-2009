@@ -163,6 +163,12 @@ Public Class XmlProjectView
         Return bResult
     End Function
 
+    Public Sub SortImportReferences()
+        Dim child As XmlNode = m_xmlProperties.Document.SelectSingleNode("//import[@name='" + cstImportsToSort + "']")
+        Dim import As XmlImportSpec = XmlNodeManager.GetInstance().CreateDocument(child)
+        import.ExchangeImports()
+    End Sub
+
     Public Sub ExportOmgUmlFile(ByVal form As Form, ByVal fileName As String)
         XmlProjectTools.ExportOmgUmlFile(form, Me.Document, fileName)
     End Sub
@@ -668,10 +674,14 @@ Public Class XmlProjectView
 
     Public Sub ExchangeImports(ByVal composite As XmlComposite)
         Dim parent As XmlImportSpec = TryCast(XmlNodeManager.GetInstance().CreateDocument(composite.Node), XmlImportSpec)
-        parent.Tag = composite.Tag
-        If parent IsNot Nothing Then
-            If parent.ExchangeImports() Then
-                Me.Updated = True
+        If parent Is Nothing Then
+            MsgBox("Please retry with an 'import' object'!", MsgBoxStyle.Critical, "Exchange imports")
+        Else
+            parent.Tag = composite.Tag
+            If parent IsNot Nothing Then
+                If parent.ExchangeImports() Then
+                    Me.Updated = True
+                End If
             End If
         End If
     End Sub

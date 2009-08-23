@@ -6,11 +6,16 @@ Public Class XmlExchangeImportsView
     Inherits XmlImportSpec
     Implements InterfViewForm
 
+    Private m_listImports As ListBox
     Private m_listDestination As ListBox
     Private m_listSource As ListBox
     Private m_xmlDestination As XmlImportSpec = Nothing
 
 #Region "Public methods"
+
+    Public Sub LoadValues()
+        m_xmlNodeManager = XmlNodeManager.GetInstance
+    End Sub
 
     Public Function CreateForm(ByVal document As XmlComponent) As System.Windows.Forms.Form Implements InterfViewForm.CreateForm
         Dim frmResult As New dlgImportExchange
@@ -23,14 +28,8 @@ Public Class XmlExchangeImportsView
     End Sub
 
     Public Sub InitBindingImports(ByVal listBox As ListBox)
-        Dim listNode As New ArrayList
-        AddNodeList(Me, listNode, "//import[@name!='" + Me.Name + "']", Me)
-        SortNodeList(listNode)
-
-        listBox.DataSource = listNode
-        listBox.DisplayMember = cstFullpathClassName
-        listBox.SelectionMode = SelectionMode.One
-        listBox.SelectedIndex = 0
+        m_listImports = listBox
+        UpdateImports()
     End Sub
 
     Public Sub InitBindingSource(ByVal listBox As ListBox)
@@ -69,18 +68,73 @@ Public Class XmlExchangeImportsView
         UpdateSource()
         UpdateDestination()
     End Sub
+
+    Public Sub AddImport(ByVal list As ListBox)
+        Dim parent As XmlComposite = m_xmlNodeManager.CreateDocument(Me.Document.SelectSingleNode("/root"))
+        parent.AddNewComponent("import")
+        UpdateImports()
+        Me.Updated = True
+    End Sub
+
+    Public Sub Edit(ByVal list As ListBox)
+        If list.SelectedItem IsNot Nothing _
+            Then
+            Dim document As XmlComponent = CType(list.SelectedItem, XmlComponent)
+            Dim fen As Form = m_xmlNodeManager.CreateForm(document)
+            Dim InterfCounter As InterfNodeCounter = TryCast(fen, InterfNodeCounter)
+            If InterfCounter IsNot Nothing Then InterfCounter.NodeCounter = m_xmlReferenceNodeCounter
+
+            fen.ShowDialog()
+            If CType(fen.Tag, Boolean) Then
+                UpdateSource()
+                UpdateDestination()
+                Me.Updated = True
+            End If
+        End If
+    End Sub
+
+    Public Sub Delete(ByVal list As ListBox)
+        If list.SelectedItem IsNot Nothing _
+            Then
+            Dim document As XmlComponent = CType(list.SelectedItem, XmlComponent)
+            Dim parent As XmlComposite = m_xmlNodeManager.CreateDocument(document.Node.ParentNode)
+            If parent.CanRemove(document) Then
+                If parent.RemoveComponent(document) Then
+                    UpdateImports()
+                    Me.Updated = True
+                End If
+            End If
+        End If
+    End Sub
 #End Region
 
 #Region "Private methods"
+
+    Private Sub UpdateImports()
+        Dim listNode As New ArrayList
+        AddNodeList(Me, listNode, "//import[@name!='" + Me.Name + "']", Me)
+        SortNodeList(listNode)
+
+        With m_listImports
+            .DataSource = listNode
+            .DisplayMember = cstFullpathClassName
+            .SelectionMode = SelectionMode.One
+            ' Selection automatically call "UpdateDestination"
+            .SelectedIndex = 0
+        End With
+    End Sub
 
     Private Sub UpdateSource()
         Dim listNode As New ArrayList
         AddNodeList(Me, listNode, "descendant::reference | descendant::interface", Me)
         SortNodeList(listNode)
 
-        m_listSource.DataSource = listNode
-        m_listSource.DisplayMember = cstFullpathClassName
-        m_listSource.SelectionMode = SelectionMode.MultiSimple
+        With m_listSource
+            .DataSource = listNode
+            .DisplayMember = cstFullpathClassName
+            .SelectionMode = SelectionMode.MultiSimple
+            .SelectedIndex = -1
+        End With
     End Sub
 
     Private Sub UpdateDestination()
@@ -88,9 +142,12 @@ Public Class XmlExchangeImportsView
         AddNodeList(m_xmlDestination, listNode, "descendant::reference | descendant::interface", Me)
         SortNodeList(listNode)
 
-        m_listDestination.DataSource = listNode
-        m_listDestination.DisplayMember = cstFullpathClassName
-        m_listDestination.SelectionMode = SelectionMode.MultiSimple
+        With m_listDestination
+            .DataSource = listNode
+            .DisplayMember = cstFullpathClassName
+            .SelectionMode = SelectionMode.MultiSimple
+            .SelectedIndex = -1
+        End With
     End Sub
 #End Region
 End Class

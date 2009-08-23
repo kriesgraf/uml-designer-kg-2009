@@ -215,6 +215,14 @@ Public Class XmlProjectProperties
         Return False
     End Function
 
+    Public Overrides Function CanAddComponent(ByVal nodeXml As XmlComponent) As Boolean
+        Select Case nodeXml.NodeName
+            Case "import", "class", "package"
+                Return True
+        End Select
+        Return False
+    End Function
+
     Protected Friend Overrides Function AppendNode(ByVal child As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
         Dim before As XmlNode = Nothing
         Select Case child.Name
