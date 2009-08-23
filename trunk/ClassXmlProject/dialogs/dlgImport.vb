@@ -250,4 +250,10 @@ Public Class dlgImport
         m_xmlView.InitBindingListReferences(lsbReferences, True)
     End Sub
 #End Region
+
+    Private Sub lsbReferences_KeyUp(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles lsbReferences.KeyUp
+        If e.KeyCode = Keys.Enter And lsbReferences.SelectedItem IsNot Nothing Then
+            m_xmlView.Edit(lsbReferences)
+        End If
+    End Sub
 End Class
