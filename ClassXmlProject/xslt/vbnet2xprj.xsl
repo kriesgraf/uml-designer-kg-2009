@@ -23,9 +23,12 @@
       <generation destination="{$ProjectFolder}" language="{$LanguageID}"/>
       <comment brief="Brief description">Detailed comment</comment>
       <!--
-      <ICI>
+      <Classes>
+        <xsl:copy-of select="$Classes"/>
+      </Classes>
+      <UnknownTypes>
         <xsl:copy-of select="$UnknownTypes"/>
-      </ICI>
+      </UnknownTypes>
        -->
       <xsl:call-template name="Imports"/>
       <import name="Imports_to_sort" visibility="package">
@@ -60,7 +63,14 @@
   </xsl:template>
   <!-- ============================================================================== -->
   <xsl:template match="element-type" mode="Imports">
-    <reference name="{@name}" type="class" id="{@idref}" container="{@container}"/>
+    <xsl:param name="NoPrefix"/>
+    <reference name="{@name}" type="class" id="{@idref}" container="{@container}">
+      <xsl:if test="@prefix and $NoPrefix=''">
+        <xsl:attribute name="package">
+          <xsl:value-of select="@prefix"/>
+        </xsl:attribute>
+      </xsl:if>
+    </reference>
   </xsl:template>
   <!-- ============================================================================== -->
   <xsl:template match="class">
@@ -124,6 +134,7 @@
         </xsl:variable>
         <xsl:variable name="Implementation">
           <xsl:choose>
+            <xsl:when test="@template">container</xsl:when>
             <xsl:when test="@kind='Interface'">abstract</xsl:when>
             <xsl:when test="contains(@other,'NotInheritable')">final</xsl:when>
             <xsl:when test="contains(@other,'MustInherit')">root</xsl:when>
@@ -132,6 +143,10 @@
         </xsl:variable>
         <class name="{@name}" implementation="{$Implementation}" visibility="{$Visibility}" constructor="no" destructor="no" inline="none" id="{generate-id()}">
           <xsl:apply-templates select="inherited"/>
+          <xsl:variable name="Model">
+            <xsl:apply-templates select="@template" mode="Class"/>
+          </xsl:variable>
+          <xsl:copy-of select="$Model"/>
           <xsl:choose>
             <xsl:when test="preceding-sibling::*[position()=1 and name()='vb-doc']">
               <xsl:apply-templates select="preceding-sibling::*[position()=1 and name()='vb-doc']" mode="Full"/>
@@ -167,7 +182,9 @@
       <xsl:attribute name="range">public</xsl:attribute>
       <xsl:attribute name="idref">
         <xsl:call-template name="SearchMember">
-          <xsl:with-param name="Label" select="@name"/>
+          <xsl:with-param name="Label">
+            <xsl:apply-templates select="@name" mode="SimpleName2"/>
+          </xsl:with-param>
         </xsl:call-template>
       </xsl:attribute>
     </xsl:copy>
@@ -206,7 +223,17 @@
   <!-- ============================================================================== -->
   <xsl:template match="enumvalue">
     <enumvalue name="{@name}" id="{generate-id()}">
-      <xsl:text>insert here a comment</xsl:text>
+      <xsl:if test="@value!=''">
+        <xsl:attribute name="value">
+          <xsl:value-of select="@value"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="preceding-sibling::*[position()=1 and name()='vb-doc']">
+          <xsl:apply-templates select="preceding-sibling::*[position()=1 and name()='vb-doc']" mode="Short"/>
+        </xsl:when>
+        <xsl:otherwise>Insert here a comment</xsl:otherwise>
+      </xsl:choose>
     </enumvalue>
   </xsl:template>
   <!-- ============================================================================== -->
@@ -235,9 +262,21 @@
       </xsl:choose>
     </xsl:variable>
     <property attribute="{$Attribute}" overridable="{$Overridable}" name="{@name}" member="{$Member}" num-id="{position()}">
-      <type level="0" by="val" modifier="var">
-        <xsl:apply-templates select="@type" mode="Type"/>
-      </type>
+      <xsl:choose>
+        <xsl:when test="@template">
+          <type by="val" modifier="var" level="0">
+            <xsl:apply-templates select="." mode="Type"/>
+            <list>
+              <xsl:apply-templates select="." mode="List"/>
+            </list>
+          </type>
+        </xsl:when>
+        <xsl:otherwise>
+          <type level="0" by="val" modifier="var">
+            <xsl:apply-templates select="@type" mode="Type"/>
+          </type>
+        </xsl:otherwise>
+      </xsl:choose>
       <variable range="private">
         <xsl:if test="@size!=''">
           <xsl:attribute name="size">10</xsl:attribute>
@@ -312,6 +351,14 @@
     </xsl:variable>
     <method modifier="var" inline="no" member="{$Member}" num-id="{position()}">
       <xsl:choose>
+        <xsl:when test="contains(@other,'Operator')">
+          <xsl:attribute name="constructor">no</xsl:attribute>
+          <xsl:attribute name="operator">
+            <xsl:value-of select="@name"/>
+          </xsl:attribute>
+          <xsl:attribute name="name">operator</xsl:attribute>
+          <xsl:attribute name="implementation">simple</xsl:attribute>
+        </xsl:when>
         <xsl:when test="@name!='New'">
           <xsl:attribute name="constructor">no</xsl:attribute>
           <xsl:attribute name="name">
@@ -436,78 +483,19 @@
     </comment>
   </xsl:template>
   <!-- ============================================================================== -->
+  <xsl:template match="@template" mode="Class">
+    <xsl:choose>
+      <xsl:when test="contains(.,',')">
+        <model name="{substring-before(.,',')}" id="{generate-id()}1"/>
+        <model name="{substring-after(.,',')}" id="{generate-id()}2"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <model name="." id="{generate-id()}"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ============================================================================== -->
 </xsl:stylesheet>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

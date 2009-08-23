@@ -6,6 +6,8 @@ Imports Microsoft.VisualBasic
 
 Public Class VbCodeReverse
 
+    Private Const cstTempExport As String = ".umlexp"
+
     Public Shared Function Reverse(ByVal observer As InterfProgression, ByVal folder As String, _
                                    ByVal document As XmlDocument, Optional ByVal bRecursive As Boolean = True) As Boolean
         Dim bResult As String = False
@@ -64,7 +66,14 @@ Public Class VbCodeReverse
 
         analyser.IsCodeReverse = True
 
-        Dim source As String = analyser.Analyse(filename)
+        Dim strResult As String = My.Computer.FileSystem.CombinePath(Path.GetDirectoryName(filename), cstTempExport)
+        If My.Computer.FileSystem.DirectoryExists(strResult) = False Then
+            My.Computer.FileSystem.CreateDirectory(strResult)
+            Dim Info As DirectoryInfo = My.Computer.FileSystem.GetDirectoryInfo(strResult)
+            Info.Attributes = Info.Attributes Or FileAttributes.Hidden
+            'Debug.Print("CreateTempFolder:=" + strResult)
+        End If
+        Dim source As String = analyser.Analyse(Path.GetDirectoryName(filename), Path.GetFileName(filename), ".rev", cstTempExport)
 
         Dim node As XmlNode = analyser.Document.DocumentElement
         Dim package As XmlNode = node.SelectSingleNode("descendant::package")

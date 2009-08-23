@@ -3,6 +3,7 @@
 <!-- ======================================================================= -->
   <xsl:key match="element-type" name="include" use="@name"/>
   <xsl:key match="import" name="import" use="@name"/>
+  <xsl:key match="element-type" name="package" use="@prefix"/>
   <!-- ======================================================================= -->
   <xsl:variable name="Language">
     <xsl:if test="$LanguageFolder=''">
@@ -13,7 +14,8 @@
   </xsl:variable>
   <!-- ======================================================================= -->
   <xsl:variable name="Classes">
-    <xsl:apply-templates select="//class | //typedef" mode="UnknownTypes"/>
+    <xsl:apply-templates select="//typedef" mode="UnknownClasses"/>
+    <xsl:apply-templates select="//class" mode="UnknownClasses"/>
   </xsl:variable>
   <!-- ======================================================================= -->
   <xsl:variable name="UnknownTypes1">
@@ -23,18 +25,35 @@
   <xsl:variable name="UnknownTypes">
     <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[generate-id()=generate-id(key('include',@name)[1])]">
       <xsl:sort select="@name"/>
+      <xsl:variable name="Name">
+        <xsl:apply-templates select="@name" mode="SimpleName2"/>
+      </xsl:variable>
+      <xsl:variable name="Prefix">
+        <xsl:apply-templates select="@name" mode="PrefixName"/>
+      </xsl:variable>
       <xsl:variable name="Description">
         <xsl:call-template name="SimpleTypes">
-          <xsl:with-param name="Label" select="@name"/>
+          <xsl:with-param name="Label" select="$Name"/>
         </xsl:call-template>
       </xsl:variable>
       <xsl:variable name="Idref">
         <xsl:call-template name="ClassMember">
-          <xsl:with-param name="Label" select="@name"/>
+          <xsl:with-param name="Label" select="$Name"/>
         </xsl:call-template>
       </xsl:variable>
       <xsl:copy>
         <xsl:copy-of select="@*"/>
+        <xsl:if test="$Prefix!=''">
+          <xsl:attribute name="name">
+            <xsl:value-of select="$Name"/>
+          </xsl:attribute>
+          <xsl:attribute name="prefix">
+            <xsl:value-of select="$Prefix"/>
+          </xsl:attribute>
+        </xsl:if>
+        <!--xsl:attribute name="RESULT">
+          <xsl:value-of select="concat($Prefix,':',$Name,'=[',$Description,'|',$Idref,']')"/>
+        </xsl:attribute-->
         <xsl:choose>
           <xsl:when test="$Description!=''">
             <xsl:attribute name="desc">
@@ -64,6 +83,7 @@
   <!-- ======================================================================= -->
   <xsl:template name="ClassMember">
     <xsl:param name="Label"/>
+    <!--xsl:value-of select="concat('[',$Label,']=')"/-->
     <xsl:value-of select="msxsl:node-set($Classes)/*[@name=$Label]/@id"/>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -77,13 +97,42 @@
     <xsl:value-of select="msxsl:node-set($UnknownTypes)/*[@name=$Label]/@desc"/>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="class | typedef" mode="UnknownTypes">
+  <xsl:template match="class" mode="UnknownClasses">
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
       <xsl:attribute name="id">
         <xsl:value-of select="generate-id()"/>
       </xsl:attribute>
+      <xsl:choose>
+        <xsl:when test="ancestor::class">
+          <xsl:attribute name="kind">Container</xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:copy-of select="@kind"/>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:copy-of select="@name"/>
+      <xsl:choose>
+        <xsl:when test="ancestor::class">
+          <xsl:attribute name="prefix">
+            <xsl:apply-templates select="ancestor::class" mode="FullpathClassName"/>
+          </xsl:attribute>
+        </xsl:when>
+        <xsl:when test="parent::package">
+          <xsl:attribute name="prefix">
+            <xsl:apply-templates select="parent::package" mode="FullpathClassName"/>
+          </xsl:attribute>
+        </xsl:when>
+      </xsl:choose>
     </xsl:copy>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="typedef" mode="UnknownClasses">
+    <class id="{generate-id()}" kind="{@type}">
+      <xsl:copy-of select="@name"/>
+      <xsl:attribute name="prefix">
+        <xsl:apply-templates select="." mode="FullpathClassName"/>
+      </xsl:attribute>
+    </class>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="typedef" mode="UnknownTypes">
@@ -91,7 +140,26 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="property | attribute | element" mode="UnknownTypes">
-    <element-type node="{name()}" name="{@type}" container="0"/>
+    <xsl:variable name="Name">
+      <xsl:apply-templates select="@type" mode="SimpleName"/>
+    </xsl:variable>
+    <element-type node="{name()}" container="0">
+      <xsl:choose>
+        <xsl:when test="contains($Name,',')">
+          <xsl:attribute name="name">
+            <xsl:value-of select="substring-after($Name,',')"/>
+          </xsl:attribute>
+          <xsl:attribute name="prefix">
+            <xsl:value-of select="substring-before($Name,',')"/>
+          </xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:attribute name="name">
+            <xsl:value-of select="$Name"/>
+          </xsl:attribute>
+        </xsl:otherwise>
+      </xsl:choose>
+    </element-type>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="inherited" mode="UnknownTypes">
@@ -116,7 +184,26 @@
       </xsl:call-template>
     </xsl:variable>
     <xsl:for-each select="msxsl:node-set($ListParams)/param">
-      <element-type node="{name()}" name="{type/@desc}" container="0"/>
+      <xsl:variable name="Name">
+        <xsl:apply-templates select="type/@desc" mode="SimpleName"/>
+      </xsl:variable>
+      <element-type node="{name()}" container="0">
+        <xsl:choose>
+          <xsl:when test="contains($Name,',')">
+            <xsl:attribute name="name">
+              <xsl:value-of select="substring-after($Name,',')"/>
+            </xsl:attribute>
+            <xsl:attribute name="prefix">
+              <xsl:value-of select="substring-before($Name,',')"/>
+            </xsl:attribute>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="name">
+              <xsl:value-of select="$Name"/>
+            </xsl:attribute>
+          </xsl:otherwise>
+        </xsl:choose>
+      </element-type>
     </xsl:for-each>
   </xsl:template>
   <!-- ============================================================================== -->
@@ -306,7 +393,62 @@
     </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="inherited" mode="Type">
+  <xsl:template match="property | attribute" mode="List">
+    <xsl:variable name="Description">
+      <xsl:call-template name="SearchSimpleType">
+        <xsl:with-param name="Label" select="@type"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="Idref">
+      <xsl:call-template name="SearchMember">
+        <xsl:with-param name="Label" select="@type"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="$Description!=''">
+        <xsl:attribute name="desc">
+          <xsl:value-of select="$Description"/>
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:when test="$Idref!=''">
+        <xsl:attribute name="idref">
+          <xsl:value-of select="$Idref"/>
+        </xsl:attribute>
+      </xsl:when>
+    </xsl:choose>
+    <xsl:choose>
+      <xsl:when test="contains(@template,',')">
+        <xsl:variable name="IndexDescription">
+          <xsl:call-template name="SearchSimpleType">
+            <xsl:with-param name="Label" select="substring-before(@template,',')"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="IndexIdref">
+          <xsl:call-template name="SearchMember">
+            <xsl:with-param name="Label" select="substring-before(@template,',')"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:choose>
+          <xsl:when test="$IndexDescription!=''">
+            <xsl:attribute name="index-desc">
+              <xsl:value-of select="$IndexDescription"/>
+            </xsl:attribute>
+          </xsl:when>
+          <xsl:when test="$IndexIdref!=''">
+            <xsl:attribute name="index-idref">
+              <xsl:value-of select="$IndexIdref"/>
+            </xsl:attribute>
+          </xsl:when>
+        </xsl:choose>
+        <xsl:attribute name="type">indexed</xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="type">simple</xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="inherited | property | attribute" mode="Type">
     <xsl:variable name="Name">
       <xsl:choose>
         <xsl:when test="contains(@template,',')">
@@ -342,7 +484,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="UnknownImports">
-    <xsl:for-each select="msxsl:node-set($UnknownTypes)/*[@import='yes']">
+    <xsl:for-each select="msxsl:node-set($UnknownTypes)/*[@import='yes' and (not(@prefix) or @prefix='')]">
       <xsl:apply-templates select="." mode="Imports"/>
     </xsl:for-each>
   </xsl:template>
@@ -354,6 +496,26 @@
     <xsl:for-each select="msxsl:node-set($Imports)/*[generate-id()=generate-id(key('import',@name)[1])]">
       <xsl:sort select="@name"/>
       <xsl:copy-of select="."/>
+    </xsl:for-each>
+    <xsl:for-each select="msxsl:node-set($UnknownTypes)/*[@import='yes' and @prefix!=''][generate-id()=generate-id(key('package',@prefix)[1])]">
+      <xsl:sort select="@prefix"/>
+      <xsl:variable name="Prefix" select="@prefix"/>
+      <xsl:element name="import">
+        <xsl:attribute name="name">
+          <xsl:value-of select="@prefix"/>
+        </xsl:attribute>
+        <xsl:attribute name="visibility">package</xsl:attribute>
+        <xsl:element name="export">
+          <xsl:attribute name="name">
+            <xsl:value-of select="@prefix"/>
+          </xsl:attribute>
+          <xsl:for-each select="msxsl:node-set($UnknownTypes)/*[@prefix=$Prefix]">
+            <xsl:apply-templates select="." mode="Imports">
+              <xsl:with-param name="NoPrefix">No</xsl:with-param>
+            </xsl:apply-templates>
+          </xsl:for-each>
+        </xsl:element>
+      </xsl:element>
     </xsl:for-each>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -422,9 +584,104 @@
     </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
+  <xsl:template match="@type | @desc | @name" mode="PrefixName">
+    <xsl:variable name="Name">
+      <xsl:apply-templates select="." mode="SimpleName"/>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="contains($Name,',')">
+        <xsl:value-of select="substring-before($Name,',')"/>
+      </xsl:when>
+      <xsl:otherwise/>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="@type | @desc | @name" mode="SimpleName2">
+    <xsl:variable name="Name">
+      <xsl:apply-templates select="." mode="SimpleName"/>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="contains($Name,',')">
+        <xsl:value-of select="substring-after($Name,',')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$Name"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="@type | @desc | @name" mode="SimpleName">
+    <xsl:choose>
+      <xsl:when test="contains(.,'.')">
+        <xsl:value-of select="substring-before(.,'.')"/>
+        <xsl:if test="contains(substring-after(.,'.'),'.')">
+          <xsl:text>.</xsl:text>
+        </xsl:if>
+        <xsl:call-template name="SimpleName">
+          <xsl:with-param name="Name" select="substring-after(.,'.')"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template name="SimpleName">
+    <xsl:param name="Name"/>
+    <xsl:choose>
+      <xsl:when test="contains($Name,'.')">
+        <xsl:value-of select="substring-before($Name,'.')"/>
+        <xsl:if test="contains(substring-after($Name,'.'),'.')">
+          <xsl:text>.</xsl:text>
+        </xsl:if>
+        <xsl:call-template name="SimpleName">
+          <xsl:with-param name="Name" select="substring-after($Name,'.')"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="concat(',',$Name)"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="*" mode="FullpathClassName">
+    <xsl:if test="parent::package">
+      <xsl:apply-templates select="parent::package" mode="FullpathClassName"/>
+      <xsl:text>.</xsl:text>
+    </xsl:if>
+    <xsl:value-of select="@name"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
   <xsl:template match="text()"/>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -11,6 +11,7 @@ Public Class frmProject
 #Region "Class declarations"
 
     Private m_xmlProject As New XmlProjectView
+    Private m_bIsVbCodeReverse As Boolean = False
 
 #End Region
 
@@ -28,6 +29,14 @@ Public Class frmProject
         End Get
     End Property
 
+    Public Property IsVbCodeReverse() As Boolean
+        Get
+            Return m_bIsVbCodeReverse
+        End Get
+        Set(ByVal value As Boolean)
+            m_bIsVbCodeReverse = value
+        End Set
+    End Property
 #End Region
 
 #Region "Public methods"
@@ -212,7 +221,14 @@ Public Class frmProject
                 ' change display of docvwProjectDisplay & btnDocView in one shot
                 DocViewMenuItem_Click(UmlViewToolStripMenuItem, Nothing)
 
-                If .IsNew Then
+                If Me.IsVbCodeReverse Then
+
+                    m_xmlProject.SortImportReferences()
+                    RefreshProjectView(lvwProjectMembers.Binding.Parent)
+                    RefreshUpdatedPath(True)
+
+                ElseIf .IsNew Then
+
                     RefreshProjectView(lvwProjectMembers.Binding.Parent)
                     RefreshUpdatedPath(True)
                     mnuProjectProperties_Click(Me, Nothing)

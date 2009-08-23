@@ -33,6 +33,8 @@ Public Class XmlProjectTools
 
     Private Shared PrefixNameDocument As New XmlDocument
 
+    Public Const cstImportsToSort As String = "Imports_to_sort"
+
     Public Const cstMsgYesNoExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgYesNoCancelExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNoCancel + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgYesNoQuestion As MsgBoxStyle = CType(MsgBoxStyle.Question + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
@@ -491,11 +493,12 @@ Public Class XmlProjectTools
             form.Cursor = Cursors.WaitCursor
 
             observer.ProgressBarVisible = True
+            observer.Log = "Initialization".PadRight(40)
 
             VbCodeReverse.Reverse(observer, strRootFolder, document)
             observer.Log = ""
             observer.Minimum = 0
-            observer.Maximum = 10
+            observer.Maximum = 12
             observer.Log = "Load XSLT converter".PadRight(40)
             observer.Increment(1)
 
@@ -544,7 +547,11 @@ Public Class XmlProjectTools
             RenumberProject(document.DocumentElement, True)
             observer.Increment(1)
 
-            stage = "Remove prefix in properties"
+            stage = "Merge template signature"
+            MergeTemplateSignature(document)
+            observer.Increment(1)
+
+            stage = "Remove prefix in properties and struct elements"
             CleanPrefixPropertiesAndElements(document)
             observer.Increment(1)
 
@@ -552,7 +559,11 @@ Public Class XmlProjectTools
             MergeAttributesProperties(document)
             observer.Increment(1)
 
-            stage = "Update nodes collaboration"
+            stage = "Find collaborations"
+            FindCollaborations(document)
+            observer.Increment(1)
+
+            stage = "Update nodes relationship/collaboration"
             UpdatesCollaborations(document)
             observer.Increment(1)
 
@@ -655,7 +666,7 @@ Public Class XmlProjectTools
             RenumberProject(document.DocumentElement, True)
             observer.Increment(1)
 
-            stage = "Remove prefix in properties"
+            stage = "Remove prefix in properties and struct elements"
             CleanPrefixPropertiesAndElements(document)
             observer.Increment(1)
 
@@ -793,7 +804,7 @@ Public Class XmlProjectTools
             observer.Increment(1)
 
             ' Remove prefix in properties , accessors, convert doxygen comments
-            stage = "Remove prefix in properties"
+            stage = "Remove prefix in properties and struct elements"
             CleanPrefixPropertiesAndElements(document)
             observer.Increment(1)
 
@@ -2730,7 +2741,24 @@ Public Class XmlProjectTools
         Next
     End Sub
 
-    Shared Sub CleanPrefixPropertiesAndElements(ByVal document As XmlDocument, _
+    Private Shared Sub MergeTemplateSignature(ByVal document As XmlDocument)
+        For Each classNode As XmlNode In document.SelectNodes("//class[@implementation='container']")
+            For Each model As XmlNode In classNode.SelectNodes("model")
+                Dim strNewId As String = GetID(model)
+                Dim ref As XmlNode = document.SelectSingleNode("//reference[@name='" + GetName(model) + "']")
+                If ref IsNot Nothing Then
+                    Dim strOldId As String = GetID(ref)
+                    For Each node As XmlNode In classNode.SelectNodes("descendant::*/@*[.='" + strOldId + "']")
+                        node.InnerText = strNewId
+                    Next
+                    ref.ParentNode.RemoveChild(ref)
+                    ref = Nothing
+                End If
+            Next
+        Next
+    End Sub
+
+    Private Shared Sub CleanPrefixPropertiesAndElements(ByVal document As XmlDocument, _
                                             Optional ByVal regexPrefixMember As String = "[a-z0-9]{1,}([A-Z].*)", _
                                             Optional ByVal prefixMember As String = "m_")
 

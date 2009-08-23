@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Windows.Forms
 
 Public Class dlgImportExchange
     Implements InterfFormDocument
@@ -18,6 +19,7 @@ Public Class dlgImportExchange
     Private Sub dlgImportExchange_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
             With m_xmlView
+                .LoadValues()
                 .InitBindingName(Me.Text)
                 .InitBindingSource(Me.lsbSource)
                 .InitBindingDestination(Me.lsbDestination)
@@ -54,6 +56,48 @@ Public Class dlgImportExchange
             With m_xmlView
                 .MoveSource()
             End With
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Private Sub listBox_DoubleClick(ByVal sender As ListBox, ByVal e As System.EventArgs) _
+        Handles lsbSource.DoubleClick, lsbDestination.DoubleClick
+        Try
+            If sender.SelectedItem IsNot Nothing Then
+                m_xmlView.Edit(sender)
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Private Sub lsbSource_KeyUp(ByVal sender As ListBox, ByVal e As System.Windows.Forms.KeyEventArgs) _
+        Handles lsbSource.KeyUp, lsbDestination.KeyUp
+        Try
+            If e.KeyCode = Keys.Enter And sender.SelectedItem IsNot Nothing Then
+                m_xmlView.Edit(sender)
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnAdd.Click
+        Try
+            If lsbImports.SelectedItem IsNot Nothing Then
+                m_xmlView.AddImport(lsbImports)
+            End If
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
+        Try
+            If lsbImports.SelectedItem IsNot Nothing Then
+                m_xmlView.Delete(lsbImports)
+            End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
