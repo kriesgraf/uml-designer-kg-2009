@@ -657,7 +657,8 @@ Public Class XmlComponent
     End Function
 
     Protected Friend Overridable Function AppendNode(ByVal nodeXml As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
-        ' TODO : Overide thsi method inclasses append action is not simply that here
+        ' This method is called when order is not defined
+        ' TODO : Override this method in classes where append action is not simply that here
         Return m_xmlNode.AppendChild(nodeXml)
     End Function
 

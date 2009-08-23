@@ -204,7 +204,7 @@ Public Class XmlClassSpec
         End Try
     End Sub
 
-    Public Overrides Function AddNewComponent(ByVal strDocName As String) As String
+    Public Overrides Function GetNameNewComponent(ByVal strDocName As String) As String
         Try
             If strDocName = "" Then
                 Dim child As XmlNode = Me.Node.LastChild
@@ -213,7 +213,7 @@ Public Class XmlClassSpec
                     If GetAttributeValue(child, "constructor") <> "no" Then
                         strDocName = "constructor_doc"
                     Else
-                        strDocName = MyBase.AddNewComponent(strDocName)
+                        strDocName = MyBase.GetNameNewComponent(strDocName)
                     End If
                 End If
             End If

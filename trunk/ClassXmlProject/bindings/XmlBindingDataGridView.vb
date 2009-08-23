@@ -229,7 +229,7 @@ Public Class XmlBindingDataGridView
 
     Private Sub m_BindingSource_AddingNew(ByVal sender As Object, ByVal e As System.ComponentModel.AddingNewEventArgs) Handles m_BindingSource.AddingNew
         Try
-            Dim strNodeName As String = m_xmlParentNode.AddNewComponent(TryCast(m_dataControl.Tag, String))
+            Dim strNodeName As String = m_xmlParentNode.GetNameNewComponent(TryCast(m_dataControl.Tag, String))
             e.NewObject = AddItem(strNodeName)
 
         Catch ex As Exception
