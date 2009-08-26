@@ -163,11 +163,11 @@ Public Class XmlProjectView
         Return bResult
     End Function
 
-    Public Sub SortImportReferences()
+    Public Function SortImportReferences() As Boolean
         Dim child As XmlNode = m_xmlProperties.Document.SelectSingleNode("//import[@name='" + cstImportsToSort + "']")
         Dim import As XmlImportSpec = XmlNodeManager.GetInstance().CreateDocument(child)
-        import.ExchangeImports()
-    End Sub
+        Return import.ExchangeImports()
+    End Function
 
     Public Sub ExportOmgUmlFile(ByVal form As Form, ByVal fileName As String)
         XmlProjectTools.ExportOmgUmlFile(form, Me.Document, fileName)
@@ -197,8 +197,9 @@ Public Class XmlProjectView
 
     Public Sub RenumberDatabaseIndex()
         Try
-            RenumberProject(Me.Properties.Node)
+            RenumberProject(Me.Properties.Node, True)
             m_xmlReferenceNodeCounter.InitItemCounters(Me.Properties.Node.OwnerDocument)
+            Me.Updated = True
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -672,7 +673,7 @@ Public Class XmlProjectView
         End If
     End Sub
 
-    Public Sub ExchangeImports(ByVal composite As XmlComposite)
+    Public Function ExchangeImports(ByVal composite As XmlComposite) As Boolean
         Dim parent As XmlImportSpec = TryCast(XmlNodeManager.GetInstance().CreateDocument(composite.Node), XmlImportSpec)
         If parent Is Nothing Then
             MsgBox("Please retry with an 'import' object'!", MsgBoxStyle.Critical, "Exchange imports")
@@ -681,10 +682,12 @@ Public Class XmlProjectView
             If parent IsNot Nothing Then
                 If parent.ExchangeImports() Then
                     Me.Updated = True
+                    Return True
                 End If
             End If
         End If
-    End Sub
+        Return False
+    End Function
 
     Public Shared Function InitPrototypes() As Boolean
         Try

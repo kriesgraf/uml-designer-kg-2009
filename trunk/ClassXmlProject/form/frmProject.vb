@@ -223,10 +223,10 @@ Public Class frmProject
 
                 If Me.IsVbCodeReverse Then
 
-                    m_xmlProject.SortImportReferences()
-                    RefreshProjectView(lvwProjectMembers.Binding.Parent)
-                    RefreshUpdatedPath(True)
-
+                    If m_xmlProject.SortImportReferences() Then
+                        lvwProjectMembers.Binding.ResetBindings(True)
+                        RefreshUpdatedPath(False)
+                    End If
                 ElseIf .IsNew Then
 
                     RefreshProjectView(lvwProjectMembers.Binding.Parent)
@@ -865,7 +865,8 @@ Public Class frmProject
         Me.Cursor = Cursors.WaitCursor
         Try
             m_xmlProject.TrimComments()
-            RefreshUpdatedPath(True)
+            RefreshProjectView(lvwProjectMembers.Binding.Parent)
+            RefreshUpdatedPath(False)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -878,7 +879,10 @@ Public Class frmProject
         Handles mnuProjectExchangeImports.Click, mnuPackageExchangeImports.Click
 
         Try
-            m_xmlProject.ExchangeImports(lvwProjectMembers.SelectedItem)
+            If m_xmlProject.ExchangeImports(lvwProjectMembers.SelectedItem) Then
+                lvwProjectMembers.Binding.ResetBindings(True)
+                RefreshUpdatedPath(False)
+            End If
 
         Catch ex As Exception
             MsgExceptionBox(ex)
