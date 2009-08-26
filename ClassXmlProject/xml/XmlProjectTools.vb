@@ -544,7 +544,7 @@ Public Class XmlProjectTools
             observer.ProgressBarVisible = True
 
             stage = "Apply UML Designer element indexation"
-            RenumberProject(document.DocumentElement, True)
+            RenumberProject(document.DocumentElement)
             observer.Increment(1)
 
             stage = "Merge template signature"
@@ -1805,7 +1805,7 @@ Public Class XmlProjectTools
 
                 Select Case child.Name
                     Case "package"
-                        strID = CStr(oRefCounter.GetNewPackageId(oImportCounter))
+                        strID = XmlComponent.UID
                         'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
                         SetID(child, strID)
 
@@ -1813,7 +1813,7 @@ Public Class XmlProjectTools
                         'Debug.Print("StartInsertion: no renumber (" + GetID(child) + ") " + child.Name)
 
                     Case "relationship"
-                        strID = CStr(oRefCounter.GetNewRelationId(oImportCounter))
+                        strID = XmlComponent.UID
                         'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
                         ChangeID(child, import, strID)
 
@@ -1861,7 +1861,7 @@ Public Class XmlProjectTools
 
         Dim strOldID As String = GetID(nodeReference)
         Dim strQuery As String
-        If strOldID.StartsWith("class") Or strOldID.StartsWith("relation") Then
+        If strOldID.StartsWith("class") Or strOldID.StartsWith(XmlComponent.cstUidPrefix) Then
             strQuery = "//@idref[.='" + strOldID + "']"
             list = treeNode.SelectNodes(strQuery)
             For Each attrib In list
@@ -2859,22 +2859,19 @@ Public Class XmlProjectTools
 
     Private Shared Sub FindCollaborations(ByVal document As XmlDocument)
         Try
-            Dim list As XmlNodeList = document.SelectNodes("//property[id(type/@idref)[name()='class']]")
-            Dim index As Integer = 1
+            Dim list As XmlNodeList = document.SelectNodes("//property[id(type/@idref)[name()!='typedef']]")
             Dim propNode As XmlNode
 
             For Each propNode In list
-                CreateRelationShip(index, propNode, document)
-                index += 1
+                CreateRelationShip(propNode, document)
             Next
 
-            list = document.SelectNodes("//typedef[id(type/@idref)[name()='class'] and type/@struct='container']")
+            list = document.SelectNodes("//typedef[id(type/@idref)[name()!='typedef'] and type/@struct='container']")
 
             For Each typeNode As XmlNode In list
                 propNode = typeNode.ParentNode.SelectSingleNode("property[type/@idref='" + GetID(typeNode) + "']")
                 If propNode IsNot Nothing Then
-                    CreateRelationShipFromType(index, propNode, typeNode, document)
-                    index += 1
+                    CreateRelationShipFromType(propNode, typeNode, document)
                 End If
             Next
 
@@ -2885,21 +2882,37 @@ Public Class XmlProjectTools
         End Try
     End Sub
 
-    Private Shared Function CreateRelationShip(ByVal index As Integer, ByVal propNode As XmlNode, ByVal document As XmlDocument) As Boolean
+    Private Shared Function CreateRelationShip(ByVal propNode As XmlNode, ByVal document As XmlDocument) As Boolean
         Try
             Dim strComment As String = GetNodeString(propNode, "comment")
             Dim classFather As XmlNode = propNode.ParentNode
             Dim classChild As XmlNode = document.GetElementById(GetIDREF(GetNode(propNode, "type")))
             Dim range As String = GetNodeString(propNode, "variable/@range")
+            Dim member As String = GetAttributeValue(propNode, "member")
+            Dim level As String = GetNodeString(propNode, "type/@level")
+            Dim list As XmlNode = GetNode(propNode, "descendant::list")
+            Dim array As XmlNode = GetNode(propNode, "type/@size | type/@sizeref")
+            Dim cardinal As String = "01"
+            If array IsNot Nothing Or list IsNot Nothing Then
+                cardinal = "0n"
+            End If
 
-            Dim strXml As String = "<relationship id='relation" + index.ToString + "' action='" + strComment + "' type='assembl'>"
+            Dim strXml As String = "<relationship id='" + XmlComponent.UID + "' action='" + strComment + "' type='assembl'>"
             strXml += "<father name='New_father' range='no' cardinal='01' level='0' member='object' idref='" + GetID(classFather) + "'>"
             strXml += "<get range='no' by='val' modifier='var' />"
             strXml += "<set range='no' by='val' />"
             strXml += "</father>"
-            strXml += "<child name='" + GetName(propNode) + "' range='" + range + "' cardinal='01' level='0' member='object' idref='" + GetID(classChild) + "'>"
-            strXml += "<get range='no' by='val' modifier='var' />"
-            strXml += "<set range='no' by='val' />"
+            strXml += "<child name='" + GetName(propNode) + "' range='" + range + "' cardinal='" + cardinal + "' level='" + level + _
+                        "' member='" + member + "' idref='" + GetID(classChild) + "'>"
+
+            If array IsNot Nothing Then
+                strXml += "<array " + array.Name + "='" + array.InnerText + "'/>"
+            ElseIf list IsNot Nothing Then
+                strXml += list.OuterXml
+            Else
+                strXml += GetNode(propNode, "get").OuterXml
+                strXml += GetNode(propNode, "set").OuterXml
+            End If
             strXml += "</child>"
             strXml += "</relationship>"
             Dim xmlFrag As New XmlDocument
@@ -2916,22 +2929,26 @@ Public Class XmlProjectTools
         Return False
     End Function
 
-    Private Shared Function CreateRelationShipFromType(ByVal index As Integer, ByVal propNode As XmlNode, ByVal typeNode As XmlNode, ByVal document As XmlDocument, Optional ByVal prefixList As String = "List") As Boolean
+    Private Shared Function CreateRelationShipFromType(ByVal propNode As XmlNode, ByVal typeNode As XmlNode, ByVal document As XmlDocument, Optional ByVal prefixList As String = "List") As Boolean
         Try
             Dim strComment As String = GetNodeString(propNode, "comment")
             Dim classFather As XmlNode = propNode.ParentNode
             Dim classChild As XmlNode = document.GetElementById(GetIDREF(GetNode(typeNode, "type")))
             Dim range As String = GetNodeString(propNode, "variable/@range")
             Dim name As String = GetName(propNode)
+            Dim member As String = GetAttributeValue(propNode, "member")
+            Dim level As String = GetNodeString(propNode, "type/@level")
+            Dim cardinal As String = "0n"
 
             If name.StartsWith(prefixList) Then name = name.Substring(Len(prefixList))
 
-            Dim strXml As String = "<relationship id='relation" + index.ToString + "' action='" + strComment + "' type='assembl'>"
+            Dim strXml As String = "<relationship id='" + XmlComponent.UID + "' action='" + strComment + "' type='assembl'>"
             strXml += "<father name='New_father' range='no' cardinal='01' level='0' member='object' idref='" + GetID(classFather) + "'>"
             strXml += "<get range='no' by='val' modifier='var' />"
             strXml += "<set range='no' by='val' />"
             strXml += "</father>"
-            strXml += "<child name='" + name + "' range='" + range + "' cardinal='0n' level='0' member='object' idref='" + GetID(classChild) + "'>"
+            strXml += "<child name='" + name + "' range='" + range + "' cardinal='" + cardinal + "' level='" + level + "' member='" + member _
+                        + "' idref='" + GetID(classChild) + "'>"
             strXml += typeNode.FirstChild.FirstChild.OuterXml
             strXml += "</child>"
             strXml += "</relationship>"
