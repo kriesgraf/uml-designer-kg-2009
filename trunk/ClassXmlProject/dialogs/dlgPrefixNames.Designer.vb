@@ -26,6 +26,7 @@ Partial Class dlgPrefixNames
         Me.grdPrefixNameList = New System.Windows.Forms.DataGridView
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         CType(Me.grdPrefixNameList, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.ShowInTaskbar = False
         Me.SuspendLayout()
         '
         'grdSimpleTypeList

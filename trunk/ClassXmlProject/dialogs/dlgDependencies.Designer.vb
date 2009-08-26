@@ -45,6 +45,7 @@ Partial Class dlgDependencies
         Me.Controls.Add(Me.lsbDependencies)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
         Me.Name = "dlgDependencies"
+        Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "dlgDependencies"
         Me.ResumeLayout(False)

@@ -20,6 +20,7 @@ Partial Class dlgClass
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
+        Me.ShowInTaskbar = False
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
