@@ -76,27 +76,6 @@ Public Class XmlNodeCounter
         Return iResult
     End Function
 
-    Public Sub Recycle(ByVal node As XmlNode)
-
-        Dim strID As String
-
-        Try
-            strID = GetID(node)
-            If strID.StartsWith(m_strPrefix) = False Then
-                Throw New Exception("In Node: " + node.OuterXml + vbCrLf + vbCrLf + "Attribute 'id' does not start with prefix '" + m_strPrefix + "'")
-            End If
-
-            strID = AfterStr(strID, m_strPrefix)
-            If IsNumeric(strID) = False Then
-                Exit Sub
-            ElseIf CInt(strID) <> 0 Then
-                m_CountDeletedList.Add(CInt(strID), strID)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Sub
-
     Public Sub Init(ByVal docXML As XmlDocument, ByVal strQuery As String)
         Try
             Clear()
