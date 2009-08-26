@@ -223,13 +223,13 @@ Public Class XmlPackageSpec
     Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _
                                                     Optional ByVal eRename As ENameReplacement = ENameReplacement.NewName, _
                                                     Optional ByVal bSetIdrefChildren As Boolean = False)
-        Id = xmlRefNodeCounter.GetNewPackageId()
+        Id = XmlComponent.UID
         Select Case eRename
             Case ENameReplacement.NewName
-                Name = "New_" + Me.Id
+                Name = "New_" + xmlRefNodeCounter.GetNewPackageId()
             Case ENameReplacement.AddCopyName
                 ' Name is set by caller
-                Name = Name + "_" + Me.Id
+                Name = Name + "_" + xmlRefNodeCounter.GetNewPackageId()
         End Select
 
         Me.LoadChildrenList()
