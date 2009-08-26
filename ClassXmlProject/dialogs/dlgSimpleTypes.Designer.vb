@@ -32,6 +32,7 @@ Partial Class dlgSimpleTypes
         CType(Me.grdSimpleTypeList, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ContextMenuStrip1.SuspendLayout()
         CType(Me.dtsSimpleTypesList, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.ShowInTaskbar = False
         Me.SuspendLayout()
         '
         'grdSimpleTypeList
