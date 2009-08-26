@@ -16,6 +16,11 @@ Public Class dlgImportExchange
         End Set
     End Property
 
+    Private Sub dlgImportExchange_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
+        m_xmlView.CheckEmpty()
+        Me.Tag = m_xmlView.Updated
+    End Sub
+
     Private Sub dlgImportExchange_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
             With m_xmlView
@@ -26,6 +31,20 @@ Public Class dlgImportExchange
                 ' Order is important
                 .InitBindingImports(Me.lsbImports)
             End With
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Private Sub lsbImports_KeyUp(ByVal sender As ListBox, ByVal e As System.Windows.Forms.KeyEventArgs) Handles lsbImports.KeyUp
+        Try
+            If e.KeyCode = Keys.Insert And sender.SelectedItem IsNot Nothing Then
+                m_xmlView.AddImport(lsbImports)
+                lsbImports.Select()
+            ElseIf e.KeyCode = Keys.Delete And sender.SelectedItem IsNot Nothing Then
+                m_xmlView.Delete(lsbImports)
+                lsbImports.Select()
+            End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
@@ -77,6 +96,10 @@ Public Class dlgImportExchange
         Try
             If e.KeyCode = Keys.Enter And sender.SelectedItem IsNot Nothing Then
                 m_xmlView.Edit(sender)
+            ElseIf e.KeyCode = Keys.Left And sender Is lsbDestination Then
+                m_xmlView.MoveSource()
+            ElseIf e.KeyCode = Keys.Right And sender Is lsbSource Then
+                m_xmlView.MoveDestination()
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -87,6 +110,7 @@ Public Class dlgImportExchange
         Try
             If lsbImports.SelectedItem IsNot Nothing Then
                 m_xmlView.AddImport(lsbImports)
+                lsbImports.Select()
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)
@@ -97,6 +121,7 @@ Public Class dlgImportExchange
         Try
             If lsbImports.SelectedItem IsNot Nothing Then
                 m_xmlView.Delete(lsbImports)
+                lsbImports.Select()
             End If
         Catch ex As Exception
             MsgExceptionBox(ex)

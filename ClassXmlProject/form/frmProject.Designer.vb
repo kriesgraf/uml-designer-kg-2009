@@ -34,6 +34,7 @@ Partial Class frmProject
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProjectEdit = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuEditProperties = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuProjectExchangeImports = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator8 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProjectGenerate = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator25 = New System.Windows.Forms.ToolStripSeparator
@@ -126,6 +127,7 @@ Partial Class frmProject
         Me.mnuPackageEdit = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPackageMoveUp = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuPackageProperties = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuPackageExchangeImports = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator11 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuPackageGenerate = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator26 = New System.Windows.Forms.ToolStripSeparator
@@ -185,8 +187,6 @@ Partial Class frmProject
         Me.DeleteReference = New System.Windows.Forms.ToolStripMenuItem
         Me.RemoveAll = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.mnuProjectExchangeImports = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuPackageExchangeImports = New System.Windows.Forms.ToolStripMenuItem
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
@@ -301,6 +301,13 @@ Partial Class frmProject
         Me.mnuEditProperties.Size = New System.Drawing.Size(245, 22)
         Me.mnuEditProperties.Text = "Parameters..."
         Me.mnuEditProperties.Visible = False
+        '
+        'mnuProjectExchangeImports
+        '
+        Me.mnuProjectExchangeImports.Name = "mnuProjectExchangeImports"
+        Me.mnuProjectExchangeImports.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.mnuProjectExchangeImports.Size = New System.Drawing.Size(245, 22)
+        Me.mnuProjectExchangeImports.Text = "Exchange imports..."
         '
         'ToolStripSeparator8
         '
@@ -989,6 +996,13 @@ Partial Class frmProject
         Me.mnuPackageProperties.Text = "Parameters..."
         Me.mnuPackageProperties.Visible = False
         '
+        'mnuPackageExchangeImports
+        '
+        Me.mnuPackageExchangeImports.Name = "mnuPackageExchangeImports"
+        Me.mnuPackageExchangeImports.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.mnuPackageExchangeImports.Size = New System.Drawing.Size(245, 22)
+        Me.mnuPackageExchangeImports.Text = "Exchange imports..."
+        '
         'ToolStripSeparator11
         '
         Me.ToolStripSeparator11.Name = "ToolStripSeparator11"
@@ -1394,18 +1408,6 @@ Partial Class frmProject
         Me.RemoveAll.Name = "RemoveAll"
         Me.RemoveAll.Size = New System.Drawing.Size(247, 22)
         Me.RemoveAll.Text = "Remove all"
-        '
-        'mnuProjectExchangeImports
-        '
-        Me.mnuProjectExchangeImports.Name = "mnuProjectExchangeImports"
-        Me.mnuProjectExchangeImports.Size = New System.Drawing.Size(245, 22)
-        Me.mnuProjectExchangeImports.Text = "Exchange imports..."
-        '
-        'mnuPackageExchangeImports
-        '
-        Me.mnuPackageExchangeImports.Name = "mnuPackageExchangeImports"
-        Me.mnuPackageExchangeImports.Size = New System.Drawing.Size(245, 22)
-        Me.mnuPackageExchangeImports.Text = "Exchange imports..."
         '
         'frmProject
         '

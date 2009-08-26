@@ -1,6 +1,8 @@
 ﻿Imports System.Windows.Forms
 Imports ClassXmlProject.XmlNodeListView
+Imports ClassXmlProject.XmlProjectTools
 Imports System.Collections
+Imports Microsoft.VisualBasic
 
 Public Class XmlExchangeImportsView
     Inherits XmlImportSpec
@@ -24,7 +26,7 @@ Public Class XmlExchangeImportsView
     End Function
 
     Public Sub InitBindingName(ByRef strName As String)
-        strName = "Imports " + MyBase.Name
+        strName = "Exchange references from import '" + MyBase.Name + "' with..."
     End Sub
 
     Public Sub InitBindingImports(ByVal listBox As ListBox)
@@ -52,19 +54,36 @@ Public Class XmlExchangeImportsView
         m_listDestination = listBox
     End Sub
 
+    Public Sub CheckEmpty()
+        If ChildExportNode.Node.HasChildNodes = False Then
+            If MsgBox("Import '" + Me.Name + "' is empty too, do you want to remove it?", _
+                      cstMsgYesNoQuestion, "Remove import") = MsgBoxResult.Yes _
+            Then
+                Me.RemoveMe()
+                Me.Updated = True
+            End If
+        End If
+    End Sub
+
     Public Sub MoveSource()
+        Dim bUpdated As Boolean = False
         For Each child As XmlNodeListView In m_listDestination.SelectedItems
             Me.AppendComponent(child)
+            bUpdated = True
         Next
+        If bUpdated Then Me.Updated = True
         UpdateSource()
         UpdateDestination()
     End Sub
 
     Public Sub MoveDestination()
         If m_xmlDestination Is Nothing Then Exit Sub
+        Dim bUpdated As Boolean = False
         For Each child As XmlNodeListView In m_listSource.SelectedItems
             m_xmlDestination.AppendComponent(child)
+            bUpdated = True
         Next
+        If bUpdated Then Me.Updated = True
         UpdateSource()
         UpdateDestination()
     End Sub
@@ -120,7 +139,7 @@ Public Class XmlExchangeImportsView
             .DisplayMember = cstFullpathClassName
             .SelectionMode = SelectionMode.One
             ' Selection automatically call "UpdateDestination"
-            .SelectedIndex = 0
+            If m_listImports.Items.Count > 0 Then .SelectedIndex = 0
         End With
     End Sub
 
