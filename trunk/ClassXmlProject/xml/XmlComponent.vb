@@ -101,6 +101,8 @@ Public Class XmlComponent
 
 #Region "Class declarations"
 
+    Public Const cstUidPrefix As String = "U"
+
     Protected Friend m_bCreateNodeNow As Boolean
     Protected m_xmlNodeManager As XmlNodeManager
 
@@ -219,6 +221,11 @@ Public Class XmlComponent
         End Get
     End Property
 
+    Public Shared ReadOnly Property UID() As String
+        Get
+            Return cstUidPrefix + Guid.NewGuid().ToString.Replace("-", "_")
+        End Get
+    End Property
 #End Region
 
 #Region "Public methods"
