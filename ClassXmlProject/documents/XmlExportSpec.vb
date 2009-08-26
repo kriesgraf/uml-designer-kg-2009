@@ -139,9 +139,6 @@ Public Class XmlExportSpec
                 End If
             Next child
             If bResult Then
-                For Each child In Node.ChildNodes
-                    m_xmlReferenceNodeCounter.Recycle(child)
-                Next child
                 RemoveMe()
             End If
         Catch ex As Exception
