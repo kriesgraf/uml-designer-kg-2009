@@ -217,7 +217,7 @@ Public Class XmlProjectProperties
 
     Public Overrides Function CanAddComponent(ByVal nodeXml As XmlComponent) As Boolean
         Select Case nodeXml.NodeName
-            Case "import", "class", "package"
+            Case "import", "class", "package", "relationship"
                 Return True
         End Select
         Return False
