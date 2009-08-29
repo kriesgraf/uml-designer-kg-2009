@@ -219,7 +219,9 @@
     <xsl:text>
 </xsl:text>
     <xsl:copy>
-      <xsl:call-template name="ID"/>
+      <xsl:attribute name="id">
+        <xsl:value-of select="generate-id()"/>
+      </xsl:attribute>
       <xsl:call-template name="Name"/>
       <xsl:copy-of select="@folder"/>
       <xsl:apply-templates select="comment[1]"/>
@@ -234,7 +236,9 @@
     <xsl:text>
 </xsl:text>
     <xsl:copy>
-      <xsl:call-template name="ID"/>
+      <xsl:attribute name="id">
+        <xsl:value-of select="generate-id()"/>
+      </xsl:attribute>
       <xsl:call-template name="Action"/>
       <xsl:if test="not(@type)">
         <xsl:attribute name="type">assembl</xsl:attribute>
@@ -254,15 +258,7 @@
     </xsl:copy>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template match="collaboration">
-    <xsl:text>
-</xsl:text>
-    <xsl:if test="id(@idref)[self::relationship]">
-      <xsl:copy>
-        <xsl:call-template name="IDREF"/>
-      </xsl:copy>
-    </xsl:if>
-  </xsl:template>
+  <xsl:template match="collaboration"/>
   <!-- ======================================================================= -->
   <xsl:template match="dependency">
     <xsl:text>
