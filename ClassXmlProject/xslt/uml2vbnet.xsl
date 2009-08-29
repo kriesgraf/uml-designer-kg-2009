@@ -126,12 +126,13 @@
       <xsl:attribute name="Merge">yes</xsl:attribute>
       <xsl:attribute name="name"><xsl:value-of select="@name"/>.vb</xsl:attribute>
     <xsl:variable name="Request1"><xsl:call-template name="FullImportName"/></xsl:variable>
-    <!--
     <IMPORTS><xsl:copy-of select="$Request1"/></IMPORTS>
+    <!--
      -->
     <xsl:variable name="CurrentPackage"><xsl:value-of select="parent::package/@name"/></xsl:variable>
     <xsl:for-each select="msxsl:node-set($Request1)//reference[generate-id()=generate-id(key('include',@value)[1])]">
-Imports <xsl:value-of select="@value"/></xsl:for-each>
+    <xsl:text>
+Imports </xsl:text><xsl:value-of select="@value"/></xsl:for-each>
 <xsl:text xml:space="preserve">
 </xsl:text>
     <xsl:apply-templates select="import/body" mode="Code"/>
@@ -730,6 +731,7 @@ End Namespace
   </xsl:template>
 <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
