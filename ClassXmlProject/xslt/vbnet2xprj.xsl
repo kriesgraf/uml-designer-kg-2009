@@ -22,20 +22,22 @@
       </xsl:attribute>
       <generation destination="{$ProjectFolder}" language="{$LanguageID}"/>
       <comment brief="Brief description">Detailed comment</comment>
-      <!--
       <Classes>
         <xsl:copy-of select="$Classes"/>
       </Classes>
+      <!--
+       -->
       <UnknownTypes>
         <xsl:copy-of select="$UnknownTypes"/>
       </UnknownTypes>
-       -->
+      <!--
       <xsl:call-template name="Imports"/>
       <import name="Imports_to_sort" visibility="package">
         <export name="Imports_to_sort">
           <xsl:call-template name="UnknownImports"/>
         </export>
       </import>
+       -->
       <xsl:apply-templates select="*[not(self::imports)]"/>
     </root>
   </xsl:template>
@@ -65,6 +67,14 @@
   <xsl:template match="element-type" mode="Imports">
     <xsl:param name="NoPrefix"/>
     <reference name="{@name}" type="class" id="{@idref}" container="{@container}">
+      <xsl:attribute name="container">
+        <xsl:choose>
+          <xsl:when test="contains(concat(@name,';'),'List;')">3</xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="@container"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
       <xsl:if test="@prefix and $NoPrefix=''">
         <xsl:attribute name="package">
           <xsl:value-of select="@prefix"/>
@@ -278,8 +288,24 @@
         </xsl:otherwise>
       </xsl:choose>
       <variable range="private">
-        <xsl:if test="@size!=''">
-          <xsl:attribute name="size">10</xsl:attribute>
+        <xsl:choose>
+          <xsl:when test="@size='()'">
+            <xsl:attribute name="size">10</xsl:attribute>
+          </xsl:when>
+          <xsl:when test="@size!=''">
+            <xsl:call-template name="SearchSize">
+              <xsl:with-param name="Label">
+                <xsl:apply-templates select="@size" mode="SimpleName2"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:when>
+        </xsl:choose>
+        <xsl:if test="@default">
+          <xsl:call-template name="SearchValue">
+            <xsl:with-param name="Label">
+              <xsl:apply-templates select="@default" mode="SimpleName2"/>
+            </xsl:with-param>
+          </xsl:call-template>
         </xsl:if>
       </variable>
       <comment>
@@ -414,31 +440,28 @@
           <comment brief="Brief description">Detailed comment</comment>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:call-template name="AllParams">
+      <xsl:apply-templates select="param">
         <xsl:with-param name="Comments">
           <xsl:copy-of select="preceding-sibling::*[position()=1 and name()='vb-doc']"/>
         </xsl:with-param>
-      </xsl:call-template>
+      </xsl:apply-templates>
     </method>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template name="ImplementsPARAMS">
-    <xsl:param name="Param"/>
-    <xsl:param name="Type"/>
-    <xsl:param name="Value"/>
+  <xsl:template name="ImplementParam" match="param">
     <xsl:param name="Comments"/>
     <xsl:variable name="Name">
       <xsl:choose>
-        <xsl:when test="starts-with($Param,'Optional')">
-          <xsl:value-of select="substring-after($Param,'Optional ')"/>
+        <xsl:when test="starts-with(@name,'Optional')">
+          <xsl:value-of select="substring-after(@name,'Optional ')"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="$Param"/>
+          <xsl:value-of select="@name"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <param num-id="0" name="{substring-after($Name,' ')}">
-      <type modifier="var" level="0" desc="{$Type}">
+      <type modifier="var" level="0" desc="{@type}">
         <xsl:attribute name="by">
           <xsl:choose>
             <xsl:when test="starts-with($Name,'ByRef')">
@@ -449,9 +472,9 @@
         </xsl:attribute>
       </type>
       <variable range="private">
-        <xsl:if test="$Value!=''">
+        <xsl:if test="@value!=''">
           <xsl:attribute name="value">
-            <xsl:value-of select="$Value"/>
+            <xsl:value-of select="@value"/>
           </xsl:attribute>
         </xsl:if>
       </variable>
@@ -496,6 +519,20 @@
   </xsl:template>
   <!-- ============================================================================== -->
 </xsl:stylesheet>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
