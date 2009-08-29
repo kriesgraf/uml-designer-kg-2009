@@ -411,20 +411,26 @@
     <xsl:param name="CurrentPackage"/>
     <xsl:choose>
         <xsl:when test="type/element[@idref]">
-          <xsl:apply-templates select="type/element[@idref]" mode="ListImports">
-            <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-          </xsl:apply-templates>
+          <xsl:if test="id(type/element/@idref)[parent::export]">
+            <xsl:apply-templates select="type/element[@idref]" mode="ListImports">
+              <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+            </xsl:apply-templates>
+          </xsl:if>
         </xsl:when>
        <xsl:when test="type[@idref and not(enumvalue)]">
-          <xsl:apply-templates select="type[@idref]" mode="ListImports">
-            <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-          </xsl:apply-templates>
+          <xsl:if test="id(type/@idref)[parent::export]">
+            <xsl:apply-templates select="type[@idref]" mode="ListImports">
+              <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+            </xsl:apply-templates>
+          </xsl:if>
         </xsl:when>
      </xsl:choose>
      <xsl:if test="type/list[@idref]">
-       <xsl:apply-templates select="type/list[@idref]" mode="ListImports">
-         <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-       </xsl:apply-templates>
+       <xsl:if test="id(type/list/@idref)[parent::export]">
+         <xsl:apply-templates select="type/list[@idref]" mode="ListImports">
+           <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+         </xsl:apply-templates>
+       </xsl:if>
      </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -434,9 +440,11 @@
       <xsl:value-of select="@idref"/>
       <xsl:if test="name()='index-idref'"><xsl:value-of select="."/></xsl:if>
     </xsl:variable>
-    <xsl:apply-templates select="id($RefID)" mode="ClassImports">
-       <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-    </xsl:apply-templates>
+    <xsl:if test="id($RefID)[parent::export]">
+      <xsl:apply-templates select="id($RefID)" mode="ClassImports">
+         <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+      </xsl:apply-templates>
+    </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="class | reference | interface" mode="ClassImports">
@@ -448,9 +456,11 @@
   <!-- ======================================================================= -->
   <xsl:template match="child" mode="ListImports">
     <xsl:param name="CurrentPackage"/>
-    <xsl:apply-templates select="id(preceding-sibling::father/@idref)" mode="ListImports">
-      <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-    </xsl:apply-templates>
+    <xsl:if test="id(following-sibling::father/@idref)[parent::export]">
+      <xsl:apply-templates select="id(preceding-sibling::father/@idref)" mode="ListImports">
+        <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+      </xsl:apply-templates>
+    </xsl:if>
     <xsl:apply-templates select="preceding-sibling::father/list" mode="ListImports">
       <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
     </xsl:apply-templates>
@@ -458,9 +468,11 @@
   <!-- ======================================================================= -->
   <xsl:template match="father" mode="ListImports">
     <xsl:param name="CurrentPackage"/>
-    <xsl:apply-templates select="id(following-sibling::child/@idref)" mode="ListImports">
-      <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-    </xsl:apply-templates>
+    <xsl:if test="id(following-sibling::child/@idref)[parent::export]">
+      <xsl:apply-templates select="id(following-sibling::child/@idref)" mode="ListImports">
+        <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+      </xsl:apply-templates>
+    </xsl:if>
     <xsl:apply-templates select="following-sibling::child/list" mode="ListImports">
       <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
     </xsl:apply-templates>
@@ -468,23 +480,30 @@
   <!-- ======================================================================= -->
   <xsl:template match="list" mode="ListImports">
     <xsl:param name="CurrentPackage"/>
-    <xsl:apply-templates select="id(@index-idref)" mode="ListImports">
-      <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-    </xsl:apply-templates>
-    <xsl:apply-templates select="id(@idref)" mode="ListImports">
-      <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-    </xsl:apply-templates>
+    <xsl:if test="id(@index-idref)[parent::export]">
+      <xsl:apply-templates select="id(@index-idref)" mode="ListImports">
+        <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+      </xsl:apply-templates>
+    </xsl:if>
+    <xsl:if test="id(@idref)[parent::export]">
+      <xsl:apply-templates select="id(@idref)" mode="ListImports">
+        <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+      </xsl:apply-templates>
+    </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="inherited" mode="ListImports">
     <xsl:param name="CurrentPackage"/>
-    <xsl:apply-templates select="id(@idref)" mode="ListImports">
-      <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
-    </xsl:apply-templates>
+    <xsl:if test="id(@idref)[parent::export]">
+      <xsl:apply-templates select="id(@idref)" mode="ListImports">
+        <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
+      </xsl:apply-templates>
+    </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="dependency" mode="ListImports">
     <xsl:param name="CurrentPackage"/>
+    <reference name="dependency" ref="{id(@idref)/@name}"/>
     <xsl:apply-templates select="id(@idref)" mode="ListImports">
       <xsl:with-param name="CurrentPackage" select="$CurrentPackage"/>
     </xsl:apply-templates>
@@ -504,8 +523,20 @@
     </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
+  <xsl:template match="class" mode="Package2">
+    <xsl:apply-templates select="parent::package" mode="Package2"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
   <xsl:template match="class" mode="Package">
     <xsl:apply-templates select="parent::*" mode="Package"/>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="package" mode="Package2">
+    <xsl:if test="parent::package">
+      <xsl:apply-templates select="parent::package" mode="Package2"/>
+      <xsl:text>.</xsl:text>
+    </xsl:if>
+    <xsl:value-of select="@name"/>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="package" mode="Package">
@@ -561,7 +592,6 @@
   <!-- ======================================================================= -->
   <xsl:template match="class" mode="ListImports">
     <xsl:param name="CurrentPackage"/>
-    <xsl:if test="$CurrentPackage!=parent::*/@name">
     <xsl:element name="reference">
       <xsl:attribute name="node"><xsl:value-of select="name()"/></xsl:attribute>
       <xsl:attribute name="name">
@@ -572,9 +602,10 @@
       </xsl:attribute>
       <xsl:attribute name="value">
         <xsl:apply-templates select="." mode="Package"/>
+        <xsl:text>.</xsl:text>
+        <xsl:value-of select="@name"/>
       </xsl:attribute>
     </xsl:element>
-    </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="typedef" mode="ClassImports">
@@ -613,6 +644,13 @@
   <xsl:template match="class" mode="FullPackageName">
     <xsl:param name="CurrentClassName"/>
     <xsl:param name="CurrentPackageName"/>
+    <xsl:variable name="LocalPackageName">
+      <xsl:apply-templates select="." mode="Package2"/>
+    </xsl:variable>
+    <xsl:if test="$LocalPackageName!=$CurrentPackageName and $LocalPackageName!=''">
+      <xsl:value-of select="concat($LocalPackageName,'.')"/>
+    </xsl:if>
+      <!--xsl:value-of select="concat('[',$CurrentPackageName,'|',$LocalPackageName,']')"/-->
     <xsl:value-of select="@name"/>
   </xsl:template>
   <!-- ======================================================================= -->
@@ -667,6 +705,7 @@
         ''' &lt;summary&gt;<xsl:value-of select="text()"/>&lt;/summary&gt;</xsl:template>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
