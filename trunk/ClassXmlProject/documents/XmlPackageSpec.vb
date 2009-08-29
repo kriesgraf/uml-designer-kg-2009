@@ -226,7 +226,7 @@ Public Class XmlPackageSpec
         Id = XmlComponent.UID
         Select Case eRename
             Case ENameReplacement.NewName
-                Name = "New_" + xmlRefNodeCounter.GetNewPackageId()
+                Name = "New_" + Me.NodeName + xmlRefNodeCounter.GetNewPackageId()
             Case ENameReplacement.AddCopyName
                 ' Name is set by caller
                 Name = Name + "_" + xmlRefNodeCounter.GetNewPackageId()

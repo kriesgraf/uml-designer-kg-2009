@@ -162,10 +162,11 @@ Public Class XmlRelationSpec
             Throw New Exception("Argument 'xmlRefNodeCounter' is null")
         End If
 
-        Id = xmlRefNodeCounter.GetNewRelationId()
-        Name = "New_" + Id
-        Me.Father.Name = "New_Father_" + Id
-        Me.Child.Name = "New_Child_" + Id
+        Me.Id = XmlComponent.UID
+        Dim index As Integer = xmlRefNodeCounter.GetNewRelationId()
+        Name = "New_" + Me.NodeName + index
+        Me.Father.Name = "New_Father_" + index
+        Me.Child.Name = "New_Child_" + index
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
