@@ -164,16 +164,18 @@ Public Class VbCodeMerger
     End Sub
 
     Private Shared Sub MergeFiles(ByVal NextModule As VbCodeAnalyser, ByVal newDocXml As XmlDocument)
-        Try
-            ' Only one class in the "next" file
-            Dim firstParent As XmlNode = NextModule.Document.SelectSingleNode("//class")
-            ' Only the first class id generated
-            Dim secondParent As XmlNode = newDocXml.DocumentElement.SelectSingleNode("//class")
+        ' Only one class in the "next" file
+        Dim firstParent As XmlNode = NextModule.Document.SelectSingleNode("//class")
+        If firstParent Is Nothing Then
+            Throw New Exception("File '" + NextModule.Filename + "' generated from code doesn't contain node 'class'")
+        End If
+        ' Only the first class id generated
+        Dim secondParent As XmlNode = newDocXml.DocumentElement.SelectSingleNode("//class")
+        If secondParent Is Nothing Then
+            Throw New Exception("XML merged document doesn't contain node 'class'")
+        End If
 
-            MergeNodes(firstParent, secondParent, NextModule, newDocXml)
-        Catch ex As Exception
-            Throw ex
-        End Try
+        MergeNodes(firstParent, secondParent, NextModule, newDocXml)
     End Sub
 
     Private Shared Sub MergeNodes(ByVal firstParent As XmlNode, ByVal secondParent As XmlNode, _
