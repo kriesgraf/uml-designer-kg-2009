@@ -492,8 +492,8 @@ Public Class XmlProjectTools
         Try
             form.Cursor = Cursors.WaitCursor
 
-            observer.ProgressBarVisible = True
             observer.Log = "Initialization".PadRight(40)
+            observer.ProgressBarVisible = True
 
             VbCodeReverse.Reverse(observer, strRootFolder, document)
             observer.Log = ""
@@ -505,6 +505,7 @@ Public Class XmlProjectTools
             Dim styleXsl As New XslSimpleTransform(True)
             styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
                                         My.Settings.ToolsFolder + cstVbCodeReverseEngineering))
+
             observer.Log = "Convert metadata".PadRight(40)
             observer.Increment(1)
 
@@ -518,8 +519,6 @@ Public Class XmlProjectTools
             styleXsl.Transform(document.DocumentElement, strTempFile, argList)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             form.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -590,6 +589,7 @@ Public Class XmlProjectTools
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
             observer.ProgressBarVisible = False
+            observer.Log = "Ready"
         End Try
         Return bResult
     End Function
@@ -606,7 +606,10 @@ Public Class XmlProjectTools
 
             observer.Minimum = 0
             observer.Maximum = 12
+            observer.Log = "Initialization".PadRight(40)
             observer.ProgressBarVisible = True
+
+            observer.Log = "Load XSLT converter".PadRight(40)
 
             Dim styleXsl As New XslSimpleTransform(True)
             Select Case iMode
@@ -618,6 +621,8 @@ Public Class XmlProjectTools
                                                                      My.Settings.ToolsFolder + cstIbmXmi2ProjectStyle))
             End Select
             observer.Increment(1)
+            observer.Log = "Convert metadata".PadRight(40)
+
             Dim argList As New XslSimpleTransform.Arguments
             argList.Add("FolderDTD", Application.LocalUserAppDataPath.ToString + Path.DirectorySeparatorChar)
 
@@ -625,8 +630,6 @@ Public Class XmlProjectTools
             styleXsl.Transform(strFilename, strTempFile, argList)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             form.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -693,6 +696,8 @@ Public Class XmlProjectTools
 
         Try
             observer.ProgressBarVisible = True
+            observer.Log = "Loading project".PadRight(40)
+
             stage = "Reload to check DTD"
             LoadDocument(form, document, strTempFile, True)
             observer.Increment(1)
@@ -702,6 +707,7 @@ Public Class XmlProjectTools
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
             observer.ProgressBarVisible = False
+            observer.Log = "Ready"
         End Try
         Return bResult
     End Function
@@ -727,12 +733,16 @@ Public Class XmlProjectTools
 
             observer.Minimum = 0
             observer.Maximum = 18
+            observer.Log = "Initialization".PadRight(40)
             observer.ProgressBarVisible = True
 
             Dim styleXsl As New XslSimpleTransform(True)
+            observer.Log = "Load XSLT converter".PadRight(40)
+
             styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
                                                              My.Settings.ToolsFolder + cstDoxygen2ProjectStyle))
             observer.Increment(1)
+            observer.Log = "Convert metadata".PadRight(40)
 
             Dim argList As New XslSimpleTransform.Arguments
             argList.Add("DoxFolder", GetProjectPath(strFilename) + Path.DirectorySeparatorChar.ToString)
@@ -741,8 +751,6 @@ Public Class XmlProjectTools
             styleXsl.Transform(strFilename, strTempFile, argList)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             form.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -843,6 +851,8 @@ Public Class XmlProjectTools
 
         Try
             observer.ProgressBarVisible = True
+            observer.Log = "Loading project".PadRight(40)
+
             stage = "Reload to check DTD"
             LoadDocument(form, document, strTempFile, True)
             observer.Increment(1)
@@ -852,6 +862,7 @@ Public Class XmlProjectTools
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
             observer.ProgressBarVisible = False
+            observer.Log = "Ready"
         End Try
         Return bResult
     End Function
