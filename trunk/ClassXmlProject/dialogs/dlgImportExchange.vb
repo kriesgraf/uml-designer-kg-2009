@@ -38,7 +38,10 @@ Public Class dlgImportExchange
 
     Private Sub lsbImports_KeyUp(ByVal sender As ListBox, ByVal e As System.Windows.Forms.KeyEventArgs) Handles lsbImports.KeyUp
         Try
-            If e.KeyCode = Keys.Insert And sender.SelectedItem IsNot Nothing Then
+            If e.KeyCode = Keys.Enter And sender.SelectedItem IsNot Nothing Then
+                m_xmlView.Edit(lsbImports)
+                lsbImports.Select()
+            ElseIf e.KeyCode = Keys.Insert Then
                 m_xmlView.AddImport(lsbImports)
                 lsbImports.Select()
             ElseIf e.KeyCode = Keys.Delete And sender.SelectedItem IsNot Nothing Then
@@ -81,7 +84,7 @@ Public Class dlgImportExchange
     End Sub
 
     Private Sub listBox_DoubleClick(ByVal sender As ListBox, ByVal e As System.EventArgs) _
-        Handles lsbSource.DoubleClick, lsbDestination.DoubleClick
+        Handles lsbImports.DoubleClick, lsbSource.DoubleClick, lsbDestination.DoubleClick
         Try
             If sender.SelectedItem IsNot Nothing Then
                 m_xmlView.Edit(sender)
