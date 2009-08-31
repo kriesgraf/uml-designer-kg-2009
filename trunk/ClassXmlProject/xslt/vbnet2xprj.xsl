@@ -22,23 +22,31 @@
       </xsl:attribute>
       <generation destination="{$ProjectFolder}" language="{$LanguageID}"/>
       <comment brief="Brief description">Detailed comment</comment>
+      <!--TEST>
+      <xsl:call-template name="SimpleName">
+          <xsl:with-param name="Name">
+            <xsl:value-of select="//class[@name='XmlComposite']/inherited/@name"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </TEST-->
+<!--
       <Classes>
         <xsl:copy-of select="$Classes"/>
       </Classes>
-      <!--
-       -->
       <UnknownTypes>
         <xsl:copy-of select="$UnknownTypes"/>
       </UnknownTypes>
-      <!--
-      <xsl:call-template name="Imports"/>
-      <import name="Imports_to_sort" visibility="package">
-        <export name="Imports_to_sort">
-          <xsl:call-template name="UnknownImports"/>
-        </export>
-      </import>
        -->
       <xsl:apply-templates select="*[not(self::imports)]"/>
+      <package id="package1" name="Package_to_sort">
+        <comment brief="Please, open this package and select import 'Imports_to_sort' and press Ctrl+E">Or right-click on menu item 'Exchange imports'</comment>
+        <xsl:call-template name="Imports"/>
+        <import name="Imports_to_sort" visibility="package">
+          <export name="Imports_to_sort">
+            <xsl:call-template name="UnknownImports"/>
+          </export>
+        </import>
+      </package>
     </root>
   </xsl:template>
   <!-- ============================================================================== -->
@@ -66,21 +74,51 @@
   <!-- ============================================================================== -->
   <xsl:template match="element-type" mode="Imports">
     <xsl:param name="NoPrefix"/>
-    <reference name="{@name}" type="class" id="{@idref}" container="{@container}">
-      <xsl:attribute name="container">
-        <xsl:choose>
-          <xsl:when test="contains(concat(@name,';'),'List;')">3</xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="@container"/>
-          </xsl:otherwise>
-        </xsl:choose>
+    <xsl:variable name="Element">
+      <xsl:choose>
+        <xsl:when test="starts-with(@name,'I')">interface</xsl:when>
+        <xsl:otherwise>reference</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:element name="{$Element}">
+      <xsl:copy-of select="@name"/>
+      <xsl:attribute name="id">
+        <xsl:value-of select="@idref"/>
       </xsl:attribute>
-      <xsl:if test="@prefix and $NoPrefix=''">
-        <xsl:attribute name="package">
-          <xsl:value-of select="@prefix"/>
+      <xsl:if test="$Element='reference'">
+        <xsl:attribute name="type">class</xsl:attribute>
+        <xsl:copy-of select="@container"/>
+        <xsl:attribute name="container">
+          <xsl:choose>
+            <xsl:when test="contains(concat(@name,';'),'List;')">3</xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="@container"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:attribute>
       </xsl:if>
-    </reference>
+      <xsl:if test="@prefix and $NoPrefix=''">
+        <xsl:if test="@prefix!=''">
+          <xsl:attribute name="package">
+            <xsl:value-of select="@prefix"/>
+          </xsl:attribute>
+        </xsl:if>
+      </xsl:if>
+      <xsl:if test="$Element='reference'">
+        <xsl:apply-templates select="." mode="Enumeration"/>
+      </xsl:if>
+    </xsl:element>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="element-type" mode="EnumValue">
+    <xsl:if test="position()=1">
+      <!-- Caution : can insert only time before first child node !!! -->
+      <xsl:attribute name="type">typedef</xsl:attribute>
+      <xsl:attribute name="class">
+        <xsl:value-of select="@prefix"/>
+      </xsl:attribute>
+    </xsl:if>
+    <enumvalue name="{@name}" id="{@idref}">Insert here a comment</enumvalue>
   </xsl:template>
   <!-- ============================================================================== -->
   <xsl:template match="class">
@@ -461,7 +499,7 @@
       </xsl:choose>
     </xsl:variable>
     <param num-id="0" name="{substring-after($Name,' ')}">
-      <type modifier="var" level="0" desc="{@type}">
+      <type modifier="var" level="0">
         <xsl:attribute name="by">
           <xsl:choose>
             <xsl:when test="starts-with($Name,'ByRef')">
@@ -470,12 +508,16 @@
             <xsl:otherwise>val</xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
+        <!-- This template could insert children nodes ! -->
+        <xsl:apply-templates select="@type" mode="Type"/>
       </type>
       <variable range="private">
         <xsl:if test="@value!=''">
-          <xsl:attribute name="value">
-            <xsl:value-of select="@value"/>
-          </xsl:attribute>
+          <xsl:call-template name="SearchValue">
+            <xsl:with-param name="Label">
+              <xsl:apply-templates select="@value" mode="SimpleName2"/>
+            </xsl:with-param>
+          </xsl:call-template>
         </xsl:if>
       </variable>
       <xsl:call-template name="ParamComment">
@@ -519,16 +561,6 @@
   </xsl:template>
   <!-- ============================================================================== -->
 </xsl:stylesheet>
-
-
-
-
-
-
-
-
-
-
 
 
 
