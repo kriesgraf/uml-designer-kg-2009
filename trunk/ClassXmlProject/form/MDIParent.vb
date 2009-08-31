@@ -85,11 +85,14 @@ Public Class MDIParent
             dlgOpenFile.Title = "Select one or several project file..."
             dlgOpenFile.Filter = "UML project (*.xprj)|*.xprj|Doxygen XML index file|index.xml|UML 2.1 XMI file|*.xmi"
             dlgOpenFile.Multiselect = True
+            dlgOpenFile.FileName = My.Settings.CurrentProject
 
             If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
+                My.Settings.CurrentProject = dlgOpenFile.FileNames(0)
                 For Each filename As String In dlgOpenFile.FileNames
                     OpenOneFile(filename)
+
                 Next
             End If
         Catch ex As Exception
@@ -527,22 +530,22 @@ Public Class MDIParent
 
     Private Sub ContentsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ContentsToolStripMenuItem.Click
         ' Navigate to a URL.
-        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/wiki/Getting_started")
+        OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/wiki/Getting_started")
     End Sub
 
     Private Sub IndexToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles IndexToolStripMenuItem.Click
         ' Navigate to a URL.
-        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/")
+        OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/")
     End Sub
 
     Private Sub SearchToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SearchToolStripMenuItem.Click
         ' Navigate to a URL.
-        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/w/list")
+        OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/w/list")
     End Sub
 
     Private Sub HelpToolStripButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HelpToolStripButton.Click
         ' Navigate to a URL.
-        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/")
+        OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/")
     End Sub
 
     Private Sub DiffToolStripOption_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DiffToolStripOption.Click
@@ -569,6 +572,19 @@ Public Class MDIParent
 
     Private Sub VbCodeReverse_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VbCodeReverse.Click
         ImportFromVbCodeSource()
+    End Sub
+
+    Private Sub OpenWebPage(ByVal url As String)
+        Try
+            System.Diagnostics.Process.Start(url)
+        Catch ex As Exception
+            If MsgBox("This URL '" + url + "' is theorically available, perhaps you web browser returned a wrong value." + _
+                      vbCrLf + vbCrLf + "However, you can look at the error message and send us an issue, yes or no?", _
+                      XmlProjectTools.cstMsgYesNoQuestion, "Start external process") = MsgBoxResult.Yes _
+            Then
+                MsgExceptionBox(New Exception("This URL '" + url + "' is theorically available, perhaps you web browser returned a wrong value.", ex))
+            End If
+        End Try
     End Sub
 #End Region
 End Class
