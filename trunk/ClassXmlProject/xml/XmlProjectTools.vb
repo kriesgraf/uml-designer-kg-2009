@@ -1604,6 +1604,9 @@ Public Class XmlProjectTools
                 strResult = GetName(current)
 
                 Select Case current.Name
+                    Case "import"
+                        strResult = GetName(current)
+
                     Case "father", "child"
                         current = current.ParentNode
                         strResult = GetFullpathDescription(current, eTag)
@@ -2174,6 +2177,21 @@ Public Class XmlProjectTools
                             bResult = True
                         End If
 
+                    Case "import", "package"
+                        If eLang = ELanguage.Language_CplusPlus _
+                        Then
+                            If regVariableName.IsMatch(strFormattedValue) = False _
+                            And regCppHeader.IsMatch(strFormattedValue) = False _
+                            And regCppPackage.IsMatch(strFormattedValue) = False _
+                            Then
+                                bResult = True
+                            End If
+                        ElseIf regVariableName.IsMatch(strFormattedValue) = False _
+                            And regVbAndJavaPackage.IsMatch(strFormattedValue) = False _
+                        Then
+                            bResult = True
+                        End If
+
                     Case Else
                         If regVariableName.IsMatch(strFormattedValue) = False _
                         Then
@@ -2187,6 +2205,11 @@ Public Class XmlProjectTools
                 provider.SetIconPadding(dataControl, 0)
                 provider.SetIconAlignment(dataControl, eAlignment)
                 provider.SetError(dataControl, strErrorMsg)
+                dataControl.Rows(e.RowIndex).ErrorText = strErrorMsg
+                dataControl.Rows(e.RowIndex).Cells(e.ColumnIndex).ErrorText = strErrorMsg
+            Else
+                dataControl.Rows(e.RowIndex).ErrorText = ""
+                dataControl.Rows(e.RowIndex).Cells(e.ColumnIndex).ErrorText = ""
             End If
         Catch ex As Exception
             Throw ex
@@ -2490,6 +2513,7 @@ Public Class XmlProjectTools
             Dim Getter, Setter As XmlNode
             Dim node, child As XmlNode
             Dim numID As Integer = 1
+            Dim tempo As String
 
             If bFilterImports Then
                 For Each node In document.SelectNodes("//interface[method[starts-with(@name,'" + prefixGet + "')]]")
@@ -2498,14 +2522,15 @@ Public Class XmlProjectTools
 
                         nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "yes", numID, child)
 
-                        Dim strRange As String = "public"
+                        tempo = "public"
 
                         If child.SelectSingleNode("return") IsNot Nothing Then
-                            strRange = child.SelectSingleNode("return/variable/@range").Value
+                            tempo = child.SelectSingleNode("return/variable/@range").Value
+                            If tempo = "private" Then tempo = "protected"
                         End If
 
                         Getter = nodeProperty.SelectSingleNode("get")
-                        AddAttributeValue(Getter, "range", strRange)
+                        AddAttributeValue(Getter, "range", tempo)
 
                         node.RemoveChild(child)
                         numID += 1
@@ -2550,8 +2575,16 @@ Public Class XmlProjectTools
                     End Select
 
                     AddAttributeValue(child, "overridable", strImplementation)
-                    AddAttributeValue(GetNode(child, "get"), "range", GetAttributeValue(GetNode(Getter, "descendant::return/variable"), "range"))
-                    AddAttributeValue(GetNode(child, "get"), "by", GetAttributeValue(GetNode(Getter, "descendant::return/type"), "by"))
+                    tempo = GetAttributeValue(GetNode(Getter, "descendant::return/variable"), "range")
+                    If tempo = "private" Then tempo = "protected"
+
+                    AddAttributeValue(GetNode(child, "get"), "range", tempo)
+                    tempo = GetAttributeValue(GetNode(Getter, "descendant::return/type"), "by")
+                    If tempo = "" Then
+                        tempo = "val"
+                    End If
+
+                    AddAttributeValue(GetNode(child, "get"), "by", tempo)
                     AddAttributeValue(GetNode(child, "get"), "modifier", GetAttributeValue(GetNode(Getter, "descendant::return/type"), "modifier"))
                     child.ParentNode.RemoveChild(Getter)
                 End If
@@ -2567,8 +2600,16 @@ Public Class XmlProjectTools
                         AddAttributeValue(child, "overridable", strImplementation)
                     End If
 
-                    AddAttributeValue(GetNode(child, "set"), "range", GetAttributeValue(GetNode(Setter, "descendant::return/variable"), "range"))
-                    AddAttributeValue(GetNode(child, "get"), "by", GetAttributeValue(GetNode(Setter, "descendant::param/type"), "by"))
+                    tempo = GetAttributeValue(GetNode(Setter, "descendant::return/variable"), "range")
+                    If tempo = "private" Then tempo = "protected"
+
+                    AddAttributeValue(GetNode(child, "set"), "range", tempo)
+                    tempo = GetAttributeValue(GetNode(Setter, "descendant::param/type"), "by")
+                    If tempo = "" Then
+                        tempo = "val"
+                    End If
+
+                    AddAttributeValue(GetNode(child, "get"), "by", tempo)
                     child.ParentNode.RemoveChild(Setter)
                 End If
             Next
@@ -2583,14 +2624,15 @@ Public Class XmlProjectTools
 
                         nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "yes", numID, child)
 
-                        Dim strRange As String = "public"
+                        tempo = "public"
 
                         If child.SelectSingleNode("return") IsNot Nothing Then
-                            strRange = child.SelectSingleNode("return/variable/@range").Value
+                            tempo = child.SelectSingleNode("return/variable/@range").Value
+                            If tempo = "private" Then tempo = "protected"
                         End If
 
                         Setter = nodeProperty.SelectSingleNode("set")
-                        AddAttributeValue(Setter, "range", strRange)
+                        AddAttributeValue(Setter, "range", tempo)
 
                         node.RemoveChild(child)
                         numID += 1
