@@ -269,11 +269,28 @@ Public Class dlgPackage
 
     Private Sub mnuExportReferences_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuExportReferences.Click
         Try
-            m_xmlView.ExportReferences(Me, CType(gridClasses.SelectedItem, XmlComponent))
+            m_xmlView.ExportReferences(Me, gridClasses.SelectedItem)
+
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
+
+    Private Sub mnuExchangeImports_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuExchangeImports.Click
+        Try
+            m_xmlView.ExchangeImports(gridClasses.SelectedItem)
 
         Catch ex As Exception
             MsgExceptionBox(ex)
         End Try
     End Sub
 #End Region
+
+    Private Sub gridClasses_CellValidating(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles gridClasses.CellValidating
+
+    End Sub
+
+    Private Sub gridClasses_CellValidated(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles gridClasses.CellValidated
+
+    End Sub
 End Class

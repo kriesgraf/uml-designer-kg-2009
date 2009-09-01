@@ -6,9 +6,16 @@ Imports ClassXmlProject.XmlProjectTools
 Public Class XmlReferenceSpec
     Inherits XmlComponent
 
+    Public Enum EReferenceKind
+        Exception
+        [Class]
+        Typedef
+        Enumeration
+    End Enum
+
     Public ReadOnly Property Comment() As String
         Get
-            If Me.Kind = "typedef" Then
+            If Me.RefKind = EReferenceKind.Typedef Then
                 Return "Imports typedef " + FullpathClassName
             End If
             Return "Imports class " + FullpathClassName
@@ -50,6 +57,22 @@ Public Class XmlReferenceSpec
                 AddAttribute("class", value)
             End If
         End Set
+    End Property
+
+    Public ReadOnly Property RefKind() As EReferenceKind
+        Get
+            Select Case Kind
+                Case "typedef"
+                    If Me.SelectNodes("enumvalue").Count > 0 Then
+                        Return EReferenceKind.Enumeration
+                    End If
+                    Return EReferenceKind.Typedef
+                Case "exception"
+                    Return EReferenceKind.Exception
+                Case Else
+                    Return EReferenceKind.Class
+            End Select
+        End Get
     End Property
 
     Public Property Kind() As String

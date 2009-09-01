@@ -63,8 +63,9 @@ Partial Class dlgPackage
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog
+        Me.mnuExchangeImports = New System.Windows.Forms.ToolStripMenuItem
+        Me.gridClasses = New ClassXmlProject.XmlDataGridView
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -263,9 +264,9 @@ Partial Class dlgPackage
         '
         'mnuClass
         '
-        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportReferences, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.mnuExportNodes, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
+        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.mnuExchangeImports, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportReferences, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.mnuExportNodes, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
         Me.mnuClass.Name = "mnuClass"
-        Me.mnuClass.Size = New System.Drawing.Size(246, 342)
+        Me.mnuClass.Size = New System.Drawing.Size(246, 364)
         '
         'mnuAdd
         '
@@ -462,15 +463,21 @@ Partial Class dlgPackage
         '
         Me.errorProvider.ContainerControl = Me
         '
+        'mnuExchangeImports
+        '
+        Me.mnuExchangeImports.Name = "mnuExchangeImports"
+        Me.mnuExchangeImports.Size = New System.Drawing.Size(245, 22)
+        Me.mnuExchangeImports.Text = "Exchange imports..."
+        '
         'gridClasses
         '
         Me.gridClasses.ColumnDragStart = 0
         Me.gridClasses.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.gridClasses.ContextMenuStrip = Me.mnuClass
-        Me.gridClasses.Dock = System.Windows.Forms.DockStyle.Right
-        Me.gridClasses.Location = New System.Drawing.Point(22, 0)
+        Me.gridClasses.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.gridClasses.Location = New System.Drawing.Point(0, 0)
         Me.gridClasses.Name = "gridClasses"
-        Me.gridClasses.Size = New System.Drawing.Size(720, 272)
+        Me.gridClasses.Size = New System.Drawing.Size(742, 272)
         Me.gridClasses.TabIndex = 1
         Me.ToolTip1.SetToolTip(Me.gridClasses, "Click right to update grid")
         '
@@ -546,5 +553,6 @@ Partial Class dlgPackage
     Friend WithEvents mnuExportReferences As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuExportNodes As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FolderBrowserDialog1 As System.Windows.Forms.FolderBrowserDialog
+    Friend WithEvents mnuExchangeImports As System.Windows.Forms.ToolStripMenuItem
 
 End Class

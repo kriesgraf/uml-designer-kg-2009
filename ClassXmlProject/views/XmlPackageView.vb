@@ -289,6 +289,22 @@ Public Class XmlPackageView
         End Try
     End Sub
 
+    Public Function ExchangeImports(ByVal composite As XmlComposite) As Boolean
+        Dim parent As XmlImportSpec = TryCast(XmlNodeManager.GetInstance().CreateDocument(composite.Node), XmlImportSpec)
+        If parent Is Nothing Then
+            MsgBox("Please retry with an 'import' object'!", MsgBoxStyle.Critical, "Exchange imports")
+        Else
+            parent.Tag = composite.Tag
+            If parent IsNot Nothing Then
+                If parent.ExchangeImports() Then
+                    Me.Updated = True
+                    Return True
+                End If
+            End If
+        End If
+        Return False
+    End Function
+
     Private Function LoadImport(ByVal fen As Form, ByVal fileName As String) As Boolean
         Dim bResult As Boolean = False
         Try
