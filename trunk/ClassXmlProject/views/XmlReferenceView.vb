@@ -21,7 +21,17 @@ Public Class XmlReferenceView
     End Sub
 
     Public Function CreateForm(ByVal document As XmlComponent) As System.Windows.Forms.Form Implements InterfViewForm.CreateForm
-        Dim frmResult As New dlgReference
+
+        Dim frmResult As Form
+        Dim reference As XmlReferenceSpec = CreateDocument(document.Node)
+
+        If reference.RefKind = EReferenceKind.Enumeration _
+        Then
+            frmResult = New dlgInterface
+        Else
+            frmResult = New dlgReference
+        End If
+
         CType(frmResult, InterfFormDocument).Document = document
         Return frmResult
     End Function

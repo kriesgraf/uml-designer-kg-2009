@@ -70,6 +70,22 @@ Public Class XmlInterfaceView
         Return frmResult
     End Function
 
+    Public Sub InitMenuItems(ByVal AddEnumeration As ToolStripMenuItem, _
+                             ByVal AddMethod As ToolStripMenuItem, _
+                             ByVal AddProperty As ToolStripMenuItem)
+
+        If Me.NodeName = "interface" Then
+            AddMethod.Visible = True
+            AddProperty.Visible = True
+            AddEnumeration.Visible = False
+        Else
+            AddMethod.Visible = False
+            AddProperty.Visible = False
+            AddEnumeration.Visible = True
+        End If
+    End Sub
+
+
     Public Sub InitBindingName(ByVal dataControl As Control)
         Try
             m_bInitOk = True
@@ -86,7 +102,12 @@ Public Class XmlInterfaceView
         Try
             m_bInitOk = True
             m_chkRoot = dataControl
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Root", "Checked")
+
+            If Me.NodeName = "interface" Then
+                m_xmlBindingsList.AddBinding(dataControl, Me, "Root", "Checked")
+            Else
+                m_chkRoot.Visible = False
+            End If
 
         Catch ex As Exception
             Throw ex
@@ -111,7 +132,11 @@ Public Class XmlInterfaceView
         Try
             m_bInitOk = True
             m_grdMembers = dataControl
-            dataControl.Binding.LoadXmlNodes(Me, "property | method", "interface_member_view", CType(Me, InterfObject))
+            If Me.NodeName = "interface" Then
+                dataControl.Binding.LoadXmlNodes(Me, "property | method", "interface_member_view", CType(Me, InterfObject))
+            Else
+                dataControl.Binding.LoadXmlNodes(Me, "enumvalue", "type_enumvalue_view")
+            End If
             dataControl.Binding.NodeCounter = Nothing
 
         Catch ex As Exception

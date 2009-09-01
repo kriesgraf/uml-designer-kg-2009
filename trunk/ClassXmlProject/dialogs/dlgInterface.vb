@@ -70,6 +70,7 @@ Public Class dlgInterface
 
             .LoadValues()
 
+            .InitMenuItems(AddEnumeration, AddMethod, AddProperty)
             .InitBindingName(txtName)
             .InitBindingPackage(txtPackage)
             .InitBindingRoot(chkRoot)
@@ -82,7 +83,7 @@ Public Class dlgInterface
     End Sub
 
     Private Sub mnuAddMember_Click(ByVal sender As ToolStripMenuItem, ByVal e As System.EventArgs) _
-                Handles AddProperty.Click, AddMethod.Click
+                Handles AddProperty.Click, AddMethod.Click, AddEnumeration.Click
 
         gridMembers.AddItem(CType(sender.Tag, String))
     End Sub
@@ -159,5 +160,13 @@ Public Class dlgInterface
                 Me.Close()
             End If
         End If
+    End Sub
+
+    Private Sub Grids_CellValidating(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles gridMembers.CellValidating
+
+    End Sub
+
+    Private Sub Grids_CellValidated(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles gridMembers.CellValidated
+
     End Sub
 End Class
