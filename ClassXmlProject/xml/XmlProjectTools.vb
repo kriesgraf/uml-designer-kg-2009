@@ -2184,11 +2184,13 @@ Public Class XmlProjectTools
                             And regCppHeader.IsMatch(strFormattedValue) = False _
                             And regCppPackage.IsMatch(strFormattedValue) = False _
                             Then
+                                strErrorMsg = "Must contains characters compliant with package, qualified name or C++ header file name"
                                 bResult = True
                             End If
                         ElseIf regVariableName.IsMatch(strFormattedValue) = False _
                             And regVbAndJavaPackage.IsMatch(strFormattedValue) = False _
                         Then
+                            strErrorMsg = "Must contains characters compliant with package, or qualified name"
                             bResult = True
                         End If
 
