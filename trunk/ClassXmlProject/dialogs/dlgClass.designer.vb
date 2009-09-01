@@ -20,7 +20,6 @@ Partial Class dlgClass
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
-        Me.ShowInTaskbar = False
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
@@ -412,13 +411,13 @@ Partial Class dlgClass
         '
         Me.mnuRelations.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddRelation, Me.EditRelation, Me.RelationProperties, Me.ToolStripSeparator4, Me.DeleteRelation})
         Me.mnuRelations.Name = "mnuRelations"
-        Me.mnuRelations.Size = New System.Drawing.Size(153, 120)
+        Me.mnuRelations.Size = New System.Drawing.Size(143, 98)
         '
         'AddRelation
         '
         Me.AddRelation.Image = Global.ClassXmlProject.My.Resources.Resources.network
         Me.AddRelation.Name = "AddRelation"
-        Me.AddRelation.Size = New System.Drawing.Size(152, 22)
+        Me.AddRelation.Size = New System.Drawing.Size(142, 22)
         Me.AddRelation.Text = "Add"
         '
         'EditRelation
@@ -426,27 +425,27 @@ Partial Class dlgClass
         Me.EditRelation.Image = Global.ClassXmlProject.My.Resources.Resources.Rename___Edit
         Me.EditRelation.Name = "EditRelation"
         Me.EditRelation.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
-        Me.EditRelation.Size = New System.Drawing.Size(152, 22)
+        Me.EditRelation.Size = New System.Drawing.Size(142, 22)
         Me.EditRelation.Text = "Edit..."
         '
         'RelationProperties
         '
         Me.RelationProperties.Name = "RelationProperties"
-        Me.RelationProperties.Size = New System.Drawing.Size(152, 22)
+        Me.RelationProperties.Size = New System.Drawing.Size(142, 22)
         Me.RelationProperties.Text = "Parameters..."
         Me.RelationProperties.Visible = False
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(149, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(139, 6)
         '
         'DeleteRelation
         '
         Me.DeleteRelation.Image = Global.ClassXmlProject.My.Resources.Resources.Stop_2
         Me.DeleteRelation.Name = "DeleteRelation"
         Me.DeleteRelation.ShortcutKeys = System.Windows.Forms.Keys.Delete
-        Me.DeleteRelation.Size = New System.Drawing.Size(152, 22)
+        Me.DeleteRelation.Size = New System.Drawing.Size(142, 22)
         Me.DeleteRelation.Text = "Delete"
         '
         'TableLayoutPanel7
@@ -664,7 +663,7 @@ Partial Class dlgClass
         '
         Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddMember, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuOverrides, Me.ToolStripSeparator6, Me.mnuMemberDependencies, Me.ToolStripSeparator8, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.RemoveRedundancies, Me.DeleteMember})
         Me.mnuMembers.Name = "mnuMembers"
-        Me.mnuMembers.Size = New System.Drawing.Size(246, 276)
+        Me.mnuMembers.Size = New System.Drawing.Size(246, 298)
         '
         'AddMember
         '
@@ -1018,6 +1017,7 @@ Partial Class dlgClass
         Me.Controls.Add(Me.TableLayoutPanel10)
         Me.MinimizeBox = False
         Me.Name = "dlgClass"
+        Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "dlgClass"
         Me.TableLayoutPanel3.ResumeLayout(False)
