@@ -5,8 +5,8 @@
                 xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
 >
 <!-- ======================================================================= -->
-  <!--xsl:output method="xml" encoding="ISO-8859-1" media-type="xmi" indent="yes"/-->
-  <xsl:output method="xml" encoding="ISO-8859-1" media-type="xmi" indent="yes" doctype-system="xmi2-1-uml2-1.dtd" standalone="no"/>
+  <xsl:output method="xml" encoding="ISO-8859-1" media-type="xmi" indent="yes"/>
+  <!--xsl:output method="xml" encoding="ISO-8859-1" media-type="xmi" indent="yes" doctype-system="xmi2-1-uml2-1.dtd" standalone="no"/-->
   <!-- ======================================================================= -->
   <xsl:param name="LanguageFolder"/>
   <!-- ======================================================================= -->
@@ -944,6 +944,7 @@
   </xsl:template>
   <!-- ======================================================================= -->
   </xsl:stylesheet>
+
 
 
 
