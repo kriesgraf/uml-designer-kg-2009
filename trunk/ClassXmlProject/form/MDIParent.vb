@@ -14,6 +14,9 @@ Public Class MDIParent
 
     ' Internet Explorer page setup  is used for printing document
     Private Const cstPrintSetupKey As String = "Software\Microsoft\Internet Explorer\PageSetup"
+    Private Const cstWindowsExplorer As String = "Explorer.exe"
+    Private Const cstInternetExplorer As String = "IExplore.exe"
+
     Private m_strSetupHeader As String
     Private m_strSetupFooter As String
     Private m_strCurrentFolder As String = "." + Path.DirectorySeparatorChar.ToString
@@ -75,6 +78,11 @@ Public Class MDIParent
 
     Public Sub OpenMultipleFiles(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileOpen.Click, OpenToolStripButton.Click
         Try
+            ' To avoid lost of prototypes
+            If XmlNodeManager.GetInstance().CheckPrototypes() Then
+                XmlProjectView.InitPrototypes()
+            End If
+
             Dim dlgOpenFile As New OpenFileDialog
             If My.Settings.CurrentFolder = m_strCurrentFolder Then
                 dlgOpenFile.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
@@ -564,6 +572,8 @@ Public Class MDIParent
             MsgBox("Close all projects to apply command", MsgBoxStyle.Information)
         End If
         XmlProjectTools.DEBUG_COMMANDS_ACTIVE = Me.DebugToolStripOption.Checked
+
+        Me.ToolUserApplicationFolder.Visible = Me.DebugToolStripOption.Checked
     End Sub
 
     Private Sub mnuFileNewOmgUmlFile_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuFileNewOmgUmlFile.Click
@@ -574,9 +584,24 @@ Public Class MDIParent
         ImportFromVbCodeSource()
     End Sub
 
+
+    Private Sub OpenFileExplorer(ByVal folder As String)
+        Try
+            System.Diagnostics.Process.Start(cstWindowsExplorer, """" + folder + """")
+        Catch ex As Exception
+            If MsgBox("This folder '" + folder + "' is theorically available." + _
+                      vbCrLf + vbCrLf + "However, you can look at the error message and send us an issue, yes or no?", _
+                      XmlProjectTools.cstMsgYesNoQuestion, "Start external process") = MsgBoxResult.Yes _
+            Then
+                MsgExceptionBox(New Exception("This folder '" + folder + "' is not available.", ex))
+            End If
+        End Try
+    End Sub
+
+
     Private Sub OpenWebPage(ByVal url As String)
         Try
-            System.Diagnostics.Process.Start(url)
+            System.Diagnostics.Process.Start(cstInternetExplorer, url)
         Catch ex As Exception
             If MsgBox("This URL '" + url + "' is theorically available, perhaps you web browser returned a wrong value." + _
                       vbCrLf + vbCrLf + "However, you can look at the error message and send us an issue, yes or no?", _
@@ -585,6 +610,10 @@ Public Class MDIParent
                 MsgExceptionBox(New Exception("This URL '" + url + "' is theorically available, perhaps you web browser returned a wrong value.", ex))
             End If
         End Try
+    End Sub
+
+    Private Sub ToolUserApplicationFolder_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolUserApplicationFolder.Click
+        OpenFileExplorer(Application.LocalUserAppDataPath.ToString)
     End Sub
 #End Region
 End Class

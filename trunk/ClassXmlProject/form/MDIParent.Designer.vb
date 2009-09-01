@@ -49,6 +49,7 @@ Partial Class MDIParent
         Me.ExternalTools = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
         Me.DebugToolStripOption = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolUserApplicationFolder = New System.Windows.Forms.ToolStripMenuItem
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.WindowsMenu = New System.Windows.Forms.ToolStripMenuItem
         Me.CascadeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -73,8 +74,8 @@ Partial Class MDIParent
         Me.HelpToolStripButton = New System.Windows.Forms.ToolStripButton
         Me.StatusStrip = New System.Windows.Forms.StatusStrip
         Me.ToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
-        Me.strpStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.strpProgressBar = New System.Windows.Forms.ToolStripProgressBar
+        Me.strpStatusLabel = New System.Windows.Forms.ToolStripStatusLabel
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
         Me.mnuBar.SuspendLayout()
         Me.ToolStrip.SuspendLayout()
@@ -204,7 +205,7 @@ Partial Class MDIParent
         '
         'ToolsMenu
         '
-        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DiffToolStripOption, Me.VbMergeToolStripOption, Me.ToolStripSeparator5, Me.ExternalTools, Me.ToolStripSeparator6, Me.DebugToolStripOption, Me.OptionsToolStripMenuItem})
+        Me.ToolsMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DiffToolStripOption, Me.VbMergeToolStripOption, Me.ToolStripSeparator5, Me.ExternalTools, Me.ToolStripSeparator6, Me.DebugToolStripOption, Me.ToolUserApplicationFolder, Me.OptionsToolStripMenuItem})
         Me.ToolsMenu.MergeIndex = 4
         Me.ToolsMenu.Name = "ToolsMenu"
         Me.ToolsMenu.Size = New System.Drawing.Size(44, 20)
@@ -213,43 +214,50 @@ Partial Class MDIParent
         'DiffToolStripOption
         '
         Me.DiffToolStripOption.Name = "DiffToolStripOption"
-        Me.DiffToolStripOption.Size = New System.Drawing.Size(189, 22)
+        Me.DiffToolStripOption.Size = New System.Drawing.Size(193, 22)
         Me.DiffToolStripOption.Text = "External Diff/Merge tool"
         '
         'VbMergeToolStripOption
         '
         Me.VbMergeToolStripOption.CheckOnClick = True
         Me.VbMergeToolStripOption.Name = "VbMergeToolStripOption"
-        Me.VbMergeToolStripOption.Size = New System.Drawing.Size(189, 22)
+        Me.VbMergeToolStripOption.Size = New System.Drawing.Size(193, 22)
         Me.VbMergeToolStripOption.Text = "Visual Basic merge tool"
         '
         'ToolStripSeparator5
         '
         Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(186, 6)
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(190, 6)
         '
         'ExternalTools
         '
         Me.ExternalTools.Name = "ExternalTools"
-        Me.ExternalTools.Size = New System.Drawing.Size(189, 22)
+        Me.ExternalTools.Size = New System.Drawing.Size(193, 22)
         Me.ExternalTools.Text = "External tools..."
         '
         'ToolStripSeparator6
         '
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
-        Me.ToolStripSeparator6.Size = New System.Drawing.Size(186, 6)
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(190, 6)
         '
         'DebugToolStripOption
         '
         Me.DebugToolStripOption.Name = "DebugToolStripOption"
-        Me.DebugToolStripOption.Size = New System.Drawing.Size(189, 22)
+        Me.DebugToolStripOption.Size = New System.Drawing.Size(193, 22)
         Me.DebugToolStripOption.Text = "Debug commands"
+        '
+        'ToolUserApplicationFolder
+        '
+        Me.ToolUserApplicationFolder.Name = "ToolUserApplicationFolder"
+        Me.ToolUserApplicationFolder.Size = New System.Drawing.Size(193, 22)
+        Me.ToolUserApplicationFolder.Text = "User application folder..."
+        Me.ToolUserApplicationFolder.Visible = False
         '
         'OptionsToolStripMenuItem
         '
         Me.OptionsToolStripMenuItem.Enabled = False
         Me.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem"
-        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(189, 22)
+        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(193, 22)
         Me.OptionsToolStripMenuItem.Text = "&Options"
         '
         'WindowsMenu
@@ -425,17 +433,17 @@ Partial Class MDIParent
         Me.ToolStripStatusLabel.Name = "ToolStripStatusLabel"
         Me.ToolStripStatusLabel.Size = New System.Drawing.Size(0, 17)
         '
-        'strpStatusLabel
-        '
-        Me.strpStatusLabel.Name = "strpStatusLabel"
-        Me.strpStatusLabel.Size = New System.Drawing.Size(38, 17)
-        Me.strpStatusLabel.Text = "Ready"
-        '
         'strpProgressBar
         '
         Me.strpProgressBar.Name = "strpProgressBar"
         Me.strpProgressBar.Size = New System.Drawing.Size(100, 16)
         Me.strpProgressBar.Visible = False
+        '
+        'strpStatusLabel
+        '
+        Me.strpStatusLabel.Name = "strpStatusLabel"
+        Me.strpStatusLabel.Size = New System.Drawing.Size(38, 17)
+        Me.strpStatusLabel.Text = "Ready"
         '
         'MDIParent
         '
@@ -512,5 +520,6 @@ Partial Class MDIParent
     Friend WithEvents ExternalTools As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents VbCodeReverse As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator7 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ToolUserApplicationFolder As System.Windows.Forms.ToolStripMenuItem
 
 End Class
