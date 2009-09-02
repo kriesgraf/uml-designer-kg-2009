@@ -485,6 +485,7 @@ Public Class XmlProjectTools
         Dim oldCursor As Cursor = form.Cursor
         Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim bResult As Boolean = False
+        Dim bVisible As Boolean = True
         Dim document As New XmlDocument
 
         strTempFile = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
@@ -519,28 +520,34 @@ Public Class XmlProjectTools
             styleXsl.Transform(document.DocumentElement, strTempFile, argList)
             observer.Increment(1)
 
+        Catch ex As Exception
+            bVisible = False
+            Throw New Exception("Failed during conversion of temporary file '" + strTempFile + "'", ex)
         Finally
             form.Cursor = oldCursor
-            observer.ProgressBarVisible = False
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Dim stage As String = "Format final project to UML Designer"
 
         Try
+            form.Cursor = Cursors.WaitCursor
+
             document = New XmlDocument
             observer.ProgressBarVisible = True
             LoadDocument(form, document, strTempFile, True)
             observer.Increment(1)
 
         Catch ex As Exception
+            bVisible = False
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
-            observer.ProgressBarVisible = False
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Try
             form.Cursor = Cursors.WaitCursor
-            observer.ProgressBarVisible = True
 
             stage = "Apply UML Designer element indexation"
             RenumberProject(document.DocumentElement)
@@ -572,14 +579,16 @@ Public Class XmlProjectTools
             observer.Increment(1)
 
         Catch ex As Exception
+            bVisible = False
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
             form.Cursor = oldCursor
-            observer.ProgressBarVisible = False
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Try
-            observer.ProgressBarVisible = True
+            form.Cursor = Cursors.WaitCursor
+
             stage = "Reload to check DTD"
             LoadDocument(form, document, strTempFile, True)
             observer.Increment(1)
@@ -588,8 +597,9 @@ Public Class XmlProjectTools
         Catch ex As Exception
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
-            observer.ProgressBarVisible = False
+            form.Cursor = oldCursor
             observer.Log = "Ready"
+            observer.ProgressBarVisible = False
         End Try
         Return bResult
     End Function
@@ -599,6 +609,7 @@ Public Class XmlProjectTools
         Dim oldCursor As Cursor = form.Cursor
         Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim bResult As Boolean = False
+        Dim bVisible As Boolean = True
         strTempFile = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath.ToString, _
                                                          cstTempUmlFile + ".xprj")
         Try
@@ -630,28 +641,33 @@ Public Class XmlProjectTools
             styleXsl.Transform(strFilename, strTempFile, argList)
             observer.Increment(1)
 
+        Catch ex As Exception
+            bVisible = False
+            Throw New Exception("Fails to complete conversion of input file '" + strFilename + "'", ex)
         Finally
             form.Cursor = oldCursor
-            observer.ProgressBarVisible = False
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Dim stage As String = "Format final project to UML Designer"
         Dim document As New XmlDocument
 
         Try
-            observer.ProgressBarVisible = True
+            form.Cursor = Cursors.WaitCursor
+
             LoadDocument(form, document, strTempFile, True)
             observer.Increment(1)
 
         Catch ex As Exception
+            bVisible = False
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
-            observer.ProgressBarVisible = False
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Try
             form.Cursor = Cursors.WaitCursor
-            observer.ProgressBarVisible = True
 
             stage = "Merge iterator with container"
             MergeIteratorContainer(document)
@@ -688,14 +704,15 @@ Public Class XmlProjectTools
             observer.Increment(1)
 
         Catch ex As Exception
+            bVisible = False
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
             form.Cursor = oldCursor
-            observer.ProgressBarVisible = False
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Try
-            observer.ProgressBarVisible = True
+            form.Cursor = Cursors.WaitCursor
             observer.Log = "Loading project".PadRight(40)
 
             stage = "Reload to check DTD"
@@ -706,8 +723,9 @@ Public Class XmlProjectTools
         Catch ex As Exception
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
-            observer.ProgressBarVisible = False
+            form.Cursor = oldCursor
             observer.Log = "Ready"
+            observer.ProgressBarVisible = False
         End Try
         Return bResult
     End Function
@@ -715,6 +733,7 @@ Public Class XmlProjectTools
     Public Shared Function ConvertDoxygenIndexFile(ByVal form As Form, ByVal strFilename As String, _
                                                    ByRef strTempFile As String) As Boolean
         Dim eLanguage As ELanguage
+        Dim bVisible As Boolean = True
 
         If MsgBox("Do you want to convert file to C++ language (Yes) or Java (No) ?", cstMsgYesNoQuestion, "Doxygen Tag file import") = MsgBoxResult.Yes Then
             eLanguage = eLanguage.Language_CplusPlus
@@ -751,27 +770,33 @@ Public Class XmlProjectTools
             styleXsl.Transform(strFilename, strTempFile, argList)
             observer.Increment(1)
 
+        Catch ex As Exception
+            bVisible = False
+            Throw New Exception("Failed during conversion of input file '" + strFilename + "'", ex)
         Finally
             form.Cursor = oldCursor
-            observer.ProgressBarVisible = False
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Dim stage As String = "Format final project to UML Designer"
         Dim document As New XmlDocument
 
         Try
+            form.Cursor = Cursors.WaitCursor
             observer.ProgressBarVisible = True
+
             LoadDocument(form, document, strTempFile, True)
             observer.Increment(1)
 
         Catch ex As Exception
+            bVisible = False
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
-            observer.ProgressBarVisible = False
+            form.Cursor = oldCursor
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Try
-            observer.ProgressBarVisible = True
             form.Cursor = Cursors.WaitCursor
 
             ' Some doxygen types reference in "ref" element, the refid references the relationship child class and not the container type
@@ -843,14 +868,15 @@ Public Class XmlProjectTools
             observer.Increment(1)
 
         Catch ex As Exception
+            bVisible = False
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
             form.Cursor = oldCursor
-            observer.ProgressBarVisible = False
+            observer.ProgressBarVisible = bVisible
         End Try
 
         Try
-            observer.ProgressBarVisible = True
+            form.Cursor = Cursors.WaitCursor
             observer.Log = "Loading project".PadRight(40)
 
             stage = "Reload to check DTD"
@@ -861,14 +887,17 @@ Public Class XmlProjectTools
         Catch ex As Exception
             Throw New Exception("Fails to complete conversion during stage '" + stage + "', with temporary file:" + vbCrLf + strTempFile, ex)
         Finally
-            observer.ProgressBarVisible = False
+            form.Cursor = oldCursor
             observer.Log = "Ready"
+            observer.ProgressBarVisible = False
         End Try
         Return bResult
     End Function
 
     Public Shared Function ApplyPatch(ByVal form As Form, ByVal strOldFile As String, ByRef strNewFile As String) As Boolean
         Dim oldCursor As Cursor = form.Cursor
+        Dim observer As InterfProgression = CType(form, InterfProgression)
+        Dim bTopMost As Boolean = form.TopMost
         Try
             strNewFile = ""
             Dim dlgOpenFile As New OpenFileDialog
@@ -882,7 +911,7 @@ Public Class XmlProjectTools
 
                 Dim FilePatch As String = dlgOpenFile.FileName
                 strNewFile = strOldFile + ".new.xprj"
-                ApplyPatchFile(strOldFile, strNewFile, FilePatch)
+                ApplyPatchFile(form, strOldFile, strNewFile, FilePatch)
 
                 ' Using avoid to remain the file locked for another process
                 ' the following to Validate succeeds.
@@ -890,9 +919,16 @@ Public Class XmlProjectTools
                 settings.ProhibitDtd = False
                 settings.ValidationType = System.Xml.ValidationType.DTD
 
+                observer.Minimum = 0
+                observer.Minimum = 4
+
+                observer.Log = "Load patched project..."
+                observer.Increment(1)
+
                 Dim document As New XmlDocument
                 Using reader As XmlReader = XmlReader.Create(strNewFile, settings)
                     document.Load(reader)
+                    observer.Increment(1)
                 End Using
 
                 form.Cursor = oldCursor
@@ -901,8 +937,13 @@ Public Class XmlProjectTools
             End If
 
         Catch ex As Exception
-            form.Cursor = oldCursor
+            form.TopMost = False
             MsgExceptionBox(ex)
+        Finally
+            form.TopMost = bTopMost
+            form.Cursor = oldCursor
+            observer.Log = "Ready"
+            observer.ProgressBarVisible = False
         End Try
         Return False
     End Function
@@ -1011,10 +1052,12 @@ Public Class XmlProjectTools
                                         Optional ByVal bThrowsException As Boolean = False, _
                                         Optional ByVal bWithXsdValidation As Boolean = False) As EResult
 
+        Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim oldCursor As Cursor = form.Cursor
         Dim eResult As EResult = eResult.Failed
         Dim bDtdError As Boolean = False
         Dim currentException As Exception = Nothing
+
         Try
             ' TODO replace optional argument bWithXsdValidation with true when XmlSchema validation works with ID/IDREF
             If bWithXsdValidation Then
@@ -1027,16 +1070,23 @@ Public Class XmlProjectTools
                 ' the following to Validate succeeds.
                 document.Validate(Nothing)
             Else
+                ' Using avoid to remain the file locked for another process
+                form.Cursor = Cursors.WaitCursor
+                observer.Minimum = 0
+                observer.Maximum = 3
+                observer.Log = "Loading project..."
+                observer.ProgressBarVisible = True
+
                 ' the following to Validate succeeds.
                 Dim settings As XmlReaderSettings = New XmlReaderSettings()
                 settings.ProhibitDtd = False
                 settings.ValidationType = System.Xml.ValidationType.DTD
+                observer.Increment(1)
 
-                ' Using avoid to remain the file locked for another process
-                form.Cursor = Cursors.WaitCursor
                 Using reader As XmlReader = XmlReader.Create(strFilename, settings)
                     Try
                         document.Load(reader)
+                        observer.Increment(1)
                         eResult = XmlProjectTools.EResult.Completed
 
                     Catch ex As XmlSchemaException
@@ -1058,15 +1108,17 @@ Public Class XmlProjectTools
                 End Using
             End If
 
+            If bDtdError Then
+                eResult = ConvertAndCorrectErrors(form, document, strFilename, bDtdError, currentException)
+            End If
+
         Catch ex As Exception
             Throw ex
         Finally
             form.Cursor = oldCursor
+            observer.Log = "Ready"
+            observer.ProgressBarVisible = False
         End Try
-
-        If bDtdError Then
-            eResult = ConvertAndCorrectErrors(form, document, strFilename, bDtdError, currentException)
-        End If
         Return eResult
     End Function
 
@@ -2700,6 +2752,8 @@ Public Class XmlProjectTools
                                                     ByVal currentException As Exception) As EResult
         Dim oldCursor As Cursor = form.Cursor
         Dim eResult As EResult
+        Dim bOldTopMost = form.TopMost
+        Dim observer As InterfProgression = CType(form, InterfProgression)
         Try
             Dim strToolsFolder = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
             Dim strPatchFile As String = My.Computer.FileSystem.CombinePath(strToolsFolder, cstV1_2_To_V1_3_Patch)
@@ -2710,44 +2764,63 @@ Public Class XmlProjectTools
             dialog.Filename = strFilename
             dialog.Warning = currentException
 
+            form.TopMost = False
+
             If dialog.ShowDialog(form) = MsgBoxResult.Cancel _
             Then
+                form.TopMost = bOldTopMost
                 eResult = XmlProjectTools.EResult.Failed
             Else
+                form.TopMost = bOldTopMost
                 form.Cursor = Cursors.WaitCursor
 
-                ApplyPatchFile(strFilename, strTempFile, strPatchFile)
+                ApplyPatchFile(form, strFilename, strTempFile, strPatchFile)
 
                 ' Using avoid to remain the file locked for another process
                 ' the following to Validate succeeds.
                 Dim settings As XmlReaderSettings = New XmlReaderSettings()
                 settings.ProhibitDtd = False
                 settings.ValidationType = System.Xml.ValidationType.DTD
+                observer.Minimum = 0
+                observer.Minimum = 4
+
+                observer.Log = "Load patched project..."
+                observer.Increment(1)
 
                 ' Check second time to validate corrections.
                 Using reader As XmlReader = XmlReader.Create(strTempFile, settings)
                     document.Load(reader)
+                    observer.Increment(1)
                 End Using
 
                 RenumberProject(document, True)
                 UpdatesCollaborations(document)
+                observer.Increment(1)
+
                 document.Save(strTempFile)
+                observer.Increment(1)
 
                 ' Check second time to validate corrections.
                 Using reader As XmlReader = XmlReader.Create(strTempFile, settings)
                     document.Load(reader)
+                    observer.Increment(1)
                 End Using
 
                 bDtdError = False
                 form.Cursor = oldCursor
                 eResult = XmlProjectTools.EResult.Converted
                 MsgBox("Conversion completed!", MsgBoxStyle.Exclamation, "File converted")
+                observer.Log = "Ready"
+                observer.ProgressBarVisible = False
             End If
 
         Catch ex As XmlSchemaException
             form.Cursor = oldCursor
+            observer.Log = "Ready"
+            observer.ProgressBarVisible = False
             eResult = XmlProjectTools.EResult.Failed
             bDtdError = True
+
             MsgExceptionBox(New Exception( _
                                  "LineNumber=" + ex.LineNumber.ToString + vbCrLf + _
                                 "LinePosition=" + ex.LinePosition.ToString + vbCrLf + _
@@ -2758,6 +2831,9 @@ Public Class XmlProjectTools
 
         Catch ex As Exception
             form.Cursor = oldCursor
+            observer.Log = "Ready"
+            observer.ProgressBarVisible = False
+
             eResult = XmlProjectTools.EResult.Failed
             bDtdError = True
             MsgExceptionBox(ex)
@@ -3064,14 +3140,27 @@ Public Class XmlProjectTools
 
     End Sub
 
-    Private Shared Sub ApplyPatchFile(ByVal strOldFile As String, ByRef strNewFile As String, ByVal FilePatch As String)
+    Private Shared Sub ApplyPatchFile(ByVal observer As InterfProgression, ByVal strOldFile As String, _
+                                      ByRef strNewFile As String, ByVal FilePatch As String)
         Try
+            observer.Minimum = 0
+            observer.Maximum = 3
+            observer.ProgressBarVisible = True
+            observer.Log = "Load patch"
+            observer.Increment(1)
+
             Dim xslStylesheet As XslSimpleTransform = New XslSimpleTransform(True)
             xslStylesheet.Load(FilePatch)
+            observer.Increment(1)
+            observer.Log = "Apply patch"
+
             xslStylesheet.Transform(strOldFile, strNewFile)
+            observer.Increment(1)
 
         Catch ex As Exception
             Throw ex
+        Finally
+            observer.Log = "Ready"
         End Try
     End Sub
 
