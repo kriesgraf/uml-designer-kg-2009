@@ -76,7 +76,8 @@ Public Class MDIParent
         strpStatusLabel.Text = "Language: " + xmlProject.Properties.Language + " - Node: " + strNodeName
     End Sub
 
-    Public Sub OpenMultipleFiles(ByVal sender As Object, ByVal e As EventArgs) Handles mnuFileOpen.Click, OpenToolStripButton.Click
+    Public Sub OpenMultipleFiles(ByVal sender As Object, ByVal e As EventArgs, Optional ByVal bVisible As Boolean = True) Handles mnuFileOpen.Click, OpenToolStripButton.Click
+        Dim fen As dlgProgress = Nothing
         Try
             ' To avoid lost of prototypes
             If XmlNodeManager.GetInstance().CheckPrototypes() Then
@@ -98,13 +99,24 @@ Public Class MDIParent
             If (dlgOpenFile.ShowDialog(Me) = DialogResult.OK) _
             Then
                 My.Settings.CurrentProject = dlgOpenFile.FileNames(0)
-                For Each filename As String In dlgOpenFile.FileNames
-                    OpenOneFile(filename)
 
+                If bVisible = False Then
+                    fen = New dlgProgress
+                    fen.Text = Me.Text
+                    fen.Show(Me)
+                End If
+                For Each filename As String In dlgOpenFile.FileNames
+                    OpenOneFile(filename, fen)
                 Next
             End If
         Catch ex As Exception
+            If fen IsNot Nothing Then fen.TopMost = False
             MsgExceptionBox(ex)
+        Finally
+            If fen IsNot Nothing Then
+                fen.Close()
+                fen = Nothing
+            End If
         End Try
     End Sub
 
@@ -305,21 +317,23 @@ Public Class MDIParent
         End Try
     End Sub
 
-    Private Sub OpenOneFile(ByVal filename As String)
+    Private Sub OpenOneFile(ByVal filename As String, Optional ByVal parent As Form = Nothing)
         Try
+            If parent Is Nothing Then parent = Me
+
             Dim bFromDoxygenIndex As Boolean = False
             Dim bFromOmgXmiFile As Boolean = False
             My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(filename)
 
             If Path.GetFileName(filename).ToLower = "index.xml" _
             Then
-                If XmlProjectTools.ConvertDoxygenIndexFile(Me, filename, filename) = False Then
+                If XmlProjectTools.ConvertDoxygenIndexFile(parent, filename, filename) = False Then
                     Exit Sub
                 End If
                 bFromDoxygenIndex = True
             ElseIf Path.GetExtension(filename).ToLower = ".xmi" _
             Then
-                If XmlProjectTools.ConvertOmgUmlModel(Me, filename, filename) = False Then
+                If XmlProjectTools.ConvertOmgUmlModel(parent, filename, filename) = False Then
                     Exit Sub
                 End If
                 bFromOmgXmiFile = True
@@ -330,7 +344,7 @@ Public Class MDIParent
             If XmlProjectTools.UseDocTypeDeclarationFileForProject(strTempFolder) = True Then
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                If ChildForm.OpenProject(Me, filename) Then
+                If ChildForm.OpenProject(parent, filename) Then
 
                     ChildForm.MdiParent = Me
 
@@ -448,6 +462,8 @@ Public Class MDIParent
             End If
         End Try
 
+        Dim fen As dlgProgress = Nothing
+
         Try
             If Deployment.Application.ApplicationDeployment.IsNetworkDeployed Then
                 Me.Text = Me.Text + " - " + My.Application.Deployment.CurrentVersion.ToString
@@ -472,20 +488,33 @@ Public Class MDIParent
             ElseIf My.Application.CommandLineArgs.Count > 0 Then
                 Dim strFilename As String = My.Application.CommandLineArgs.Item(0)
                 Dim ChildForm As New frmProject
+
+                fen = New dlgProgress
+                fen.Text = Me.Text
+                fen.Show(Me)
+
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                If ChildForm.OpenProject(Me, strFilename) Then
+                If ChildForm.OpenProject(fen, strFilename) Then
+                    fen.Close()
+                    fen = Nothing
                     ChildForm.MdiParent = Me
                     ChildForm.Show()
                 End If
             Else
-                OpenMultipleFiles(sender, e)
+                OpenMultipleFiles(sender, e, False)
             End If
 
             Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
 
 
         Catch ex As Exception
+            If fen IsNot Nothing Then fen.TopMost = False
             MsgExceptionBox(ex)
+        Finally
+            If fen IsNot Nothing Then
+                fen.Close()
+                fen = Nothing
+            End If
         End Try
     End Sub
 
