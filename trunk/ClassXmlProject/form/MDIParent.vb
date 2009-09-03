@@ -14,8 +14,6 @@ Public Class MDIParent
 
     ' Internet Explorer page setup  is used for printing document
     Private Const cstPrintSetupKey As String = "Software\Microsoft\Internet Explorer\PageSetup"
-    Private Const cstWindowsExplorer As String = "Explorer.exe"
-    Private Const cstInternetExplorer As String = "IExplore.exe"
 
     Private m_strSetupHeader As String
     Private m_strSetupFooter As String
@@ -160,7 +158,7 @@ Public Class MDIParent
         Try
             Dim dlgOpenFolder As New FolderBrowserDialog
             If My.Settings.ImportFolder = m_strCurrentFolder Then
-                dlgOpenFolder.RootFolder = My.Computer.FileSystem.SpecialDirectories.MyDocuments
+                dlgOpenFolder.RootFolder = Environment.SpecialFolder.MyDocuments
             Else
                 dlgOpenFolder.SelectedPath = My.Settings.ImportFolder
             End If
@@ -487,24 +485,47 @@ Public Class MDIParent
 
             ElseIf My.Application.CommandLineArgs.Count > 0 Then
                 Dim strFilename As String = My.Application.CommandLineArgs.Item(0)
-                Dim ChildForm As New frmProject
+                If My.Computer.FileSystem.DirectoryExists(strFilename) _
+                Then
 
-                fen = New dlgProgress
-                fen.Text = Me.Text
-                fen.Show(Me)
+                    fen = New dlgProgress
+                    fen.Text = Me.Text
+                    fen.Show(Me)
 
-                ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
-                If ChildForm.OpenProject(fen, strFilename) Then
-                    fen.Close()
-                    fen = Nothing
-                    ChildForm.MdiParent = Me
-                    ChildForm.Show()
+                    Dim strTempFile As String = ""
+
+                    XmlProjectTools.ConvertVbCodeSource(fen, strFilename, strTempFile)
+                    Dim ChildForm As New frmProject
+                    ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
+                    If ChildForm.OpenProject(Me, strTempFile) Then
+                        fen.Close()
+                        fen = Nothing
+                        ChildForm.IsVbCodeReverse = True
+                        ChildForm.MdiParent = Me
+                        ChildForm.Text = "VB.NET Reverse Engineering"
+                        ChildForm.Show()
+                    End If
+                ElseIf My.Computer.FileSystem.FileExists(strFilename) _
+                Then
+                    Dim ChildForm As New frmProject
+
+                    fen = New dlgProgress
+                    fen.Text = Me.Text
+                    fen.Show(Me)
+
+                    ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.
+                    If ChildForm.OpenProject(fen, strFilename) Then
+                        fen.Close()
+                        fen = Nothing
+                        ChildForm.MdiParent = Me
+                        ChildForm.Show()
+                    End If
                 End If
             Else
                 OpenMultipleFiles(sender, e, False)
             End If
 
-            Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
+                Me.VbMergeToolStripOption.Checked = My.Settings.VbMergeTool
 
 
         Catch ex As Exception
@@ -567,22 +588,22 @@ Public Class MDIParent
 
     Private Sub ContentsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ContentsToolStripMenuItem.Click
         ' Navigate to a URL.
-        OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/wiki/Getting_started")
+        XmlProjectTools.OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/wiki/Getting_started")
     End Sub
 
     Private Sub IndexToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles IndexToolStripMenuItem.Click
         ' Navigate to a URL.
-        OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/")
+        XmlProjectTools.OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/")
     End Sub
 
     Private Sub SearchToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SearchToolStripMenuItem.Click
         ' Navigate to a URL.
-        OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/w/list")
+        XmlProjectTools.OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/w/list")
     End Sub
 
     Private Sub HelpToolStripButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HelpToolStripButton.Click
         ' Navigate to a URL.
-        OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/")
+        XmlProjectTools.OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/")
     End Sub
 
     Private Sub DiffToolStripOption_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DiffToolStripOption.Click
@@ -613,36 +634,8 @@ Public Class MDIParent
         ImportFromVbCodeSource()
     End Sub
 
-
-    Private Sub OpenFileExplorer(ByVal folder As String)
-        Try
-            System.Diagnostics.Process.Start(cstWindowsExplorer, """" + folder + """")
-        Catch ex As Exception
-            If MsgBox("This folder '" + folder + "' is theorically available." + _
-                      vbCrLf + vbCrLf + "However, you can look at the error message and send us an issue, yes or no?", _
-                      XmlProjectTools.cstMsgYesNoQuestion, "Start external process") = MsgBoxResult.Yes _
-            Then
-                MsgExceptionBox(New Exception("This folder '" + folder + "' is not available.", ex))
-            End If
-        End Try
-    End Sub
-
-
-    Private Sub OpenWebPage(ByVal url As String)
-        Try
-            System.Diagnostics.Process.Start(cstInternetExplorer, url)
-        Catch ex As Exception
-            If MsgBox("This URL '" + url + "' is theorically available, perhaps you web browser returned a wrong value." + _
-                      vbCrLf + vbCrLf + "However, you can look at the error message and send us an issue, yes or no?", _
-                      XmlProjectTools.cstMsgYesNoQuestion, "Start external process") = MsgBoxResult.Yes _
-            Then
-                MsgExceptionBox(New Exception("This URL '" + url + "' is theorically available, perhaps you web browser returned a wrong value.", ex))
-            End If
-        End Try
-    End Sub
-
     Private Sub ToolUserApplicationFolder_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolUserApplicationFolder.Click
-        OpenFileExplorer(Application.LocalUserAppDataPath.ToString)
+        XmlProjectTools.OpenFileExplorer(Application.LocalUserAppDataPath.ToString)
     End Sub
 #End Region
 End Class
