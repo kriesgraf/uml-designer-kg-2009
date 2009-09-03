@@ -44,7 +44,7 @@ Public NotInheritable Class dlgAboutBox
         Me.LabelCompanyName.LinkVisited = True
 
         ' Navigate to a URL.
-        System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/")
+        XmlProjectTools.OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/")
     End Sub
 
     Private Sub TextBoxDescription_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TextBoxDescription.Click

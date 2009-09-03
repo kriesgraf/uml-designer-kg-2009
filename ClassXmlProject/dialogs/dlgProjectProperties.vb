@@ -65,7 +65,7 @@ Public Class dlgProjectProperties
 
     Private Sub btnPath_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnPath.Click
         FolderBrowserDialog1.Description = "Select the project root folder..."
-        FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop
+        FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.MyDocuments
         FolderBrowserDialog1.SelectedPath = txtPath.Text
         If FolderBrowserDialog1.ShowDialog() = Windows.Forms.DialogResult.OK Then
             txtPath.Text = FolderBrowserDialog1.SelectedPath
