@@ -91,7 +91,7 @@ Public Class dlgAlertException
 
         ' Navigate to a URL.
         Try
-            System.Diagnostics.Process.Start("http://code.google.com/p/uml-designer-kg-2009/issues/entry")
+            XmlProjectTools.OpenWebPage("http://code.google.com/p/uml-designer-kg-2009/issues/entry")
 
         Catch ex As Exception
             ' No Exception re-entrance
