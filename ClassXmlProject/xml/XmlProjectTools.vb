@@ -31,20 +31,19 @@ Public Class XmlProjectTools
 #Region "Class declarations"
     Public Shared DEBUG_COMMANDS_ACTIVE As Boolean = False
 
-    Private Shared PrefixNameDocument As New XmlDocument
-
     Public Const cstImportsToSort As String = "Imports_to_sort"
-
     Public Const cstMsgYesNoExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgYesNoCancelExclamation As MsgBoxStyle = CType(MsgBoxStyle.Exclamation + MsgBoxStyle.YesNoCancel + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgYesNoQuestion As MsgBoxStyle = CType(MsgBoxStyle.Question + MsgBoxStyle.YesNo + MsgBoxStyle.DefaultButton2, MsgBoxStyle)
     Public Const cstMsgOkCancelCritical As MsgBoxStyle = CType(MsgBoxStyle.Critical + MsgBoxStyle.OkCancel + MsgBoxStyle.DefaultButton1, MsgBoxStyle)
-
     Public Const cstMaxCircularReferences As Integer = 20
     Public Const cstExternalToolsFileVersion As String = "1.0"
     Public Const cstXslTemplate As String = "uml2template.xsl"
     Public Const cstPrefixNameFilename As String = "language.xml"
 
+    Private Shared PrefixNameDocument As New XmlDocument
+    Private Const cstWindowsExplorer As String = "Explorer.exe"
+    Private Const cstInternetExplorer As String = "IExplore.exe"
     Private Const cstSchemaName As String = "class-model"
     Private Const cstSchemaVersion As String = "1.3"
     Private Const cstTempDoxygenFile As String = "__doxygenTempFile"
@@ -57,10 +56,10 @@ Public Class XmlProjectTools
     Private Const cstIbmXmi2ProjectStyle As String = "rhp-xmi2prj.xsl"
     Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xsl"
 
-    Public Shared regVariableName As Regex = New Regex("^[a-zA-Z_][a-zA-Z0-9_]{0,}$")
-    Public Shared regVbAndJavaPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\.){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
-    Public Shared regCppPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\:\:){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
-    Public Shared regCppHeader As Regex = New Regex("^([a-zA-Z0-9_]{1,}(\/|\\)){0,}[a-zA-Z0-9_]{1,}(|\.h|\.hpp)$")
+    Private Shared regVariableName As Regex = New Regex("^[a-zA-Z_][a-zA-Z0-9_]{0,}$")
+    Private Shared regVbAndJavaPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\.){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
+    Private Shared regCppPackage As Regex = New Regex("^([a-zA-Z_][a-zA-Z0-9_]{1,}\:\:){0,}[a-zA-Z_][a-zA-Z0-9_]{1,}$")
+    Private Shared regCppHeader As Regex = New Regex("^([a-zA-Z0-9_]{1,}(\/|\\)){0,}[a-zA-Z0-9_]{1,}(|\.h|\.hpp)$")
     Private Shared regOperator As New Regex("^(IsFalse|IsTrue|Not|" + _
                                             "\+|\+\+|\-|\-\-|\*|\/|\\|\&|\&\&|\||\|\||\%|\^|\>\>|\<\<|\=|\=\=|\!|\!\=|\<\>|\>|\>\=|\<|\<\=|" + _
                                             "And|Like|Mod|Or|Xor|CType)$")
@@ -2699,6 +2698,34 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
+
+
+    Public Shared Sub OpenFileExplorer(ByVal folder As String)
+        Try
+            System.Diagnostics.Process.Start(cstWindowsExplorer, """" + folder + """")
+        Catch ex As Exception
+            If MsgBox("This folder '" + folder + "' is theorically available." + _
+                      vbCrLf + vbCrLf + "However, you can look at the error message and send us an issue, yes or no?", _
+                      XmlProjectTools.cstMsgYesNoQuestion, "Start external process") = MsgBoxResult.Yes _
+            Then
+                MsgExceptionBox(New Exception("This folder '" + folder + "' is not available.", ex))
+            End If
+        End Try
+    End Sub
+
+    Public Shared Sub OpenWebPage(ByVal url As String)
+        Try
+            System.Diagnostics.Process.Start(cstInternetExplorer, url)
+        Catch ex As Exception
+            If MsgBox("This URL '" + url + "' is theorically available, perhaps you web browser returned a wrong value." + _
+                      vbCrLf + vbCrLf + "However, you can look at the error message and send us an issue, yes or no?", _
+                      XmlProjectTools.cstMsgYesNoQuestion, "Start external process") = MsgBoxResult.Yes _
+            Then
+                MsgExceptionBox(New Exception("This URL '" + url + "' is theorically available, perhaps you web browser returned a wrong value.", ex))
+            End If
+        End Try
+    End Sub
+
 #End If
 #End Region
 
