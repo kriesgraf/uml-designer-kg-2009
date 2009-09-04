@@ -72,12 +72,13 @@ Public Class dlgInterface
 
             .InitMenuItems(AddEnumeration, AddMethod, AddProperty)
             .InitBindingName(txtName)
+            .InitBindEnumClass(lblClass, txtClass)
             .InitBindingPackage(txtPackage)
             .InitBindingRoot(chkRoot)
 
             .LoadMembers(gridMembers)
 
-            Me.Text = .Name
+            Me.Text = .Title
         End With
 
     End Sub
@@ -167,6 +168,14 @@ Public Class dlgInterface
     End Sub
 
     Private Sub Grids_CellValidated(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles gridMembers.CellValidated
+
+    End Sub
+
+    Private Sub txtPackage_Validating(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtPackage.Validating
+
+    End Sub
+
+    Private Sub txtName_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtPackage.Validated, txtName.Validated
 
     End Sub
 End Class

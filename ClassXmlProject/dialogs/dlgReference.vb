@@ -60,7 +60,7 @@ Public Class dlgReference
             .InitBindingContainer(cmbContainer)
             .InitBindingType(cmbType)
 
-            Me.Text = .Name
+            Me.Text = .Title
         End With
 
     End Sub
@@ -80,6 +80,23 @@ Public Class dlgReference
                 txtParentClass.Enabled = True
                 cmbContainer.SelectedIndex = 0
                 cmbContainer.Enabled = False
+
+            Case "enumeration"
+                If MsgBox("This operation is irreversible, would you want to continue ?" _
+                          , cstMsgYesNoExclamation, "Array conversion") _
+                                = MsgBoxResult.No _
+                Then
+                    m_xmlView.CancelEnum(cmbType)
+                Else
+                    m_xmlView.ConfirmEnum()
+                    Me.Hide()
+                    ' To confirm update
+                    Me.Tag = True
+                    ' And open new one
+                    Dim fen As Form = m_xmlView.CreateForm(m_xmlView)
+                    ' Change dialog result close automatically previous window
+                    Me.DialogResult = fen.ShowDialog(Me)
+                End If
 
             Case Else
                 cmbContainer.Enabled = True

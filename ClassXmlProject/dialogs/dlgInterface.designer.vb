@@ -32,9 +32,11 @@ Partial Class dlgInterface
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel
         Me.btnDelete = New System.Windows.Forms.Button
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
+        Me.gridMembers = New ClassXmlProject.XmlDataGridView
         Me.mnuMembers = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.AddProperty = New System.Windows.Forms.ToolStripMenuItem
         Me.AddMethod = New System.Windows.Forms.ToolStripMenuItem
+        Me.AddEnumeration = New System.Windows.Forms.ToolStripMenuItem
         Me.EditMember = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator7 = New System.Windows.Forms.ToolStripSeparator
         Me.CopyMember = New System.Windows.Forms.ToolStripMenuItem
@@ -47,13 +49,13 @@ Partial Class dlgInterface
         Me.DeleteMember = New System.Windows.Forms.ToolStripMenuItem
         Me.chkRoot = New System.Windows.Forms.CheckBox
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.AddEnumeration = New System.Windows.Forms.ToolStripMenuItem
-        Me.gridMembers = New ClassXmlProject.XmlDataGridView
+        Me.lblClass = New System.Windows.Forms.Label
+        Me.txtClass = New System.Windows.Forms.TextBox
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
+        CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mnuMembers.SuspendLayout()
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'lblName
@@ -159,6 +161,8 @@ Partial Class dlgInterface
         Me.TableLayoutPanel2.Controls.Add(Me.gridMembers, 1, 2)
         Me.TableLayoutPanel2.Controls.Add(Me.chkRoot, 1, 1)
         Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 0, 3)
+        Me.TableLayoutPanel2.Controls.Add(Me.lblClass, 2, 1)
+        Me.TableLayoutPanel2.Controls.Add(Me.txtClass, 3, 1)
         Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
@@ -170,11 +174,23 @@ Partial Class dlgInterface
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(540, 238)
         Me.TableLayoutPanel2.TabIndex = 2
         '
+        'gridMembers
+        '
+        Me.gridMembers.ColumnDragStart = 0
+        Me.gridMembers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.TableLayoutPanel2.SetColumnSpan(Me.gridMembers, 3)
+        Me.gridMembers.ContextMenuStrip = Me.mnuMembers
+        Me.gridMembers.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.gridMembers.Location = New System.Drawing.Point(54, 57)
+        Me.gridMembers.Name = "gridMembers"
+        Me.gridMembers.Size = New System.Drawing.Size(483, 138)
+        Me.gridMembers.TabIndex = 10
+        '
         'mnuMembers
         '
         Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddProperty, Me.AddMethod, Me.AddEnumeration, Me.EditMember, Me.ToolStripSeparator7, Me.CopyMember, Me.PasteMember, Me.DuplicateMember, Me.MemberProperties, Me.ToolStripSeparator5, Me.mnuMemberDependencies, Me.ToolStripSeparator2, Me.DeleteMember})
         Me.mnuMembers.Name = "mnuMembers"
-        Me.mnuMembers.Size = New System.Drawing.Size(227, 264)
+        Me.mnuMembers.Size = New System.Drawing.Size(227, 242)
         '
         'AddProperty
         '
@@ -193,6 +209,15 @@ Partial Class dlgInterface
         Me.AddMethod.Size = New System.Drawing.Size(226, 22)
         Me.AddMethod.Tag = "method"
         Me.AddMethod.Text = "Method"
+        '
+        'AddEnumeration
+        '
+        Me.AddEnumeration.Image = Global.ClassXmlProject.My.Resources.Resources.Apps
+        Me.AddEnumeration.Name = "AddEnumeration"
+        Me.AddEnumeration.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.AddEnumeration.Size = New System.Drawing.Size(226, 22)
+        Me.AddEnumeration.Tag = "enumvalue"
+        Me.AddEnumeration.Text = "Enumeration value"
         '
         'EditMember
         '
@@ -278,26 +303,25 @@ Partial Class dlgInterface
         '
         Me.errorProvider.ContainerControl = Me
         '
-        'AddEnumeration
+        'lblClass
         '
-        Me.AddEnumeration.Image = Global.ClassXmlProject.My.Resources.Resources.Apps
-        Me.AddEnumeration.Name = "AddEnumeration"
-        Me.AddEnumeration.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
-        Me.AddEnumeration.Size = New System.Drawing.Size(226, 22)
-        Me.AddEnumeration.Tag = "enumvalue"
-        Me.AddEnumeration.Text = "Enumeration value"
+        Me.lblClass.AutoSize = True
+        Me.lblClass.Dock = System.Windows.Forms.DockStyle.Right
+        Me.lblClass.Location = New System.Drawing.Point(287, 26)
+        Me.lblClass.Name = "lblClass"
+        Me.lblClass.Size = New System.Drawing.Size(35, 28)
+        Me.lblClass.TabIndex = 12
+        Me.lblClass.Text = "Class:"
+        Me.lblClass.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'gridMembers
+        'txtClass
         '
-        Me.gridMembers.ColumnDragStart = 0
-        Me.gridMembers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.TableLayoutPanel2.SetColumnSpan(Me.gridMembers, 3)
-        Me.gridMembers.ContextMenuStrip = Me.mnuMembers
-        Me.gridMembers.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.gridMembers.Location = New System.Drawing.Point(54, 57)
-        Me.gridMembers.Name = "gridMembers"
-        Me.gridMembers.Size = New System.Drawing.Size(483, 138)
-        Me.gridMembers.TabIndex = 10
+        Me.txtClass.Dock = System.Windows.Forms.DockStyle.Top
+        Me.txtClass.Location = New System.Drawing.Point(328, 29)
+        Me.txtClass.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
+        Me.txtClass.Name = "txtClass"
+        Me.txtClass.Size = New System.Drawing.Size(192, 20)
+        Me.txtClass.TabIndex = 13
         '
         'dlgInterface
         '
@@ -313,9 +337,9 @@ Partial Class dlgInterface
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel2.ResumeLayout(False)
         Me.TableLayoutPanel2.PerformLayout()
+        CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).EndInit()
         Me.mnuMembers.ResumeLayout(False)
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.gridMembers, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -345,5 +369,7 @@ Partial Class dlgInterface
     Friend WithEvents errorProvider As System.Windows.Forms.ErrorProvider
     Friend WithEvents btnDelete As System.Windows.Forms.Button
     Friend WithEvents AddEnumeration As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents lblClass As System.Windows.Forms.Label
+    Friend WithEvents txtClass As System.Windows.Forms.TextBox
 
 End Class

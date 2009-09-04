@@ -13,6 +13,15 @@ Public Class XmlReferenceSpec
         Enumeration
     End Enum
 
+    Public ReadOnly Property Title() As String
+        Get
+            If Me.Kind = "class" Then
+                Return "Class " + Me.Name
+            End If
+            Return "Typedef " + Me.Name
+        End Get
+    End Property
+
     Public ReadOnly Property Comment() As String
         Get
             If Me.RefKind = EReferenceKind.Typedef Then
@@ -37,6 +46,15 @@ Public Class XmlReferenceSpec
         End Get
         Set(ByVal value As String)
             SetAttribute("id", value)
+        End Set
+    End Property
+
+    Public Property External() As String
+        Get
+            Return GetAttribute("external")
+        End Get
+        Set(ByVal value As String)
+            SetAttribute("external", value)
         End Set
     End Property
 
@@ -134,8 +152,10 @@ Public Class XmlReferenceSpec
             Container = 0
             Id = "class0"
             Kind = "class"
+            External = "no"
             Package = ""
             ParentClass = ""
+
         Catch ex As Exception
             Throw ex
         Finally
