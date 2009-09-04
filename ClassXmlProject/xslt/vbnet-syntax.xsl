@@ -4,6 +4,8 @@
   <xsl:key match="element-type" name="include" use="@name"/>
   <xsl:key match="import" name="import" use="@name"/>
   <xsl:key match="element-type" name="package" use="@prefix"/>
+  <xsl:key match="element-package" name="import" use="@name"/>
+  <xsl:key match="@prefix" name="prefix" use="."/>
   <!-- ======================================================================= -->
   <xsl:variable name="LanguageVbasic">
     <xsl:if test="$LanguageFolder=''">
@@ -49,35 +51,84 @@
     <xsl:apply-templates select="//class" mode="UnknownTypes"/>
   </xsl:variable>
   <!-- ======================================================================= -->
-  <xsl:variable name="UnknownTypes">
-    <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Class' and generate-id()=generate-id(key('include',@name)[1])]">
+  <xsl:variable name="UnknownPackage1">
+    <xsl:variable name="Imports">
+      <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*/@prefix[.!=''][generate-id()=generate-id(key('prefix',.)[1])]">
+        <element-package name="{.}"/>
+      </xsl:for-each>
+      <xsl:for-each select="//imports">
+        <element-package name="{@name}"/>
+        <xsl:for-each select="node-import">
+          <element-package name="{.}"/>
+        </xsl:for-each>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:for-each select="msxsl:node-set($Imports)/*[generate-id()=generate-id(key('import',@name)[1])]">
       <xsl:sort select="@name"/>
-      <xsl:copy>
-        <xsl:copy-of select="@*"/>
-        <xsl:attribute name="idref">
-          <xsl:value-of select="generate-id()"/>
-        </xsl:attribute>
-      </xsl:copy>
-    </xsl:for-each>
-    <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Constant' and generate-id()=generate-id(key('include',@name)[1])]">
-      <xsl:sort select="@name"/>
-      <xsl:copy>
-        <xsl:copy-of select="@*"/>
-        <xsl:attribute name="idref">
-          <xsl:value-of select="generate-id()"/>
-        </xsl:attribute>
-      </xsl:copy>
-    </xsl:for-each>
-    <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Value' and generate-id()=generate-id(key('include',@name)[1])]">
-      <xsl:sort select="@name"/>
-      <xsl:copy>
-        <xsl:copy-of select="@*"/>
-        <xsl:attribute name="idref">
-          <xsl:value-of select="generate-id()"/>
-        </xsl:attribute>
-      </xsl:copy>
+      <xsl:copy-of select="."/>
     </xsl:for-each>
   </xsl:variable>
+  <!-- ======================================================================= -->
+  <xsl:variable name="UnknownTypes">
+    <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Class' and @prefix=''][generate-id()=generate-id(key('include',@name)[1])]">
+      <xsl:sort select="@name"/>
+      <xsl:apply-templates select="." mode="Copy"/>
+    </xsl:for-each>
+    <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Constant' and @prefix=''][generate-id()=generate-id(key('include',@name)[1])]">
+      <xsl:sort select="@name"/>
+      <xsl:apply-templates select="." mode="Copy"/>
+    </xsl:for-each>
+    <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Value' and @prefix=''][generate-id()=generate-id(key('include',@name)[1])]">
+      <xsl:sort select="@name"/>
+      <xsl:apply-templates select="." mode="Copy"/>
+    </xsl:for-each>
+    <xsl:for-each select="msxsl:node-set($UnknownPackage1)/*">
+      <xsl:variable name="Name" select="@name"/>
+      <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Class' and @prefix=$Name][generate-id()=generate-id(key('include',@name)[1])]">
+        <xsl:sort select="@name"/>
+        <xsl:apply-templates select="." mode="Copy"/>
+      </xsl:for-each>
+      <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Constant' and @prefix=$Name][generate-id()=generate-id(key('include',@name)[1])]">
+        <xsl:sort select="@name"/>
+        <xsl:apply-templates select="." mode="Copy"/>
+      </xsl:for-each>
+      <xsl:for-each select="msxsl:node-set($UnknownTypes1)/*[@kind='Value' and @prefix=$Name][generate-id()=generate-id(key('include',@name)[1])]">
+        <xsl:sort select="@name"/>
+        <xsl:apply-templates select="." mode="Copy"/>
+      </xsl:for-each>
+    </xsl:for-each>
+  </xsl:variable>
+  <!-- ======================================================================= -->
+  <xsl:template name="Imports">
+    <xsl:for-each select="msxsl:node-set($UnknownPackage1)/*">
+      <xsl:sort select="@name"/>
+      <xsl:variable name="Name" select="@name"/>
+      <xsl:element name="import">
+        <xsl:copy-of select="@name"/>
+          <xsl:attribute name="param">
+          <xsl:value-of select="$Name"/>
+        </xsl:attribute>
+        <xsl:attribute name="visibility">package</xsl:attribute>
+        <xsl:element name="export">
+          <xsl:copy-of select="@name"/>
+          <xsl:for-each select="msxsl:node-set($UnknownTypes)/*[@kind='Class' and @prefix=$Name]">
+            <xsl:apply-templates select="." mode="Imports">
+              <xsl:with-param name="NoPrefix">No</xsl:with-param>
+            </xsl:apply-templates>
+          </xsl:for-each>
+        </xsl:element>
+      </xsl:element>
+    </xsl:for-each>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="element-type" mode="Copy">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:attribute name="idref">
+        <xsl:value-of select="generate-id()"/>
+      </xsl:attribute>
+    </xsl:copy>
+  </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="classKnownClasses" match="class" mode="KnownClasses">
     <xsl:variable name="Prefix">
@@ -213,12 +264,17 @@
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="paepUnknownTypes" match="property | attribute | element | param" mode="UnknownTypes">
+    <xsl:variable name="NodeType">
     <xsl:apply-templates select="@type" mode="UnknownTypes">
       <xsl:with-param name="ParamName" select="name()"/>
     </xsl:apply-templates>
+    </xsl:variable>
+    <xsl:copy-of select="$NodeType"/>
+    <xsl:if test="msxsl:node-set($NodeType)/*">
     <xsl:apply-templates select="@default | @size | @value" mode="UnknownValues">
       <xsl:with-param name="ParamName" select="name()"/>
     </xsl:apply-templates>
+    </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="methodUnknownTypes" match="method" mode="UnknownTypes">
@@ -239,7 +295,7 @@
   <xsl:template name="NotifyUnknownTypes">
     <xsl:param name="ParamName"/>
     <xsl:param name="TypeName"/>
-    <ICI ParamName="{$ParamName}" TypeName="{$TypeName}"/>
+    <!--ICI ParamName="{$ParamName}" TypeName="{$TypeName}"/-->
     <xsl:variable name="Name">
       <xsl:call-template name="SimpleName">
         <xsl:with-param name="Name" select="$TypeName"/>
@@ -600,36 +656,6 @@
     </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
-  <xsl:template name="Imports">
-    <xsl:variable name="Imports">
-      <xsl:apply-templates select="//imports"/>
-    </xsl:variable>
-    <xsl:for-each select="msxsl:node-set($Imports)/*[generate-id()=generate-id(key('import',@name)[1])]">
-      <xsl:sort select="@name"/>
-      <xsl:copy-of select="."/>
-    </xsl:for-each>
-    <xsl:for-each select="msxsl:node-set($UnknownTypes)/*[@import='yes' and @prefix!=''][generate-id()=generate-id(key('package',@prefix)[1])]">
-      <xsl:sort select="@prefix"/>
-      <xsl:variable name="Prefix" select="@prefix"/>
-      <xsl:element name="import">
-        <xsl:attribute name="name">
-          <xsl:value-of select="@prefix"/>
-        </xsl:attribute>
-        <xsl:attribute name="visibility">package</xsl:attribute>
-        <xsl:element name="export">
-          <xsl:attribute name="name">
-            <xsl:value-of select="@prefix"/>
-          </xsl:attribute>
-          <xsl:for-each select="msxsl:node-set($UnknownTypes)/*[@prefix=$Prefix]">
-            <xsl:apply-templates select="." mode="Imports">
-              <xsl:with-param name="NoPrefix">No</xsl:with-param>
-            </xsl:apply-templates>
-          </xsl:for-each>
-        </xsl:element>
-      </xsl:element>
-    </xsl:for-each>
-  </xsl:template>
-  <!-- ======================================================================= -->
   <xsl:template name="ParamComment">
     <xsl:param name="Comments"/>
     <xsl:param name="ParamName"/>
@@ -865,6 +891,15 @@
   <xsl:template match="text()"/>
   <!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
+
+
+
+
+
+
+
 
 
 
