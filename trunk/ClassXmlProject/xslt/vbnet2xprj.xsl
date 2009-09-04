@@ -33,12 +33,15 @@
       <Classes>
         <xsl:copy-of select="$Classes"/>
       </Classes>
+      <UnknownPackage>
+        <xsl:copy-of select="$UnknownPackage1"/>
+      </UnknownPackage>
       <UnknownTypes>
-        <xsl:copy-of select="$UnknownTypes"/>
+        <xsl:copy-of select="$UnknownTypes1"/>
       </UnknownTypes>
-       -->
+ -->
       <xsl:apply-templates select="*[not(self::imports)]"/>
-      <package id="package1" name="Package_to_sort">
+      <package id="package1" name="Framework_and_other">
         <comment brief="Please, open this package and select import 'Imports_to_sort' and press Ctrl+E">Or right-click on menu item 'Exchange imports'</comment>
         <xsl:call-template name="Imports"/>
         <import name="Imports_to_sort" visibility="package">
@@ -59,17 +62,6 @@
       <comment brief="Brief comment">Detailed comment</comment>
       <xsl:apply-templates select="*"/>
     </xsl:copy>
-  </xsl:template>
-  <!-- ============================================================================== -->
-  <xsl:template match="imports">
-    <import name="{@name}" visibility="package">
-      <export name="{@name}"/>
-    </import>
-    <xsl:for-each select="node-import">
-      <import name="{.}" visibility="package">
-        <export name="{.}"/>
-      </import>
-    </xsl:for-each>
   </xsl:template>
   <!-- ============================================================================== -->
   <xsl:template match="element-type" mode="Imports">
@@ -561,6 +553,11 @@
   </xsl:template>
   <!-- ============================================================================== -->
 </xsl:stylesheet>
+
+
+
+
+
 
 
 
