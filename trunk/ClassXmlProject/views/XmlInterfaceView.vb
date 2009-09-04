@@ -13,12 +13,30 @@ Public Class XmlInterfaceView
     Private WithEvents m_chkRoot As CheckBox
     Private m_bInitOk As Boolean = False
 
+    Public ReadOnly Property Title() As String
+        Get
+            If Me.NodeName = "interface" Then
+                Return "Interface " + Me.Name
+            End If
+            Return "Enum " + Me.Name
+        End Get
+    End Property
+
     Public Property InterfObject() As Object Implements InterfObject.InterfObject
         Get
             Return Me
         End Get
         Set(ByVal value As Object)
             ' Nothing to do
+        End Set
+    End Property
+
+    Public Property ParentClass() As String
+        Get
+            Return GetAttribute("class")
+        End Get
+        Set(ByVal value As String)
+            SetAttribute("class", value)
         End Set
     End Property
 
@@ -85,6 +103,24 @@ Public Class XmlInterfaceView
         End If
     End Sub
 
+    Public Sub InitBindEnumClass(ByVal label As Label, ByVal text As TextBox)
+        Try
+            m_bInitOk = True
+
+            If Me.NodeName = "reference" Then
+                label.Visible = True
+                text.Visible = True
+                m_xmlBindingsList.AddBinding(text, Me, "ParentClass")
+            Else
+                label.Visible = False
+                text.Visible = False
+            End If
+        Catch ex As Exception
+            Throw ex
+        Finally
+            m_bInitOk = False
+        End Try
+    End Sub
 
     Public Sub InitBindingName(ByVal dataControl As Control)
         Try

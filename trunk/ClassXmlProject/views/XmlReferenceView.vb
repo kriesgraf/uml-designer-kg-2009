@@ -75,6 +75,17 @@ Public Class XmlReferenceView
         End Try
     End Sub
 
+    Public Sub CancelEnum(ByVal combo As ComboBox)
+        combo.SelectedIndex = 0
+    End Sub
+
+    Public Sub ConfirmEnum()
+        Me.Kind = "typedef"
+        Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
+        element.Tag = Me.Tag
+        AppendComponent(element)
+    End Sub
+
     Public Sub InitBindingType(ByVal combo As ComboBox)
         Try
             combo.DropDownStyle = ComboBoxStyle.DropDownList
@@ -85,7 +96,7 @@ Public Class XmlReferenceView
                 combo.Enabled = False
                 combo.SelectedItem = "enumeration"
             Else
-                combo.Items.AddRange(New Object() {"class", "typedef", "exception"})
+                combo.Items.AddRange(New Object() {"class", "typedef", "enumeration", "exception"})
                 m_xmlBindingsList.AddBinding(combo, Me, "Kind", "SelectedItem")
             End If
 
