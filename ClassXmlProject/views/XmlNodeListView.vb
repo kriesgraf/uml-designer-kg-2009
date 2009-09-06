@@ -90,7 +90,7 @@ Public Class XmlNodeListView
                 Case "return", "method"
                     name = """method/return value"" " + Me.Name
                 Case Else
-                    name = Me.Name
+                    name = Me.FullpathClassName
             End Select
             Return name + " (" + GetFullFullInfo() + ")" + m_strName
         End Get
@@ -112,6 +112,20 @@ Public Class XmlNodeListView
                     name = Me.Name
             End Select
             Return name + " (" + GetFullUmlPath(Me.Node) + ")" + m_strName
+        End Get
+    End Property
+
+    Public ReadOnly Property IsClassNode() As Boolean
+        Get
+            Select Case Me.NodeName
+                Case "class", "interface"
+                    Return True
+                Case "reference"
+                    If GetAttribute("type") = "class" Then
+                        Return True
+                    End If
+            End Select
+            Return False
         End Get
     End Property
 
@@ -253,7 +267,7 @@ Public Class XmlNodeListView
             If bProperty And document.SelectNodes("enumvalue").Count > 0 Then
                 AddNodeList(document, myList, "descendant::enumvalue")
             Else
-                AddNodeList(document, myList, "//enumvalue[ancestor::typedef]")
+                AddNodeList(document, myList, "//enumvalue[ancestor::typedef or ancestor::reference]")
             End If
 
             With control
@@ -567,6 +581,9 @@ Public Class XmlNodeListView
                 Case "reference"
                     Dim component3 As XmlReferenceSpec = Me.CreateDocument(Me.Node)
                     tempo = ConvertEnumImplToView(component3.Implementation)
+                    For Each child In Me.SelectNodes("enumvalue")
+                        tempo += ", " + GetName(child)
+                    Next
                     Return tempo
 
                 Case "import", "export"

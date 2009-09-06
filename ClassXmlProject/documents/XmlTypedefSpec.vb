@@ -119,6 +119,10 @@ Public Class XmlTypedefSpec
         Return Me.TypeVarDefinition.AppendComponent(nodeXml, observer)
     End Function
 
+    Protected Friend Overrides Function AppendNode(ByVal nodeXml As System.Xml.XmlNode, Optional ByVal observer As Object = Nothing) As System.Xml.XmlNode
+        Return Me.TypeVarDefinition.AppendNode(nodeXml, observer)
+    End Function
+
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
         Try
             ' This method reset m_bCreateNodeNow !

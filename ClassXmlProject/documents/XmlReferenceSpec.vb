@@ -4,7 +4,7 @@ Imports ClassXmlProject.UmlCodeGenerator
 Imports ClassXmlProject.XmlProjectTools
 
 Public Class XmlReferenceSpec
-    Inherits XmlComponent
+    Inherits XmlComposite
 
     Public Enum EReferenceKind
         Exception

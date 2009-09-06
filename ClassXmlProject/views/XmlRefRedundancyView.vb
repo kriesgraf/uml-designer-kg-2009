@@ -77,7 +77,16 @@ Public Class XmlRefRedundancyView
                                         bResult = True
                                     End If
                                 Case Else
-                                    If XmlProjectTools.ChangeID(child.Node, m_xmlProjectNode.Node, .Id) Then
+                                    Dim bHashTypedef As Boolean = (child.SelectNodes("typedef").Count > 0)
+                                    If .NodeName = "reference" And .IsClassNode And bHashTypedef Then
+                                        If MsgBox("Can't replace object: '" + child.FullpathClassName + "'" + vbCrLf + _
+                                                  "With remaining reference: '" + .FullpathClassName + "'" + vbCrLf + _
+                                                  "Because '" + child.FullpathClassName + "' has 'typedef' children." + vbCrLf + _
+                                                  "Would you want to continue?", XmlProjectTools.cstMsgYesNoQuestion, "Remove redundancies") _
+                                                  = MsgBoxResult.No Then
+                                            Exit For
+                                        End If
+                                    ElseIf XmlProjectTools.ChangeClassIDs(child.Node, .Node) Then
                                         bResult = True
                                     End If
                                     If child.RemoveMe() Then

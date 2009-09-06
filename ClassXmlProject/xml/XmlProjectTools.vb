@@ -64,7 +64,6 @@ Public Class XmlProjectTools
                                             "\+|\+\+|\-|\-\-|\*|\/|\\|\&|\&\&|\||\|\||\%|\^|\>\>|\<\<|\=|\=\=|\!|\!\=|\<\>|\>|\>\=|\<|\<\=|" + _
                                             "And|Like|Mod|Or|Xor|CType)$")
 
-
     Public Enum EResult
         Completed
         Failed
@@ -110,6 +109,14 @@ Public Class XmlProjectTools
         Dim bReference As Boolean
         Dim ilevel As Integer
         Dim strIdref As String
+    End Structure
+
+    Private Structure TChangeID
+        Dim strID As String
+        Dim strNodeName As String
+        Dim strName As String
+        Dim xmlNode As XmlNode
+        Dim bHasEnum As Boolean
     End Structure
 
 #End Region
@@ -1917,6 +1924,94 @@ Public Class XmlProjectTools
             Return True
         End If
         Return False
+    End Function
+
+    Public Shared Function ChangeClassIDs(ByVal nodeToRemove As XmlNode, ByVal nodeToRemain As XmlNode) As Boolean
+        Dim listToRemain As New Dictionary(Of String, TChangeID)
+        Dim listToRemove As New Dictionary(Of String, TChangeID)
+        Dim child As XmlNode
+        Dim tChangeID, element As TChangeID
+
+        Dim strTypedefNodeToRemain As String = "typedef"
+        Dim strTypedefNodeToRemove As String = "typedef"
+
+        If nodeToRemove.Name = "reference" Then
+            strTypedefNodeToRemove = nodeToRemove.Name
+        Else
+            For Each child In nodeToRemain.SelectNodes("descendant::typedef")
+                tChangeID = New TChangeID
+                tChangeID.strID = GetID(child)
+                tChangeID.strName = GetName(child)
+                tChangeID.strNodeName = child.Name
+                tChangeID.xmlNode = child
+                tChangeID.bHasEnum = (child.SelectNodes("descendant::enumvalue").Count > 0)
+                listToRemain.Add(tChangeID.strName, tChangeID)
+            Next
+
+            For Each child In nodeToRemove.SelectNodes("descendant::typedef")
+                tChangeID = New TChangeID
+                tChangeID.strID = GetID(child)
+                tChangeID.strName = GetName(child)
+                tChangeID.strNodeName = child.Name
+                tChangeID.xmlNode = child
+                tChangeID.bHasEnum = (child.SelectNodes("descendant::enumvalue").Count > 0)
+                listToRemove.Add(tChangeID.strName, tChangeID)
+            Next
+        End If
+
+        For Each child In nodeToRemain.SelectNodes("descendant::enumvalue")
+            tChangeID = New TChangeID
+            tChangeID.strID = GetID(child)
+            tChangeID.strName = GetName(child.SelectSingleNode("ancestor::" + strTypedefNodeToRemain)) + "." + GetName(child)
+            tChangeID.strNodeName = child.Name
+            tChangeID.xmlNode = child
+            tChangeID.bHasEnum = True
+            listToRemain.Add(tChangeID.strName, tChangeID)
+        Next
+
+        For Each child In nodeToRemove.SelectNodes("descendant::enumvalue")
+            tChangeID = New TChangeID
+            tChangeID.strID = GetID(child)
+            tChangeID.strName = GetName(child.SelectSingleNode("ancestor::" + strTypedefNodeToRemove)) + "." + GetName(child)
+            tChangeID.strNodeName = child.Name
+            tChangeID.xmlNode = child
+            tChangeID.bHasEnum = True
+            listToRemove.Add(tChangeID.strName, tChangeID)
+        Next
+
+        ' Change ID that class, enumvalue or typedef nodes is known
+        For Each element In listToRemain.Values
+            If listToRemove.ContainsKey(element.strName) Then
+                tChangeID = listToRemove.Item(element.strName)
+
+                If element.strNodeName = "typedef" Then
+                    If (element.bHasEnum And tChangeID.bHasEnum) _
+                    Or (element.bHasEnum = False And tChangeID.bHasEnum = False) _
+                    Then
+                        ChangeID(tChangeID.xmlNode, element.xmlNode, element.strID)
+                        listToRemove.Remove(tChangeID.strName)
+                    End If
+                Else
+                    ChangeID(tChangeID.xmlNode, element.xmlNode, element.strID)
+                    listToRemove.Remove(tChangeID.strName)
+                End If
+                tChangeID = Nothing
+            End If
+        Next
+
+        ' Transfer into remaining class node, unknown enumvalue or typedef nodes
+        Dim component As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(nodeToRemain)
+        For Each element In listToRemove.Values
+            If nodeToRemain.Name <> "typedef" Then
+                If element.strNodeName = "typedef" Then
+                    component.AppendNode(element.xmlNode)
+                ElseIf element.xmlNode.SelectSingleNode("ancestor::class") IsNot nodeToRemain Then
+                    component.AppendNode(element.xmlNode.SelectSingleNode("ancestor::typedef"))
+                End If
+            Else
+                component.AppendNode(element.xmlNode)
+            End If
+        Next
     End Function
 
     Public Shared Function ChangeID(ByVal nodeReference As XmlNode, ByVal treeNode As XmlNode, ByVal szNewID As String) As Boolean
