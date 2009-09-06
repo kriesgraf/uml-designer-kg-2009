@@ -84,6 +84,7 @@ Public Class XmlReferenceView
         Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
         element.Tag = Me.Tag
         AppendComponent(element)
+        UpdateValues()
     End Sub
 
     Public Sub InitBindingType(ByVal combo As ComboBox)

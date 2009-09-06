@@ -2,7 +2,6 @@
 Imports System.Xml
 Imports System.IO
 Imports System.Text
-Imports System.Xml.Schema
 Imports System.Windows.Forms
 Imports Microsoft.VisualBasic
 
@@ -166,6 +165,7 @@ Public Class XmlProjectView
     Public Function SortImportReferences() As Boolean
         Dim child As XmlNode = m_xmlProperties.Document.SelectSingleNode("//import[@name='" + cstImportsToSort + "']")
         Dim import As XmlImportSpec = XmlNodeManager.GetInstance().CreateDocument(child)
+        import.Tag = m_xmlProperties.Tag
         Return import.ExchangeImports()
     End Function
 
@@ -793,6 +793,8 @@ Public Class XmlProjectView
                 m_xmlProperties = XmlNodeManager.GetInstance().CreateDocument(m_xmlDocument.DocumentElement)
 
                 m_xmlProperties.Updated = bChanged
+                m_xmlProperties.Tag = m_xmlProperties.GenerationLanguage
+
                 Me.Updated = bChanged
                 m_xmlReferenceNodeCounter = New XmlReferenceNodeCounter(m_xmlDocument)
                 m_xmlProperties.NodeCounter = m_xmlReferenceNodeCounter
