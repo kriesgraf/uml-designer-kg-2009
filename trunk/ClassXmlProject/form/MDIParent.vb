@@ -122,7 +122,7 @@ Public Class MDIParent
         Me.Close()
     End Sub
 
-    Public Sub ImportFromOmgUmlModel(Optional ByVal iMode As Integer = 1)
+    Public Sub ImportFromOmgUmlModel()
         Try
             Dim dlgOpenFile As New OpenFileDialog
             If My.Settings.ImportFolder = m_strCurrentFolder Then
@@ -139,7 +139,7 @@ Public Class MDIParent
                 Dim strTempFile As String = ""
                 My.Settings.ImportFolder = XmlProjectTools.GetProjectPath(dlgOpenFile.FileName)
 
-                XmlProjectTools.ConvertOmgUmlModel(Me, dlgOpenFile.FileName, strTempFile, iMode)
+                XmlProjectTools.ConvertOmgUmlModel(Me, dlgOpenFile.FileName, strTempFile)
 
                 Dim ChildForm As New frmProject
                 ' Configurez-la en tant qu'enfant de ce formulaire MDI avant de l'afficher.

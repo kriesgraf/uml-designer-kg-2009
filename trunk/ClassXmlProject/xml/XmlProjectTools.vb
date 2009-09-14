@@ -53,7 +53,7 @@ Public Class XmlProjectTools
     Private Const cstXmi2ProjectStyle As String = "xmi2prj.xsl"
     Private Const cstVbCodeReverseEngineering As String = "vbnet2xprj.xsl"
     Private Const cstProject2XmiStyle As String = "xprj2xmi.xsl"
-    Private Const cstIbmXmi2ProjectStyle As String = "rhp-xmi2prj.xsl"
+    'Private Const cstIbmXmi2ProjectStyle As String = "rhp-xmi2prj.xsl"
     Private Const cstV1_2_To_V1_3_Patch As String = "Patch_V1_2ToV1_3.xsl"
 
     Private Shared regVariableName As Regex = New Regex("^[a-zA-Z_][a-zA-Z0-9_]{0,}$")
@@ -611,7 +611,7 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function ConvertOmgUmlModel(ByVal form As Form, ByVal strFilename As String, _
-                                              ByRef strTempFile As String, Optional ByVal iMode As Integer = 1) As Boolean
+                                              ByRef strTempFile As String) As Boolean
         Dim oldCursor As Cursor = form.Cursor
         Dim observer As InterfProgression = CType(form, InterfProgression)
         Dim bResult As Boolean = False
@@ -629,14 +629,8 @@ Public Class XmlProjectTools
             observer.Log = "Load XSLT converter".PadRight(40)
 
             Dim styleXsl As New XslSimpleTransform(True)
-            Select Case iMode
-                Case 0
-                    styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
-                                                                     My.Settings.ToolsFolder + cstXmi2ProjectStyle))
-                Case Else
-                    styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
-                                                                     My.Settings.ToolsFolder + cstIbmXmi2ProjectStyle))
-            End Select
+            styleXsl.Load(My.Computer.FileSystem.CombinePath(Application.StartupPath, _
+                                                        My.Settings.ToolsFolder + cstXmi2ProjectStyle))
             observer.Increment(1)
             observer.Log = "Convert metadata".PadRight(40)
 
@@ -2793,7 +2787,6 @@ Public Class XmlProjectTools
             Throw ex
         End Try
     End Sub
-
 
     Public Shared Sub OpenFileExplorer(ByVal folder As String)
         Try
