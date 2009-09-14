@@ -32,6 +32,7 @@ Public Class dlgExternalTools
                 Me.Close()
             End If
 
+            UpdateLayout()
 
             OK_Button.Enabled = False
             btnApply.Enabled = False
@@ -150,40 +151,49 @@ Public Class dlgExternalTools
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
-        Try
-            btnApply_Click(sender, e)
-
-        Catch ex As Exception
-            MsgExceptionBox(ex)
-        Finally
+        If ApplyChange() Then
             Me.DialogResult = System.Windows.Forms.DialogResult.OK
             Me.Close()
-        End Try
+        End If
     End Sub
 
     Private Sub btnApply_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnApply.Click
+        ApplyChange()
+    End Sub
+
+    Private Function ApplyChange() As Boolean
+        Dim bResult As Boolean = True
         Try
             m_bInitOk = True
-            OK_Button.Enabled = False
-            btnApply.Enabled = False
-
-            m_xmlBindingsList.UpdateValues()
-
-            If m_xmlControl.SaveTools() And m_bNameChanged Then
-                Me.Tag = True
+            If Me.tblpFields.Enabled And My.Computer.FileSystem.FileExists(Me.txtStylesheet.Text) = False Then
+                bResult = False
             End If
 
-            If m_bNameChanged Then m_xmlControl.RefreshList(lsbExternalTools)
+            If bResult Then
+                OK_Button.Enabled = False
+                btnApply.Enabled = False
 
-            m_bItemChanged = False
-            m_bNameChanged = False
+                m_xmlBindingsList.UpdateValues()
 
+                If m_xmlControl.SaveTools() And m_bNameChanged Then
+                    Me.Tag = True
+                End If
+
+                If m_bNameChanged Then m_xmlControl.RefreshList(lsbExternalTools)
+
+                m_bItemChanged = False
+                m_bNameChanged = False
+            Else
+                MsgBox("Please check if stylesheet is a valid filename:" + vbCrLf + vbCrLf + _
+                       Me.txtStylesheet.Text, MsgBoxStyle.Exclamation)
+            End If
         Catch ex As Exception
             MsgExceptionBox(ex)
         Finally
             m_bInitOk = False
         End Try
-    End Sub
+        Return bResult
+    End Function
 
     Private Sub Cancel_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Cancel_Button.Click
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
@@ -201,6 +211,7 @@ Public Class dlgExternalTools
 
             m_xmlControl.CreateCommand()
             m_xmlControl.RefreshList(lsbExternalTools, True)
+            UpdateLayout()
 
         Catch ex As Exception
             Throw ex
@@ -246,6 +257,7 @@ Public Class dlgExternalTools
                 m_bInitOk = True
                 m_xmlControl.DeleteCommand(menuItem)
                 m_xmlControl.RefreshList(lsbExternalTools)
+                UpdateLayout()
 
                 OK_Button.Enabled = True
                 btnApply.Enabled = True
@@ -440,5 +452,10 @@ Public Class dlgExternalTools
             txtDiffTool.Enabled = True
             txtDiffToolArguments.Enabled = True
         End If
+    End Sub
+
+    Private Sub UpdateLayout()
+        Me.tblpFields.Enabled = (Me.lsbExternalTools.Items.Count > 0)
+        Me.btnDelete.Enabled = (Me.lsbExternalTools.Items.Count > 0)
     End Sub
 End Class
