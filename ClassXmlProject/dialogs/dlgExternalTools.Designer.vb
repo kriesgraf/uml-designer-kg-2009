@@ -30,7 +30,7 @@ Partial Class dlgExternalTools
         Me.Cancel_Button = New System.Windows.Forms.Button
         Me.btnApply = New System.Windows.Forms.Button
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
-        Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel
+        Me.tblpFields = New System.Windows.Forms.TableLayoutPanel
         Me.txtDiffToolArguments = New System.Windows.Forms.TextBox
         Me.txtDiffTool = New System.Windows.Forms.TextBox
         Me.txtArguments = New System.Windows.Forms.TextBox
@@ -70,7 +70,7 @@ Partial Class dlgExternalTools
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
-        Me.TableLayoutPanel3.SuspendLayout()
+        Me.tblpFields.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
         Me.DiffArgsMnuStrip.SuspendLayout()
@@ -85,7 +85,7 @@ Partial Class dlgExternalTools
         Me.TableLayoutPanel1.ColumnCount = 3
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 47.61905!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 52.38095!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 103.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnApply, 2, 0)
@@ -114,14 +114,14 @@ Partial Class dlgExternalTools
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Location = New System.Drawing.Point(66, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
-        Me.Cancel_Button.Size = New System.Drawing.Size(64, 23)
+        Me.Cancel_Button.Size = New System.Drawing.Size(63, 23)
         Me.Cancel_Button.TabIndex = 1
         Me.Cancel_Button.Text = "Cancel"
         '
         'btnApply
         '
         Me.btnApply.Enabled = False
-        Me.btnApply.Location = New System.Drawing.Point(136, 3)
+        Me.btnApply.Location = New System.Drawing.Point(135, 3)
         Me.btnApply.Name = "btnApply"
         Me.btnApply.Size = New System.Drawing.Size(72, 23)
         Me.btnApply.TabIndex = 2
@@ -134,7 +134,7 @@ Partial Class dlgExternalTools
         Me.TableLayoutPanel2.ColumnCount = 1
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel1, 0, 2)
-        Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel3, 0, 1)
+        Me.TableLayoutPanel2.Controls.Add(Me.tblpFields, 0, 1)
         Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel4, 0, 0)
         Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 0)
@@ -146,46 +146,46 @@ Partial Class dlgExternalTools
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(424, 410)
         Me.TableLayoutPanel2.TabIndex = 1
         '
-        'TableLayoutPanel3
+        'tblpFields
         '
-        Me.TableLayoutPanel3.CausesValidation = False
-        Me.TableLayoutPanel3.ColumnCount = 3
-        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105.0!))
-        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel3.Controls.Add(Me.txtDiffToolArguments, 1, 6)
-        Me.TableLayoutPanel3.Controls.Add(Me.txtDiffTool, 1, 5)
-        Me.TableLayoutPanel3.Controls.Add(Me.txtArguments, 1, 4)
-        Me.TableLayoutPanel3.Controls.Add(Me.Label3, 0, 4)
-        Me.TableLayoutPanel3.Controls.Add(Me.Label5, 0, 6)
-        Me.TableLayoutPanel3.Controls.Add(Me.txtCommand, 1, 3)
-        Me.TableLayoutPanel3.Controls.Add(Me.txtName, 1, 0)
-        Me.TableLayoutPanel3.Controls.Add(Me.Label6, 0, 0)
-        Me.TableLayoutPanel3.Controls.Add(Me.txtStylesheet, 1, 1)
-        Me.TableLayoutPanel3.Controls.Add(Me.btnStylesheetPath, 2, 1)
-        Me.TableLayoutPanel3.Controls.Add(Me.btnCommandPath, 2, 3)
-        Me.TableLayoutPanel3.Controls.Add(Me.btnDiffPath, 2, 5)
-        Me.TableLayoutPanel3.Controls.Add(Me.btnArguments, 2, 4)
-        Me.TableLayoutPanel3.Controls.Add(Me.btnDiffArgs, 2, 6)
-        Me.TableLayoutPanel3.Controls.Add(Me.chkCommand, 0, 3)
-        Me.TableLayoutPanel3.Controls.Add(Me.chkDiffTool, 0, 5)
-        Me.TableLayoutPanel3.Controls.Add(Me.txtXslParams, 1, 2)
-        Me.TableLayoutPanel3.Controls.Add(Me.Label2, 0, 2)
-        Me.TableLayoutPanel3.Controls.Add(Me.btnXslParams, 2, 2)
-        Me.TableLayoutPanel3.Controls.Add(Me.btnXslStylesheet, 0, 1)
-        Me.TableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel3.Location = New System.Drawing.Point(3, 157)
-        Me.TableLayoutPanel3.Name = "TableLayoutPanel3"
-        Me.TableLayoutPanel3.RowCount = 7
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle)
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(418, 209)
-        Me.TableLayoutPanel3.TabIndex = 1
+        Me.tblpFields.CausesValidation = False
+        Me.tblpFields.ColumnCount = 3
+        Me.tblpFields.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105.0!))
+        Me.tblpFields.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblpFields.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
+        Me.tblpFields.Controls.Add(Me.txtDiffToolArguments, 1, 6)
+        Me.tblpFields.Controls.Add(Me.txtDiffTool, 1, 5)
+        Me.tblpFields.Controls.Add(Me.txtArguments, 1, 4)
+        Me.tblpFields.Controls.Add(Me.Label3, 0, 4)
+        Me.tblpFields.Controls.Add(Me.Label5, 0, 6)
+        Me.tblpFields.Controls.Add(Me.txtCommand, 1, 3)
+        Me.tblpFields.Controls.Add(Me.txtName, 1, 0)
+        Me.tblpFields.Controls.Add(Me.Label6, 0, 0)
+        Me.tblpFields.Controls.Add(Me.txtStylesheet, 1, 1)
+        Me.tblpFields.Controls.Add(Me.btnStylesheetPath, 2, 1)
+        Me.tblpFields.Controls.Add(Me.btnCommandPath, 2, 3)
+        Me.tblpFields.Controls.Add(Me.btnDiffPath, 2, 5)
+        Me.tblpFields.Controls.Add(Me.btnArguments, 2, 4)
+        Me.tblpFields.Controls.Add(Me.btnDiffArgs, 2, 6)
+        Me.tblpFields.Controls.Add(Me.chkCommand, 0, 3)
+        Me.tblpFields.Controls.Add(Me.chkDiffTool, 0, 5)
+        Me.tblpFields.Controls.Add(Me.txtXslParams, 1, 2)
+        Me.tblpFields.Controls.Add(Me.Label2, 0, 2)
+        Me.tblpFields.Controls.Add(Me.btnXslParams, 2, 2)
+        Me.tblpFields.Controls.Add(Me.btnXslStylesheet, 0, 1)
+        Me.tblpFields.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblpFields.Location = New System.Drawing.Point(3, 157)
+        Me.tblpFields.Name = "tblpFields"
+        Me.tblpFields.RowCount = 7
+        Me.tblpFields.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
+        Me.tblpFields.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
+        Me.tblpFields.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
+        Me.tblpFields.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
+        Me.tblpFields.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
+        Me.tblpFields.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
+        Me.tblpFields.RowStyles.Add(New System.Windows.Forms.RowStyle)
+        Me.tblpFields.Size = New System.Drawing.Size(418, 209)
+        Me.tblpFields.TabIndex = 1
         '
         'txtDiffToolArguments
         '
@@ -541,8 +541,8 @@ Partial Class dlgExternalTools
         Me.Text = "External tools"
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel2.ResumeLayout(False)
-        Me.TableLayoutPanel3.ResumeLayout(False)
-        Me.TableLayoutPanel3.PerformLayout()
+        Me.tblpFields.ResumeLayout(False)
+        Me.tblpFields.PerformLayout()
         Me.TableLayoutPanel4.ResumeLayout(False)
         Me.TableLayoutPanel4.PerformLayout()
         Me.FlowLayoutPanel1.ResumeLayout(False)
@@ -557,7 +557,7 @@ Partial Class dlgExternalTools
     Friend WithEvents Cancel_Button As System.Windows.Forms.Button
     Friend WithEvents TableLayoutPanel2 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents btnApply As System.Windows.Forms.Button
-    Friend WithEvents TableLayoutPanel3 As System.Windows.Forms.TableLayoutPanel
+    Friend WithEvents tblpFields As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents TableLayoutPanel4 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents lsbExternalTools As System.Windows.Forms.ListBox
