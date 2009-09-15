@@ -158,7 +158,7 @@ Public Class MDIParent
         Try
             Dim dlgOpenFolder As New FolderBrowserDialog
             If My.Settings.ImportFolder = m_strCurrentFolder Then
-                dlgOpenFolder.RootFolder = Environment.SpecialFolder.MyDocuments
+                dlgOpenFolder.RootFolder = Environment.SpecialFolder.Desktop
             Else
                 dlgOpenFolder.SelectedPath = My.Settings.ImportFolder
             End If

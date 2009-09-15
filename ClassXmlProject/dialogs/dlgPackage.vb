@@ -198,7 +198,7 @@ Public Class dlgPackage
             End If
 
             FolderBrowserDialog1.Description = "Select the folder where you want to deposit generated code...."
-            FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.MyDocuments
+            FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop
             FolderBrowserDialog1.SelectedPath = absolutePath
             If FolderBrowserDialog1.ShowDialog() = DialogResult.OK Then
                 txtFolder.Text = FolderBrowserDialog1.SelectedPath
