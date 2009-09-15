@@ -163,10 +163,10 @@ Public Class XmlRelationSpec
         End If
 
         Me.Id = XmlComponent.UID
-        Dim index As Integer = xmlRefNodeCounter.GetNewRelationId()
-        Name = "New_" + Me.NodeName + index
-        Me.Father.Name = "New_Father_" + index
-        Me.Child.Name = "New_Child_" + index
+        Dim strIndex As String = xmlRefNodeCounter.GetNewRelationId()
+        Name = "New_" + Me.NodeName + strIndex
+        Me.Father.Name = "New_Father_" + strIndex
+        Me.Child.Name = "New_Child_" + strIndex
     End Sub
 
     Public Overrides Sub NotifyInsert(Optional ByVal before As XmlComponent = Nothing)
