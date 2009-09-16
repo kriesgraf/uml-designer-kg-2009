@@ -9,6 +9,12 @@ Public Class dlgTypeVar
     Private m_bValueEnabled As Boolean = True
     Private m_bInvalideCell As Boolean = False
 
+    Public WriteOnly Property IsStaticProperty() As Boolean
+        Set(ByVal value As Boolean)
+            m_xmlView.IsStaticProperty = value
+        End Set
+    End Property
+
     Public WriteOnly Property Document() As XmlComponent Implements InterfFormDocument.Document
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node

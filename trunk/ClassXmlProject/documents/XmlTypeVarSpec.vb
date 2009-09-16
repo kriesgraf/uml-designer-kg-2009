@@ -12,6 +12,7 @@ Public Class XmlTypeVarSpec
 
     Public Const cstFullpathTypeDescription As String = "FullpathTypeDescription"
     Private m_bEnumWrong As Boolean = False
+    Private m_bStaticProperty As Boolean = False
 
     Public Enum EKindDeclaration
         EK_Unknown
@@ -59,14 +60,13 @@ Public Class XmlTypeVarSpec
         End Get
     End Property
 
-    Public ReadOnly Property IsStaticProperty() As Boolean
+    Public Property IsStaticProperty() As Boolean
         Get
-            Dim tempo As String = GetAttribute("member", "parent::property")
-            If String.IsNullOrEmpty(tempo) Then
-                Return False
-            End If
-            Return (tempo = "class")
+            Return m_bStaticProperty
         End Get
+        Set(ByVal value As Boolean)
+            m_bStaticProperty = value
+        End Set
     End Property
 
     Public ReadOnly Property FullpathTypeDescription() As String
@@ -383,8 +383,10 @@ Public Class XmlTypeVarSpec
 
 #Region "Public methods"
 
-    Public Function CreateDialogBox() As Form
-        Return XmlNodeManager.GetInstance().CreateForm(Me)
+    Public Function CreateDialogBox(Optional ByVal bIsStaticProperty As Boolean = False) As Form
+        Dim fen As dlgTypeVar = CType(XmlNodeManager.GetInstance().CreateForm(Me), dlgTypeVar)
+        fen.IsStaticProperty = bIsStaticProperty
+        Return fen
     End Function
 
     Public Overrides Function CanPasteItem(ByVal child As XmlComponent) As Boolean

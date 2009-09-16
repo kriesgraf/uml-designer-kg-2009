@@ -163,7 +163,7 @@ Public Class dlgProperty
     End Sub
 
     Private Sub cmdType_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdType.Click
-        Dim fen As Form = m_xmlView.TypeVarDefinition.CreateDialogBox()
+        Dim fen As Form = m_xmlView.TypeVarDefinition.CreateDialogBox(Me.chkMember.Checked)
         fen.ShowDialog()
         If CType(fen.Tag, Boolean) = True Then
             m_xmlView.Updated = True
@@ -224,6 +224,24 @@ Public Class dlgProperty
                 Me.errorProvider.SetIconPadding(cmbSetAccess, 0)
                 Me.errorProvider.SetIconAlignment(cmbSetAccess, ErrorIconAlignment.TopLeft)
                 Me.errorProvider.SetError(cmbSetAccess, "'Constant' property can't have setter!")
+
+                e.Cancel = True
+            End If
+        End If
+    End Sub
+
+    Private Sub chkMember_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkMember.Validated
+        Me.errorProvider.SetError(sender, "")
+    End Sub
+
+    Private Sub chkMember_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles chkMember.Validating
+        e.Cancel = False
+        If m_xmlView.TypeVarDefinition.Modifier Then
+            If CType(m_xmlView.Tag, ELanguage) = ELanguage.Language_Vbasic And chkMember.Checked Then
+                ' Set the ErrorProvider error with the text to display. 
+                Me.errorProvider.SetIconPadding(cmbSetAccess, 0)
+                Me.errorProvider.SetIconAlignment(chkMember, ErrorIconAlignment.TopLeft)
+                Me.errorProvider.SetError(chkMember, "'Constant' property can't be 'Shared'!")
 
                 e.Cancel = True
             End If
