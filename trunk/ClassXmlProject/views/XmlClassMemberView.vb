@@ -19,7 +19,7 @@ Public Class XmlClassMemberView
     Public ReadOnly Property TypeVarDefinition() As XmlTypeVarSpec
         Get
             If m_xmlAdapter IsNot Nothing Then
-                m_xmlAdapter.Tag = Me.Tag
+                m_xmlAdapter.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlAdapter
         End Get
@@ -110,7 +110,7 @@ Public Class XmlClassMemberView
         Select Case Me.NodeName
             Case "property"
                 Dim xmlProperty As XmlPropertySpec = CreateDocument(Me.Node)
-                xmlProperty.Tag = Me.Tag
+                xmlProperty.GenerationLanguage = Me.GenerationLanguage
 
                 Select Case m_xmlClassView.CurrentClassImpl
                     Case XmlProjectTools.EImplementation.Interf
@@ -120,8 +120,7 @@ Public Class XmlClassMemberView
                         xmlProperty.AccessGetInline = False
                         xmlProperty.MemberAttribute = False
 
-                    Case XmlProjectTools.EImplementation.Leaf, _
-                         XmlProjectTools.EImplementation.Node, _
+                    Case XmlProjectTools.EImplementation.Node, _
                          XmlProjectTools.EImplementation.Root
                         ' Ignore
 
@@ -131,15 +130,24 @@ Public Class XmlClassMemberView
 
             Case "method"
                 Dim xmlMethod As XmlMethodSpec = CreateDocument(Me.Node)
-                xmlMethod.Tag = Me.Tag
+                xmlMethod.GenerationLanguage = Me.GenerationLanguage
 
                 Select Case m_xmlClassView.CurrentClassImpl
                     Case XmlProjectTools.EImplementation.Interf
 
                         xmlMethod.Implementation = XmlProjectTools.EImplementation.Interf
 
-                    Case XmlProjectTools.EImplementation.Leaf, _
-                         XmlProjectTools.EImplementation.Node, _
+                    Case XmlProjectTools.EImplementation.Leaf
+                        Select Case xmlMethod.Implementation
+                            Case XmlProjectTools.EImplementation.Node, _
+                                 XmlProjectTools.EImplementation.Root
+                                xmlMethod.Implementation = XmlProjectTools.EImplementation.Leaf
+
+                            Case Else
+                                ' Ignore
+                        End Select
+
+                    Case XmlProjectTools.EImplementation.Node, _
                          XmlProjectTools.EImplementation.Root
                         ' Ignore
 
@@ -325,7 +333,7 @@ Public Class XmlClassMemberView
         Else
             m_xmlAdapter = MyBase.CreateDocument(GetNode("type"))
         End If
-        If m_xmlAdapter IsNot Nothing Then m_xmlAdapter.Tag = Me.Tag
+        If m_xmlAdapter IsNot Nothing Then m_xmlAdapter.GenerationLanguage = Me.GenerationLanguage
     End Sub
 
     Public Function CanDropItem(ByVal component As XmlComponent) As Boolean Implements InterfGridViewNotifier.CanDropItem
@@ -337,6 +345,6 @@ Public Class XmlClassMemberView
     End Function
 
     Public Function CanDragItem() As Boolean Implements InterfGridViewNotifier.CanDragItem
-        Return (Me.NodeName = "typedef" And Me.Tag = ELanguage.Language_CplusPlus)
+        Return (Me.NodeName = "typedef" And Me.GenerationLanguage = ELanguage.Language_CplusPlus)
     End Function
 End Class
