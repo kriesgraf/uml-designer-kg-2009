@@ -73,14 +73,14 @@ Public Class XmlImportSpec
     Public Property InlineBody() As XmlCodeInline
         Get
             If m_xmlInline IsNot Nothing Then
-                m_xmlInline.Tag = Me.Tag
+                m_xmlInline.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlInline
         End Get
         Set(ByVal value As XmlCodeInline)
             m_xmlInline = value
             If m_xmlInline IsNot Nothing Then
-                m_xmlInline.Tag = Me.Tag
+                m_xmlInline.GenerationLanguage = Me.GenerationLanguage
             End If
         End Set
     End Property
@@ -129,7 +129,7 @@ Public Class XmlImportSpec
                     AppendComponent(m_xmlExport)
                 End If
             End If
-            If m_xmlExport IsNot Nothing Then m_xmlExport.Tag = Me.Tag
+            If m_xmlExport IsNot Nothing Then m_xmlExport.GenerationLanguage = Me.GenerationLanguage
 
             Return m_xmlExport
         End Get
@@ -146,7 +146,7 @@ Public Class XmlImportSpec
 
             Name = "New_import"
             Visibility = "package"
-            Select Case CType(Me.Tag, ELanguage)
+            Select Case Me.GenerationLanguage
                 Case ELanguage.Language_CplusPlus
                     Parameter = "Import.h"
                 Case ELanguage.Language_Vbasic
@@ -295,7 +295,7 @@ Public Class XmlImportSpec
         Dim bResult As Boolean = False
         Try
             Dim import As XmlImportSpec = CreateDocument("import")
-            import.Tag = Me.Tag
+            import.GenerationLanguage = Me.GenerationLanguage
             import.SetDefaultValues(False)
             import.Name = "MovedUp" + import.GetHashCode().ToString
 
@@ -333,7 +333,7 @@ Public Class XmlImportSpec
                     interf.Name = ref.Name
                     interf.Id = ref.Id
                     interf.Package = ref.Package
-                    interf.Tag = ref.Tag
+                    interf.GenerationLanguage = ref.GenerationLanguage
                     ref.ReplaceMe(interf)
                     ref = Nothing
 
@@ -343,7 +343,7 @@ Public Class XmlImportSpec
                     ref.Name = interf.Name
                     ref.Id = interf.Id
                     ref.Package = interf.Package
-                    ref.Tag = interf.Tag
+                    ref.GenerationLanguage = interf.GenerationLanguage
                     interf.ReplaceMe(ref)
                     interf = Nothing
             End Select
@@ -354,7 +354,7 @@ Public Class XmlImportSpec
 
     Public Function ExchangeImports() As Boolean
         Dim xmlcpnt As XmlExchangeImportsView = CType(CreateView("import_exchange", Me.Node), XmlExchangeImportsView)
-        xmlcpnt.Tag = Me.Tag
+        xmlcpnt.GenerationLanguage = Me.GenerationLanguage
 
         Dim fen As Form = xmlcpnt.CreateForm(xmlcpnt)
         fen.ShowDialog()
@@ -401,12 +401,12 @@ Public Class XmlImportSpec
 
             If TestNode("body") Then
                 m_xmlInline = TryCast(CreateDocument(GetNode("body")), XmlCodeInline)
-                If m_xmlInline IsNot Nothing Then m_xmlInline.Tag = Me.Tag
+                If m_xmlInline IsNot Nothing Then m_xmlInline.GenerationLanguage = Me.GenerationLanguage
 
             ElseIf TestNode("export") Then
                 m_xmlExport = TryCast(CreateDocument(GetNode("export")), XmlExportSpec)
                 If m_xmlExport IsNot Nothing Then
-                    m_xmlExport.Tag = Me.Tag
+                    m_xmlExport.GenerationLanguage = Me.GenerationLanguage
                     m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
                 End If
             End If
@@ -543,14 +543,14 @@ Public Class XmlImportSpec
                 Dim export As XmlExportSpec = New XmlExportSpec()   ' We don't use base method MyBase.CreateDocument, because don't want to create an XmlNode instance
                 export.Document = Me.Document
                 export.NodeCounter = m_xmlReferenceNodeCounter
-                export.Tag = Me.Tag
+                export.GenerationLanguage = Me.GenerationLanguage
 
                 Dim myList As New ArrayList
 
                 If export.LoadImport(form, Me, strFilename, bDoxygenTagFile) Then
                     export.LoadChildrenList()
                     For Each xmlcpnt As XmlComponent In export.ChildrenList
-                        xmlcpnt.Tag = export.Tag
+                        xmlcpnt.GenerationLanguage = export.GenerationLanguage
                         Dim added As XmlNodeListView = AddComponentList(xmlcpnt, myList)
                         Dim found As XmlNode = Me.ChildExportNode.FindNode(xmlcpnt)
                         Dim strID As String = Nothing

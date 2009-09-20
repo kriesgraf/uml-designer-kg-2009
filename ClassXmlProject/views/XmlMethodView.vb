@@ -110,7 +110,7 @@ Public Class XmlMethodView
                     .Enabled = False
                 End With
 
-                If Me.Tag = ELanguage.Language_Vbasic Then
+                If Me.GenerationLanguage = ELanguage.Language_Vbasic Then
                     With m_cmdBehaviour
                         .Combo.SelectedIndex = 0
                         .Enabled = False
@@ -183,7 +183,7 @@ Public Class XmlMethodView
     End Sub
 
     Public Sub UpdateMenu(ByVal item As ToolStripItem)
-        If Me.Tag = ELanguage.Language_Vbasic Then
+        If Me.GenerationLanguage = ELanguage.Language_Vbasic Then
             item.Visible = False
         End If
     End Sub
@@ -192,7 +192,7 @@ Public Class XmlMethodView
         Try
             dataControl.Items.Clear()
 
-            If Me.Tag = ELanguage.Language_Vbasic And bChecked Then
+            If Me.GenerationLanguage = ELanguage.Language_Vbasic And bChecked Then
                 dataControl.Items.Add("public")
             Else
                 dataControl.Items.AddRange(New Object() {"private", "protected", "public"})
@@ -239,7 +239,7 @@ Public Class XmlMethodView
             m_eClassImplementation = ConvertDtdToEnumImpl(GetAttribute("implementation", "parent::class"))
         End If
 
-        If Me.Tag <> ELanguage.Language_CplusPlus _
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus _
             Or m_eClassImplementation = EImplementation.Interf _
             Or Me.Node.ParentNode.Name = "interface" _
         Then
@@ -275,7 +275,7 @@ Public Class XmlMethodView
             m_cmdBehaviour.Combo = dataControl
             m_cmdBehaviour.Title = label
 
-            If Me.Tag <> ELanguage.Language_Vbasic Then
+            If Me.GenerationLanguage <> ELanguage.Language_Vbasic Then
                 m_cmdBehaviour.Enabled = False
                 m_cmdBehaviour.Visible = False
             Else
@@ -319,7 +319,7 @@ Public Class XmlMethodView
         Try
             m_xmlBindingsList.AddBinding(dataControl, Me, "Modifier", "Checked")
 
-            If Me.Tag <> ELanguage.Language_CplusPlus Then
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                 dataControl.Checked = False
                 dataControl.Enabled = False
                 dataControl.Visible = False

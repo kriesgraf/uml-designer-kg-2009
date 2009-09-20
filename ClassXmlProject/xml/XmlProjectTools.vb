@@ -2293,7 +2293,8 @@ Public Class XmlProjectTools
 
             Else
                 Dim component As XmlComponent = CType(dataControl.Rows(e.RowIndex).DataBoundItem, XmlComponent)
-                Dim eLang As ELanguage = CType(component.Tag, ELanguage)
+                Dim eLang As ELanguage = component.GenerationLanguage
+
 
                 Select Case component.NodeName
                     Case "method"

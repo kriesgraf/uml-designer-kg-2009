@@ -18,7 +18,7 @@ Public Class dlgMethod
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
             ' get a useful tag that transmit generation language ID
-            m_xmlView.Tag = value.Tag
+            m_xmlView.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 
@@ -210,7 +210,7 @@ Public Class dlgMethod
     End Sub
 
     Private Sub txtOperator_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtOperator.Validating
-        e.Cancel = IsInvalidOperator(sender, Me.errorProvider, CType(m_xmlView.Tag, ELanguage))
+        e.Cancel = IsInvalidOperator(sender, Me.errorProvider, m_xmlView.GenerationLanguage)
     End Sub
 End Class
 

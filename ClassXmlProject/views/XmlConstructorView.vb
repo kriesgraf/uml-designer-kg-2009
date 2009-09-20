@@ -47,7 +47,7 @@ Public Class XmlConstructorView
     End Sub
 
     Public Sub InitBindingCheckCopy(ByVal dataControl As CheckBox)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
         Else
@@ -56,7 +56,7 @@ Public Class XmlConstructorView
     End Sub
 
     Public Sub InitBindingCheckInline(ByVal dataControl As CheckBox)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Visible = False
         Else
             m_xmlBindingsList.AddBinding(dataControl, Me, "Inline", "Checked")

@@ -19,7 +19,7 @@ Public Class dlgTypeVar
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
             ' get a useful tag that transmit generation language ID
-            m_xmlView.Tag = value.Tag
+            m_xmlView.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 
@@ -196,7 +196,7 @@ Public Class dlgTypeVar
 
     Private Sub chkTypeConst_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles chkTypeConst.Validating
         e.Cancel = False
-        If CType(m_xmlView.Tag, ELanguage) = ELanguage.Language_Vbasic And chkTypeConst.Checked Then
+        If m_xmlView.GenerationLanguage = ELanguage.Language_Vbasic And chkTypeConst.Checked Then
             If m_xmlView.IsStaticProperty Then
                 ' Set the ErrorProvider error with the text to display. 
                 Me.errorProvider.SetIconPadding(chkTypeConst, 0)

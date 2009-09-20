@@ -142,8 +142,8 @@ Public Class XmlComposite
                     Else
                         xcpnt = CreateDocument(TryCast(iterator.Current, XmlNode))
                     End If
-                    xcpnt.Tag = Me.Tag
-                    'Debug.Print("(AddChildren,'" + strViewName + "')" + xcpnt.ToString + ":=" + Str(xcpnt.Tag))
+                    xcpnt.GenerationLanguage = Me.GenerationLanguage
+                    'Debug.Print("(AddChildren,'" + strViewName + "')" + xcpnt.ToString + ":=" + Str(xcpnt.GenerationLanguage))
                     m_xmlChildrenList.Add(xcpnt)
                 End While
             End If

@@ -151,7 +151,7 @@ Public Class XmlImportView
     Public Sub AddNew(ByVal list As ListBox, ByVal name As String)
         Try
             Dim xmlcpnt As XmlComponent = CreateDocument(name, Me.Document)
-            xmlcpnt.Tag = Me.Tag
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
             xmlcpnt.SetIdReference(m_xmlReferenceNodeCounter)
             AppendComponent(xmlcpnt)
 
@@ -168,7 +168,7 @@ Public Class XmlImportView
         Try
             Dim fen As New dlgRenameNode
             fen.Title = "Rename package"
-            fen.Tag = Me.Tag
+            fen.Tag = Me.GenerationLanguage
             fen.Label = "Enter new package label"
 
             If fen.ShowDialog() = DialogResult.OK Then
@@ -416,7 +416,7 @@ Public Class XmlImportView
             End If
 
             If xmlComponent IsNot Nothing Then
-                xmlComponent.Tag = Me.Tag
+                xmlcomponent.GenerationLanguage = Me.GenerationLanguage
                 xmlComponent.SetIdReference(m_xmlReferenceNodeCounter, ENameReplacement.AddCopyName)
 
                 If bDuplicate And bImportData = False _

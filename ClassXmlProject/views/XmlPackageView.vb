@@ -146,7 +146,7 @@ Public Class XmlPackageView
 
                 My.Settings.ExportFolder = Path.GetDirectoryName(strFilename)
 
-                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+                Dim eLang As ELanguage = Me.GenerationLanguage
 
                 Select Case component.NodeName
                     Case "package"
@@ -228,7 +228,7 @@ Public Class XmlPackageView
 
                 My.Settings.ExportFolder = Path.GetDirectoryName(dlgSaveFile.FileName)
 
-                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+                Dim eLang As ELanguage = Me.GenerationLanguage
                 Dim strFullPackage As String
 
                 Select Case component.NodeName
@@ -294,7 +294,7 @@ Public Class XmlPackageView
         If parent Is Nothing Then
             MsgBox("Please retry with an 'import' object'!", MsgBoxStyle.Critical, "Exchange imports")
         Else
-            parent.Tag = composite.Tag
+            parent.GenerationLanguage = composite.GenerationLanguage
             If parent IsNot Nothing Then
                 If parent.ExchangeImports() Then
                     Me.Updated = True

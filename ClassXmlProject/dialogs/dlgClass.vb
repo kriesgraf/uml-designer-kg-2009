@@ -58,7 +58,7 @@ Public Class dlgClass
             ' this line updates all values of XmlClassGlobalView object
             m_xmlView.Node = value.Node
             ' get a useful tag that transmit generation language ID
-            m_xmlView.Tag = value.Tag
+            m_xmlView.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 
@@ -104,7 +104,11 @@ Public Class dlgClass
                 .SetToolTip(txtBrief, txtBrief.Text)
             End With
 
-            Me.Text = m_xmlView.Name
+            If DEBUG_COMMANDS_ACTIVE Then
+                Me.Text = m_xmlView.Name + " (" + m_xmlView.GenerationLanguage.ToString + ")"
+            Else
+                Me.Text = m_xmlView.Name
+            End If
 
             With m_xmlView
                 .LoadValues()
@@ -198,7 +202,7 @@ Public Class dlgClass
     Private Sub mnuAddSuperClass_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles AddSuperClass.Click
         Dim xmlcpnt As XmlSuperClassView = CType(XmlNodeManager.GetInstance().CreateView(m_xmlView.Node, "class_superclass_view", m_xmlView.Document), XmlSuperClassView)
         xmlcpnt.CurrentImplementation = m_xmlView.CurrentClassImpl()
-        xmlcpnt.Tag = m_xmlView.Tag
+        xmlcpnt.GenerationLanguage = m_xmlView.GenerationLanguage
 
         Dim fen As Form = xmlcpnt.CreateForm(xmlcpnt)
         fen.ShowDialog()

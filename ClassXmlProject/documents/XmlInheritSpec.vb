@@ -33,7 +33,7 @@ Public Class XmlInheritSpec
         Get
             Dim parent As XmlNode = GetClassNode()
 
-            Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+            Dim eLang As ELanguage = Me.GenerationLanguage
             Dim strResult As String = GetFullpathDescription(parent, eLang)
             If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
             Return strResult

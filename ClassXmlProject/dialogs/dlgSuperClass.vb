@@ -33,7 +33,7 @@ Public Class dlgSuperClass
             ' This line get reference of object in argument, neither view creation nor XML node copy !
             m_xmlView = CType(value, XmlSuperClassView)
             ' get a useful tag that transmit generation language ID
-            m_xmlView.Tag = value.Tag
+            m_xmlView.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 

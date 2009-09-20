@@ -82,7 +82,7 @@ Public Class XmlReferenceView
     Public Sub ConfirmEnum()
         Me.Kind = "typedef"
         Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
-        element.Tag = Me.Tag
+        element.GenerationLanguage = Me.GenerationLanguage
         AppendComponent(element)
         UpdateValues()
     End Sub

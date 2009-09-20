@@ -40,7 +40,7 @@ Public Class XmlRefRedundancyView
         For Each child As XmlNodeListView In RemovedArray
             If child.CheckedView Then
                 copy = New XmlNodeListView(child.Node)
-                copy.Tag = Me.Tag
+                copy.GenerationLanguage = Me.GenerationLanguage
                 RemainedArray.Add(copy)
             End If
         Next
@@ -126,7 +126,7 @@ Public Class XmlRefRedundancyView
                     xmlcpnt.Node = Me.Node
                 End If
 
-                xmlcpnt.Tag = Me.Tag
+                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                 listResult.Add(xmlcpnt)
 
                 XmlNodeListView.SortNodeList(listResult)

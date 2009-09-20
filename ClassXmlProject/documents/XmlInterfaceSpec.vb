@@ -23,7 +23,7 @@ Public Class XmlInterfaceSpec
 
     Public ReadOnly Property FullpathClassName() As String
         Get
-            Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+            Dim eLang As ELanguage = Me.GenerationLanguage
             Dim strResult As String = GetFullpathDescription(Me.Node, eLang)
             If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
             Return strResult

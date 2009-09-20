@@ -78,7 +78,7 @@ Public Class XmlRelationParentView
     End Sub
 
     Public Sub InitBindingIndexLevel(ByVal dataControl As ComboBox, ByVal label As Label)
-        If CType(Me.Tag, ELanguage) <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
             label.Visible = False
@@ -90,7 +90,7 @@ Public Class XmlRelationParentView
     End Sub
 
     Public Sub InitBindingIterator(ByVal dataControl As CheckBox)
-        If CType(Me.Tag, ELanguage) <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
         Else

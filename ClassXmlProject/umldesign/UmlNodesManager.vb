@@ -58,7 +58,7 @@ Public Class UmlNodesManager
             observer.Increment(1)
 
             import = New XmlComponent(source.DocumentElement)
-            import.Tag = component.Tag
+            import.GenerationLanguage = component.GenerationLanguage
 
             StartInsertion(source, NodeCounter)
             observer.Increment(1)
@@ -94,7 +94,7 @@ Public Class UmlNodesManager
 
                     Case Else
                         Dim xmlcpnt As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(component.Document.ImportNode(child, True))
-                        xmlcpnt.Tag = component.Tag
+                        xmlcpnt.GenerationLanguage = component.GenerationLanguage
                         component.AppendComponent(xmlcpnt)
                 End Select
             Next child

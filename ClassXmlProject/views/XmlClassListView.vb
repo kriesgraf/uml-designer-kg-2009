@@ -23,7 +23,7 @@ Public Class XmlClassListView
 
     Public ReadOnly Property FullpathClassName() As String
         Get
-            Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+            Dim eLang As ELanguage = Me.GenerationLanguage
             Dim strResult As String = GetFullpathDescription(Me.Node, eLang)
             If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
             Return strResult
@@ -112,7 +112,7 @@ Public Class XmlClassListView
         While iterator.MoveNext
             Dim nodeXml As XmlNode = CType(iterator.Current, XmlNode)
             Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(nodeXml)
-            xmlcpnt.Tag = document.Tag
+            xmlcpnt.GenerationLanguage = document.GenerationLanguage
             'Debug.Print("(" + node.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
             myList.Add(xmlcpnt)
         End While

@@ -166,7 +166,7 @@ Public Class XmlTypeView
 
         If m_bIsNotOverriden = False Then Exit Sub
 
-        If Me.Tag = ELanguage.Language_Vbasic _
+        If Me.GenerationLanguage = ELanguage.Language_Vbasic _
         Then
             If GetNode("ancestor::typedef") IsNot Nothing _
             Then
@@ -181,7 +181,7 @@ Public Class XmlTypeView
         Try
             Dim bIsNotParam = (GetNode("parent::param") Is Nothing)
 
-            If bIsNotParam And Me.Tag <> ELanguage.Language_CplusPlus Then
+            If bIsNotParam And Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                 control.Enabled = False
                 control.Visible = False
             Else
@@ -196,7 +196,7 @@ Public Class XmlTypeView
         Try
             Dim bIsNotProperty = (GetNode("parent::property") Is Nothing)
 
-            If bIsNotProperty And Me.Tag <> ELanguage.Language_CplusPlus Then
+            If bIsNotProperty And Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                 control.Enabled = False
                 control.Visible = False
             Else
@@ -219,7 +219,7 @@ Public Class XmlTypeView
 
     Public Sub InitBindingLevel(ByVal control As ComboBox, ByVal label As Label)
         Try
-            If Me.Tag <> ELanguage.Language_CplusPlus Then
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                 control.Enabled = False
                 control.Visible = False
                 label.Visible = False

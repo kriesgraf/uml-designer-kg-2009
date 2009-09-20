@@ -108,7 +108,7 @@ Public Class XmlComponent
 
     Private Shared m_xmlClipBoardComponent As New XmlClipboard
 
-    Private m_iTag As Integer
+    Protected m_iTag As Integer
     Private m_xmlNode As XmlNode
     Private m_xmlDocument As XmlDocument
     Private m_bUpdated As Boolean = False
@@ -139,14 +139,14 @@ Public Class XmlComponent
         End Set
     End Property
 
-    <CategoryAttribute("General"), _
-    DescriptionAttribute("Integer tag")> _
-    Public Overridable Property Tag() As Integer
+    <CategoryAttribute("Code generation"), _
+    DescriptionAttribute("Project language")> _
+    Public Overridable Property GenerationLanguage() As ELanguage
         Get
-            Return m_iTag
+            Return CType(m_iTag, ELanguage)
         End Get
-        Set(ByVal value As Integer)
-            m_iTag = value
+        Set(ByVal value As ELanguage)
+            m_iTag = CInt(value)
         End Set
     End Property
 

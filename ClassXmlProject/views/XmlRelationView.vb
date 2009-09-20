@@ -479,7 +479,7 @@ Public Class XmlRelationView
 
     Private Sub InitBindingParentLevel(ByVal xmlParent As XmlRelationParentSpec, ByVal control As ComboCommand)
         Try
-            If Me.Tag <> ELanguage.Language_CplusPlus Then
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                 control.Enabled = False
                 control.Visible = False
             End If

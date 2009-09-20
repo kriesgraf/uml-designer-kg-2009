@@ -129,7 +129,7 @@ Public Class XmlExportSpec
             If Node Is Nothing Then Exit Function
 
             For Each child In Node.ChildNodes
-                count = GetNodeRefCount(child, strList, CType(Me.Tag, ELanguage))
+                count = GetNodeRefCount(child, strList, Me.GenerationLanguage)
                 If count > 0 Then
                     MsgBox("Reference/Interface " + GetName(child) + " is used by " + CStr(count) + " element(s):" + vbCrLf + strList _
                            + vbCrLf + vbCrLf + "We invite you to apply command 'Search dependencies' on node '" + GetName(child) + "'" + vbCrLf _
@@ -173,7 +173,7 @@ Public Class XmlExportSpec
             Dim document As New XmlDocument
             Dim strSource As String = GetProjectPath(strFilename)
 
-            Dim eLanguage As ELanguage = CType(Me.Tag, ELanguage)
+            Dim eLanguage As ELanguage = Me.GenerationLanguage
 
             Select Case eLanguage
                 Case ClassXmlProject.ELanguage.Language_Tools, ClassXmlProject.ELanguage.Language_Vbasic

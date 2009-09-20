@@ -131,7 +131,7 @@ Public Class XmlNodeListView
 
     Public ReadOnly Property FullpathClassName() As String
         Get
-            Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+            Dim eLang As ELanguage = Me.GenerationLanguage
             Dim strResult As String = ""
 
             Dim parent As XmlImportView = TryCast(m_xmlComponent, XmlImportView)
@@ -205,7 +205,7 @@ Public Class XmlNodeListView
             Dim myList As New ArrayList
             Dim bIsNotTypedef = (document.GetNode("parent::typedef") Is Nothing)
 
-            If document.Tag = ELanguage.Language_CplusPlus Then
+            If document.GenerationLanguage = ELanguage.Language_CplusPlus Then
                 bIsNotTypedef = True
             End If
 
@@ -223,7 +223,7 @@ Public Class XmlNodeListView
                     AddNodeList(document, myList, "//interface")
                     AddNodeList(document, myList, "//reference[@container='0' or not(@container)]")
 
-                    AddSimpleTypesList(myList, CType(document.Tag, ELanguage))
+                    AddSimpleTypesList(myList, document.GenerationLanguage)
 
                 Case EComboList.Container_single
                     ' Specific container type
@@ -243,7 +243,7 @@ Public Class XmlNodeListView
                     AddNodeList(document, myList, "//interface")
                     AddNodeList(document, myList, "//reference[@container='0' or not(@container)]")
 
-                    AddSimpleTypesList(myList, CType(document.Tag, ELanguage))
+                    AddSimpleTypesList(myList, document.GenerationLanguage)
             End Select
 
             SortNodeList(myList)
@@ -284,7 +284,7 @@ Public Class XmlNodeListView
     Public Shared Function AddComponentList(ByVal component As XmlComponent, _
                                             ByRef myList As ArrayList, Optional ByVal refobj As XmlComponent = Nothing) As XmlNodeListView
         Dim xmlcpnt As XmlNodeListView = New XmlNodeListView(component.Node, refobj)
-        xmlcpnt.Tag = component.Tag
+        xmlcpnt.GenerationLanguage = component.GenerationLanguage
         'Debug.Print("(" + component.Node.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
         myList.Add(xmlcpnt)
         Return xmlcpnt
@@ -317,7 +317,7 @@ Public Class XmlNodeListView
                 Case Else
                     xmlcpnt = New XmlNodeListView(nodeXml, refobj)
             End Select
-            xmlcpnt.Tag = document.Tag
+            xmlcpnt.GenerationLanguage = document.GenerationLanguage
             'Debug.Print("(" + nodeXml.ToString + ")" + xmlcpnt.NodeName + "=" + xmlcpnt.FullpathClassName)
             myList.Add(xmlcpnt)
         End While
@@ -516,7 +516,7 @@ Public Class XmlNodeListView
     Public Shared Function GetListRedundancies(ByVal parent As XmlComponent, ByVal child As XmlNode, ByRef listResult As ArrayList) As Boolean
         Dim bResult As Boolean = False
         Try
-            Dim elang As ELanguage = CType(parent.Tag, ELanguage)
+            Dim elang As ELanguage = parent.GenerationLanguage
             Dim separator As String = GetSeparator(elang)
             Dim strName As String = GetName(child)
             If InStr(strName, separator) > 0 Then
@@ -595,17 +595,17 @@ Public Class XmlNodeListView
 
                 Case "param"
                     Dim component4 As XmlParamSpec = Me.CreateDocument(Me.Node)
-                    component4.Tag = Me.Tag
+                    component4.GenerationLanguage = Me.GenerationLanguage
                     Return component4.TypeVarDefinition.DetailedDescription
 
                 Case "property"
                     Dim component5 As XmlPropertySpec = Me.CreateDocument(Me.Node)
-                    component5.Tag = Me.Tag
+                    component5.GenerationLanguage = Me.GenerationLanguage
                     Return component5.TypeVarDefinition.DetailedDescription
 
                 Case "typedef"
                     Dim component As XmlTypedefSpec = Me.CreateDocument(Me.Node)
-                    component.Tag = Me.Tag
+                    component.GenerationLanguage = Me.GenerationLanguage
                     Return component.DetailedDescription
 
                 Case "method"

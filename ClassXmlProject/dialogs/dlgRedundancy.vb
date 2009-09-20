@@ -25,7 +25,7 @@ Public Class dlgRedundancy
         Set(ByVal value As XmlComponent)
             m_xmlView.ProjectNode = value
             ' get a useful tag that transmit generation language ID
-            m_xmlView.Tag = value.Tag
+            m_xmlView.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 

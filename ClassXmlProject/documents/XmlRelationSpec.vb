@@ -18,7 +18,7 @@ Public Class XmlRelationSpec
     Protected Friend ReadOnly Property Father() As XmlRelationParentSpec
         Get
             If m_xmlFather IsNot Nothing Then
-                m_xmlFather.Tag = Me.Tag
+                m_xmlFather.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlFather
         End Get
@@ -27,7 +27,7 @@ Public Class XmlRelationSpec
     Protected Friend ReadOnly Property Child() As XmlRelationParentSpec
         Get
             If m_xmlChild IsNot Nothing Then
-                m_xmlChild.Tag = Me.Tag
+                m_xmlChild.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlChild
         End Get
@@ -183,14 +183,14 @@ Public Class XmlRelationSpec
                 nodeXml = CreateAppendNode("father")
             End If
             m_xmlFather = CreateDocument(nodeXml, bLoadChildren)
-            If m_xmlFather IsNot Nothing Then m_xmlFather.Tag = Me.Tag
+            If m_xmlFather IsNot Nothing Then m_xmlFather.GenerationLanguage = Me.GenerationLanguage
 
             nodeXml = GetNode("child")
             If nodeXml Is Nothing And m_bCreateNodeNow Then
                 nodeXml = CreateAppendNode("child")
             End If
             m_xmlChild = CreateDocument(nodeXml, bLoadChildren)
-            If m_xmlChild IsNot Nothing Then m_xmlChild.Tag = Me.Tag
+            If m_xmlChild IsNot Nothing Then m_xmlChild.GenerationLanguage = Me.GenerationLanguage
 
         Catch ex As Exception
             Throw ex
