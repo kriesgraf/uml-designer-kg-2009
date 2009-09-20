@@ -181,7 +181,11 @@ Public Class XmlClassGlobalView
 
             With dataControl
                 .DropDownStyle = ComboBoxStyle.DropDownList
-                .Items.AddRange(New Object() {"no", "private", "protected", "public"})
+                If MyBase.GenerationLanguage <> ELanguage.Language_Vbasic Then
+                    .Items.AddRange(New Object() {"no", "private", "protected", "public"})
+                Else
+                    .Items.AddRange(New Object() {"no", "protected"})
+                End If
             End With
             m_xmlBindingsList.AddBinding(dataControl, Me, "Destructor", "SelectedItem")
 
@@ -205,7 +209,7 @@ Public Class XmlClassGlobalView
                 .Items.Add(ConvertEnumImplToView(EImplementation.Interf))
                 .Items.Add(ConvertEnumImplToView(EImplementation.Container))
 
-                If Me.Tag <> ELanguage.Language_Vbasic Then
+                If Me.GenerationLanguage <> ELanguage.Language_Vbasic Then
                     .Items.Add(ConvertEnumImplToView(EImplementation.Exception))
                 End If
 
@@ -253,7 +257,7 @@ Public Class XmlClassGlobalView
     End Sub
 
     Public Sub InitBindingPartial(ByVal chkPartial As CheckBox)
-        If Me.Tag = ELanguage.Language_Vbasic Then
+        If Me.GenerationLanguage = ELanguage.Language_Vbasic Then
             chkPartial.Visible = True
             chkPartial.Enabled = True
             m_xmlBindingsList.AddBinding(chkPartial, Me, "PartialDecl", "Checked")
@@ -359,7 +363,7 @@ Public Class XmlClassGlobalView
 
                 My.Settings.ExportFolder = Path.GetDirectoryName(strFilename)
 
-                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+                Dim eLang As ELanguage = Me.GenerationLanguage
 
                 Select Case component.NodeName
                     Case "typedef"
