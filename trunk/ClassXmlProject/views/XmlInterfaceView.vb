@@ -36,7 +36,11 @@ Public Class XmlInterfaceView
             Return GetAttribute("class")
         End Get
         Set(ByVal value As String)
-            SetAttribute("class", value)
+            If value = "" Then
+                RemoveAttribute("class")
+            Else
+                AddAttribute("class", value)
+            End If
         End Set
     End Property
 
@@ -186,7 +190,7 @@ Public Class XmlInterfaceView
         Dim bResult As Boolean = False
         Try
             Dim xmlcpnt As XmlComponent = CreateDocument(removeNode.Node)
-            xmlcpnt.Tag = Me.Tag
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
 
             If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + xmlcpnt.Name, _
                        cstMsgYesNoQuestion, _
