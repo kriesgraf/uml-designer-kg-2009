@@ -140,7 +140,7 @@ Public Class XmlBindingDataListView
 
             If interf.CanDropItem(component, bImportData, False) Then
                 If bImportData Then
-                    component.Tag = m_xmlParentNode.Tag
+                    component.GenerationLanguage = m_xmlParentNode.GenerationLanguage
                     component.Name = component.Name + "_imported"
                     component.SetIdReference(m_xmlReferenceNodeCounter, XmlComponent.ENameReplacement.AddCopyName, True)
                 End If
@@ -294,6 +294,9 @@ Public Class XmlBindingDataListView
             ' Disconnect source to make update
             m_dataControl.DataSource = Nothing
 
+            ' To enforce generation language propagation
+            m_xmlParentNode.GenerationLanguage = m_xmlRootNode.GenerationLanguage
+
             With CType(m_xmlParentNode, XmlComposite)
                 .LoadChildrenList(m_strViewName)
                 m_dataControl.DataSource = .ChildrenList
@@ -315,20 +318,23 @@ Public Class XmlBindingDataListView
         Dim xmlView As XmlComponent = Nothing
         Try
             If m_xmlParentNode Is Nothing Then
-                Throw New Exception("m_xmlParentNode property is null")
+                Throw New Exception("parentNode property is null")
             Else
+                Dim parentNode As XmlComposite = XmlNodeManager.GetInstance().CreateDocument(m_xmlParentNode.Node)
+                parentNode.GenerationLanguage = m_xmlRootNode.GenerationLanguage
+
                 If strNodeName Is Nothing Then
                     strNodeName = CType(m_dataControl.Tag, String)
                 End If
                 ' Create an adapter that build xml nodes and attributes
-                xmlComponent = XmlNodeManager.GetInstance().CreateDocument(strNodeName, m_xmlParentNode.Node.OwnerDocument, False)
-                xmlComponent.Tag = m_xmlParentNode.Tag
+                xmlComponent = XmlNodeManager.GetInstance().CreateDocument(strNodeName, parentNode.Node.OwnerDocument, False)
+                xmlComponent.GenerationLanguage = parentNode.GenerationLanguage
                 xmlComponent.SetIdReference(m_xmlReferenceNodeCounter)
 
-                Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
+                Dim child As XmlNode = parentNode.AppendComponent(xmlComponent)
                 If child IsNot Nothing Then
-                    xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
-                    xmlView.Tag = xmlComponent.Tag
+                    xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, parentNode.Node.OwnerDocument)
+                    xmlView.GenerationLanguage = xmlComponent.GenerationLanguage
 
                     With CType(xmlView, InterfObject)
                         .InterfObject = m_xmlParentNode
@@ -420,7 +426,7 @@ Public Class XmlBindingDataListView
                 End If
 
                 If xmlComponent IsNot Nothing Then
-                    xmlComponent.Tag = m_xmlParentNode.Tag
+                    xmlComponent.GenerationLanguage = m_xmlParentNode.GenerationLanguage
 
                     ' Append a node not duplicated cause move node to new location.
                     Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
@@ -454,7 +460,7 @@ Public Class XmlBindingDataListView
             If component IsNot Nothing _
             Then
                 Dim parent As XmlComposite = CType(XmlNodeManager.GetInstance().CreateDocument(m_xmlParentNode.Node), XmlComposite)
-                parent.Tag = m_xmlParentNode.Tag
+                parent.GenerationLanguage = m_xmlParentNode.GenerationLanguage
 
                 If parent.CanRemove(component) _
                 Then
