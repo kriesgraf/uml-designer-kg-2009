@@ -29,7 +29,7 @@ Public Class XmlTypedefSpec
     Public ReadOnly Property TypeVarDefinition() As XmlTypeVarSpec
         Get
             If m_xmlType IsNot Nothing Then
-                m_xmlType.Tag = Me.Tag
+                m_xmlType.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlType
         End Get
@@ -107,7 +107,7 @@ Public Class XmlTypedefSpec
                 End If
             End If
 
-            If xmlResult IsNot Nothing Then xmlResult.Tag = Me.Tag
+            If xmlResult IsNot Nothing Then xmlResult.GenerationLanguage = Me.GenerationLanguage
 
         Catch ex As Exception
             Throw ex
@@ -120,7 +120,12 @@ Public Class XmlTypedefSpec
     End Function
 
     Protected Friend Overrides Function AppendNode(ByVal nodeXml As System.Xml.XmlNode, Optional ByVal observer As Object = Nothing) As System.Xml.XmlNode
-        Return Me.TypeVarDefinition.AppendNode(nodeXml, observer)
+        Select Case nodeXml.Name
+            Case "type", "variable", "comment"
+                Return MyBase.AppendNode(nodeXml, observer)
+            Case Else
+                Return Me.TypeVarDefinition.AppendNode(nodeXml, observer)
+        End Select
     End Function
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
@@ -189,7 +194,7 @@ Public Class XmlTypedefSpec
                 nodeXml = GetNode("type")
             End If
             m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
-            If m_xmlType IsNot Nothing Then m_xmlType.Tag = Me.Tag
+            If m_xmlType IsNot Nothing Then m_xmlType.GenerationLanguage = Me.GenerationLanguage
 
         Catch ex As Exception
             Throw ex
