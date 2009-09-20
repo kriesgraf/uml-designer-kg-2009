@@ -59,7 +59,7 @@ Public Class XmlStructureView
     End Sub
 
     Public Sub InitBindingUnion(ByVal dataControl As CheckBox)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
         Else

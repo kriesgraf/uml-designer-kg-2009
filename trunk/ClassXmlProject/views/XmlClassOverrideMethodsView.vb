@@ -130,7 +130,7 @@ Public Class XmlClassOverrideMethodsView
         Try
             Dim child As XmlNode
             Dim xmlcpnt As XmlMethodSpec = CreateDocument(dstMethod)
-            xmlcpnt.Tag = Me.Tag
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
 
             Dim list As XmlNodeList = SelectNodes(dstMethod, "param")
 

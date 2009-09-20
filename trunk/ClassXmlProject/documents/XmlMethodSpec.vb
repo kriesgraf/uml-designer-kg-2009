@@ -26,14 +26,6 @@ Public Class XmlMethodSpec
 
 #Region "Properties"
 
-    <CategoryAttribute("Code generation"), _
-    DescriptionAttribute("Project language")> _
-    Public ReadOnly Property GenerationLanguage() As ELanguage
-        Get
-            Return CType(MyBase.Tag, ELanguage)
-        End Get
-    End Property
-
     <CategoryAttribute("UML design"), _
     DescriptionAttribute("VB.NET method declaration")> _
     Public Property Behaviour() As String
@@ -94,7 +86,7 @@ Public Class XmlMethodSpec
     Public ReadOnly Property ReturnValue() As XmlTypeVarSpec
         Get
             If m_xmlReturnValue IsNot Nothing Then
-                m_xmlReturnValue.Tag = Me.Tag
+                m_xmlReturnValue.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlReturnValue
         End Get
@@ -313,7 +305,7 @@ Public Class XmlMethodSpec
             Me.ReturnValue.Descriptor = "void"
 
             Dim xmlParam As XmlParamSpec = CreateDocument(GetNode("param"))
-            xmlParam.Tag = Me.Tag
+            xmlParam.GenerationLanguage = Me.GenerationLanguage
             xmlParam.SetDefaultValues(bCreateNodeNow)
             xmlParam.NumId = "1"
             xmlParam = Nothing
@@ -355,7 +347,7 @@ Public Class XmlMethodSpec
                 End If
             End If
 
-            If xmlResult IsNot Nothing Then xmlResult.Tag = Me.Tag
+            If xmlResult IsNot Nothing Then xmlResult.GenerationLanguage = Me.GenerationLanguage
 
         Catch ex As Exception
             Throw ex
@@ -376,7 +368,7 @@ Public Class XmlMethodSpec
             If TestNode("return") Then
                 Dim nodeType As XmlNode = GetNode("return/type")
                 m_xmlReturnValue = TryCast(CreateDocument(nodeType, bLoadChildren), XmlTypeVarSpec)
-                If m_xmlReturnValue IsNot Nothing Then m_xmlReturnValue.Tag = Me.Tag
+                If m_xmlReturnValue IsNot Nothing Then m_xmlReturnValue.GenerationLanguage = Me.GenerationLanguage
             End If
         Catch ex As Exception
             Throw ex

@@ -33,16 +33,33 @@ Public Class XmlProjectProperties
 
     <CategoryAttribute("Code generation"), _
     DescriptionAttribute("Project language ID")> _
-    Public Property GenerationLanguage() As Integer
+    Public NotOverridable Overrides Property GenerationLanguage() As ELanguage
         Get
-            Dim value As Integer = CInt(GetAttribute("language", "generation"))
+            Dim value As ELanguage = CType(CInt(GetAttribute("language", "generation")), ELanguage)
+            m_iTag = CInt(value)
             Return value
         End Get
-        Set(ByVal value As Integer)
-            SetAttribute("language", CStr(value), "generation")
+        Set(ByVal value As ELanguage)
+            m_iTag = CInt(value)
+            SetAttribute("language", CStr(m_iTag), "generation")
         End Set
     End Property
 
+    <CategoryAttribute("Code generation"), _
+    Browsable(False), _
+    DescriptionAttribute("Integer value")> _
+    Public Property ValueLanguage() As Integer
+        Get
+            Return CInt(Me.GenerationLanguage)
+        End Get
+        Set(ByVal value As Integer)
+            Me.GenerationLanguage = CType(value, ELanguage)
+        End Set
+    End Property
+
+    <CategoryAttribute("Code generation"), _
+    Browsable(False), _
+    DescriptionAttribute("String value")> _
     Public ReadOnly Property Language() As String
         Get
             Return GetLanguage(GenerationLanguage)

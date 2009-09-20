@@ -192,7 +192,7 @@ Public Class XmlBindingDataGridView
 
             While iterator.MoveNext()
                 component = XmlNodeManager.GetInstance().CreateView(CType(iterator.Current, XmlNode), m_strViewName, m_xmlParentNode.Node.OwnerDocument)
-                component.Tag = m_xmlParentNode.Tag
+                component.GenerationLanguage = m_xmlParentNode.GenerationLanguage
                 component.Document = m_xmlParentNode.Document
 
                 If m_refObject IsNot Nothing _
@@ -249,14 +249,14 @@ Public Class XmlBindingDataGridView
                 End If
                 ' Create an adapter that build xml nodes and attributes
                 xmlComponent = XmlNodeManager.GetInstance().CreateDocument(strNodeName, m_xmlParentNode.Node.OwnerDocument, False)
-                xmlComponent.Tag = m_xmlParentNode.Tag
+                xmlComponent.GenerationLanguage = m_xmlParentNode.GenerationLanguage
                 xmlComponent.SetIdReference(m_xmlReferenceNodeCounter)
 
                 Dim child As XmlNode = m_xmlParentNode.AppendComponent(xmlComponent)
                 If child IsNot Nothing Then
 
                     xmlView = XmlNodeManager.GetInstance().CreateView(child, m_strViewName, m_xmlParentNode.Node.OwnerDocument)
-                    xmlView.Tag = xmlComponent.Tag
+                    xmlView.GenerationLanguage = xmlComponent.GenerationLanguage
 
                     If m_refObject IsNot Nothing Then
                         With CType(xmlView, InterfObject)
@@ -306,7 +306,7 @@ Public Class XmlBindingDataGridView
 
     Public Function DuplicateOrPasteItem(ByVal component As XmlComponent, _
                                          Optional ByVal bDuplicate As Boolean = True, _
-                                         Optional ByVal bImportData As Boolean = false) As Boolean
+                                         Optional ByVal bImportData As Boolean = False) As Boolean
         Try
             If m_xmlParentNode Is Nothing Then
                 Throw New Exception("m_xmlParentNode property is null")
@@ -323,7 +323,7 @@ Public Class XmlBindingDataGridView
                 End If
 
                 If xmlComponent IsNot Nothing Then
-                    xmlComponent.Tag = m_xmlParentNode.Tag
+                    xmlComponent.GenerationLanguage = m_xmlParentNode.GenerationLanguage
 
                     If bDuplicate And bImportData = False _
                     Then
@@ -359,7 +359,7 @@ Public Class XmlBindingDataGridView
             If component IsNot Nothing Then
 
                 Dim parent As XmlComposite = CType(XmlNodeManager.GetInstance().CreateDocument(m_xmlParentNode.Node), XmlComposite)
-                parent.Tag = m_xmlParentNode.Tag
+                parent.GenerationLanguage = m_xmlParentNode.GenerationLanguage
 
                 If parent.CanRemove(component) _
                 Then
@@ -480,7 +480,7 @@ Public Class XmlBindingDataGridView
             Debug.Print("grid view '" + m_strViewName + "': " + GetName(document.DocumentElement))
 
             component.Document = document
-            component.Tag = m_xmlParentNode.Tag
+            component.GenerationLanguage = m_xmlParentNode.GenerationLanguage
 
             CType(component, InterfViewControl).InitControl(m_dataControl)
 

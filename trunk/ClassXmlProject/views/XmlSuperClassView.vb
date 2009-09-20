@@ -55,7 +55,7 @@ Public Class XmlSuperClassView
 
             For Each xmlview As XmlNodeListView In m_ListBox.SelectedItems
                 Dim xmlcpnt As XmlInheritSpec = MyBase.CreateDocument("inherited", MyBase.Document)
-                xmlcpnt.Tag = Me.Tag
+                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                 xmlcpnt.Idref = xmlview.Id
 
                 MyBase.AppendNode(xmlcpnt.Node)

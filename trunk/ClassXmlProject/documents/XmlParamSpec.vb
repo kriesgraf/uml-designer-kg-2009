@@ -21,7 +21,7 @@ Public Class XmlParamSpec
     Public ReadOnly Property TypeVarDefinition() As XmlTypeVarSpec
         Get
             If m_xmlType IsNot Nothing Then
-                m_xmlType.Tag = Me.Tag
+                m_xmlType.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlType
         End Get
@@ -96,7 +96,7 @@ Public Class XmlParamSpec
             End If
 
             m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
-            If m_xmlType IsNot Nothing Then m_xmlType.Tag = Me.Tag
+            If m_xmlType IsNot Nothing Then m_xmlType.GenerationLanguage = Me.GenerationLanguage
 
         Catch ex As Exception
             Throw ex

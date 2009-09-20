@@ -45,7 +45,7 @@ Public Class XmlClassDependencyView
                 data.Columns.Add(col1)
             End If
 
-            If Me.Tag <> ELanguage.Language_Vbasic _
+            If Me.GenerationLanguage <> ELanguage.Language_Vbasic _
             Then
                 col1 = New DataGridViewComboBoxColumn
                 With col1

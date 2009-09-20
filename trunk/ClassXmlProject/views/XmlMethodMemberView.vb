@@ -14,7 +14,7 @@ Public Class XmlMethodMemberView
     Public ReadOnly Property TypeVarDefinition() As XmlTypeVarSpec
         Get
             If m_xmlAdapter IsNot Nothing Then
-                m_xmlAdapter.Tag = Me.Tag
+                m_xmlAdapter.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlAdapter
         End Get
@@ -48,7 +48,7 @@ Public Class XmlMethodMemberView
             If m_xmlAdapter Is Nothing Then
                 Dim xmlNode As XmlNode = MyBase.GetElementById(MyBase.GetAttribute("idref"))
 
-                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+                Dim eLang As ELanguage = Me.GenerationLanguage
                 Dim strResult As String = GetFullpathDescription(xmlNode, eLang)
                 If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
                 Return strResult
@@ -66,7 +66,7 @@ Public Class XmlMethodMemberView
 
                 If m_xmlAdapter IsNot Nothing _
                 Then
-                    m_xmlAdapter.Tag = Me.Tag
+                    m_xmlAdapter.GenerationLanguage = Me.GenerationLanguage
                     fen = XmlNodeManager.GetInstance().CreateForm(Me.TypeVarDefinition)
                 Else
                     Dim xmlcpnt As XmlComponent = New XmlComponent(MyBase.Node.ParentNode)
@@ -112,7 +112,7 @@ Public Class XmlMethodMemberView
         ElseIf TestNode("type") Then
 
             m_xmlAdapter = MyBase.CreateDocument(GetNode("type"))
-            m_xmlAdapter.Tag = Me.Tag
+            m_xmlAdapter.GenerationLanguage = Me.GenerationLanguage
         Else
             m_xmlAdapter = Nothing
         End If

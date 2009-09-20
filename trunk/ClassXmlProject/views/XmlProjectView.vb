@@ -165,7 +165,7 @@ Public Class XmlProjectView
     Public Function SortImportReferences() As Boolean
         Dim child As XmlNode = m_xmlProperties.Document.SelectSingleNode("//import[@name='" + cstImportsToSort + "']")
         Dim import As XmlImportSpec = XmlNodeManager.GetInstance().CreateDocument(child)
-        import.Tag = m_xmlProperties.Tag
+        import.GenerationLanguage = m_xmlProperties.GenerationLanguage
         Return import.ExchangeImports()
     End Function
 
@@ -175,8 +175,6 @@ Public Class XmlProjectView
 
     Public Function EditProperties() As Boolean
         If m_xmlProperties.Edit() Then
-            ' We go home to be sure that language info is reflected back to all tree nodes
-            m_Control.GoHome()
             Me.Updated = True
             Return True
         End If
@@ -564,7 +562,7 @@ Public Class XmlProjectView
 
         If composite IsNot Nothing Then
             Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
-            xmlcpnt.Tag = composite.Tag
+            xmlcpnt.GenerationLanguage = composite.GenerationLanguage
             xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
             If xmlcpnt.AddReferences(form, eMode) Then
                 Me.Updated = True
@@ -579,7 +577,7 @@ Public Class XmlProjectView
     Public Function RemoveRedundantReference(ByVal parent As XmlComposite, ByVal reference As XmlComponent) As Boolean
         If parent IsNot Nothing And reference IsNot Nothing Then
             Dim xmlcpnt As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(parent.Node)
-            xmlcpnt.Tag = parent.Tag
+            xmlcpnt.GenerationLanguage = parent.GenerationLanguage
             If xmlcpnt.RemoveRedundant(reference) Then
                 m_Control.Binding.ResetBindings(True)
                 Me.Updated = True
@@ -606,7 +604,7 @@ Public Class XmlProjectView
     Public Function RemoveAllReferences(ByVal composite As XmlComposite) As Boolean
         If composite IsNot Nothing Then
             Dim xmlcpnt As XmlImportView = XmlNodeManager.GetInstance().CreateView(composite.Node, "import")
-            xmlcpnt.Tag = composite.Tag
+            xmlcpnt.GenerationLanguage = composite.GenerationLanguage
             xmlcpnt.NodeCounter = m_xmlReferenceNodeCounter
             If xmlcpnt.RemoveAllReferences() Then
                 m_Control.Binding.ResetBindings(True)
@@ -620,7 +618,7 @@ Public Class XmlProjectView
     Public Function OverrideProperties(ByVal composite As XmlComposite) As Boolean
         If composite.NodeName = "class" Then
             Dim xmlcpnt As XmlClassSpec = XmlNodeManager.GetInstance().CreateDocument(composite.Node)
-            xmlcpnt.Tag = Me.Properties.Tag
+            xmlcpnt.GenerationLanguage = Me.Properties.GenerationLanguage
 
             If xmlcpnt.OverrideProperties(xmlcpnt.Implementation) Then
                 Me.Updated = True
@@ -636,7 +634,7 @@ Public Class XmlProjectView
     Public Function OverrideMethods(ByVal composite As XmlComposite) As Boolean
         If composite.NodeName = "class" Then
             Dim xmlcpnt As XmlClassSpec = XmlNodeManager.GetInstance().CreateDocument(composite.Node)
-            xmlcpnt.Tag = Me.Properties.Tag
+            xmlcpnt.GenerationLanguage = Me.Properties.GenerationLanguage
 
             If xmlcpnt.OverrideMethods(xmlcpnt.Implementation) Then
                 Me.Updated = True
@@ -665,7 +663,7 @@ Public Class XmlProjectView
 
     Public Sub ConvertImportElement(ByVal composite As XmlComposite, ByVal child As XmlComponent)
         Dim parent As XmlImportSpec = TryCast(XmlNodeManager.GetInstance().CreateDocument(composite.Node), XmlImportSpec)
-        parent.Tag = composite.Tag
+        parent.GenerationLanguage = composite.GenerationLanguage
         If parent IsNot Nothing Then
             parent.ConvertComponent(child)
             m_Control.Binding.ResetBindings(True)
@@ -678,7 +676,7 @@ Public Class XmlProjectView
         If parent Is Nothing Then
             MsgBox("Please retry with an 'import' object'!", MsgBoxStyle.Critical, "Exchange imports")
         Else
-            parent.Tag = composite.Tag
+            parent.GenerationLanguage = composite.GenerationLanguage
             If parent IsNot Nothing Then
                 If parent.ExchangeImports() Then
                     Me.Updated = True
@@ -793,7 +791,7 @@ Public Class XmlProjectView
                 m_xmlProperties = XmlNodeManager.GetInstance().CreateDocument(m_xmlDocument.DocumentElement)
 
                 m_xmlProperties.Updated = bChanged
-                m_xmlProperties.Tag = m_xmlProperties.GenerationLanguage
+                m_xmlProperties.GenerationLanguage = m_xmlProperties.GenerationLanguage
 
                 Me.Updated = bChanged
                 m_xmlReferenceNodeCounter = New XmlReferenceNodeCounter(m_xmlDocument)

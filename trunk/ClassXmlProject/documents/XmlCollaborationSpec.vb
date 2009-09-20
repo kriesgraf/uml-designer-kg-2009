@@ -67,7 +67,7 @@ Public Class XmlCollaborationSpec
     Public ReadOnly Property RelationSpec() As XmlRelationSpec
         Get
             If m_xmlRelation IsNot Nothing Then
-                m_xmlRelation.Tag = Me.Tag
+                m_xmlRelation.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlRelation
         End Get
@@ -134,7 +134,7 @@ Public Class XmlCollaborationSpec
                 m_xmlRelation = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlRelationSpec)
             End If
 
-            If m_xmlRelation IsNot Nothing Then m_xmlRelation.Tag = Me.Tag
+            If m_xmlRelation IsNot Nothing Then m_xmlRelation.GenerationLanguage = Me.GenerationLanguage
 
         Catch ex As Exception
             Throw ex

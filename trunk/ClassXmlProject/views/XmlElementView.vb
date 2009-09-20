@@ -63,7 +63,7 @@ Public Class XmlElementView
     End Sub
 
     Public Sub InitBindingModifier(ByVal control As Control)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             control.Enabled = False
             control.Visible = False
         Else
@@ -72,7 +72,7 @@ Public Class XmlElementView
     End Sub
 
     Public Sub InitBindingLevel(ByVal control As ComboBox, ByVal label As Label)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             control.Enabled = False
             control.Visible = False
             label.Visible = False
@@ -96,7 +96,7 @@ Public Class XmlElementView
 
                     If MyBase.VarSize <> "" Or MyBase.SizeRef <> "" _
                     Then
-                        strResult = strResult + " " + GetArrayString(CType(Me.Tag, ELanguage))
+                        strResult = strResult + " " + GetArrayString(Me.GenerationLanguage)
                     End If
                 End If
             Catch ex As Exception
@@ -211,7 +211,7 @@ Public Class XmlElementView
             strResult = GetName(child)
 
             Dim strSeparator As String = "::"
-            If Me.Tag <> ELanguage.Language_CplusPlus Then
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                 strSeparator = "."
             End If
 

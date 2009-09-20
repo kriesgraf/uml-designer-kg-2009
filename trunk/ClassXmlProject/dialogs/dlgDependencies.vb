@@ -18,7 +18,7 @@ Public Class dlgDependencies
         Set(ByVal value As XmlComponent)
             m_xmlDataSource = value
             ' get a useful tag that transmit generation language ID
-            m_xmlDataSource.Tag = value.Tag
+            m_xmlDataSource.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 
@@ -100,7 +100,7 @@ Public Class dlgDependencies
             If lsbDependencies.SelectedItem IsNot Nothing _
             Then
                 Dim xmlcpnt As XmlComponent = XmlNodeManager.GetInstance().CreateDocument(CType(lsbDependencies.SelectedItem, XmlNodeListView).MasterNode)
-                xmlcpnt.Tag = m_xmlDataSource.Tag
+                xmlcpnt.GenerationLanguage = m_xmlDataSource.GenerationLanguage
 
                 Dim fen As Form = XmlNodeManager.GetInstance().CreateForm(xmlcpnt)
                 Dim InterfCounter As InterfNodeCounter = TryCast(fen, InterfNodeCounter)

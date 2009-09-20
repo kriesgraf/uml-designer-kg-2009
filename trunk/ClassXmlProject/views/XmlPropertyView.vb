@@ -71,7 +71,7 @@ Public Class XmlPropertyView
                 And chkAttribute.Checked _
                 And Me.ArrayDeclaration _
                 And chkSetInline.Checked = False _
-                And Me.Tag = ELanguage.Language_CplusPlus _
+                And Me.GenerationLanguage = ELanguage.Language_CplusPlus _
         Then
             MsgBox("An array typed attribute can't be set in C++!" + vbCrLf + vbCrLf + _
                    "Solution: uncheck attribute range or remove/customize setter.", MsgBoxStyle.Critical, "Property parameters")
@@ -107,7 +107,7 @@ Public Class XmlPropertyView
     End Sub
 
     Public Sub UpdateOption(ByVal control As RadioButtonArray)
-        If Me.Tag = ELanguage.Language_Vbasic Then
+        If Me.GenerationLanguage = ELanguage.Language_Vbasic Then
             control.Item(0).Text = "Simple"
             control.Item(1).Text = "Container"
             control.Item(2).Visible = False
@@ -229,7 +229,7 @@ Public Class XmlPropertyView
             dataControl.ThreeState = False
             m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetModifier", "Checked")
 
-            If Me.Tag = ELanguage.Language_Vbasic _
+            If Me.GenerationLanguage = ELanguage.Language_Vbasic _
             Then
                 dataControl.Checked = False
                 dataControl.Enabled = False
@@ -334,7 +334,7 @@ Public Class XmlPropertyView
             dataControl.Items.AddRange(New Object() {"ref", "val"})
             m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetBy", "SelectedItem")
 
-            If Me.Tag <> ELanguage.Language_CplusPlus _
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus _
             Then
                 dataControl.Enabled = False
                 dataControl.Visible = False
@@ -376,7 +376,7 @@ Public Class XmlPropertyView
             dataControl.Items.AddRange(New Object() {"ref", "val"})
             m_xmlBindingsList.AddBinding(dataControl, Me, "AccessSetBy", "SelectedItem")
 
-            If Me.Tag <> ELanguage.Language_CplusPlus _
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus _
             Then
                 dataControl.Enabled = False
                 dataControl.Visible = False
@@ -403,7 +403,7 @@ Public Class XmlPropertyView
                 .Combo.Items.AddRange(New Object() {"Normal", "Default", "WithEvents"})
                 m_xmlBindingsList.AddBinding(dataControl, Me, "Behaviour", "SelectedItem")
 
-                If Me.Tag <> ELanguage.Language_Vbasic _
+                If Me.GenerationLanguage <> ELanguage.Language_Vbasic _
                 Then
                     .Combo.SelectedIndex = 0
                     .Enabled = False

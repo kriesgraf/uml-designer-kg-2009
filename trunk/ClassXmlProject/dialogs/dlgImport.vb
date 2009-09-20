@@ -25,7 +25,7 @@ Public Class dlgImport
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
             ' get a useful tag that transmit generation language ID
-            m_xmlView.Tag = value.Tag
+            m_xmlView.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 
@@ -238,7 +238,7 @@ Public Class dlgImport
 
     Private Sub txtPackage_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
             Handles txtParam.Validating
-        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.Tag)
+        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.GenerationLanguage)
     End Sub
 
     Private Sub mnuMoveUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuMoveUp.Click

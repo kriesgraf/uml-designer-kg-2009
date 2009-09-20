@@ -31,7 +31,7 @@ Public Class XmlTypeVarSpec
 
     Public ReadOnly Property VariableDefinition() As XmlVariableSpec
         Get
-            If m_xmlVariable IsNot Nothing Then m_xmlVariable.Tag = Me.Tag
+            If m_xmlVariable IsNot Nothing Then m_xmlVariable.GenerationLanguage = Me.GenerationLanguage
             Return m_xmlVariable
         End Get
     End Property
@@ -79,7 +79,7 @@ Public Class XmlTypeVarSpec
                             strResult = "union {" + GetStructureName(True) + "}"
 
                         Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
-                            strResult = strResult + GetBeginStruct(CType(Me.Tag, ELanguage)) + GetStructureName(True) + GetEndStruct(CType(Me.Tag, ELanguage))
+                            strResult = strResult + GetBeginStruct(Me.GenerationLanguage) + GetStructureName(True) + GetEndStruct(Me.GenerationLanguage)
 
                         Case XmlTypeVarSpec.EKindDeclaration.EK_Container
                             strResult = GetContainer(GetTypeName())
@@ -105,7 +105,7 @@ Public Class XmlTypeVarSpec
                             strResult = "union {" + GetStructureName() + "}"
 
                         Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
-                            strResult = strResult + GetBeginStruct(CType(Me.Tag, ELanguage)) + GetStructureName() + GetEndStruct(CType(Me.Tag, ELanguage))
+                            strResult = strResult + GetBeginStruct(Me.GenerationLanguage) + GetStructureName() + GetEndStruct(Me.GenerationLanguage)
 
                         Case XmlTypeVarSpec.EKindDeclaration.EK_Container
                             strResult = GetContainer(GetTypeName())
@@ -461,7 +461,7 @@ Public Class XmlTypeVarSpec
             End If
 
             m_xmlVariable = CreateDocument(nodeXml)
-            If m_xmlVariable IsNot Nothing Then m_xmlVariable.Tag = Me.Tag
+            If m_xmlVariable IsNot Nothing Then m_xmlVariable.GenerationLanguage = Me.GenerationLanguage
 
         Catch ex As Exception
             Throw ex
@@ -531,7 +531,7 @@ Public Class XmlTypeVarSpec
                         Value = ""
                         VarSize = ""
                         Dim xmlcpnt As XmlElementSpec = New XmlElementSpec(AppendNode(CreateNode("element")))
-                        xmlcpnt.Tag = Me.Tag
+                        xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                         xmlcpnt.SetDefaultValues(True)
                     End If
 
@@ -546,7 +546,7 @@ Public Class XmlTypeVarSpec
                         Value = ""
                         VarSize = ""
                         Dim xmlcpnt As XmlElementSpec = New XmlElementSpec(AppendNode(CreateNode("element")))
-                        xmlcpnt.Tag = Me.Tag
+                        xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                         xmlcpnt.SetDefaultValues(True)
                     End If
 
@@ -554,7 +554,7 @@ Public Class XmlTypeVarSpec
 
                     If eOldKind <> EKindDeclaration.EK_Enumeration Then
                         Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
-                        element.Tag = Me.Tag
+                        element.GenerationLanguage = Me.GenerationLanguage
                         AppendComponent(element)
                     End If
 
@@ -599,13 +599,13 @@ Public Class XmlTypeVarSpec
         Dim strResult As String = ""
         Try
             If Reference IsNot Nothing Then
-                strResult = XmlTypeVarSpec.GetReferenceTypeDescription(Me.GetElementById(Reference), CType(Me.Tag, ELanguage), True)
+                strResult = XmlTypeVarSpec.GetReferenceTypeDescription(Me.GetElementById(Reference), Me.GenerationLanguage, True)
             ElseIf Descriptor IsNot Nothing Then
                 strResult = Descriptor
             End If
 
             If strResult = "" Then
-                strResult += GetBeginEnum(CType(Me.Tag, ELanguage))
+                strResult += GetBeginEnum(Me.GenerationLanguage)
                 If bAbreviated = False Then
                     Dim list As XmlNodeList = SelectNodes("enumvalue")
                     For Each child As XmlNode In list
@@ -617,21 +617,21 @@ Public Class XmlTypeVarSpec
                 Else
                     strResult += GetAttribute("name", "enumvalue") + ",..."
                 End If
-                strResult += GetEndStruct(CType(Me.Tag, ELanguage))
+                strResult += GetEndStruct(Me.GenerationLanguage)
             End If
 
             If Modifier Then
-                If Me.Tag <> ELanguage.Language_CplusPlus Then
+                If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                     strResult = "Const " + strResult
                 Else
                     strResult = "const " + strResult
                 End If
             End If
 
-            strResult = strResult + DisplayLevel(Level, CType(Me.Tag, ELanguage))
+            strResult = strResult + DisplayLevel(Level, Me.GenerationLanguage)
 
             If By Then
-                If Me.Tag <> ELanguage.Language_CplusPlus Then
+                If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                     If Me.ParentNodeName = "param" Then
                         strResult = "ByRef As " + strResult
                     End If
@@ -639,7 +639,7 @@ Public Class XmlTypeVarSpec
                     strResult = strResult + Chr(38)
                 End If
             Else
-                If Me.Tag <> ELanguage.Language_CplusPlus Then
+                If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                     If Me.ParentNodeName = "param" Then
                         strResult = "ByVal As " + strResult
                     End If
@@ -648,7 +648,7 @@ Public Class XmlTypeVarSpec
 
             If VarSize <> "" Or SizeRef <> "" _
             Then
-                strResult = strResult + " " + GetArrayString(CType(Me.Tag, ELanguage))
+                strResult = strResult + " " + GetArrayString(Me.GenerationLanguage)
             End If
         Catch ex As Exception
             Throw ex
@@ -659,18 +659,18 @@ Public Class XmlTypeVarSpec
     Private Function GetContainer(ByVal szFullpathTypeDescription As String) As String
         Dim strResult As String = ""
         Try
-            strResult = GetBeginContainer(CType(Me.Tag, ELanguage))
+            strResult = GetBeginContainer(Me.GenerationLanguage)
 
             If ContainerType = "indexed" Then
                 If IndexRef IsNot Nothing Then
-                    strResult = strResult + GetReferenceTypeDescription(Me.GetElementById(IndexRef), CType(Me.Tag, ELanguage), True)
+                    strResult = strResult + GetReferenceTypeDescription(Me.GetElementById(IndexRef), Me.GenerationLanguage, True)
                 ElseIf IndexDesc IsNot Nothing Then
                     strResult = strResult + IndexDesc
                 End If
-                strResult = strResult + DisplayLevel(Level, CType(Me.Tag, ELanguage)) + ", "
+                strResult = strResult + DisplayLevel(Level, Me.GenerationLanguage) + ", "
             End If
 
-            strResult = strResult + szFullpathTypeDescription + GetEndContainer(CType(Me.Tag, ELanguage))
+            strResult = strResult + szFullpathTypeDescription + GetEndContainer(Me.GenerationLanguage)
         Catch ex As Exception
             Throw ex
         End Try

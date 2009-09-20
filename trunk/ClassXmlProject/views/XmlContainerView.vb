@@ -80,7 +80,7 @@ Public Class XmlContainerView
     End Sub
 
     Public Sub InitBindingLevel(ByVal dataControl As ComboBox, ByVal label As Label)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
             label.Visible = False
@@ -92,7 +92,7 @@ Public Class XmlContainerView
     End Sub
 
     Public Sub InitBindingIndexLevel(ByVal dataControl As ComboBox, ByVal label As Label)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
             label.Visible = False
@@ -104,7 +104,7 @@ Public Class XmlContainerView
     End Sub
 
     Public Sub InitBindingIterator(ByVal dataControl As CheckBox)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
         Else
@@ -117,7 +117,7 @@ Public Class XmlContainerView
     End Sub
 
     Public Sub InitBindingModifier(ByVal dataControl As CheckBox)
-        If Me.Tag <> ELanguage.Language_CplusPlus Then
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
             dataControl.Enabled = False
             dataControl.Visible = False
         Else

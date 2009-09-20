@@ -28,7 +28,7 @@ Public Class XmlInterfaceMemberView
     Public ReadOnly Property TypeVarDefinition() As XmlTypeVarSpec
         Get
             If m_xmlAdapter IsNot Nothing Then
-                m_xmlAdapter.Tag = Me.Tag
+                m_xmlAdapter.GenerationLanguage = Me.GenerationLanguage
             End If
             Return m_xmlAdapter
         End Get
@@ -111,14 +111,14 @@ Public Class XmlInterfaceMemberView
         Select Case Me.NodeName
             Case "property"
                 Dim xmlcpnt As XmlPropertySpec = CreateDocument(Me.Node)
-                xmlcpnt.Tag = Me.Tag
+                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                 xmlcpnt.OverridableProperty = True
 
             Case "method"
                 If m_xmlClassView.CurrentClassImpl = XmlProjectTools.EImplementation.Interf _
                 Then
                     Dim xmlcpnt As XmlMethodSpec = CreateDocument(Me.Node)
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     xmlcpnt.Implementation = XmlProjectTools.EImplementation.Interf
                 End If
 
@@ -272,7 +272,7 @@ Public Class XmlInterfaceMemberView
         Else
             m_xmlAdapter = MyBase.CreateDocument(GetNode("type"))
         End If
-        If m_xmlAdapter IsNot Nothing Then m_xmlAdapter.Tag = Me.Tag
+        If m_xmlAdapter IsNot Nothing Then m_xmlAdapter.GenerationLanguage = Me.GenerationLanguage
     End Sub
 
     Public Function CanDropItem(ByVal component As XmlComponent) As Boolean Implements InterfGridViewNotifier.CanDropItem

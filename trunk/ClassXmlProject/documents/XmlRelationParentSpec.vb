@@ -43,7 +43,7 @@ Public Class XmlRelationParentSpec
     Protected Function GetFullpathClassName(ByVal strIdref As String) As String
         Dim nodeClass As XmlNode = Me.GetElementById(strIdref)
 
-        Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+        Dim eLang As ELanguage = Me.GenerationLanguage
         Dim strResult As String = GetFullpathDescription(nodeClass, eLang)
         If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
         Return strResult
@@ -319,30 +319,30 @@ Public Class XmlRelationParentSpec
         End If
 
         Dim strResult As String = GetFullpathClassName(strIdref)
-        strResult = strResult + DisplayLevel(ilevel, CType(Me.Tag, ELanguage))
+        strResult = strResult + DisplayLevel(ilevel, Me.GenerationLanguage)
 
         If TestNode("array") Then
-            strResult = strResult + GetArrayString(CType(Me.Tag, ELanguage))
+            strResult = strResult + GetArrayString(Me.GenerationLanguage)
         End If
 
         If TestNode("list") Then
             If ContainerType = "indexed" Then
                 Dim strTempo As String = ""
                 If IndexRef IsNot Nothing Then
-                    strTempo = XmlTypeVarSpec.GetReferenceTypeDescription(Me.GetElementById(IndexRef), CType(Me.Tag, ELanguage), True)
+                    strTempo = XmlTypeVarSpec.GetReferenceTypeDescription(Me.GetElementById(IndexRef), Me.GenerationLanguage, True)
                 ElseIf IndexDesc IsNot Nothing Then
                     strTempo = IndexDesc
                 End If
-                strTempo = strTempo + DisplayLevel(IndexLevel, CType(Me.Tag, ELanguage)) + ", "
+                strTempo = strTempo + DisplayLevel(IndexLevel, Me.GenerationLanguage) + ", "
                 strResult = strTempo + strResult
             ElseIf TestNode("id(list/@idref)[@container='3']") Then
-                If CType(Me.Tag, ELanguage) <> ELanguage.Language_CplusPlus Then
+                If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
                     strResult = "Object"
                 Else
                     strResult = "CObject"
                 End If
             End If
-            strResult = GetBeginContainer(CType(Me.Tag, ELanguage)) + strResult + GetEndContainer(CType(Me.Tag, ELanguage))
+            strResult = GetBeginContainer(Me.GenerationLanguage) + strResult + GetEndContainer(Me.GenerationLanguage)
         End If
         Return strResult
     End Function

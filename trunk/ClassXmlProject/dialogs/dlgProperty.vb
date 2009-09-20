@@ -25,7 +25,7 @@ Public Class dlgProperty
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
             ' get a useful tag that transmit generation language ID
-            m_xmlView.Tag = value.Tag
+            m_xmlView.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 
@@ -99,7 +99,7 @@ Public Class dlgProperty
     Private Sub ChangeCombo(ByVal bGetChange As Boolean)
         If m_bChangeCombo = True Then Exit Sub
 
-        If m_xmlView.Tag = ELanguage.Language_Vbasic _
+        If m_xmlView.GenerationLanguage = ELanguage.Language_Vbasic _
         Then
             m_bChangeCombo = True
 
@@ -237,7 +237,7 @@ Public Class dlgProperty
     Private Sub chkMember_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles chkMember.Validating
         e.Cancel = False
         If m_xmlView.TypeVarDefinition.Modifier Then
-            If CType(m_xmlView.Tag, ELanguage) = ELanguage.Language_Vbasic And chkMember.Checked Then
+            If m_xmlView.GenerationLanguage = ELanguage.Language_Vbasic And chkMember.Checked Then
                 ' Set the ErrorProvider error with the text to display. 
                 Me.errorProvider.SetIconPadding(cmbSetAccess, 0)
                 Me.errorProvider.SetIconAlignment(chkMember, ErrorIconAlignment.TopLeft)

@@ -43,7 +43,7 @@ Public Class XmlExchangeImportsView
         Dim element As XmlNodeListView = TryCast(listBox.SelectedItem, XmlNodeListView)
         If element IsNot Nothing Then
             m_xmlDestination = CType(CreateDocument(element.Node), XmlImportSpec)
-            m_xmlDestination.Tag = Me.Tag
+            m_xmlDestination.GenerationLanguage = Me.GenerationLanguage
             UpdateDestination()
         Else
             m_xmlDestination = Nothing

@@ -66,7 +66,7 @@ Public Class XmlProjectPropertiesView
                                    {GetLanguage(CType(0, ELanguage)), _
                                     GetLanguage(CType(1, ELanguage)), _
                                     GetLanguage(CType(2, ELanguage))})
-        m_xmlBindingsList.AddBinding(cmbLanguage, Me, "GenerationLanguage", "SelectedIndex")
+        m_xmlBindingsList.AddBinding(cmbLanguage, Me, "ValueLanguage", "SelectedIndex")
     End Sub
 
     Public Sub InitBindingFolder(ByVal control As TextBox)

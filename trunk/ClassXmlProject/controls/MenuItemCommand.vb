@@ -13,6 +13,17 @@ Public Class MenuItemCommand
     Public Class MenuItemNode
         Inherits XmlComponent
 
+        Private m_RefIndex As Integer
+
+        Property RefIndex() As Integer
+            Get
+                Return m_RefIndex
+            End Get
+            Set(ByVal value As Integer)
+                m_RefIndex = value
+            End Set
+        End Property
+
         Property DiffTool() As String
             Get
                 Return GetAttribute("difftool")
@@ -154,8 +165,8 @@ Public Class MenuItemCommand
             xmlResult.SetDefaultValues(True)
 
             m_xmlDocument.DocumentElement.AppendChild(xmlResult.Node)
-            xmlResult.Tag = m_xmlNodeList.Add(xmlResult)
-            xmlResult.Name += xmlResult.Tag.ToString
+            xmlResult.RefIndex = m_xmlNodeList.Add(xmlResult)
+            xmlResult.Name += xmlResult.RefIndex.ToString
 
         Catch ex As Exception
             Throw ex
@@ -166,7 +177,7 @@ Public Class MenuItemCommand
     Public Sub AddCommand(ByVal itemNode As MenuItemNode)
         Try
             m_xmlDocument.DocumentElement.AppendChild(itemNode.Node)
-            itemNode.Tag = m_xmlNodeList.Add(itemNode)
+            itemNode.RefIndex = m_xmlNodeList.Add(itemNode)
 
         Catch ex As Exception
             Throw ex
@@ -190,7 +201,7 @@ Public Class MenuItemCommand
             Dim index As Integer = m_mnuParent.DropDownItems.IndexOf(m_mnuCustomize)
 
             newItem = New ToolStripMenuItem(element.Name)
-            newItem.Tag = element.Tag
+            newItem.Tag = element.RefIndex
 
             m_mnuParent.DropDownItems.Insert(index, newItem)
             m_lstMenuItems.Add(newItem) ' To remove item later
@@ -273,7 +284,7 @@ Public Class MenuItemCommand
 
             For Each node As XmlNode In m_xmlDocument.SelectNodes("//menuitem")
                 Dim itemNode As MenuItemNode = New MenuItemNode(node)
-                itemNode.Tag = m_xmlNodeList.Add(itemNode)
+                itemNode.RefIndex = m_xmlNodeList.Add(itemNode)
             Next
             m_xmlNodeEnumerator = m_xmlNodeList.GetEnumerator
 

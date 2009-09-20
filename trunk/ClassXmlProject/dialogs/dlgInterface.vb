@@ -20,7 +20,7 @@ Public Class dlgInterface
         Set(ByVal value As XmlComponent)
             m_xmlView.Node = value.Node
             ' get a useful tag that transmit generation language ID
-            m_xmlView.Tag = value.Tag
+            m_xmlView.GenerationLanguage = value.GenerationLanguage
         End Set
     End Property
 
@@ -149,7 +149,7 @@ Public Class dlgInterface
 
     Private Sub txtPackage_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
             Handles txtPackage.Validating
-        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.Tag, True)
+        e.Cancel = IsInvalidPackageName(sender, Me.errorProvider, m_xmlView.GenerationLanguage, True)
     End Sub
 
     Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDelete.Click
