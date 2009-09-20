@@ -43,19 +43,11 @@ Public Class XmlClassSpec
         End Set
     End Property
 
-    <CategoryAttribute("Code generation"), _
-    DescriptionAttribute("Project language")> _
-    Public ReadOnly Property GenerationLanguage() As ELanguage
-        Get
-            Return CType(MyBase.Tag, ELanguage)
-        End Get
-    End Property
-
     <CategoryAttribute("UML design"), _
     DescriptionAttribute("C++ class declaration")> _
     Public ReadOnly Property FullpathClassName() As String
         Get
-            Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+            Dim eLang As ELanguage = Me.GenerationLanguage
             Dim strResult As String = GetFullpathDescription(Me.Node, eLang)
             If DEBUG_COMMANDS_ACTIVE Then strResult += " (" + eLang.ToString + ")"
             Return strResult
@@ -372,14 +364,15 @@ Public Class XmlClassSpec
                 End If
 
             Case "typedef"
-                Dim eLang As ELanguage = CType(Me.Tag, ELanguage)
+                Dim eLang As ELanguage = Me.GenerationLanguage
                 With CType(nodeXml, XmlTypedefSpec)
                     If eLang = ELanguage.Language_Vbasic _
+                    And .TypeVarDefinition.Kind = XmlTypeVarSpec.EKindDeclaration.EK_SimpleType _
                     Then
                         .TypeVarDefinition.Kind = XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
 
                         Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
-                        element.Tag = Me.Tag
+                        element.GenerationLanguage = Me.GenerationLanguage
                         .AppendComponent(element)
                     End If
                 End With
@@ -420,6 +413,13 @@ Public Class XmlClassSpec
             If xmlRefNodeCounter Is Nothing Then
                 Throw New Exception("Argument 'xmlRefNodeCounter' is null")
             End If
+
+            Select Case Me.GenerationLanguage
+                Case ELanguage.Language_Java
+                    Me.Destructor = "no"
+                Case ELanguage.Language_Vbasic
+                    Me.Destructor = "protected"
+            End Select
 
             Me.Id = xmlRefNodeCounter.GetNewClassId()
             Select Case eRename
