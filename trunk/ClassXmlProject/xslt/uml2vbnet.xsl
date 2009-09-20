@@ -335,6 +335,16 @@ End Namespace
     ''' &lt;/summary&gt;
     <xsl:apply-templates select="." mode="Code"/> Sub New()
     End Sub</xsl:template>
+<!-- ======================================================================= -->
+  <xsl:template match="@destructor">
+
+    ''' &lt;summary&gt;
+    ''' Destructor
+    ''' &lt;/summary&gt;
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+</xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="Functions">
     <xsl:param name="Range"/>
@@ -347,6 +357,7 @@ End Namespace
         <xsl:with-param name="ImplementedMethods" select="$ImplementedMethods"/>
         <xsl:sort select="@name"/>
       </xsl:apply-templates>
+      <xsl:apply-templates select="@destructor[.=$Range]"/>
     </xsl:if>
   </xsl:template>
 <!-- ======================================================================= -->
@@ -731,6 +742,7 @@ End Namespace
   </xsl:template>
 <!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
