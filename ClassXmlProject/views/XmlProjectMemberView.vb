@@ -41,21 +41,6 @@ Public Class XmlProjectMemberView
 
 #Region "Properties"
 
-    Public Overrides Property Tag() As Integer
-        Get
-            If MyBase.NodeName = "root" Then
-                Return CInt(GetAttribute("language", "generation"))
-            End If
-            Return MyBase.Tag
-        End Get
-        Set(ByVal value As Integer)
-            If MyBase.NodeName = "root" Then
-                SetAttribute("language", CStr(value), "generation")
-            End If
-            MyBase.Tag = value
-        End Set
-    End Property
-
     Public ReadOnly Property ClassImpl() As EImplementation
         Get
             If Me.NodeName = "class" _
@@ -83,25 +68,25 @@ Public Class XmlProjectMemberView
                 Case "relationship"
                     Dim xmlcpnt As XmlRelationSpec = New XmlRelationSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return New String() {xmlcpnt.Action, xmlcpnt.Comment, xmlcpnt.NodeName}
 
                 Case "import"
                     Dim xmlcpnt As XmlImportSpec = New XmlImportSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return New String() {xmlcpnt.Name, xmlcpnt.Comment, xmlcpnt.NodeName}
 
                 Case "reference"
                     Dim xmlcpnt As XmlReferenceSpec = New XmlReferenceSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return New String() {xmlcpnt.Name, xmlcpnt.Comment, MyBase.NodeName}
 
                 Case "interface"
                     Dim xmlcpnt As XmlInterfaceSpec = New XmlInterfaceSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return New String() {xmlcpnt.Name, xmlcpnt.Comment, MyBase.NodeName}
 
                 Case "package"
@@ -118,7 +103,7 @@ Public Class XmlProjectMemberView
                 Case "method"
                     Dim xmlcpnt As XmlMethodSpec = New XmlMethodSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return New String() {xmlcpnt.Name, xmlcpnt.BriefComment, MyBase.NodeName}
 
                 Case "class"
@@ -134,25 +119,25 @@ Public Class XmlProjectMemberView
                 Case "relationship"
                     Dim xmlcpnt As XmlRelationSpec = New XmlRelationSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return xmlcpnt.Comment
 
                 Case "reference"
                     Dim xmlcpnt As XmlReferenceSpec = New XmlReferenceSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return xmlcpnt.Comment
 
                 Case "interface"
                     Dim xmlcpnt As XmlInterfaceSpec = New XmlInterfaceSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return xmlcpnt.Comment
 
                 Case "import"
                     Dim xmlcpnt As XmlImportSpec = New XmlImportSpec(Me.Node)
                     xmlcpnt.ChangeReferences()
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     Return xmlcpnt.Comment
 
                 Case "typedef"
@@ -224,14 +209,14 @@ Public Class XmlProjectMemberView
                 If m_xmlParentView.ClassImpl = EImplementation.Interf _
                 Then
                     Dim xmlcpnt As XmlPropertySpec = CreateDocument(Me.Node)
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     xmlcpnt.OverridableProperty = True
                 End If
             Case "method"
                 If m_xmlParentView.ClassImpl = EImplementation.Interf _
                 Then
                     Dim xmlcpnt As XmlMethodSpec = CreateDocument(Me.Node)
-                    xmlcpnt.Tag = Me.Tag
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                     xmlcpnt.Implementation = EImplementation.Interf
                 End If
 
@@ -268,7 +253,7 @@ Public Class XmlProjectMemberView
 
             Case "import"
                 Dim xmlcpnt As XmlImportSpec = CreateDocument(Me.Node)
-                xmlcpnt.Tag = Me.Tag
+                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
                 bResult = xmlcpnt.CanDropItem(child)
         End Select
         If bResult And bCheckOnly = False Then
@@ -282,7 +267,7 @@ Public Class XmlProjectMemberView
         Dim parent As XmlComposite = TryCast(CreateDocument(Me.Node), XmlComposite)
         If parent Is Nothing Then Return False
 
-        parent.Tag = Me.Tag
+        parent.GenerationLanguage = Me.GenerationLanguage
         Select Case parent.NodeName
             Case "import"
                 Select Case child.NodeName
@@ -375,7 +360,7 @@ Public Class XmlProjectMemberView
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
         Try
-            'Debug.Print("(LoadChildrenList)" + Me.ToString + ":=" + Str(Me.Tag))
+            Debug.Print("(LoadChildrenList)" + Me.ToString + ":=" + Str(Me.GenerationLanguage))
             AddChildren(SelectNodes("import | class | export/reference | export/interface | package | relationship | typedef | property | method"), strViewName)
             MyBase.ChildrenList.Sort(Me)
 
@@ -392,7 +377,7 @@ Public Class XmlProjectMemberView
 
             Case Else
                 xmlResult = MyBase.DuplicateComponent(component)
-                xmlResult.Tag = Me.Tag
+                xmlResult.GenerationLanguage = Me.GenerationLanguage
         End Select
         Return xmlResult
     End Function
@@ -487,23 +472,12 @@ Public Class XmlProjectMemberView
         Return iResult
     End Function
 
-    Public Overrides Function AppendComponent(ByVal nodeXml As XmlComponent, Optional ByVal observer As Object = Nothing) As XmlNode
-        If CanAddComponent(nodeXml) _
-        Then
-            Dim xmlcpnt As XmlComponent = CreateDocument(Me.Node)
-            xmlcpnt.Tag = Me.Tag
-
-            Return xmlcpnt.AppendComponent(nodeXml, observer)
-        End If
-        Return Nothing
-    End Function
-
     Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
         Try
             'Not necessary to remove node, command Append will do it for us
             Dim member As XmlComposite = TryCast(CreateDocument(Me.Node), XmlComposite)
             If member IsNot Nothing Then
-                member.Tag = Me.Tag
+                member.GenerationLanguage = Me.GenerationLanguage
                 Select Case member.NodeName
                     Case "import"
                         Return CType(member, XmlImportSpec).MoveUpComponent(child)
@@ -511,7 +485,7 @@ Public Class XmlProjectMemberView
                     Case Else
                         Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
                         If parent IsNot Nothing Then
-                            parent.Tag = Me.Tag
+                            parent.GenerationLanguage = Me.GenerationLanguage
                             Return (parent.AppendComponent(child) IsNot Nothing)
                         End If
                 End Select
@@ -531,13 +505,13 @@ Public Class XmlProjectMemberView
                 Case "root"
                     Dim root As XmlProjectProperties = CreateDocument(Me.Node)
                     import = CreateDocument("import")
-                    import.Tag = Me.Tag
+                    import.GenerationLanguage = Me.GenerationLanguage
                     root.AppendComponent(import)
 
                 Case "package"
                     Dim package As XmlPackageSpec = CreateDocument(Me.Node)
                     import = CreateDocument("import")
-                    import.Tag = Me.Tag
+                    import.GenerationLanguage = Me.GenerationLanguage
                     package.AppendComponent(import)
             End Select
 
@@ -564,7 +538,7 @@ Public Class XmlProjectMemberView
         If Me.NodeName = "relationship" _
         Then
             Dim xmlcpnt As XmlRelationSpec = CreateDocument(Me.Node)
-            xmlcpnt.Tag = Me.Tag
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
 
             bResult = xmlcpnt.RemoveMe()
         Else
@@ -630,7 +604,7 @@ Public Class XmlProjectMemberView
     End Function
 
     Public Function ExportClassAndRemove(ByVal parent As XmlComponent, ByVal child As XmlComponent) As Boolean
-        Dim strPackage As String = GetFullpathPackage(child.Node, Me.Tag)
+        Dim strPackage As String = GetFullpathPackage(child.Node, Me.GenerationLanguage)
         Dim fragment As XmlDocumentFragment = Me.Document.CreateDocumentFragment()
         fragment.InnerXml = ExportElementClass(child.Node, strPackage)
         parent.AppendNode(fragment.FirstChild)
