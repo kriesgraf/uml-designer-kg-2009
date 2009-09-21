@@ -117,10 +117,9 @@ border-left: 1px solid gray;
           <xsl:when test="name()='class'">
 						<xsl:apply-templates select="." mode="Class"/>
 						<p/>
-							<xsl:if test="typedef"><span class="class-package">
-								<xsl:value-of select="@name"/>
-							</span> typedef specification:<p/>
-						<xsl:apply-templates select="typedef" mode="Typedef"/></xsl:if>
+                            <xsl:call-template name="Typedef">
+                              <xsl:with-param name="Name" select="@name"/>
+                            </xsl:call-template>
 					</xsl:when>
 					<xsl:when test="name()='exception'">
 						<xsl:apply-templates select="." mode="Exception"/>
@@ -512,7 +511,14 @@ border-left: 1px solid gray;
                 <xsl:when test="@root='yes'">&lt;root&gt;</xsl:when>
                 <xsl:otherwise>&lt;abstract&gt;</xsl:otherwise>
               </xsl:choose>
-              <xsl:value-of select="@name"/>
+              <xsl:choose>
+              <xsl:when test="self::reference and @type='typedef'">
+                <xsl:value-of select="@class"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="@name"/>
+              </xsl:otherwise>
+              </xsl:choose>
             </xsl:with-param>
             <xsl:with-param name="Police">
               <xsl:choose>
@@ -578,6 +584,9 @@ border-left: 1px solid gray;
         </td>
       </tr>
     </table>
+    <xsl:call-template name="Typedef">
+      <xsl:with-param name="Name" select="@class"/>
+    </xsl:call-template>
 	</td>
 	<td>
 	<table>
@@ -862,6 +871,20 @@ border-left: 1px solid gray;
 		</xsl:choose>
 	</xsl:template>
 	<!-- ======================================================================= -->
+	<xsl:template match="reference" mode="Typedef">
+      <table border="0">
+      <tr>
+      <td>
+      <xsl:text>+</xsl:text><xsl:value-of select="@name"/>
+      </td>
+      </tr>
+      <tr>
+      <td/>
+      <td><xsl:apply-templates select="enumvalue"/></td>
+      </tr>
+      </table>
+    </xsl:template>
+	<!-- ======================================================================= -->
 	<xsl:template match="typedef | property | param | return | get | set | element" mode="Typedef">
 		<xsl:variable name="NodeName" select="name()"/>
 		<table border="0">
@@ -1124,6 +1147,14 @@ border-left: 1px solid gray;
       </table>
     </xsl:template>
 	<!-- ======================================================================= -->
+	<xsl:template name="Typedef">
+      <xsl:param name="Name"/>
+      <xsl:if test="typedef or @type='typedef'"><span class="class-package">
+      <xsl:value-of select="$Name"/>
+      </span> typedef specification:<p/>
+      <xsl:apply-templates select="." mode="Typedef"/></xsl:if>
+    </xsl:template>
+	<!-- ======================================================================= -->
 	<xsl:template match="*" mode="PackageImg">
   	  <table border="0">
         <tr><td><img src="{$IconsFolder}Package.gif"/></td></tr>
@@ -1137,6 +1168,8 @@ border-left: 1px solid gray;
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
+
 
 
 
