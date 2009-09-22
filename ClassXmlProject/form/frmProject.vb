@@ -156,6 +156,7 @@ Public Class frmProject
 
             If (dlgSaveFile.ShowDialog(Me) = DialogResult.OK) Then
                 My.Settings.CurrentFolder = XmlProjectTools.GetProjectPath(dlgSaveFile.FileName)
+                My.Settings.CurrentProject = dlgSaveFile.FileName
                 m_xmlProject.SaveAs(dlgSaveFile.FileName)
                 RefreshUpdatedPath(True)
                 mnuFileSave.Enabled = False
