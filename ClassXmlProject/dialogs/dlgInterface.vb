@@ -138,7 +138,7 @@ Public Class dlgInterface
     End Sub
 
     Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) _
-            Handles txtName.Validated, txtPackage.Validated
+            Handles txtName.Validated, txtPackage.Validated, txtClass.Validated
         Me.errorProvider.SetError(sender, "")
     End Sub
 
@@ -164,18 +164,19 @@ Public Class dlgInterface
     End Sub
 
     Private Sub Grids_CellValidating(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellValidatingEventArgs) Handles gridMembers.CellValidating
-
+        e.Cancel = IsInvalidVariableName(sender, e, Me.errorProvider)
+        m_bInvalideCell = e.Cancel
     End Sub
 
     Private Sub Grids_CellValidated(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles gridMembers.CellValidated
-
+        Me.errorProvider.SetError(sender, "")
     End Sub
 
-    Private Sub txtPackage_Validating(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtPackage.Validating
-
-    End Sub
-
-    Private Sub txtName_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtPackage.Validated, txtName.Validated
-
+    Private Sub txtClass_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtClass.Validating
+        If sender.Text.Length > 0 Then
+            e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+        Else
+            e.Cancel = False
+        End If
     End Sub
 End Class

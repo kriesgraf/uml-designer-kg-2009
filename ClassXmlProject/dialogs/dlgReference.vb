@@ -108,14 +108,16 @@ Public Class dlgReference
         Me.errorProvider.SetError(sender, "")
     End Sub
 
-    Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
-            Handles txtName.Validating, txtParentClass.Validating
+    Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
         e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
     End Sub
 
-    Private Sub txtPackage_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) _
-            Handles txtPackage.Validated
-        Me.errorProvider.SetError(sender, "")
+    Private Sub txtParentClass_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtParentClass.Validating
+        If sender.Text.Length > 0 Then
+            e.Cancel = IsInvalidVariableName(sender, Me.errorProvider)
+        Else
+            e.Cancel = False
+        End If
     End Sub
 
     Private Sub txtPackage_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
