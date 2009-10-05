@@ -890,7 +890,16 @@ Public Class frmProject
         End Try
     End Sub
 
+    Private Sub mnuProjectConvertExport_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuProjectConvertExport.Click
+        Try
+            If m_xmlProject.ConvertToImportNodes(Me.Mainframe, lvwProjectMembers.SelectedItem) Then
+                lvwProjectMembers.Binding.ResetBindings(True)
+                RefreshUpdatedPath(False)
+            End If
 
-
+        Catch ex As Exception
+            MsgExceptionBox(ex)
+        End Try
+    End Sub
 #End Region
 End Class
