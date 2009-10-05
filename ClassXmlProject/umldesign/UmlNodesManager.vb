@@ -409,8 +409,7 @@ Public Class UmlNodesManager
         End Try
     End Sub
 
-    Public Shared Function ExtractReferences(ByVal fen As Form, ByVal node As XmlNode, _
-                                             ByVal strFullpathPackage As String, ByVal eLang As ELanguage) As Boolean
+    Public Shared Function ExtractReferences(ByVal fen As Form, ByVal node As XmlNode, ByVal eLang As ELanguage) As Boolean
 
         Dim observer As InterfProgression = CType(fen, InterfProgression)
         Dim oldCursor As Cursor = fen.Cursor
@@ -422,7 +421,7 @@ Public Class UmlNodesManager
             observer.ProgressBarVisible = True
             observer.Minimum = 0
 
-            Dim strXML As String = "<export name='" + GetName(node) + "' source='" + strFullpathPackage + "'>"
+            Dim strXML As String = "<export name='" + GetName(node) + "'>"
             Select Case node.Name
                 Case "class"
                     observer.Maximum = 2
@@ -436,6 +435,9 @@ Public Class UmlNodesManager
             strXML += vbCrLf + "</export>"
 
             Dim importXML As XmlImportSpec = XmlNodeManager.GetInstance().CreateDocument("import", parent.OwnerDocument)
+            If eLang <> ELanguage.Language_CplusPlus Then
+                importXML.Parameter = "Project_to_rename.Package_to_rename"
+            End If
             If importXML.LoadXml(strXML) Then
                 xmlParent.AppendComponent(importXML)
                 parent.RemoveChild(node)

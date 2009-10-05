@@ -25,7 +25,6 @@ Partial Class frmProject
         Me.components = New System.ComponentModel.Container
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmProject))
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer
-        Me.lvwProjectMembers = New ClassXmlProject.XmlDataListView
         Me.mnuProjectList = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.mnuAddImport = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuAddClass = New System.Windows.Forms.ToolStripMenuItem
@@ -53,7 +52,6 @@ Partial Class frmProject
         Me.mnuProjectDelete = New System.Windows.Forms.ToolStripMenuItem
         Me.LargeIconList = New System.Windows.Forms.ImageList(Me.components)
         Me.SmallIconList = New System.Windows.Forms.ImageList(Me.components)
-        Me.docvwProjectDisplay = New ClassXmlProject.XmlDocumentView
         Me.tlstrpNavigation = New System.Windows.Forms.ToolStrip
         Me.btnHome = New System.Windows.Forms.ToolStripButton
         Me.btnUp = New System.Windows.Forms.ToolStripButton
@@ -187,6 +185,9 @@ Partial Class frmProject
         Me.DeleteReference = New System.Windows.Forms.ToolStripMenuItem
         Me.RemoveAll = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.lvwProjectMembers = New ClassXmlProject.XmlDataListView
+        Me.docvwProjectDisplay = New ClassXmlProject.XmlDocumentView
+        Me.mnuProjectConvertExport = New System.Windows.Forms.ToolStripMenuItem
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
@@ -217,34 +218,11 @@ Partial Class frmProject
         Me.SplitContainer1.SplitterDistance = 267
         Me.SplitContainer1.TabIndex = 0
         '
-        'lvwProjectMembers
-        '
-        Me.lvwProjectMembers.AllowDrop = True
-        Me.lvwProjectMembers.BindingSource = Nothing
-        Me.lvwProjectMembers.ContextMenuStrip = Me.mnuProjectList
-        Me.lvwProjectMembers.DataSource = Nothing
-        Me.lvwProjectMembers.DisplayMember = Nothing
-        Me.lvwProjectMembers.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lvwProjectMembers.LabelEdit = True
-        Me.lvwProjectMembers.LargeImageList = Me.LargeIconList
-        Me.lvwProjectMembers.Location = New System.Drawing.Point(0, 0)
-        Me.lvwProjectMembers.MultiSelect = False
-        Me.lvwProjectMembers.Name = "lvwProjectMembers"
-        Me.lvwProjectMembers.ShowGroups = False
-        Me.lvwProjectMembers.ShowItemToolTips = True
-        Me.lvwProjectMembers.Size = New System.Drawing.Size(267, 610)
-        Me.lvwProjectMembers.SmallImageList = Me.SmallIconList
-        Me.lvwProjectMembers.TabIndex = 1
-        Me.lvwProjectMembers.TileSize = New System.Drawing.Size(160, 90)
-        Me.ToolTip1.SetToolTip(Me.lvwProjectMembers, "Click right to display menu")
-        Me.lvwProjectMembers.UseCompatibleStateImageBehavior = False
-        Me.lvwProjectMembers.ValueMember = Nothing
-        '
         'mnuProjectList
         '
-        Me.mnuProjectList.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddImport, Me.mnuAddClass, Me.mnuAddPackage, Me.mnuAddRelationship, Me.ToolStripSeparator2, Me.mnuProjectEdit, Me.mnuEditProperties, Me.mnuProjectExchangeImports, Me.ToolStripSeparator8, Me.mnuProjectGenerate, Me.ToolStripSeparator25, Me.mnuProjectDependencies, Me.ToolStripSeparator20, Me.mnuProjectImportReferences, Me.mnuProjectExport, Me.ToolStripSeparator23, Me.mnuProjectExportNodes, Me.mnuProjectImportNodes, Me.mnuProjectUpdateNodes, Me.ToolStripSeparator16, Me.mnuProjectRedundancies, Me.mnuProjectDelete})
+        Me.mnuProjectList.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddImport, Me.mnuAddClass, Me.mnuAddPackage, Me.mnuAddRelationship, Me.ToolStripSeparator2, Me.mnuProjectEdit, Me.mnuEditProperties, Me.mnuProjectExchangeImports, Me.ToolStripSeparator8, Me.mnuProjectGenerate, Me.ToolStripSeparator25, Me.mnuProjectDependencies, Me.ToolStripSeparator20, Me.mnuProjectImportReferences, Me.mnuProjectExport, Me.mnuProjectConvertExport, Me.ToolStripSeparator23, Me.mnuProjectExportNodes, Me.mnuProjectImportNodes, Me.mnuProjectUpdateNodes, Me.ToolStripSeparator16, Me.mnuProjectRedundancies, Me.mnuProjectDelete})
         Me.mnuProjectList.Name = "mnuEditList"
-        Me.mnuProjectList.Size = New System.Drawing.Size(246, 392)
+        Me.mnuProjectList.Size = New System.Drawing.Size(246, 436)
         '
         'mnuAddImport
         '
@@ -371,14 +349,14 @@ Partial Class frmProject
         '
         Me.ProjectExportNodesSimpleCopy.Image = Global.ClassXmlProject.My.Resources.Resources.Copy
         Me.ProjectExportNodesSimpleCopy.Name = "ProjectExportNodesSimpleCopy"
-        Me.ProjectExportNodesSimpleCopy.Size = New System.Drawing.Size(142, 22)
+        Me.ProjectExportNodesSimpleCopy.Size = New System.Drawing.Size(152, 22)
         Me.ProjectExportNodesSimpleCopy.Text = "Simple copy..."
         '
         'ProjectExportNodesExtract
         '
         Me.ProjectExportNodesExtract.Image = Global.ClassXmlProject.My.Resources.Resources.SFX1
         Me.ProjectExportNodesExtract.Name = "ProjectExportNodesExtract"
-        Me.ProjectExportNodesExtract.Size = New System.Drawing.Size(142, 22)
+        Me.ProjectExportNodesExtract.Size = New System.Drawing.Size(152, 22)
         Me.ProjectExportNodesExtract.Text = "Extract..."
         '
         'mnuProjectImportNodes
@@ -439,20 +417,6 @@ Partial Class frmProject
         Me.SmallIconList.Images.SetKeyName(4, "Apps.ico")
         Me.SmallIconList.Images.SetKeyName(5, "Properties.ico")
         Me.SmallIconList.Images.SetKeyName(6, "Move.ico")
-        '
-        'docvwProjectDisplay
-        '
-        Me.docvwProjectDisplay.DataSource = Nothing
-        Me.docvwProjectDisplay.Display = ""
-        Me.docvwProjectDisplay.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.docvwProjectDisplay.IsWebBrowserContextMenuEnabled = False
-        Me.docvwProjectDisplay.Language = 0
-        Me.docvwProjectDisplay.Location = New System.Drawing.Point(0, 0)
-        Me.docvwProjectDisplay.MinimumSize = New System.Drawing.Size(20, 20)
-        Me.docvwProjectDisplay.Name = "docvwProjectDisplay"
-        Me.docvwProjectDisplay.Size = New System.Drawing.Size(626, 610)
-        Me.docvwProjectDisplay.TabIndex = 0
-        Me.docvwProjectDisplay.View = ClassXmlProject.XmlDocumentViewMode.Unknown
         '
         'tlstrpNavigation
         '
@@ -939,7 +903,7 @@ Partial Class frmProject
         '
         Me.mnuPackageList.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPackageAddImport, Me.mnuPackageAddClass, Me.mnuPackageAddPackage, Me.ToolStripSeparator10, Me.mnuPackageEdit, Me.mnuPackageMoveUp, Me.mnuPackageProperties, Me.mnuPackageExchangeImports, Me.ToolStripSeparator11, Me.mnuPackageGenerate, Me.ToolStripSeparator26, Me.mnuPackageDependencies, Me.ToolStripSeparator21, Me.mnuPackageImportReference, Me.mnuPackageExportReference, Me.ToolStripSeparator24, Me.mnuPackageExportNodes, Me.mnuPackageImportNodes, Me.mnuPackageUpdateNodes, Me.ToolStripSeparator17, Me.mnuPackageRedundancies, Me.mnuPackageDelete})
         Me.mnuPackageList.Name = "mnuEditList"
-        Me.mnuPackageList.Size = New System.Drawing.Size(246, 414)
+        Me.mnuPackageList.Size = New System.Drawing.Size(246, 392)
         '
         'mnuPackageAddImport
         '
@@ -1409,6 +1373,49 @@ Partial Class frmProject
         Me.RemoveAll.Size = New System.Drawing.Size(247, 22)
         Me.RemoveAll.Text = "Remove all"
         '
+        'lvwProjectMembers
+        '
+        Me.lvwProjectMembers.AllowDrop = True
+        Me.lvwProjectMembers.BindingSource = Nothing
+        Me.lvwProjectMembers.ContextMenuStrip = Me.mnuProjectList
+        Me.lvwProjectMembers.DataSource = Nothing
+        Me.lvwProjectMembers.DisplayMember = Nothing
+        Me.lvwProjectMembers.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lvwProjectMembers.LabelEdit = True
+        Me.lvwProjectMembers.LargeImageList = Me.LargeIconList
+        Me.lvwProjectMembers.Location = New System.Drawing.Point(0, 0)
+        Me.lvwProjectMembers.MultiSelect = False
+        Me.lvwProjectMembers.Name = "lvwProjectMembers"
+        Me.lvwProjectMembers.ShowGroups = False
+        Me.lvwProjectMembers.ShowItemToolTips = True
+        Me.lvwProjectMembers.Size = New System.Drawing.Size(267, 610)
+        Me.lvwProjectMembers.SmallImageList = Me.SmallIconList
+        Me.lvwProjectMembers.TabIndex = 1
+        Me.lvwProjectMembers.TileSize = New System.Drawing.Size(160, 90)
+        Me.ToolTip1.SetToolTip(Me.lvwProjectMembers, "Click right to display menu")
+        Me.lvwProjectMembers.UseCompatibleStateImageBehavior = False
+        Me.lvwProjectMembers.ValueMember = Nothing
+        '
+        'docvwProjectDisplay
+        '
+        Me.docvwProjectDisplay.DataSource = Nothing
+        Me.docvwProjectDisplay.Display = ""
+        Me.docvwProjectDisplay.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.docvwProjectDisplay.IsWebBrowserContextMenuEnabled = False
+        Me.docvwProjectDisplay.Language = 0
+        Me.docvwProjectDisplay.Location = New System.Drawing.Point(0, 0)
+        Me.docvwProjectDisplay.MinimumSize = New System.Drawing.Size(20, 20)
+        Me.docvwProjectDisplay.Name = "docvwProjectDisplay"
+        Me.docvwProjectDisplay.Size = New System.Drawing.Size(626, 610)
+        Me.docvwProjectDisplay.TabIndex = 0
+        Me.docvwProjectDisplay.View = ClassXmlProject.XmlDocumentViewMode.Unknown
+        '
+        'mnuProjectConvertExport
+        '
+        Me.mnuProjectConvertExport.Name = "mnuProjectConvertExport"
+        Me.mnuProjectConvertExport.Size = New System.Drawing.Size(245, 22)
+        Me.mnuProjectConvertExport.Text = "Convert to import/references"
+        '
         'frmProject
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1602,4 +1609,5 @@ Partial Class frmProject
     Friend WithEvents ToolStripSeparator35 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents mnuProjectExchangeImports As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuPackageExchangeImports As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuProjectConvertExport As System.Windows.Forms.ToolStripMenuItem
 End Class

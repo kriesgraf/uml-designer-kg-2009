@@ -272,14 +272,14 @@ Public Class XmlProjectView
                         UmlNodesManager.ExportNodes(fen, nodeXml, dlgSaveFile.FileName, strFullPackage, eLang)
                         If bExtractReferences Then
                             strFullPackage = GetFullpathPackage(nodeXml, eLang, GetName(nodeXml))
-                            bResult = UmlNodesManager.ExtractReferences(fen, nodeXml, strFullPackage, eLang)
+                            bResult = UmlNodesManager.ExtractReferences(fen, nodeXml, eLang)
                         End If
 
                     Case "class"
                         strFullPackage = GetFullpathPackage(nodeXml, eLang)
                         UmlNodesManager.ExportNodes(fen, nodeXml, dlgSaveFile.FileName, strFullPackage, eLang)
                         If bExtractReferences Then
-                            bResult = UmlNodesManager.ExtractReferences(fen, nodeXml, strFullPackage, eLang)
+                            bResult = UmlNodesManager.ExtractReferences(fen, nodeXml, eLang)
                         End If
 
                     Case Else
@@ -683,6 +683,22 @@ Public Class XmlProjectView
                     Return True
                 End If
             End If
+        End If
+        Return False
+    End Function
+
+    Public Function ConvertToImportNodes(ByVal fen As Form, ByVal composite As XmlComposite) As Boolean
+        If MsgBox("This operation is irreversible, would you want to continue ?" _
+                  , cstMsgYesNoExclamation, "Convert nodes import/references") _
+                        = MsgBoxResult.Yes _
+        Then
+            Dim bResult As Boolean = False
+            Dim eLang As ELanguage = CType(Me.Properties.GenerationLanguage, ELanguage)
+            bResult = UmlNodesManager.ExtractReferences(fen, composite.Node, eLang)
+            If bResult Then
+                Me.Updated = True
+            End If
+            Return bResult
         End If
         Return False
     End Function
