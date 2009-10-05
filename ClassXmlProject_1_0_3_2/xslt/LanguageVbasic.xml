@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root version="1.0">
+<type name="bool" prefix="b" implementation="Boolean"/>
+<type name="char" prefix="uc" implementation="UByte"/>
+<type name="float32" prefix="f" implementation="Decimal"/>
+<type name="float64" prefix="d" implementation="Double"/>
+<type name="int16" prefix="us" implementation="UShort"/>
+<type name="int32" prefix="ui" implementation="UInteger"/>
+<type name="int64" prefix="ul" implementation="ULong"/>
+<type name="schar" prefix="c" implementation="Byte"/>
+<type name="sint16" prefix="s" implementation="Short"/>
+<type name="sint32" prefix="i" implementation="Integer"/>
+<type name="sint64" prefix="l" implementation="Long"/>
+<type name="time_t" prefix="t" implementation="Date"/>
+<type name="string" prefix="str" implementation="String"/>
+<type name="void" prefix="" implementation="Sub"/>
+</root>
+
+
+
