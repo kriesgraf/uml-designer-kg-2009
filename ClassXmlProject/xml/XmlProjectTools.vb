@@ -3042,66 +3042,60 @@ Public Class XmlProjectTools
     End Sub
 
     Private Shared Sub ConvertDoxygenComments(ByVal document As XmlDocument)
-        Try
-            Dim strTempo As String
-            Dim brief, detailed As XmlNode
-            Dim comment As XmlNode
-            Dim delim As String = Chr(10) + Chr(13) + Chr(9) + Chr(32)
+        Dim strTempo As String
+        Dim brief, detailed As XmlNode
+        Dim comment As XmlNode
+        Dim delim As String = Chr(10) + Chr(13) + Chr(9) + Chr(32)
 
-            For Each comment In document.SelectNodes("//enumvalue")
-                comment.InnerText = comment.InnerText.Trim(delim.ToCharArray())
-            Next
+        For Each comment In document.SelectNodes("//enumvalue")
+            comment.InnerText = comment.InnerText.Trim(delim.ToCharArray())
+        Next
 
-            For Each comment In document.SelectNodes("//comment")
-                strTempo = ""
-                Select Case comment.ParentNode.Name
-                    Case "property", "typedef", "param"
-                        brief = comment.SelectSingleNode("briefdescription")
-                        If brief Is Nothing Then brief = comment.SelectSingleNode("parameterdescription")
-                        detailed = comment.SelectSingleNode("detaileddescription")
+        For Each comment In document.SelectNodes("//comment")
+            strTempo = ""
+            Select Case comment.ParentNode.Name
+                Case "property", "typedef", "param"
+                    brief = comment.SelectSingleNode("briefdescription")
+                    If brief Is Nothing Then brief = comment.SelectSingleNode("parameterdescription")
+                    detailed = comment.SelectSingleNode("detaileddescription")
 
-                        If brief IsNot Nothing _
-                        Then
-                            strTempo = brief.InnerText
+                    If brief IsNot Nothing _
+                    Then
+                        strTempo = brief.InnerText
 
-                        ElseIf detailed IsNot Nothing Then
-                            strTempo = detailed.InnerText
-                        End If
-                        RemoveNode(comment, "node()")
-                        comment.InnerText = strTempo.Trim(delim.ToCharArray())
+                    ElseIf detailed IsNot Nothing Then
+                        strTempo = detailed.InnerText
+                    End If
+                    RemoveNode(comment, "node()")
+                    comment.InnerText = strTempo.Trim(delim.ToCharArray())
 
-                    Case "return", "root"
-                        comment.InnerText = comment.InnerText.Trim(delim.ToCharArray())
+                Case "return", "root"
+                    comment.InnerText = comment.InnerText.Trim(delim.ToCharArray())
 
-                    Case Else
-                        detailed = comment.SelectSingleNode("detaileddescription")
-                        brief = comment.SelectSingleNode("briefdescription")
+                Case Else
+                    detailed = comment.SelectSingleNode("detaileddescription")
+                    brief = comment.SelectSingleNode("briefdescription")
 
-                        If detailed IsNot Nothing Then
-                            strTempo = detailed.InnerText.Trim(delim.ToCharArray())
-                            If brief Is Nothing Then
-                                AddAttributeValue(comment, "brief", strTempo)
-                                strTempo = ""
-                            Else
-                                AddAttributeValue(comment, "brief", brief.InnerText.Trim(delim.ToCharArray()))
-                            End If
-                        ElseIf brief Is Nothing _
-                        Then
-                            AddAttributeValue(comment, "brief", brief.InnerText.Trim(delim.ToCharArray()))
+                    If detailed IsNot Nothing Then
+                        strTempo = detailed.InnerText.Trim(delim.ToCharArray())
+                        If brief Is Nothing Then
+                            AddAttributeValue(comment, "brief", strTempo)
                             strTempo = ""
+                        Else
+                            AddAttributeValue(comment, "brief", brief.InnerText.Trim(delim.ToCharArray()))
                         End If
-                        RemoveNode(comment, "node()")
-                        comment.InnerText = strTempo
-                End Select
-            Next
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+                    ElseIf brief IsNot Nothing _
+                    Then
+                        AddAttributeValue(comment, "brief", brief.InnerText.Trim(delim.ToCharArray()))
+                        strTempo = ""
+                    End If
+                    RemoveNode(comment, "node()")
+                    comment.InnerText = strTempo
+            End Select
+        Next
     End Sub
-
     Private Shared Sub FindOverridedMethods(ByVal document As XmlDocument)
-
+        ' TODO : to implement !
     End Sub
 
     Private Shared Sub FindCollaborations(ByVal document As XmlDocument)
@@ -3334,11 +3328,13 @@ Public Class XmlProjectTools
             Dim strCurrentPath As String
             For Each child In list
                 new_child = GetNode(child, "location")
-                strCurrentPath = GetProjectPath(new_child.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
-                child.RemoveChild(new_child)
-                strCurrentPath = ComputeRelativePath(strProjectPath, strCurrentPath)
-                If GetName(child) <> strCurrentPath Then
-                    AddAttributeValue(child, "folder", strCurrentPath)
+                If new_child IsNot Nothing Then
+                    strCurrentPath = GetProjectPath(new_child.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
+                    child.RemoveChild(new_child)
+                    strCurrentPath = ComputeRelativePath(strProjectPath, strCurrentPath)
+                    If GetName(child) <> strCurrentPath Then
+                        AddAttributeValue(child, "folder", strCurrentPath)
+                    End If
                 End If
             Next
 
