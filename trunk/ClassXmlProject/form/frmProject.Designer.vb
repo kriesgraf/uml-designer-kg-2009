@@ -41,6 +41,7 @@ Partial Class frmProject
         Me.ToolStripSeparator20 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProjectImportReferences = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuProjectExport = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuProjectConvertExport = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator23 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuProjectExportNodes = New System.Windows.Forms.ToolStripMenuItem
         Me.ProjectExportNodesSimpleCopy = New System.Windows.Forms.ToolStripMenuItem
@@ -187,7 +188,7 @@ Partial Class frmProject
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.lvwProjectMembers = New ClassXmlProject.XmlDataListView
         Me.docvwProjectDisplay = New ClassXmlProject.XmlDocumentView
-        Me.mnuProjectConvertExport = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuPackageConvertExport = New System.Windows.Forms.ToolStripMenuItem
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
@@ -222,7 +223,7 @@ Partial Class frmProject
         '
         Me.mnuProjectList.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddImport, Me.mnuAddClass, Me.mnuAddPackage, Me.mnuAddRelationship, Me.ToolStripSeparator2, Me.mnuProjectEdit, Me.mnuEditProperties, Me.mnuProjectExchangeImports, Me.ToolStripSeparator8, Me.mnuProjectGenerate, Me.ToolStripSeparator25, Me.mnuProjectDependencies, Me.ToolStripSeparator20, Me.mnuProjectImportReferences, Me.mnuProjectExport, Me.mnuProjectConvertExport, Me.ToolStripSeparator23, Me.mnuProjectExportNodes, Me.mnuProjectImportNodes, Me.mnuProjectUpdateNodes, Me.ToolStripSeparator16, Me.mnuProjectRedundancies, Me.mnuProjectDelete})
         Me.mnuProjectList.Name = "mnuEditList"
-        Me.mnuProjectList.Size = New System.Drawing.Size(246, 436)
+        Me.mnuProjectList.Size = New System.Drawing.Size(246, 414)
         '
         'mnuAddImport
         '
@@ -332,6 +333,12 @@ Partial Class frmProject
         Me.mnuProjectExport.Size = New System.Drawing.Size(245, 22)
         Me.mnuProjectExport.Text = "Export references..."
         '
+        'mnuProjectConvertExport
+        '
+        Me.mnuProjectConvertExport.Name = "mnuProjectConvertExport"
+        Me.mnuProjectConvertExport.Size = New System.Drawing.Size(245, 22)
+        Me.mnuProjectConvertExport.Text = "Convert to import/references"
+        '
         'ToolStripSeparator23
         '
         Me.ToolStripSeparator23.Name = "ToolStripSeparator23"
@@ -349,14 +356,14 @@ Partial Class frmProject
         '
         Me.ProjectExportNodesSimpleCopy.Image = Global.ClassXmlProject.My.Resources.Resources.Copy
         Me.ProjectExportNodesSimpleCopy.Name = "ProjectExportNodesSimpleCopy"
-        Me.ProjectExportNodesSimpleCopy.Size = New System.Drawing.Size(152, 22)
+        Me.ProjectExportNodesSimpleCopy.Size = New System.Drawing.Size(142, 22)
         Me.ProjectExportNodesSimpleCopy.Text = "Simple copy..."
         '
         'ProjectExportNodesExtract
         '
         Me.ProjectExportNodesExtract.Image = Global.ClassXmlProject.My.Resources.Resources.SFX1
         Me.ProjectExportNodesExtract.Name = "ProjectExportNodesExtract"
-        Me.ProjectExportNodesExtract.Size = New System.Drawing.Size(152, 22)
+        Me.ProjectExportNodesExtract.Size = New System.Drawing.Size(142, 22)
         Me.ProjectExportNodesExtract.Text = "Extract..."
         '
         'mnuProjectImportNodes
@@ -901,9 +908,9 @@ Partial Class frmProject
         '
         'mnuPackageList
         '
-        Me.mnuPackageList.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPackageAddImport, Me.mnuPackageAddClass, Me.mnuPackageAddPackage, Me.ToolStripSeparator10, Me.mnuPackageEdit, Me.mnuPackageMoveUp, Me.mnuPackageProperties, Me.mnuPackageExchangeImports, Me.ToolStripSeparator11, Me.mnuPackageGenerate, Me.ToolStripSeparator26, Me.mnuPackageDependencies, Me.ToolStripSeparator21, Me.mnuPackageImportReference, Me.mnuPackageExportReference, Me.ToolStripSeparator24, Me.mnuPackageExportNodes, Me.mnuPackageImportNodes, Me.mnuPackageUpdateNodes, Me.ToolStripSeparator17, Me.mnuPackageRedundancies, Me.mnuPackageDelete})
+        Me.mnuPackageList.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPackageAddImport, Me.mnuPackageAddClass, Me.mnuPackageAddPackage, Me.ToolStripSeparator10, Me.mnuPackageEdit, Me.mnuPackageMoveUp, Me.mnuPackageProperties, Me.mnuPackageExchangeImports, Me.ToolStripSeparator11, Me.mnuPackageGenerate, Me.ToolStripSeparator26, Me.mnuPackageDependencies, Me.ToolStripSeparator21, Me.mnuPackageImportReference, Me.mnuPackageExportReference, Me.mnuPackageConvertExport, Me.ToolStripSeparator24, Me.mnuPackageExportNodes, Me.mnuPackageImportNodes, Me.mnuPackageUpdateNodes, Me.ToolStripSeparator17, Me.mnuPackageRedundancies, Me.mnuPackageDelete})
         Me.mnuPackageList.Name = "mnuEditList"
-        Me.mnuPackageList.Size = New System.Drawing.Size(246, 392)
+        Me.mnuPackageList.Size = New System.Drawing.Size(246, 436)
         '
         'mnuPackageAddImport
         '
@@ -1410,11 +1417,11 @@ Partial Class frmProject
         Me.docvwProjectDisplay.TabIndex = 0
         Me.docvwProjectDisplay.View = ClassXmlProject.XmlDocumentViewMode.Unknown
         '
-        'mnuProjectConvertExport
+        'mnuPackageConvertExport
         '
-        Me.mnuProjectConvertExport.Name = "mnuProjectConvertExport"
-        Me.mnuProjectConvertExport.Size = New System.Drawing.Size(245, 22)
-        Me.mnuProjectConvertExport.Text = "Convert to import/references"
+        Me.mnuPackageConvertExport.Name = "mnuPackageConvertExport"
+        Me.mnuPackageConvertExport.Size = New System.Drawing.Size(245, 22)
+        Me.mnuPackageConvertExport.Text = "Convert to import/references"
         '
         'frmProject
         '
@@ -1610,4 +1617,5 @@ Partial Class frmProject
     Friend WithEvents mnuProjectExchangeImports As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuPackageExchangeImports As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuProjectConvertExport As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuPackageConvertExport As System.Windows.Forms.ToolStripMenuItem
 End Class
