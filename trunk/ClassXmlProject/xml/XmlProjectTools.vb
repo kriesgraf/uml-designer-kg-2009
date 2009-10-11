@@ -505,7 +505,7 @@ Public Class XmlProjectTools
             VbCodeReverse.Reverse(observer, strRootFolder, document)
             observer.Log = ""
             observer.Minimum = 0
-            observer.Maximum = 12
+            observer.Maximum = 13
             observer.Log = "Load XSLT converter".PadRight(40)
             observer.Increment(1)
 
@@ -569,6 +569,10 @@ Public Class XmlProjectTools
 
             stage = "Merge properties and attributes"
             MergeAttributesProperties(document)
+            observer.Increment(1)
+
+            stage = "Merge constructor and destructor"
+            MergeVbConstructorDestructor(document)
             observer.Increment(1)
 
             stage = "Find collaborations"
@@ -1088,6 +1092,8 @@ Public Class XmlProjectTools
                         document.Load(reader)
                         observer.Increment(1)
                         eResult = XmlProjectTools.EResult.Completed
+
+                        observer.Increment(1)
 
                     Catch ex As XmlSchemaException
                         eResult = XmlProjectTools.EResult.Failed
@@ -2631,6 +2637,23 @@ Public Class XmlProjectTools
             End If
             tempo = child.InnerText
             child.InnerText = tempo.Trim
+        Next
+    End Sub
+
+    Public Shared Sub MergeVbConstructorDestructor(ByVal document As XmlDocument)
+        Dim list As XmlNodeList = document.SelectNodes("//class[method[(@constructor!='no' and not(param)) or @name='Finalize']]")
+        Dim method As XmlNode
+        For Each child As XmlNode In list
+            method = child.SelectSingleNode("method[@constructor!='no' and not(param)]")
+            If method IsNot Nothing Then
+                child.RemoveChild(method)
+                AddAttributeValue(child, "constructor", GetAttributeValue(method, "constructor"))
+            End If
+            method = child.SelectSingleNode("method[@name='Finalize']")
+            If method IsNot Nothing Then
+                child.RemoveChild(method)
+                AddAttributeValue(child, "destructor", GetAttributeValue(GetNode(method, "return/variable"), "range"))
+            End If
         Next
     End Sub
 
