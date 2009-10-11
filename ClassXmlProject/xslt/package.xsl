@@ -504,6 +504,13 @@ border-left: 1px solid gray;
     <table class="code">
       <tr>
         <td class="member" align="center">
+          <xsl:variable name="Police">
+            <xsl:choose>
+              <xsl:when test="self::reference">b</xsl:when>
+              <xsl:when test="@root='yes'">b</xsl:when>
+              <xsl:otherwise>i</xsl:otherwise>
+            </xsl:choose>
+          </xsl:variable>
           <xsl:call-template name="Formater">
             <xsl:with-param name="Text">
               <xsl:choose>
@@ -511,6 +518,17 @@ border-left: 1px solid gray;
                 <xsl:when test="@root='yes'">&lt;root&gt;</xsl:when>
                 <xsl:otherwise>&lt;abstract&gt;</xsl:otherwise>
               </xsl:choose>
+            </xsl:with-param>
+            <xsl:with-param name="Police" select="$Police"/>
+          </xsl:call-template>
+          <xsl:if test="string-length(@package)!=0">
+            <span class="package">
+              <xsl:value-of select="@package"/>
+            </span>
+            <xsl:value-of select="$Separator"/>
+          </xsl:if>
+          <xsl:call-template name="Formater">
+            <xsl:with-param name="Text">
               <xsl:choose>
               <xsl:when test="self::reference and @type='typedef'">
                 <xsl:value-of select="@class"/>
@@ -520,13 +538,7 @@ border-left: 1px solid gray;
               </xsl:otherwise>
               </xsl:choose>
             </xsl:with-param>
-            <xsl:with-param name="Police">
-              <xsl:choose>
-                <xsl:when test="self::reference">b</xsl:when>
-                <xsl:when test="@root='yes'">b</xsl:when>
-                <xsl:otherwise>i</xsl:otherwise>
-              </xsl:choose>
-            </xsl:with-param>
+            <xsl:with-param name="Police" select="$Police"/>
           </xsl:call-template>
           <xsl:if test="@implementation='container'">
             <span class="template">
@@ -1168,6 +1180,7 @@ border-left: 1px solid gray;
     </xsl:template>
 	<!-- ======================================================================= -->
 </xsl:stylesheet>
+
 
 
 
