@@ -33,7 +33,9 @@ Public Class XmlNodeManager
         If m_xmlListViews.Count = 0 Or m_xmlListDocuments.Count = 0 Then
             m_xmlListViews.Clear()
             m_xmlListDocuments.Clear()
+            Return True
         End If
+        Return False
     End Function
 
     Public Function AddView(ByVal strName As String, ByRef component As Object) As Boolean
