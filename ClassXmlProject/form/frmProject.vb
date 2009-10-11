@@ -702,6 +702,9 @@ Public Class frmProject
                 bRefresh = m_xmlProject.ExportNodesExtract(Me.Mainframe, CType(lvwProjectMembers.SelectedItem, XmlComponent))
             Else
                 bRefresh = m_xmlProject.ExportNodesExtract(Me.Mainframe, lvwProjectMembers.Binding.Parent)
+                ' Needs to go back why curent children change totaly
+                lvwProjectMembers.GoBack()
+                lvwProjectMembers.Binding.ResetBindings(True)
             End If
             If bRefresh Then
                 RefreshUpdatedPath(False)
@@ -890,9 +893,17 @@ Public Class frmProject
         End Try
     End Sub
 
-    Private Sub mnuProjectConvertExport_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuProjectConvertExport.Click
+    Private Sub mnuProjectConvertExport_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+        Handles mnuProjectConvertExport.Click, mnuPackageConvertExport.Click
         Try
-            If m_xmlProject.ConvertToImportNodes(Me.Mainframe, lvwProjectMembers.SelectedItem) Then
+            If lvwProjectMembers.SelectedItem Is Nothing Then
+                If m_xmlProject.ConvertToImportNodes(Me.Mainframe, lvwProjectMembers.Binding.Parent) Then
+                    ' Needs to go back why curent children change totaly
+                    lvwProjectMembers.GoBack()
+                    lvwProjectMembers.Binding.ResetBindings(True)
+                    RefreshUpdatedPath(False)
+                End If
+            ElseIf m_xmlProject.ConvertToImportNodes(Me.Mainframe, lvwProjectMembers.SelectedItem) Then
                 lvwProjectMembers.Binding.ResetBindings(True)
                 RefreshUpdatedPath(False)
             End If

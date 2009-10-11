@@ -436,6 +436,7 @@ Public Class UmlNodesManager
 
             Dim importXML As XmlImportSpec = XmlNodeManager.GetInstance().CreateDocument("import", parent.OwnerDocument)
             If eLang <> ELanguage.Language_CplusPlus Then
+                importXML.Name += " (" + GetName(node) + ")"
                 importXML.Parameter = "Project_to_rename.Package_to_rename"
             End If
             If importXML.LoadXml(strXML) Then
@@ -947,7 +948,7 @@ Public Class UmlNodesManager
                     iteration = 0
                     SelectInheritedMethods(iteration, eImplementation, node, myList)
 
-                    For Each member As XmlOverrideMemberView In myList
+                    For Each member As XmlOverrideMemberView In myList.GetValueList
                         ExportElementClassMember(strXML, member)
                     Next
 
