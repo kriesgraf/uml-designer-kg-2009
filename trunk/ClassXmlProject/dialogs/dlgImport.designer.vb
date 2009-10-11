@@ -40,6 +40,8 @@ Partial Class dlgImport
         Me.mnuEditReference = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.NewReference = New System.Windows.Forms.ToolStripMenuItem
         Me.NewInterface = New System.Windows.Forms.ToolStripMenuItem
+        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
+        Me.mnuConvertToReference = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator
         Me.EditReference = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuRenamePackage = New System.Windows.Forms.ToolStripMenuItem
@@ -63,8 +65,6 @@ Partial Class dlgImport
         Me.txtInterface = New System.Windows.Forms.TextBox
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator
-        Me.mnuConvertToReference = New System.Windows.Forms.ToolStripMenuItem
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
@@ -84,7 +84,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(214, 4)
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(358, 3)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -129,7 +129,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27.0!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29.0!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(363, 83)
+        Me.TableLayoutPanel3.Size = New System.Drawing.Size(507, 81)
         Me.TableLayoutPanel3.TabIndex = 1
         '
         'Label1
@@ -138,7 +138,7 @@ Partial Class dlgImport
         Me.Label1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Label1.Location = New System.Drawing.Point(3, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(93, 27)
+        Me.Label1.Size = New System.Drawing.Size(132, 27)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Name:"
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -149,7 +149,7 @@ Partial Class dlgImport
         Me.lblParam.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lblParam.Location = New System.Drawing.Point(3, 27)
         Me.lblParam.Name = "lblParam"
-        Me.lblParam.Size = New System.Drawing.Size(93, 27)
+        Me.lblParam.Size = New System.Drawing.Size(132, 27)
         Me.lblParam.TabIndex = 1
         Me.lblParam.Text = "FullPathName:"
         Me.lblParam.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -157,18 +157,18 @@ Partial Class dlgImport
         'txtName
         '
         Me.txtName.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtName.Location = New System.Drawing.Point(102, 3)
+        Me.txtName.Location = New System.Drawing.Point(141, 3)
         Me.txtName.Name = "txtName"
-        Me.txtName.Size = New System.Drawing.Size(258, 20)
+        Me.txtName.Size = New System.Drawing.Size(363, 20)
         Me.txtName.TabIndex = 3
         '
         'txtParam
         '
         Me.txtParam.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtParam.Location = New System.Drawing.Point(102, 30)
+        Me.txtParam.Location = New System.Drawing.Point(141, 30)
         Me.txtParam.Margin = New System.Windows.Forms.Padding(3, 3, 20, 3)
         Me.txtParam.Name = "txtParam"
-        Me.txtParam.Size = New System.Drawing.Size(241, 20)
+        Me.txtParam.Size = New System.Drawing.Size(346, 20)
         Me.txtParam.TabIndex = 4
         '
         'TableLayoutPanel4
@@ -177,7 +177,7 @@ Partial Class dlgImport
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel4, 2)
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65.38461!))
         Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.61538!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 196.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 197.0!))
         Me.TableLayoutPanel4.Controls.Add(Me.lblVisibility, 1, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.cmbVisibility, 2, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.chkInterface, 0, 0)
@@ -186,16 +186,16 @@ Partial Class dlgImport
         Me.TableLayoutPanel4.Name = "TableLayoutPanel4"
         Me.TableLayoutPanel4.RowCount = 1
         Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel4.Size = New System.Drawing.Size(357, 23)
+        Me.TableLayoutPanel4.Size = New System.Drawing.Size(501, 23)
         Me.TableLayoutPanel4.TabIndex = 5
         '
         'lblVisibility
         '
         Me.lblVisibility.AutoSize = True
         Me.lblVisibility.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lblVisibility.Location = New System.Drawing.Point(108, 0)
+        Me.lblVisibility.Location = New System.Drawing.Point(201, 0)
         Me.lblVisibility.Name = "lblVisibility"
-        Me.lblVisibility.Size = New System.Drawing.Size(49, 23)
+        Me.lblVisibility.Size = New System.Drawing.Size(99, 23)
         Me.lblVisibility.TabIndex = 2
         Me.lblVisibility.Text = "Visibility:"
         Me.lblVisibility.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -204,9 +204,9 @@ Partial Class dlgImport
         '
         Me.cmbVisibility.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmbVisibility.FormattingEnabled = True
-        Me.cmbVisibility.Location = New System.Drawing.Point(163, 3)
+        Me.cmbVisibility.Location = New System.Drawing.Point(306, 3)
         Me.cmbVisibility.Name = "cmbVisibility"
-        Me.cmbVisibility.Size = New System.Drawing.Size(191, 21)
+        Me.cmbVisibility.Size = New System.Drawing.Size(192, 21)
         Me.cmbVisibility.TabIndex = 5
         '
         'chkInterface
@@ -215,7 +215,7 @@ Partial Class dlgImport
         Me.chkInterface.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chkInterface.Location = New System.Drawing.Point(3, 3)
         Me.chkInterface.Name = "chkInterface"
-        Me.chkInterface.Size = New System.Drawing.Size(99, 17)
+        Me.chkInterface.Size = New System.Drawing.Size(192, 17)
         Me.chkInterface.TabIndex = 6
         Me.chkInterface.Text = "Interface declaration"
         Me.chkInterface.UseVisualStyleBackColor = True
@@ -223,17 +223,18 @@ Partial Class dlgImport
         'TableLayoutPanel2
         '
         Me.TableLayoutPanel2.ColumnCount = 1
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel5, 0, 2)
         Me.TableLayoutPanel2.Controls.Add(Me.TableLayoutPanel3, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.tblDeclaration, 0, 1)
+        Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 3
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 32.64605!))
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 67.35395!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 87.0!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(369, 316)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(513, 321)
         Me.TableLayoutPanel2.TabIndex = 2
         '
         'TableLayoutPanel5
@@ -245,19 +246,19 @@ Partial Class dlgImport
         Me.TableLayoutPanel5.Controls.Add(Me.TableLayoutPanel1, 1, 0)
         Me.TableLayoutPanel5.Controls.Add(Me.pgbLoadImport, 0, 0)
         Me.TableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel5.Location = New System.Drawing.Point(3, 277)
+        Me.TableLayoutPanel5.Location = New System.Drawing.Point(3, 283)
         Me.TableLayoutPanel5.Name = "TableLayoutPanel5"
         Me.TableLayoutPanel5.RowCount = 1
         Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel5.Size = New System.Drawing.Size(363, 36)
+        Me.TableLayoutPanel5.Size = New System.Drawing.Size(507, 35)
         Me.TableLayoutPanel5.TabIndex = 3
         '
         'pgbLoadImport
         '
         Me.pgbLoadImport.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.pgbLoadImport.Location = New System.Drawing.Point(3, 23)
+        Me.pgbLoadImport.Location = New System.Drawing.Point(3, 22)
         Me.pgbLoadImport.Name = "pgbLoadImport"
-        Me.pgbLoadImport.Size = New System.Drawing.Size(175, 10)
+        Me.pgbLoadImport.Size = New System.Drawing.Size(247, 10)
         Me.pgbLoadImport.TabIndex = 1
         Me.pgbLoadImport.Visible = False
         '
@@ -269,11 +270,11 @@ Partial Class dlgImport
         Me.tblDeclaration.Controls.Add(Me.lsbReferences, 0, 0)
         Me.tblDeclaration.Controls.Add(Me.txtInterface, 1, 0)
         Me.tblDeclaration.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tblDeclaration.Location = New System.Drawing.Point(3, 92)
+        Me.tblDeclaration.Location = New System.Drawing.Point(3, 90)
         Me.tblDeclaration.Name = "tblDeclaration"
         Me.tblDeclaration.RowCount = 1
         Me.tblDeclaration.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.tblDeclaration.Size = New System.Drawing.Size(363, 179)
+        Me.tblDeclaration.Size = New System.Drawing.Size(507, 187)
         Me.tblDeclaration.TabIndex = 2
         '
         'lsbReferences
@@ -283,7 +284,7 @@ Partial Class dlgImport
         Me.lsbReferences.FormattingEnabled = True
         Me.lsbReferences.Location = New System.Drawing.Point(3, 3)
         Me.lsbReferences.Name = "lsbReferences"
-        Me.lsbReferences.Size = New System.Drawing.Size(170, 173)
+        Me.lsbReferences.Size = New System.Drawing.Size(240, 173)
         Me.lsbReferences.TabIndex = 1
         Me.ToolTip1.SetToolTip(Me.lsbReferences, "Please click right to update list")
         '
@@ -291,7 +292,7 @@ Partial Class dlgImport
         '
         Me.mnuEditReference.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewReference, Me.NewInterface, Me.ToolStripSeparator6, Me.mnuConvertToReference, Me.ToolStripSeparator5, Me.EditReference, Me.mnuRenamePackage, Me.mnuMoveUp, Me.mnuImportParameters, Me.ToolStripSeparator3, Me.mnuCopy, Me.mnuPaste, Me.DuplicateReference, Me.ToolStripSeparator4, Me.mnuRefDependencies, Me.ToolStripSeparator1, Me.AddReferences, Me.ToolStripSeparator2, Me.RemoveRedundant, Me.DeleteReference, Me.RemoveAll})
         Me.mnuEditReference.Name = "ContextMenuStrip1"
-        Me.mnuEditReference.Size = New System.Drawing.Size(248, 392)
+        Me.mnuEditReference.Size = New System.Drawing.Size(248, 370)
         '
         'NewReference
         '
@@ -309,6 +310,17 @@ Partial Class dlgImport
         Me.NewInterface.Size = New System.Drawing.Size(247, 22)
         Me.NewInterface.Tag = "interface"
         Me.NewInterface.Text = "New interface/root"
+        '
+        'ToolStripSeparator6
+        '
+        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(244, 6)
+        '
+        'mnuConvertToReference
+        '
+        Me.mnuConvertToReference.Name = "mnuConvertToReference"
+        Me.mnuConvertToReference.Size = New System.Drawing.Size(247, 22)
+        Me.mnuConvertToReference.Text = "Convert to reference/interface/root"
         '
         'ToolStripSeparator5
         '
@@ -447,36 +459,23 @@ Partial Class dlgImport
         'txtInterface
         '
         Me.txtInterface.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtInterface.Location = New System.Drawing.Point(179, 3)
+        Me.txtInterface.Location = New System.Drawing.Point(249, 3)
         Me.txtInterface.Multiline = True
         Me.txtInterface.Name = "txtInterface"
-        Me.txtInterface.Size = New System.Drawing.Size(181, 173)
+        Me.txtInterface.Size = New System.Drawing.Size(255, 181)
         Me.txtInterface.TabIndex = 2
         '
         'errorProvider
         '
         Me.errorProvider.ContainerControl = Me
         '
-        'ToolStripSeparator6
-        '
-        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
-        Me.ToolStripSeparator6.Size = New System.Drawing.Size(244, 6)
-        '
-        'mnuConvertToReference
-        '
-        Me.mnuConvertToReference.Name = "mnuConvertToReference"
-        Me.mnuConvertToReference.Size = New System.Drawing.Size(247, 22)
-        Me.mnuConvertToReference.Text = "Convert to reference/interface/root"
-        '
         'dlgImport
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel_Button
-        Me.ClientSize = New System.Drawing.Size(369, 320)
+        Me.ClientSize = New System.Drawing.Size(513, 321)
         Me.Controls.Add(Me.TableLayoutPanel2)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
-        Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "dlgImport"
         Me.ShowInTaskbar = False

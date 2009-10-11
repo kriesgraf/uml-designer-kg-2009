@@ -45,7 +45,6 @@ Partial Class dlgImportExchange
         Me.FlowLayoutPanel2.SuspendLayout()
         Me.tbplComment.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
-        Me.ShowInTaskbar = False
         Me.SuspendLayout()
         '
         'tblpMain
@@ -263,6 +262,7 @@ Partial Class dlgImportExchange
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
         Me.MinimizeBox = False
         Me.Name = "dlgImportExchange"
+        Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "dlgImportExchange"
         Me.tblpMain.ResumeLayout(False)
