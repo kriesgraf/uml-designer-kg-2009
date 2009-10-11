@@ -5,9 +5,9 @@
 
 = UML project data file structure =
 
-We have choose [http://www.w3.org/XML/ XML] format for project data file to allow a loads of possible conversion, at least HTML display and source code generation.
+We have choose [http://www.w3.org/TR/xml/ XML] format for project data file to allow a loads of possible conversion, at least HTML display and source code generation.
 
-For now the structure of the Xml document is declared in a Document Type Definition file (DTD), which current version is 1.2.
+For now the structure of the Xml document is declared in a Document Type Definition file ([http://www.w3.org/TR/xml/#sec-prolog-dtd DTD]), which current version is [http://uml-designer-kg-2009.googlecode.com/svn/tags/ClassXmlProject_1_0_2_3/xslt/class-model.xml 1.3].
 
 == Overview ===
 
