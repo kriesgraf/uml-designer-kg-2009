@@ -485,12 +485,10 @@ Public Class UmlNodesManager
                 End Select
             Next child
 
-            Dim iPackage As Integer = 1
             listID = node.SelectNodes("//package")
 
             For Each child In listID
                 SetID(child, XmlComponent.UID)
-                iPackage += 1
             Next child
 
 
@@ -537,14 +535,12 @@ Public Class UmlNodesManager
 
             If bChangeRelation Then
                 listID = node.SelectNodes("//relationship")
-                iClassIndex = 1
 
                 For Each child In listID
                     Dim szOldID As String = GetID(child)
                     strID = XmlComponent.UID
                     RenumberRefElement(child, "idref", szOldID, strID)
                     SetID(child, strID)
-                    iClassIndex += 1
                 Next child
             End If
 
