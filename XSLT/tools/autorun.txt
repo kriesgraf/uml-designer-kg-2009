@@ -1,4 +1,0 @@
-Path="C:\Program files\XSLT"
-SavePath
-Setup=setup.exe
-Title=XSLT self-extracted setup
