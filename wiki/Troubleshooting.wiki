@@ -72,8 +72,10 @@ Apart from this characteristic error, the other should be more episodic and caus
 Also we do not detail but we will show you how to proceed:
  * Read the message carefully and calmly, but do not press the OK button frantically!
  * If you have understand why this error occurs, press OK and retry you last operation carefully, fill out the forms with the correct values, choose the correct file, the correct folder and go.
- * If you do not understand, remember your last four actions, you write these actions on a scrap paper.
- * Click on the technical description to copy details to clipboard, then press OK!
- * Paste clipboard in a text file and save it after writing inside you "last four actions".
- * Go to page [http://code.google.com/p/uml-designer-kg-2009/issues/list issues] and create a new issue, copy line by line your "last four actions" and paste at the end of text box the error detailed text. 
+ * If you do not understand or the error remains, remember your last four actions, you write these actions on a scrap paper.
+ * In message box, click first on the technical description to copy details to clipboard, then click on link [http://code.google.com/p/uml-designer-kg-2009/issues/entry Send a new issue].
+ * MS Internet Explorer should display the *New issue* [http://code.google.com/p/uml-designer-kg-2009/issues/entry web page]. 
+ * Paste clipboard at the end of the *Description* text box.
+ * You can no enter the four last actions below the question _What steps will reproduce the problem_.
  * You can attach a project file that can reproduce this exception.
+ * Press *Submit issue*.
