@@ -71,18 +71,16 @@ Public Class XmlInterfaceView
     End Sub
 
     Public Function SearchDependencies(ByVal component As XmlComponent) As Boolean
-        Try
-            If component Is Nothing Then Return False
 
-            Dim bIsEmpty As Boolean = False
-            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, component, bIsEmpty) _
-            Then
-                Me.Updated = True
-                Return True
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If component Is Nothing Then Return False
+
+        Dim bIsEmpty As Boolean = False
+        If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, component, bIsEmpty) _
+        Then
+            Me.Updated = True
+            Return True
+        End If
+
         Return False
     End Function
 
@@ -119,8 +117,6 @@ Public Class XmlInterfaceView
                 label.Visible = False
                 text.Visible = False
             End If
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = False
         End Try
@@ -131,8 +127,6 @@ Public Class XmlInterfaceView
             m_bInitOk = True
             m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = False
         End Try
@@ -148,9 +142,6 @@ Public Class XmlInterfaceView
             Else
                 m_chkRoot.Visible = False
             End If
-
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = False
         End Try
@@ -161,8 +152,6 @@ Public Class XmlInterfaceView
             m_bInitOk = True
             m_xmlBindingsList.AddBinding(dataControl, Me, "Package")
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = False
         End Try
@@ -188,20 +177,18 @@ Public Class XmlInterfaceView
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim xmlcpnt As XmlComponent = CreateDocument(removeNode.Node)
-            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
 
-            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + xmlcpnt.Name, _
-                       cstMsgYesNoQuestion, _
-                       xmlcpnt.Name) = MsgBoxResult.Yes _
-            Then
-                Dim strNodeName As String = removeNode.NodeName
-                bResult = MyBase.RemoveComponent(removeNode)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim xmlcpnt As XmlComponent = CreateDocument(removeNode.Node)
+        xmlcpnt.GenerationLanguage = Me.GenerationLanguage
+
+        If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + xmlcpnt.Name, _
+                   cstMsgYesNoQuestion, _
+                   xmlcpnt.Name) = MsgBoxResult.Yes _
+        Then
+            Dim strNodeName As String = removeNode.NodeName
+            bResult = MyBase.RemoveComponent(removeNode)
+        End If
+
         Return bResult
     End Function
 

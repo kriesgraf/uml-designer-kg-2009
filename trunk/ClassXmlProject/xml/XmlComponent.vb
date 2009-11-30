@@ -256,13 +256,11 @@ Public Class XmlComponent
 
     Protected Friend Overloads Function TestNode(ByVal xpath As String) As Boolean
         Dim bResult As Boolean = False
-        Try
-            If m_xmlNode IsNot Nothing Then
-                bResult = (m_xmlNode.SelectSingleNode(xpath) IsNot Nothing)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If m_xmlNode IsNot Nothing Then
+            bResult = (m_xmlNode.SelectSingleNode(xpath) IsNot Nothing)
+        End If
+
         Return bResult
     End Function
 
@@ -301,40 +299,33 @@ Public Class XmlComponent
 
     Protected Friend Overloads Function SelectNodes(ByVal nodeXml As XmlNode, Optional ByVal xpath As String = "*") As XmlNodeList
         Dim xmlResult As XmlNodeList = Nothing
-        Try
-            If nodeXml IsNot Nothing Then
-                xmlResult = nodeXml.SelectNodes(xpath)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If nodeXml IsNot Nothing Then
+            xmlResult = nodeXml.SelectNodes(xpath)
+        End If
+
         Return xmlResult
     End Function
 
     Protected Friend Overloads Function SelectNodes(Optional ByVal xpath As String = "*") As XmlNodeList
         Dim xmlResult As XmlNodeList = Nothing
-        Try
-            If m_xmlNode IsNot Nothing Then
-                xmlResult = m_xmlNode.SelectNodes(xpath)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If m_xmlNode IsNot Nothing Then
+            xmlResult = m_xmlNode.SelectNodes(xpath)
+        End If
+
         Return xmlResult
     End Function
 
     Protected Friend Function GetNodeString(ByVal xpath As String) As String
         Dim strResult As String = ""
         Dim nodeXml As XmlNode
-        Try
-            nodeXml = GetNode(xpath)
-            If nodeXml IsNot Nothing Then
-                strResult = nodeXml.InnerText
-            End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        nodeXml = GetNode(xpath)
+        If nodeXml IsNot Nothing Then
+            strResult = nodeXml.InnerText
+        End If
+
         Return strResult
     End Function
 
@@ -381,54 +372,45 @@ Public Class XmlComponent
 
     Protected Friend Sub SetBooleanAttribute(ByVal name As String, ByVal value_bool As Boolean, _
                                              Optional ByVal value_true As String = "yes", Optional ByVal value_false As String = "no")
-        Try
-            If value_bool Then
-                SetAttribute(name, value_true)
-            Else
-                SetAttribute(name, value_false)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If value_bool Then
+            SetAttribute(name, value_true)
+        Else
+            SetAttribute(name, value_false)
+        End If
     End Sub
 
     Protected Friend Function CheckAttribute(ByVal name As String, ByVal to_check As String, _
                                              ByVal default_value As String, Optional ByVal xpath As String = "") As Boolean
 
         Dim strResult As String = Nothing
-        Try
-            strResult = GetAttribute(name, xpath)
 
-            If strResult = Nothing Then
-                Return (to_check = default_value)
-            End If
-            Return (to_check = strResult)
+        strResult = GetAttribute(name, xpath)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If strResult = Nothing Then
+            Return (to_check = default_value)
+        End If
+        Return (to_check = strResult)
     End Function
 
     Protected Friend Function GetAttribute(ByVal name As String, Optional ByVal xpath As String = "") As String
         Dim strResult As String = Nothing
         Dim nodeXml As XmlNode
-        Try
-            If m_xmlNode IsNot Nothing Then
-                If xpath = "" Then
-                    nodeXml = m_xmlNode.Attributes.ItemOf(name)
-                Else
-                    nodeXml = GetNode(xpath)
-                    If nodeXml IsNot Nothing Then
-                        nodeXml = nodeXml.Attributes.ItemOf(name)
-                    End If
-                End If
+
+        If m_xmlNode IsNot Nothing Then
+            If xpath = "" Then
+                nodeXml = m_xmlNode.Attributes.ItemOf(name)
+            Else
+                nodeXml = GetNode(xpath)
                 If nodeXml IsNot Nothing Then
-                    strResult = nodeXml.Value
+                    nodeXml = nodeXml.Attributes.ItemOf(name)
                 End If
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+            If nodeXml IsNot Nothing Then
+                strResult = nodeXml.Value
+            End If
+        End If
+
         Return strResult
     End Function
 
@@ -437,54 +419,48 @@ Public Class XmlComponent
         Dim nodeXml As XmlNode = Nothing
         Dim delim As String = Chr(10) + Chr(13) + Chr(9) + Chr(32)
 
-        Try
-            nodeXml = m_xmlNode.SelectSingleNode(xpath)
+        nodeXml = m_xmlNode.SelectSingleNode(xpath)
 
-            If nodeXml Is Nothing And m_bCreateNodeNow Then
-                nodeXml = CreateAppendNode(xpath, True, value.Trim(delim.ToCharArray()))
-            ElseIf nodeXml IsNot Nothing Then
-                nodeXml.InnerText = value.Trim(delim.ToCharArray())
-            End If
+        If nodeXml Is Nothing And m_bCreateNodeNow Then
+            nodeXml = CreateAppendNode(xpath, True, value.Trim(delim.ToCharArray()))
+        ElseIf nodeXml IsNot Nothing Then
+            nodeXml.InnerText = value.Trim(delim.ToCharArray())
+        End If
 
-            bResult = True
+        bResult = True
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return bResult
     End Function
 
     Protected Friend Function SetAttribute(ByVal name As String, ByVal value As String, Optional ByVal xpath As String = "") As Boolean
         Dim bResult As Boolean = False
         Dim nodeXml As XmlNode = m_xmlNode
-        Try
-            If xpath <> "" Then
-                nodeXml = GetNode(xpath)
-                If nodeXml Is Nothing And m_bCreateNodeNow Then
-                    nodeXml = CreateAppendNode(xpath)
-                End If
-            Else
-                nodeXml = m_xmlNode
-            End If
 
-            If nodeXml Is Nothing Then
-                '                Throw New Exception("Current nodeXml is null")
-                Return False
+        If xpath <> "" Then
+            nodeXml = GetNode(xpath)
+            If nodeXml Is Nothing And m_bCreateNodeNow Then
+                nodeXml = CreateAppendNode(xpath)
             End If
+        Else
+            nodeXml = m_xmlNode
+        End If
 
-            Dim attrib As XmlAttribute = nodeXml.Attributes.ItemOf(name)
+        If nodeXml Is Nothing Then
+            '                Throw New Exception("Current nodeXml is null")
+            Return False
+        End If
 
-            If attrib Is Nothing And m_bCreateNodeNow Then
-                attrib = nodeXml.Attributes.Append(CreateAttribute(name))
-            End If
+        Dim attrib As XmlAttribute = nodeXml.Attributes.ItemOf(name)
 
-            If attrib IsNot Nothing Then
-                attrib.Value = value
-                bResult = True
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If attrib Is Nothing And m_bCreateNodeNow Then
+            attrib = nodeXml.Attributes.Append(CreateAttribute(name))
+        End If
+
+        If attrib IsNot Nothing Then
+            attrib.Value = value
+            bResult = True
+        End If
+
         Return bResult
     End Function
 
@@ -518,59 +494,54 @@ Public Class XmlComponent
 
     Protected Friend Function CreateAppendNode(ByVal xpath As String, Optional ByVal bAddTextNode As Boolean = False, Optional ByVal value As String = "undefined") As XmlNode
         Dim xmlResult As XmlNode = Nothing
-        Try
-            If xpath.Contains("::") Then
 
-                Dim StringArray() As String = xpath.Split("::")
-                Select Case StringArray(0)
-                    Case "following-sibling"
-                        xmlResult = m_xmlNode.ParentNode.InsertAfter(CreateNode(StringArray(2)), m_xmlNode)
-                    Case "preceding-sibling"
-                        xmlResult = m_xmlNode.ParentNode.InsertBefore(CreateNode(StringArray(2)), m_xmlNode)
-                    Case Else
-                        Throw New Exception("axe-location " + StringArray(0) + " not yet supported")
-                End Select
+        If xpath.Contains("::") Then
 
-            ElseIf xpath.Contains("/") Then
+            Dim StringArray() As String = xpath.Split("::")
+            Select Case StringArray(0)
+                Case "following-sibling"
+                    xmlResult = m_xmlNode.ParentNode.InsertAfter(CreateNode(StringArray(2)), m_xmlNode)
+                Case "preceding-sibling"
+                    xmlResult = m_xmlNode.ParentNode.InsertBefore(CreateNode(StringArray(2)), m_xmlNode)
+                Case Else
+                    Throw New Exception("axe-location " + StringArray(0) + " not yet supported")
+            End Select
 
-                Dim StringArray() As String = xpath.Split("/")
-                xmlResult = GetNode(StringArray(0))
-                If xmlResult Is Nothing Then
-                    xmlResult = CreateElement(StringArray(0))
-                    AppendNode(xmlResult)
-                End If
-                xmlResult = xmlResult.AppendChild(CreateElement(StringArray(1)))
+        ElseIf xpath.Contains("/") Then
 
-            Else
-                ' We use method "CreateElement" because this is not Overridable
-                xmlResult = CreateElement(xpath)
+            Dim StringArray() As String = xpath.Split("/")
+            xmlResult = GetNode(StringArray(0))
+            If xmlResult Is Nothing Then
+                xmlResult = CreateElement(StringArray(0))
                 AppendNode(xmlResult)
             End If
-            If xmlResult IsNot Nothing And bAddTextNode Then
-                xmlResult.AppendChild(CreateTextNode(value))
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+            xmlResult = xmlResult.AppendChild(CreateElement(StringArray(1)))
+
+        Else
+            ' We use method "CreateElement" because this is not Overridable
+            xmlResult = CreateElement(xpath)
+            AppendNode(xmlResult)
+        End If
+        If xmlResult IsNot Nothing And bAddTextNode Then
+            xmlResult.AppendChild(CreateTextNode(value))
+        End If
+
         Return xmlResult
     End Function
 
     Protected Friend Overridable Function RemoveMe() As Boolean
         Dim bResult As Boolean = False
         Dim parentNode As XmlNode
-        Try
-            If m_xmlNode IsNot Nothing Then
-                parentNode = m_xmlNode.ParentNode
-                If parentNode IsNot Nothing Then
-                    NotifyRemove(m_xmlNode)
-                    parentNode.RemoveChild(m_xmlNode)
-                    m_xmlNode = Nothing
-                    bResult = True
-                End If
+
+        If m_xmlNode IsNot Nothing Then
+            parentNode = m_xmlNode.ParentNode
+            If parentNode IsNot Nothing Then
+                NotifyRemove(m_xmlNode)
+                parentNode.RemoveChild(m_xmlNode)
+                m_xmlNode = Nothing
+                bResult = True
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
 
         Return bResult
     End Function
@@ -583,53 +554,42 @@ Public Class XmlComponent
     Protected Friend Function RemoveSingleNode(ByVal xpath As String) As Boolean
         Dim bResult As Boolean = False
         Dim xmlRemovedNode As XmlNode
-        Try
-            xmlRemovedNode = m_xmlNode.SelectSingleNode(xpath)
-            If xmlRemovedNode IsNot Nothing Then
-                NotifyRemove(xmlRemovedNode)
-                m_xmlNode.RemoveChild(xmlRemovedNode)
-            End If
-            bResult = True
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        xmlRemovedNode = m_xmlNode.SelectSingleNode(xpath)
+        If xmlRemovedNode IsNot Nothing Then
+            NotifyRemove(xmlRemovedNode)
+            m_xmlNode.RemoveChild(xmlRemovedNode)
+        End If
+        bResult = True
+
         Return bResult
     End Function
 
     Protected Friend Function RemoveAllNodes(Optional ByVal xpath As String = "*") As Boolean
         Dim bResult As Boolean = False
 
-        Try
-            Dim list As XmlNodeList
+        Dim list As XmlNodeList
 
-            list = m_xmlNode.SelectNodes(xpath)
+        list = m_xmlNode.SelectNodes(xpath)
 
-            Dim iterator As IEnumerator = list.GetEnumerator()
-            iterator.Reset()
+        Dim iterator As IEnumerator = list.GetEnumerator()
+        iterator.Reset()
 
-            While iterator.MoveNext()
-                NotifyRemove(iterator.Current)
-                m_xmlNode.RemoveChild(iterator.Current)
-            End While
-            bResult = True
+        While iterator.MoveNext()
+            NotifyRemove(iterator.Current)
+            m_xmlNode.RemoveChild(iterator.Current)
+        End While
+        bResult = True
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return bResult
     End Function
 
     Public Overridable Function ReplaceMe(ByVal addedNode As XmlComponent) As Boolean
-        Try
-            m_xmlNode.ParentNode.ReplaceChild(addedNode.Node, m_xmlNode)
-            addedNode.NotifyInsert()
-            m_xmlNode = Nothing
-            Return True
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlNode.ParentNode.ReplaceChild(addedNode.Node, m_xmlNode)
+        addedNode.NotifyInsert()
+        m_xmlNode = Nothing
+        Return True
     End Function
 
     Protected Friend Function ReplaceAttribute(ByVal Source As String, ByVal Dest As String, Optional ByVal xpath As String = "") As Boolean
@@ -639,23 +599,20 @@ Public Class XmlComponent
 
     Protected Friend Function RemoveAttribute(ByVal name As String, Optional ByVal xpath As String = "") As Boolean
         Dim bResult As Boolean = False
-        Try
-            If xpath = "" Then
-                If m_xmlNode.Attributes.ItemOf(name) IsNot Nothing Then
-                    m_xmlNode.Attributes.RemoveNamedItem(name)
-                End If
-            Else
-                If TestNode(xpath) Then
-                    If GetNode(xpath).Attributes.ItemOf(name) IsNot Nothing Then
-                        GetNode(xpath).Attributes.RemoveNamedItem(name)
-                    End If
+
+        If xpath = "" Then
+            If m_xmlNode.Attributes.ItemOf(name) IsNot Nothing Then
+                m_xmlNode.Attributes.RemoveNamedItem(name)
+            End If
+        Else
+            If TestNode(xpath) Then
+                If GetNode(xpath).Attributes.ItemOf(name) IsNot Nothing Then
+                    GetNode(xpath).Attributes.RemoveNamedItem(name)
                 End If
             End If
-            bResult = True
+        End If
+        bResult = True
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return bResult
     End Function
 
@@ -672,31 +629,27 @@ Public Class XmlComponent
     Protected Friend Function AddAttribute(ByVal name As String, Optional ByVal value As String = "", Optional ByVal xpath As String = "") As XmlAttribute
         Dim attrib As XmlAttribute = Nothing
         Dim nodeXml As XmlNode = Nothing
-        Try
 
-            If xpath <> "" Then
-                nodeXml = GetNode(xpath)
-            Else
-                nodeXml = m_xmlNode
-            End If
+        If xpath <> "" Then
+            nodeXml = GetNode(xpath)
+        Else
+            nodeXml = m_xmlNode
+        End If
 
-            If nodeXml Is Nothing Then
-                '                Throw New Exception("Current nodeXml is null")
-                Return Nothing
-            End If
+        If nodeXml Is Nothing Then
+            '                Throw New Exception("Current nodeXml is null")
+            Return Nothing
+        End If
 
-            attrib = nodeXml.Attributes.ItemOf(name)
+        attrib = nodeXml.Attributes.ItemOf(name)
 
-            If attrib Is Nothing Then
-                attrib = CreateAttribute(name)
-                nodeXml.Attributes.SetNamedItem(attrib)
-            End If
+        If attrib Is Nothing Then
+            attrib = CreateAttribute(name)
+            nodeXml.Attributes.SetNamedItem(attrib)
+        End If
 
-            attrib.Value = value
+        attrib.Value = value
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return attrib
     End Function
 
@@ -760,70 +713,61 @@ Public Class XmlComponent
 
     Public Overridable Function Clone(ByVal nodeXml As XmlNode, Optional ByVal bLoadChildren As Boolean = False) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
-        Try
-            xmlResult = MemberwiseClone()
-            xmlResult.Node = nodeXml
-            xmlResult.ChangeReferences(bLoadChildren)
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        xmlResult = MemberwiseClone()
+        xmlResult.Node = nodeXml
+        xmlResult.ChangeReferences(bLoadChildren)
+
         Return xmlResult
     End Function
 
     Public Function ImportDocument(ByVal component As XmlComponent, Optional ByVal docXml As XmlDocument = Nothing) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
-        Try
-            Dim clone As XmlNode = Nothing
 
-            If component Is Nothing Then
-                Return Nothing
+        Dim clone As XmlNode = Nothing
 
-            ElseIf docXml IsNot Nothing _
-            Then
-                clone = docXml.ImportNode(component.Node, True)
+        If component Is Nothing Then
+            Return Nothing
 
-            ElseIf Me.Document IsNot Nothing _
-            Then
-                clone = Me.Document.ImportNode(component.Node, True)
-            Else
-                Throw New Exception("Document property is not initialize to process node duplication in component " + Me.ToString())
-            End If
-            xmlResult = XmlNodeManager.GetInstance().CreateDocument(clone)
+        ElseIf docXml IsNot Nothing _
+        Then
+            clone = docXml.ImportNode(component.Node, True)
 
-        Catch ex As Exception
-            Throw (ex)
-        End Try
+        ElseIf Me.Document IsNot Nothing _
+        Then
+            clone = Me.Document.ImportNode(component.Node, True)
+        Else
+            Throw New Exception("Document property is not initialize to process node duplication in component " + Me.ToString())
+        End If
+        xmlResult = XmlNodeManager.GetInstance().CreateDocument(clone)
+
         Return xmlResult
     End Function
 
     Protected Overloads Function CreateDocument(ByVal strNodeName As String, Optional ByVal docXml As XmlDocument = Nothing, Optional ByVal bLoadChildren As Boolean = False) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
-        Try
-            Dim source As XmlDocument = docXml
-            If source Is Nothing Then
-                If Me.Document Is Nothing Then
-                    Throw New Exception("Document property is not initialize to process '" + strNodeName + "' component creation in component " + Me.ToString())
-                Else
-                    source = Me.Document
-                End If
-            End If
 
-            xmlResult = XmlNodeManager.GetInstance().CreateDocument(strNodeName, source, bLoadChildren)
-        Catch ex As Exception
-            Throw (ex)
-        End Try
+        Dim source As XmlDocument = docXml
+        If source Is Nothing Then
+            If Me.Document Is Nothing Then
+                Throw New Exception("Document property is not initialize to process '" + strNodeName + "' component creation in component " + Me.ToString())
+            Else
+                source = Me.Document
+            End If
+        End If
+
+        xmlResult = XmlNodeManager.GetInstance().CreateDocument(strNodeName, source, bLoadChildren)
+
         Return xmlResult
     End Function
 
     Protected Overloads Function CreateDocument(Optional ByVal nodeXml As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
-        Try
-            If nodeXml IsNot Nothing Then
-                xmlResult = XmlNodeManager.GetInstance().CreateDocument(nodeXml, bLoadChildren)
-            End If
-        Catch ex As Exception
-            Throw (ex)
-        End Try
+
+        If nodeXml IsNot Nothing Then
+            xmlResult = XmlNodeManager.GetInstance().CreateDocument(nodeXml, bLoadChildren)
+        End If
+
         Return xmlResult
     End Function
 
@@ -844,8 +788,7 @@ Public Class XmlComponent
             ' But attribute 'Name' will be create here if not exists
             m_bCreateNodeNow = bCreateNodeNow
             Name = "New_" + m_xmlNode.Name
-        Catch ex As Exception
-            Throw ex
+
         Finally
             m_bCreateNodeNow = False
         End Try

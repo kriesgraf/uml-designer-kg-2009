@@ -245,11 +245,8 @@ Public Class XmlPropertySpec
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
-        Try
-            ChangeReferences(bLoadChildren)
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        ChangeReferences(bLoadChildren)
     End Sub
 #End Region
 
@@ -283,8 +280,6 @@ Public Class XmlPropertySpec
             AccessSetInline = False
             AccessSetRange = "no"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
@@ -307,22 +302,18 @@ Public Class XmlPropertySpec
 #Region "Protected methods"
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
-        Try
-            MyBase.ChangeReferences(bLoadChildren)
 
-            Dim nodeXml As XmlNode
-            If TestNode("type") = False And m_bCreateNodeNow Then
-                nodeXml = CreateAppendNode("type")
-            Else
-                nodeXml = GetNode("type")
-            End If
+        MyBase.ChangeReferences(bLoadChildren)
 
-            m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
-            If m_xmlType IsNot Nothing Then m_xmlType.GenerationLanguage = Me.GenerationLanguage
+        Dim nodeXml As XmlNode
+        If TestNode("type") = False And m_bCreateNodeNow Then
+            nodeXml = CreateAppendNode("type")
+        Else
+            nodeXml = GetNode("type")
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
+        If m_xmlType IsNot Nothing Then m_xmlType.GenerationLanguage = Me.GenerationLanguage
     End Sub
 #End Region
 End Class

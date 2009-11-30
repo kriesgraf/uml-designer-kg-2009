@@ -38,63 +38,56 @@ Public Class XmlClassListView
                                             ByVal DataPropertyName As String, _
                                             ByVal HeaderText As String, _
                                             ByVal column As DataGridViewColumn)
-        Try
-            Dim myList As New ArrayList
-            ' Only kind of classes
-            AddNodeList(document, myList, "//class[@implementation!='container']")
-            AddNodeList(document, myList, "//interface")
-            AddNodeList(document, myList, "//reference[@type!='typedef'][@container='0' or not(@container)]")
 
-            If myList.Count = 0 Then
-                myList = Nothing
+        Dim myList As New ArrayList
+        ' Only kind of classes
+        AddNodeList(document, myList, "//class[@implementation!='container']")
+        AddNodeList(document, myList, "//interface")
+        AddNodeList(document, myList, "//reference[@type!='typedef'][@container='0' or not(@container)]")
+
+        If myList.Count = 0 Then
+            myList = Nothing
+        End If
+        With CType(column, DataGridViewComboBoxColumn)
+            'Debug.Print("DataPropertyName=" + DataPropertyName + ";ValueMember=" + XmlClassListView.cstValueMember)
+            .Name = "ControlName_" + DataPropertyName
+
+            .DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
+            .DisplayStyleForCurrentCellOnly = True
+            .DataPropertyName = DataPropertyName
+            .HeaderText = HeaderText
+            .MaxDropDownItems = 10
+            .FlatStyle = FlatStyle.Flat
+
+            If myList.Count > 0 Then
+                .DataSource = myList
+            Else
+                .DataSource = Nothing
             End If
-            With CType(column, DataGridViewComboBoxColumn)
-                'Debug.Print("DataPropertyName=" + DataPropertyName + ";ValueMember=" + XmlClassListView.cstValueMember)
-                .Name = "ControlName_" + DataPropertyName
-
-                .DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
-                .DisplayStyleForCurrentCellOnly = True
-                .DataPropertyName = DataPropertyName
-                .HeaderText = HeaderText
-                .MaxDropDownItems = 10
-                .FlatStyle = FlatStyle.Flat
-
-                If myList.Count > 0 Then
-                    .DataSource = myList
-                Else
-                    .DataSource = Nothing
-                End If
-                .ValueMember = cstValueMember
-                .DisplayMember = cstDisplayMember
-            End With
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+            .ValueMember = cstValueMember
+            .DisplayMember = cstDisplayMember
+        End With
     End Sub
 
     Public Shared Sub InitTypedefCombo(ByVal document As XmlComponent, ByVal control As ComboBox)
-        Try
-            Dim myList As New ArrayList
 
-            AddNodeList(document, myList, "//class[@implementation!='container']")
-            AddNodeList(document, myList, "//interface")
-            AddNodeList(document, myList, "//reference[@type!='typedef'][@container='0' or not(@container)]")
+        Dim myList As New ArrayList
 
-            With control
-                .DropDownStyle = ComboBoxStyle.DropDownList
+        AddNodeList(document, myList, "//class[@implementation!='container']")
+        AddNodeList(document, myList, "//interface")
+        AddNodeList(document, myList, "//reference[@type!='typedef'][@container='0' or not(@container)]")
 
-                If myList.Count > 0 Then
-                    .DataSource = myList
-                Else
-                    .DataSource = Nothing
-                End If
-                .ValueMember = cstValueMember
-                .DisplayMember = cstDisplayMember
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
+        With control
+            .DropDownStyle = ComboBoxStyle.DropDownList
+
+            If myList.Count > 0 Then
+                .DataSource = myList
+            Else
+                .DataSource = Nothing
+            End If
+            .ValueMember = cstValueMember
+            .DisplayMember = cstDisplayMember
+        End With
     End Sub
 
     Public Overrides Function CompareComponent(ByVal x As Object, ByVal y As Object) As Integer

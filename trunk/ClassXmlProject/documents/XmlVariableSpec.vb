@@ -22,8 +22,6 @@ Public Class XmlVariableSpec
             m_bCreateNodeNow = bCreateNodeNow
             Range = "public"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try

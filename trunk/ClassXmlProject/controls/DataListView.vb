@@ -160,85 +160,82 @@ Public Class DataListView
 #Region "Private methods"
 
     Private Sub InitBinding()
-        Try
-            If m_strDisplayMember = "" Then
-                If m_oDataSource IsNot Nothing Then
-                    Throw New Exception("DisplayMember is not defined")
-                Else
-                    Exit Sub ' A la construction il ne faut lever d'exception
-                End If
+
+        If m_strDisplayMember = "" Then
+            If m_oDataSource IsNot Nothing Then
+                Throw New Exception("DisplayMember is not defined")
+            Else
+                Exit Sub ' A la construction il ne faut lever d'exception
             End If
+        End If
 
-            Dim lvitem As ListViewItem
+        Dim lvitem As ListViewItem
 
-            If m_bindingSource Is Nothing _
-            Then
-                m_bindingSource = New BindingSource
-                m_bindingSource.DataSource = m_oDataSource
+        If m_bindingSource Is Nothing _
+        Then
+            m_bindingSource = New BindingSource
+            m_bindingSource.DataSource = m_oDataSource
 
-            ElseIf m_bindingSource.DataSource Is Nothing _
-            Then
-                m_bindingSource.DataSource = m_oDataSource
-            End If
+        ElseIf m_bindingSource.DataSource Is Nothing _
+        Then
+            m_bindingSource.DataSource = m_oDataSource
+        End If
 
-            '  If m_bindingSource.Count = 0 Then Exit Sub
+        '  If m_bindingSource.Count = 0 Then Exit Sub
 
-            Dim list As PropertyDescriptorCollection = m_bindingSource.GetItemProperties(Nothing)
+        Dim list As PropertyDescriptorCollection = m_bindingSource.GetItemProperties(Nothing)
 
 #If DEBUG Then
-            'If m_oDataSource IsNot Nothing Then Debug.Print(m_oDataSource.ToString())
-            'For Each pe As System.ComponentModel.PropertyDescriptor In list
-            'Debug.Print(pe.DisplayName)
-            'Next
+        'If m_oDataSource IsNot Nothing Then Debug.Print(m_oDataSource.ToString())
+        'For Each pe As System.ComponentModel.PropertyDescriptor In list
+        'Debug.Print(pe.DisplayName)
+        'Next
 #End If
-            Me.Items.Clear()
+        Me.Items.Clear()
 
-            If list.Count > 0 Then
-                ' If descValueProperty = Nothing We can't continue
-                Dim descDisplayProperty As PropertyDescriptor = list(m_strDisplayMember)
+        If list.Count > 0 Then
+            ' If descValueProperty = Nothing We can't continue
+            Dim descDisplayProperty As PropertyDescriptor = list(m_strDisplayMember)
 
-                If descDisplayProperty Is Nothing Then
-                    Throw New Exception("DisplayMember '" + m_strDisplayMember + "' is unknown")
-                End If
-                ' If descValueProperty = Nothing We don't manage icons
-                Dim descValueProperty As PropertyDescriptor = list(m_strValueMember)
-
-                ' If descValueProperty = Nothing We don't manage icons
-                Dim descToolTipProperty As PropertyDescriptor = list("ToolTipText")
-
-                m_bindingSource.Position = 0
-
-                Dim bContinue As Boolean = (m_bindingSource.Count > 0)
-                While bContinue
-                    Dim strName As String() = CType(descDisplayProperty.GetValue(m_bindingSource.Current), String())
-                    Dim iIcon As Integer = 0
-
-                    If descValueProperty IsNot Nothing Then
-                        iIcon = CType(descValueProperty.GetValue(m_bindingSource.Current), Integer)
-                    End If
-                    lvitem = New ListViewItem(strName, iIcon)
-                    lvitem.Tag = m_bindingSource.Current
-
-                    'Dim xkm As XmlProjectMemberView = CType(m_bindingSource.Current, XmlProjectMemberView)
-                    'Debug.Print(xkm.ToString + ":=" + Str(xkm.Tag))
-
-                    If descToolTipProperty IsNot Nothing Then
-                        lvitem.ToolTipText = CType(descToolTipProperty.GetValue(m_bindingSource.Current), String)
-                    End If
-
-                    Items.Add(lvitem)
-                    'Items.Add(New ListViewItem(New String() {"titre1", "moi", "2208"}, 0))
-
-                    If m_bindingSource.Position + 1 < m_bindingSource.Count Then
-                        m_bindingSource.Position = m_bindingSource.Position + 1
-                    Else
-                        bContinue = False
-                    End If
-                End While
+            If descDisplayProperty Is Nothing Then
+                Throw New Exception("DisplayMember '" + m_strDisplayMember + "' is unknown")
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+            ' If descValueProperty = Nothing We don't manage icons
+            Dim descValueProperty As PropertyDescriptor = list(m_strValueMember)
+
+            ' If descValueProperty = Nothing We don't manage icons
+            Dim descToolTipProperty As PropertyDescriptor = list("ToolTipText")
+
+            m_bindingSource.Position = 0
+
+            Dim bContinue As Boolean = (m_bindingSource.Count > 0)
+            While bContinue
+                Dim strName As String() = CType(descDisplayProperty.GetValue(m_bindingSource.Current), String())
+                Dim iIcon As Integer = 0
+
+                If descValueProperty IsNot Nothing Then
+                    iIcon = CType(descValueProperty.GetValue(m_bindingSource.Current), Integer)
+                End If
+                lvitem = New ListViewItem(strName, iIcon)
+                lvitem.Tag = m_bindingSource.Current
+
+                'Dim xkm As XmlProjectMemberView = CType(m_bindingSource.Current, XmlProjectMemberView)
+                'Debug.Print(xkm.ToString + ":=" + Str(xkm.Tag))
+
+                If descToolTipProperty IsNot Nothing Then
+                    lvitem.ToolTipText = CType(descToolTipProperty.GetValue(m_bindingSource.Current), String)
+                End If
+
+                Items.Add(lvitem)
+                'Items.Add(New ListViewItem(New String() {"titre1", "moi", "2208"}, 0))
+
+                If m_bindingSource.Position + 1 < m_bindingSource.Count Then
+                    m_bindingSource.Position = m_bindingSource.Position + 1
+                Else
+                    bContinue = False
+                End If
+            End While
+        End If
     End Sub
 
     Private Sub DataListView_MouseDoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.MouseDoubleClick

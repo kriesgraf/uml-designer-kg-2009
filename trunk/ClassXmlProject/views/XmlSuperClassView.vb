@@ -32,57 +32,48 @@ Public Class XmlSuperClassView
     End Function
 
     Public Function UpdateValues() As Boolean
-        Try
-            Dim iInherited As Integer = 0
-            Dim strClassName As String = ""
+        Dim iInherited As Integer = 0
+        Dim strClassName As String = ""
 
-            For Each xmlview As XmlNodeListView In m_ListBox.SelectedItems
-                If xmlview.Implementation <> EImplementation.Interf Then
-                    iInherited += 1
-                    If iInherited > 1 Then
-                        MsgBox("Classes '" + strClassName + "' and '" + xmlview.Name + "' are incompatible, can extend only one class.", MsgBoxStyle.Critical, "Inherited classes")
-                        Return False
-                    End If
-                    strClassName = xmlview.Name
+        For Each xmlview As XmlNodeListView In m_ListBox.SelectedItems
+            If xmlview.Implementation <> EImplementation.Interf Then
+                iInherited += 1
+                If iInherited > 1 Then
+                    MsgBox("Classes '" + strClassName + "' and '" + xmlview.Name + "' are incompatible, can extend only one class.", MsgBoxStyle.Critical, "Inherited classes")
+                    Return False
                 End If
-            Next
-
-            Dim strIgnoreClasses As String = ""
-            ' Get list of current base classes
-            For Each child As XmlNode In SelectNodes("inherited")
-                strIgnoreClasses += GetIDREF(child) + ";"
-            Next
-
-            For Each xmlview As XmlNodeListView In m_ListBox.SelectedItems
-                Dim xmlcpnt As XmlInheritSpec = MyBase.CreateDocument("inherited", MyBase.Document)
-                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
-                xmlcpnt.Idref = xmlview.Id
-
-                MyBase.AppendNode(xmlcpnt.Node)
-            Next xmlview
-
-            ' We ask to ignore "no members" and return true so; then return false only on error
-            ' We ask to displays only overridable methods of new base classes
-            If OverrideProperties(m_eImplementation, strIgnoreClasses, True) Then
-                OverrideMethods(m_eImplementation, strIgnoreClasses, True)
+                strClassName = xmlview.Name
             End If
-            Return True
+        Next
 
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return False
+        Dim strIgnoreClasses As String = ""
+        ' Get list of current base classes
+        For Each child As XmlNode In SelectNodes("inherited")
+            strIgnoreClasses += GetIDREF(child) + ";"
+        Next
+
+        For Each xmlview As XmlNodeListView In m_ListBox.SelectedItems
+            Dim xmlcpnt As XmlInheritSpec = MyBase.CreateDocument("inherited", MyBase.Document)
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
+            xmlcpnt.Idref = xmlview.Id
+
+            MyBase.AppendNode(xmlcpnt.Node)
+        Next xmlview
+
+        ' We ask to ignore "no members" and return true so; then return false only on error
+        ' We ask to displays only overridable methods of new base classes
+        If OverrideProperties(m_eImplementation, strIgnoreClasses, True) Then
+            OverrideMethods(m_eImplementation, strIgnoreClasses, True)
+        End If
+        Return True
     End Function
 
     Public Function InitAvailableClassesList(ByVal bRestrictedVisibility As Boolean, ByVal lsbControl As ListBox) As Boolean
-        Try
-            XmlNodeListView.InitInheritedListBox(Me, lsbControl, m_eImplementation, bRestrictedVisibility)
-            m_ListBox = lsbControl
-            m_ListBox.SelectedIndex = -1
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        XmlNodeListView.InitInheritedListBox(Me, lsbControl, m_eImplementation, bRestrictedVisibility)
+        m_ListBox = lsbControl
+        m_ListBox.SelectedIndex = -1
+
     End Function
 
 End Class

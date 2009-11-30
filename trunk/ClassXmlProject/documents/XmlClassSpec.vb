@@ -180,119 +180,108 @@ Public Class XmlClassSpec
             Comment = "Insert here details"
             BriefComment = "Insert here a brief comment"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
     End Sub
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
-        Try
-            AddChildren(SelectNodes("*[name()!='comment' and name()!='inline']"), strViewName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        AddChildren(SelectNodes("*[name()!='comment' and name()!='inline']"), strViewName)
+
     End Sub
 
     Public Overrides Function GetNameNewComponent(ByVal strDocName As String) As String
-        Try
-            If strDocName = "" Then
-                Dim child As XmlNode = Me.Node.LastChild
-                strDocName = child.Name
-                If strDocName = "method" Then
-                    If GetAttributeValue(child, "constructor") <> "no" Then
-                        strDocName = "constructor_doc"
-                    Else
-                        strDocName = MyBase.GetNameNewComponent(strDocName)
-                    End If
+
+        If strDocName = "" Then
+            Dim child As XmlNode = Me.Node.LastChild
+            strDocName = child.Name
+            If strDocName = "method" Then
+                If GetAttributeValue(child, "constructor") <> "no" Then
+                    strDocName = "constructor_doc"
+                Else
+                    strDocName = MyBase.GetNameNewComponent(strDocName)
                 End If
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return strDocName
     End Function
 
     Public Overrides Function CanRemove(ByVal removeNode As XmlComponent) As Boolean
-        Try
-            Select Case removeNode.NodeName
-                Case "typedef"
-                    If SelectNodes(XmlNodeListView.GetQueryListDependencies(removeNode)).Count > 0 _
+
+        Select Case removeNode.NodeName
+            Case "typedef"
+                If SelectNodes(XmlNodeListView.GetQueryListDependencies(removeNode)).Count > 0 _
+                Then
+                    If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
+                              vbCrLf + "Do you want to proceed", _
+                                cstMsgYesNoQuestion, _
+                                removeNode.Name) = MsgBoxResult.Yes _
                     Then
-                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
-                                  vbCrLf + "Do you want to proceed", _
-                                    cstMsgYesNoQuestion, _
-                                    removeNode.Name) = MsgBoxResult.Yes _
-                        Then
-                            Dim bIsEmpty As Boolean = False
+                        Dim bIsEmpty As Boolean = False
 
-                            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
-                                Me.Updated = True
-                            End If
-
-                            Return bIsEmpty
+                        If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
+                            Me.Updated = True
                         End If
-                    Else
-                        Return True
-                    End If
 
-                Case "property"
-                    If CanRemoveOverridedProperty(Me, removeNode) Then
-                        Return True
+                        Return bIsEmpty
                     End If
+                Else
+                    Return True
+                End If
 
-                Case "method"
-                    If CanRemoveOverridedMethod(Me, removeNode) Then
-                        Return True
-                    End If
+            Case "property"
+                If CanRemoveOverridedProperty(Me, removeNode) Then
+                    Return True
+                End If
 
-                Case Else
-                    Return MyBase.CanRemove(removeNode)
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+            Case "method"
+                If CanRemoveOverridedMethod(Me, removeNode) Then
+                    Return True
+                End If
+
+            Case Else
+                Return MyBase.CanRemove(removeNode)
+        End Select
+
         Return False
     End Function
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strTitle As String = "Name"
+
+        Dim strTitle As String = "Name"
+        Select Case removeNode.NodeName
+            Case "inherited"
+                strTitle = "Inheritance"
+
+            Case "dependency"
+                strTitle = "Dependency"
+
+            Case "collaboration"
+                strTitle = "Collaboration"
+
+            Case Else
+                ' Nothing to do
+        End Select
+
+        Dim strName As String = removeNode.Name
+        If MsgBox("Confirm to delete:" + vbCrLf + strTitle + ": " + strName, _
+                   cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
+        Then
             Select Case removeNode.NodeName
                 Case "inherited"
-                    strTitle = "Inheritance"
-
-                Case "dependency"
-                    strTitle = "Dependency"
-
-                Case "collaboration"
-                    strTitle = "Collaboration"
+                    RemoveInheritedProperties(Me, removeNode)
+                    RemoveInheritedMethods(Me, removeNode)
 
                 Case Else
                     ' Nothing to do
             End Select
 
-            Dim strName As String = removeNode.Name
-            If MsgBox("Confirm to delete:" + vbCrLf + strTitle + ": " + strName, _
-                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
-            Then
-                Select Case removeNode.NodeName
-                    Case "inherited"
-                        RemoveInheritedProperties(Me, removeNode)
-                        RemoveInheritedMethods(Me, removeNode)
+            bResult = MyBase.RemoveComponent(removeNode)
+        End If
 
-                    Case Else
-                        ' Nothing to do
-                End Select
-
-                bResult = MyBase.RemoveComponent(removeNode)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return bResult
     End Function
 
@@ -383,22 +372,20 @@ Public Class XmlClassSpec
 
     Protected Friend Overrides Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            If component IsNot Nothing Then
-                If component.NodeName = "typedef" Then
-                    If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node) _
-                        = dlgRedundancy.EResult.RedundancyChanged _
-                    Then
-                        Me.Updated = True
-                        bResult = True
-                    End If
-                Else
-                    MsgBox("No redundancies check on this node!", MsgBoxStyle.Exclamation)
+
+        If component IsNot Nothing Then
+            If component.NodeName = "typedef" Then
+                If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node) _
+                    = dlgRedundancy.EResult.RedundancyChanged _
+                Then
+                    Me.Updated = True
+                    bResult = True
                 End If
+            Else
+                MsgBox("No redundancies check on this node!", MsgBoxStyle.Exclamation)
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return bResult
     End Function
 
@@ -409,44 +396,41 @@ Public Class XmlClassSpec
     Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _
                                                     Optional ByVal eRename As ENameReplacement = ENameReplacement.NewName, _
                                                     Optional ByVal bSetIdrefChildren As Boolean = False)
-        Try
-            If xmlRefNodeCounter Is Nothing Then
-                Throw New Exception("Argument 'xmlRefNodeCounter' is null")
-            End If
 
-            Select Case Me.GenerationLanguage
-                Case ELanguage.Language_Java
-                    Me.Destructor = "no"
-                Case ELanguage.Language_Vbasic
-                    Me.Destructor = "protected"
-            End Select
+        If xmlRefNodeCounter Is Nothing Then
+            Throw New Exception("Argument 'xmlRefNodeCounter' is null")
+        End If
 
-            Me.Id = xmlRefNodeCounter.GetNewClassId()
-            Select Case eRename
-                Case ENameReplacement.NewName
-                    Name = "New_" + Me.Id
-                Case ENameReplacement.AddCopyName
-                    ' Name is set by caller
-                    Name = Name + "_" + Me.Id
-            End Select
+        Select Case Me.GenerationLanguage
+            Case ELanguage.Language_Java
+                Me.Destructor = "no"
+            Case ELanguage.Language_Vbasic
+                Me.Destructor = "protected"
+        End Select
 
-            If bSetIdrefChildren Then
-                Me.RemoveAllNodes("collaboration")
-                For Each element As XmlNode In Me.SelectNodes("inherited | dependency")
-                    If Me.GetElementById(GetIDREF(element)) Is Nothing Then
-                        RemoveNode(element)
-                    End If
-                Next
-            End If
+        Me.Id = xmlRefNodeCounter.GetNewClassId()
+        Select Case eRename
+            Case ENameReplacement.NewName
+                Name = "New_" + Me.Id
+            Case ENameReplacement.AddCopyName
+                ' Name is set by caller
+                Name = Name + "_" + Me.Id
+        End Select
 
-            Me.LoadChildrenList("typedef")
-
-            For Each child As XmlComponent In Me.ChildrenList
-                child.SetIdReference(xmlRefNodeCounter, ENameReplacement.NoReplacement, bSetIdrefChildren)
+        If bSetIdrefChildren Then
+            Me.RemoveAllNodes("collaboration")
+            For Each element As XmlNode In Me.SelectNodes("inherited | dependency")
+                If Me.GetElementById(GetIDREF(element)) Is Nothing Then
+                    RemoveNode(element)
+                End If
             Next
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
+        Me.LoadChildrenList("typedef")
+
+        For Each child As XmlComponent In Me.ChildrenList
+            child.SetIdReference(xmlRefNodeCounter, ENameReplacement.NoReplacement, bSetIdrefChildren)
+        Next
     End Sub
 
     Protected Friend Overrides Function AppendNode(ByVal child As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
@@ -517,12 +501,9 @@ Public Class XmlClassSpec
     End Function
 
     Protected Function CheckModel(ByVal strID As String) As XmlNode
-        Try
-            Return GetNode("descendant::*[@*='" + strID + "' and not(self::model)]")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return GetNode("descendant::*[@*='" + strID + "' and not(self::model)]")
+
     End Function
 
     Protected Function CheckTemplate(Optional ByVal bAlertUser As Boolean = False) As Boolean
@@ -540,56 +521,48 @@ Public Class XmlClassSpec
     End Function
 
     Protected Sub AddModelCount(ByVal iCount As Integer)
-        Try
-            Dim j As Integer = 0
-            Dim strID As String = ""
-            Dim list As XmlNodeList = SelectNodes("model")
 
-            If list.Count > iCount _
-            Then
-                If iCount = 0 Then
-                    RemoveModel("A")
-                End If
-                RemoveModel("B")
-            ElseIf list.Count < iCount _
-            Then
-                If list.Count = 0 Then
-                    AddModel("A")
-                End If
-                If iCount = 2 Then
-                    AddModel("B")
-                End If
+        Dim j As Integer = 0
+        Dim strID As String = ""
+        Dim list As XmlNodeList = SelectNodes("model")
+
+        If list.Count > iCount _
+        Then
+            If iCount = 0 Then
+                RemoveModel("A")
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+            RemoveModel("B")
+        ElseIf list.Count < iCount _
+        Then
+            If list.Count = 0 Then
+                AddModel("A")
+            End If
+            If iCount = 2 Then
+                AddModel("B")
+            End If
+        End If
     End Sub
 
     Private Sub AddModel(ByVal strlabel As String)
-        Try
-            Dim model As XmlNode = MyBase.Document.CreateNode(XmlNodeType.Element, "model", "")
 
-            Dim attrib As XmlAttribute = MyBase.Document.CreateAttribute("id")
-            attrib.Value = m_xmlReferenceNodeCounter.GetNewClassId()
-            model.Attributes.Append(attrib)
+        Dim model As XmlNode = MyBase.Document.CreateNode(XmlNodeType.Element, "model", "")
 
-            attrib = MyBase.Document.CreateAttribute("name")
-            attrib.Value = strlabel
-            model.Attributes.Append(attrib)
+        Dim attrib As XmlAttribute = MyBase.Document.CreateAttribute("id")
+        attrib.Value = m_xmlReferenceNodeCounter.GetNewClassId()
+        model.Attributes.Append(attrib)
 
-            Me.AppendNode(model)
-        Catch ex As Exception
-            Throw ex
-        End Try
+        attrib = MyBase.Document.CreateAttribute("name")
+        attrib.Value = strlabel
+        model.Attributes.Append(attrib)
+
+        Me.AppendNode(model)
+
     End Sub
 
     Private Sub RemoveModel(ByVal strlabel As String)
-        Try
-            RemoveSingleNode("model[@name='" + strlabel + "']")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        RemoveSingleNode("model[@name='" + strlabel + "']")
+
     End Sub
 
 #End Region

@@ -101,8 +101,6 @@ Public Class UmlNodesManager
             observer.Increment(1)
             Return True
 
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.ProgressBarVisible = False
         End Try
@@ -169,8 +167,6 @@ Public Class UmlNodesManager
             source.Save(strFilename)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             fen.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -215,8 +211,6 @@ Public Class UmlNodesManager
             source.Save(strFilename)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             fen.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -261,8 +255,6 @@ Public Class UmlNodesManager
             source.Save(strFilename)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             fen.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -307,8 +299,6 @@ Public Class UmlNodesManager
             source.Save(strFilename)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             fen.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -351,8 +341,6 @@ Public Class UmlNodesManager
             source.Save(strFilename)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             fen.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -401,8 +389,6 @@ Public Class UmlNodesManager
             source.Save(strFilename)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             fen.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -446,8 +432,6 @@ Public Class UmlNodesManager
             End If
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             fen.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -469,84 +453,80 @@ Public Class UmlNodesManager
 #End If
 
     Public Shared Sub RenumberProject(ByRef node As XmlNode, Optional ByVal bChangeRelation As Boolean = False)
-        Try
-            Dim listID As XmlNodeList
-            Dim child As XmlNode
-            Dim strID As String
 
-            Dim iClassIndex As Integer = 1
-            listID = node.SelectNodes("//*[@id]")
+        Dim listID As XmlNodeList
+        Dim child As XmlNode
+        Dim strID As String
 
-            For Each child In listID
-                Select Case child.Name
-                    Case "class", "typedef", "reference", "interface", "model"
-                        RenumberElement(child, iClassIndex, "class")
-                        iClassIndex += 1
-                End Select
-            Next child
+        Dim iClassIndex As Integer = 1
+        listID = node.SelectNodes("//*[@id]")
 
-            listID = node.SelectNodes("//package")
+        For Each child In listID
+            Select Case child.Name
+                Case "class", "typedef", "reference", "interface", "model"
+                    RenumberElement(child, iClassIndex, "class")
+                    iClassIndex += 1
+            End Select
+        Next child
 
-            For Each child In listID
-                SetID(child, XmlComponent.UID)
-            Next child
+        listID = node.SelectNodes("//package")
 
-
-            listID = node.SelectNodes("//param | // method | //property | //element")
-
-            For Each child In listID
-                If child.ParentNode Is Nothing Then
-                    Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
-                End If
-                strID = GenerateNumericId(child.ParentNode, child.Name, "", "num-id", False)
-                AddAttributeValue(child, "num-id", strID)
-            Next
-
-            listID = node.SelectNodes("//*[not(self::type) and (enumvalue or type/enumvalue)]")
-
-            For Each child In listID
-                Dim strPrefix As String = ""
-                Select Case child.Name
-                    Case "reference"
-                        strPrefix = GetID(child)
-
-                    Case "property"
-                        If child.ParentNode Is Nothing Then
-                            Throw New Exception("Node 'property' with name '" + GetName(child) + "' has not parent.")
-                        End If
-                        strPrefix = GetAttributeValue(child, "num-id")
-                        strPrefix = GetID(child.ParentNode) + "_" + strPrefix
-                    Case Else
-                        strPrefix = GetID(child)
-                End Select
-
-                Dim szOldID As String
-                strPrefix = "enum" + AfterStr(strPrefix, "class") + "_"
-
-                For Each enumvalue As XmlNode In child.SelectNodes("descendant::enumvalue")
-                    szOldID = GetID(enumvalue)
-                    strID = GenerateNumericId(child, "descendant::enumvalue", strPrefix, "id", False)
-                    AddAttributeValue(enumvalue, "id", strID)
-                    RenumberRefElement(node, "valref", szOldID, strID)
-                    RenumberRefElement(node, "sizeref", szOldID, strID)
-                Next
-            Next child
+        For Each child In listID
+            SetID(child, XmlComponent.UID)
+        Next child
 
 
-            If bChangeRelation Then
-                listID = node.SelectNodes("//relationship")
+        listID = node.SelectNodes("//param | // method | //property | //element")
 
-                For Each child In listID
-                    Dim szOldID As String = GetID(child)
-                    strID = XmlComponent.UID
-                    RenumberRefElement(child, "idref", szOldID, strID)
-                    SetID(child, strID)
-                Next child
+        For Each child In listID
+            If child.ParentNode Is Nothing Then
+                Throw New Exception("Node 'enumvalue' with name '" + GetName(child) + "' has not parent.")
             End If
+            strID = GenerateNumericId(child.ParentNode, child.Name, "", "num-id", False)
+            AddAttributeValue(child, "num-id", strID)
+        Next
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        listID = node.SelectNodes("//*[not(self::type) and (enumvalue or type/enumvalue)]")
+
+        For Each child In listID
+            Dim strPrefix As String = ""
+            Select Case child.Name
+                Case "reference"
+                    strPrefix = GetID(child)
+
+                Case "property"
+                    If child.ParentNode Is Nothing Then
+                        Throw New Exception("Node 'property' with name '" + GetName(child) + "' has not parent.")
+                    End If
+                    strPrefix = GetAttributeValue(child, "num-id")
+                    strPrefix = GetID(child.ParentNode) + "_" + strPrefix
+                Case Else
+                    strPrefix = GetID(child)
+            End Select
+
+            Dim szOldID As String
+            strPrefix = "enum" + AfterStr(strPrefix, "class") + "_"
+
+            For Each enumvalue As XmlNode In child.SelectNodes("descendant::enumvalue")
+                szOldID = GetID(enumvalue)
+                strID = GenerateNumericId(child, "descendant::enumvalue", strPrefix, "id", False)
+                AddAttributeValue(enumvalue, "id", strID)
+                RenumberRefElement(node, "valref", szOldID, strID)
+                RenumberRefElement(node, "sizeref", szOldID, strID)
+            Next
+        Next child
+
+
+        If bChangeRelation Then
+            listID = node.SelectNodes("//relationship")
+
+            For Each child In listID
+                Dim szOldID As String = GetID(child)
+                strID = XmlComponent.UID
+                RenumberRefElement(child, "idref", szOldID, strID)
+                SetID(child, strID)
+            Next child
+        End If
     End Sub
 #End Region
 
@@ -583,52 +563,48 @@ Public Class UmlNodesManager
     Private Shared Function ExportElementPackage(ByVal observer As InterfProgression, ByVal node As XmlNode, ByVal strCurrentPackage As String, _
                                               ByVal eLang As ELanguage, Optional ByVal bRoot As Boolean = False) As String
         Dim strXML As String = ""
-        Try
-            observer.Increment(1)
 
-            If bRoot = False Then
-                If strCurrentPackage <> "" Then
-                    strCurrentPackage += GetSeparator(eLang) + GetName(node)
-                Else
-                    strCurrentPackage = GetName(node)
-                End If
+        observer.Increment(1)
+
+        If bRoot = False Then
+            If strCurrentPackage <> "" Then
+                strCurrentPackage += GetSeparator(eLang) + GetName(node)
+            Else
+                strCurrentPackage = GetName(node)
             End If
+        End If
 
-                For Each current As XmlNode In node.SelectNodes("class | package")
-                If current.Name = "class" Then
-                    strXML += vbCrLf + ExportElementClass(current, strCurrentPackage)
-                    observer.Increment(1)
-                Else
-                    strXML += vbCrLf + ExportElementPackage(observer, current, strCurrentPackage, eLang)
-                End If
-                Next current
-        Catch ex As Exception
-            Throw ex
-        End Try
+        For Each current As XmlNode In node.SelectNodes("class | package")
+            If current.Name = "class" Then
+                strXML += vbCrLf + ExportElementClass(current, strCurrentPackage)
+                observer.Increment(1)
+            Else
+                strXML += vbCrLf + ExportElementPackage(observer, current, strCurrentPackage, eLang)
+            End If
+        Next current
+
         Return strXML
     End Function
 
     Private Shared Function ExportElementTypedef(ByVal node As XmlNode, ByVal typedef As XmlNode, _
                                               ByVal strCurrentPackage As String) As String
         Dim strXML As String = ""
-        Try
-            strXML += vbCrLf + "<reference name='" + GetName(typedef) + "' class='" + GetName(node) + "'"
 
-            If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
+        strXML += vbCrLf + "<reference name='" + GetName(typedef) + "' class='" + GetName(node) + "'"
 
-            strXML += " type='typedef' container='0' id='" + GetID(typedef) + "'"
-            If GetNode(typedef, "descendant::enumvalue") Is Nothing Then
-                strXML += "/>"
-            Else
-                strXML += ">"
-                For Each child As XmlNode In SelectNodes(typedef, "descendant::enumvalue")
-                    strXML += vbCrLf + child.OuterXml
-                Next
-                strXML += vbCrLf + "</reference>"
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If strCurrentPackage <> "" Then strXML += " package='" + strCurrentPackage + "'"
+
+        strXML += " type='typedef' container='0' id='" + GetID(typedef) + "'"
+        If GetNode(typedef, "descendant::enumvalue") Is Nothing Then
+            strXML += "/>"
+        Else
+            strXML += ">"
+            For Each child As XmlNode In SelectNodes(typedef, "descendant::enumvalue")
+                strXML += vbCrLf + child.OuterXml
+            Next
+            strXML += vbCrLf + "</reference>"
+        End If
+
         Return strXML
     End Function
 
@@ -789,118 +765,111 @@ Public Class UmlNodesManager
                                        ByVal strArgument As String, ByVal index As Integer) As Boolean
         Dim bResult As Boolean = False
         Dim reg As New Regex("(\w+[\s|\t|\n]+)")
-        Try
-            Dim split As String() = reg.Split(strArgument)
-            If split.Length > 1 Then
-                Dim strParam As String = split(split.Length - 1)
-                Dim param As XmlNode = CreateNode(method, "param")
-                AddAttributeValue(param, "name", strParam)
-                AddAttributeValue(param, "num-id", index.ToString)
-                Dim strType As String = strArgument.Substring(0, strArgument.Length - strParam.Length).Trim()
-                RenameType(eLang, param, strType)
-                method.AppendChild(param)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Dim split As String() = reg.Split(strArgument)
+        If split.Length > 1 Then
+            Dim strParam As String = split(split.Length - 1)
+            Dim param As XmlNode = CreateNode(method, "param")
+            AddAttributeValue(param, "name", strParam)
+            AddAttributeValue(param, "num-id", index.ToString)
+            Dim strType As String = strArgument.Substring(0, strArgument.Length - strParam.Length).Trim()
+            RenameType(eLang, param, strType)
+            method.AppendChild(param)
+        End If
+
         Return bResult
     End Function
 
     Public Shared Function RenameType(ByVal eLang As ELanguage, ByRef nodeDoxygen As XmlNode, ByVal strType As String) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim tData As New TSimpleDeclaration
-            Dim tIndex As New TSimpleDeclaration
-            Dim tContainer As New TSimpleDeclaration
-            Dim child As XmlNode
 
-            If AnalyzeContainerType(eLang, strType, tData, tIndex, tContainer, False) Then
+        Dim tData As New TSimpleDeclaration
+        Dim tIndex As New TSimpleDeclaration
+        Dim tContainer As New TSimpleDeclaration
+        Dim child As XmlNode
 
-                child = CreateNewContainer(nodeDoxygen, tData, tIndex, tContainer)
-                RemoveNode(nodeDoxygen, "node()")
-                nodeDoxygen.AppendChild(nodeDoxygen.OwnerDocument.ImportNode(child, True))
-                child = CreateNode(nodeDoxygen, "variable")
-                nodeDoxygen.AppendChild(child)
-                AddAttributeValue(child, "range", "public")
-                child = CreateNode(nodeDoxygen, "comment")
-                nodeDoxygen.AppendChild(child)
-                bResult = True
+        If AnalyzeContainerType(eLang, strType, tData, tIndex, tContainer, False) Then
 
-            ElseIf AnalyzeSimpleType(eLang, strType, tData) Then
+            child = CreateNewContainer(nodeDoxygen, tData, tIndex, tContainer)
+            RemoveNode(nodeDoxygen, "node()")
+            nodeDoxygen.AppendChild(nodeDoxygen.OwnerDocument.ImportNode(child, True))
+            child = CreateNode(nodeDoxygen, "variable")
+            nodeDoxygen.AppendChild(child)
+            AddAttributeValue(child, "range", "public")
+            child = CreateNode(nodeDoxygen, "comment")
+            nodeDoxygen.AppendChild(child)
+            bResult = True
 
-                child = CreateSimpletype(nodeDoxygen, tData)
-                RemoveNode(nodeDoxygen, "node()")
-                nodeDoxygen.AppendChild(nodeDoxygen.OwnerDocument.ImportNode(child, True))
-                child = CreateNode(nodeDoxygen, "variable")
-                nodeDoxygen.AppendChild(child)
-                AddAttributeValue(child, "range", "public")
-                child = CreateNode(nodeDoxygen, "comment")
-                nodeDoxygen.AppendChild(child)
-                bResult = True
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        ElseIf AnalyzeSimpleType(eLang, strType, tData) Then
+
+            child = CreateSimpletype(nodeDoxygen, tData)
+            RemoveNode(nodeDoxygen, "node()")
+            nodeDoxygen.AppendChild(nodeDoxygen.OwnerDocument.ImportNode(child, True))
+            child = CreateNode(nodeDoxygen, "variable")
+            nodeDoxygen.AppendChild(child)
+            AddAttributeValue(child, "range", "public")
+            child = CreateNode(nodeDoxygen, "comment")
+            nodeDoxygen.AppendChild(child)
+            bResult = True
+        End If
+
         Return bResult
     End Function
 
     Public Shared Function RenameType(ByVal eLang As ELanguage, ByRef nodeDoxygen As XmlNode) As Boolean
         Dim bResult As Boolean = False
-        Try
 
-            Dim list As XmlNodeList
-            Dim child As XmlNode
-            Dim tData As New TSimpleDeclaration
-            Dim tIndex As New TSimpleDeclaration
-            Dim tContainer As New TSimpleDeclaration
-            Dim strType As String = ""
+        Dim list As XmlNodeList
+        Dim child As XmlNode
+        Dim tData As New TSimpleDeclaration
+        Dim tIndex As New TSimpleDeclaration
+        Dim tContainer As New TSimpleDeclaration
+        Dim strType As String = ""
 
-            Debug.Print(nodeDoxygen.OuterXml)
+        Debug.Print(nodeDoxygen.OuterXml)
 
-            list = SelectNodes(nodeDoxygen, "type/ref")
-            child = GetNode(nodeDoxygen, "type")
+        list = SelectNodes(nodeDoxygen, "type/ref")
+        child = GetNode(nodeDoxygen, "type")
 
-            If child.HasChildNodes = False Then
-                ' UML Designer type, Nothing todo !
-            ElseIf child.FirstChild.Name = "enumvalue" Then
-                ' UML Designer type, Nothing todo !
-            Else
-                For Each node As XmlNode In child.ChildNodes
-                    If node.NodeType = XmlNodeType.Element Then
-                        strType += "refid:" + GetAttributeValue(node, "refid")
-                    Else
-                        strType += node.Value
-                    End If
-                Next
+        If child.HasChildNodes = False Then
+            ' UML Designer type, Nothing todo !
+        ElseIf child.FirstChild.Name = "enumvalue" Then
+            ' UML Designer type, Nothing todo !
+        Else
+            For Each node As XmlNode In child.ChildNodes
+                If node.NodeType = XmlNodeType.Element Then
+                    strType += "refid:" + GetAttributeValue(node, "refid")
+                Else
+                    strType += node.Value
+                End If
+            Next
 
-                If nodeDoxygen.Name = "element" Then
+            If nodeDoxygen.Name = "element" Then
 
-                    If AnalyzeSimpleType(eLang, strType, tData) Then
-
-                        nodeDoxygen.RemoveChild(child)
-                        child = CreateSimpletype(child, tData)
-                        nodeDoxygen.InsertBefore(child, nodeDoxygen.FirstChild)
-                        bResult = True
-                    End If
-
-                ElseIf AnalyzeContainerType(eLang, strType, tData, tIndex, tContainer, False) Then
+                If AnalyzeSimpleType(eLang, strType, tData) Then
 
                     nodeDoxygen.RemoveChild(child)
-                    child = CreateNewContainer(nodeDoxygen, tData, tIndex, tContainer)
-                    nodeDoxygen.InsertBefore(nodeDoxygen.OwnerDocument.ImportNode(child, True), nodeDoxygen.FirstChild)
-                    bResult = True
-
-                ElseIf AnalyzeSimpleType(eLang, strType, tData) Then
-
-                    nodeDoxygen.RemoveChild(child)
-                    child = CreateSimpletype(nodeDoxygen, tData)
-                    nodeDoxygen.InsertBefore(nodeDoxygen.OwnerDocument.ImportNode(child, True), nodeDoxygen.FirstChild)
+                    child = CreateSimpletype(child, tData)
+                    nodeDoxygen.InsertBefore(child, nodeDoxygen.FirstChild)
                     bResult = True
                 End If
+
+            ElseIf AnalyzeContainerType(eLang, strType, tData, tIndex, tContainer, False) Then
+
+                nodeDoxygen.RemoveChild(child)
+                child = CreateNewContainer(nodeDoxygen, tData, tIndex, tContainer)
+                nodeDoxygen.InsertBefore(nodeDoxygen.OwnerDocument.ImportNode(child, True), nodeDoxygen.FirstChild)
+                bResult = True
+
+            ElseIf AnalyzeSimpleType(eLang, strType, tData) Then
+
+                nodeDoxygen.RemoveChild(child)
+                child = CreateSimpletype(nodeDoxygen, tData)
+                nodeDoxygen.InsertBefore(nodeDoxygen.OwnerDocument.ImportNode(child, True), nodeDoxygen.FirstChild)
+                bResult = True
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return bResult
     End Function
 
@@ -908,8 +877,7 @@ Public Class UmlNodesManager
 
         Dim strXML As String = ""
 
-        Try
-            Dim strImplementation As String = GetAttributeValue(node, "implementation")
+        Dim strImplementation As String = GetAttributeValue(node, "implementation")
             Dim strName As String = GetName(node)
 
             Debug.Print("Name:=" + strName + " - " + strImplementation)
@@ -957,9 +925,6 @@ Public Class UmlNodesManager
                 strXML += vbCrLf + ExportElementTypedef(node, typedef, strCurrentPackage)
             Next typedef
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return strXML
     End Function
 
@@ -967,31 +932,29 @@ Public Class UmlNodesManager
                                                ByVal strCurrentPath As String) As String
 
         Dim strRelative As String = strCurrentPath
-        Try
-            If strCurrentPath.StartsWith(strRootPath) Then
-                strRelative = strCurrentPath.Substring(strRootPath.Length)
-                If strRelative.StartsWith(Path.DirectorySeparatorChar.ToString) Then
-                    strRelative = strRelative.Substring(1)
-                End If
+
+        If strCurrentPath.StartsWith(strRootPath) Then
+            strRelative = strCurrentPath.Substring(strRootPath.Length)
+            If strRelative.StartsWith(Path.DirectorySeparatorChar.ToString) Then
+                strRelative = strRelative.Substring(1)
+            End If
+        Else
+            Dim strDisk As String = ""
+            Dim i As Integer = InStr(strRootPath, Path.VolumeSeparatorChar)
+            If i > 0 Then
+                strDisk = Left(strRootPath, i - 1)
             Else
-                Dim strDisk As String = ""
-                Dim i As Integer = InStr(strRootPath, Path.VolumeSeparatorChar)
+                i = InStr(strRootPath, "\\")    ' TODO: convet to special constant
                 If i > 0 Then
-                    strDisk = Left(strRootPath, i - 1)
-                Else
-                    i = InStr(strRootPath, "\\")    ' TODO: convet to special constant
-                    If i > 0 Then
-                        strDisk = Left(strRootPath, InStr(i + 2, strRootPath, Path.DirectorySeparatorChar) - 1)
-                    End If
-                End If
-                If Left(strCurrentPath, strDisk.Length) = strDisk _
-                Then
-                    strRelative = GetRelativePath(strRootPath.Substring(strDisk.Length), strCurrentPath.Substring(strDisk.Length))
+                    strDisk = Left(strRootPath, InStr(i + 2, strRootPath, Path.DirectorySeparatorChar) - 1)
                 End If
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+            If Left(strCurrentPath, strDisk.Length) = strDisk _
+            Then
+                strRelative = GetRelativePath(strRootPath.Substring(strDisk.Length), strCurrentPath.Substring(strDisk.Length))
+            End If
+        End If
+
         Return strRelative
     End Function
 
@@ -1027,48 +990,43 @@ Public Class UmlNodesManager
 
     Private Shared Function AnalyzeSimpleType(ByVal eLang As ELanguage, ByVal strType As String, _
                                         ByRef tInfo As TSimpleDeclaration) As Boolean
-        Try
-            If Trim(strType) = "" Then
 
-                ' Nothing to do
+        If Trim(strType) = "" Then
 
-            ElseIf InStr(strType, "const") > 0 Then
+            ' Nothing to do
 
-                tInfo.bConst = True
+        ElseIf InStr(strType, "const") > 0 Then
 
-                Dim reg As New RegularExpressions.Regex("const", RegularExpressions.RegexOptions.Compiled)
+            tInfo.bConst = True
 
+            Dim reg As New RegularExpressions.Regex("const", RegularExpressions.RegexOptions.Compiled)
+
+            AnalyzeSimpleType(eLang, Trim(reg.Split(strType)(0)), tInfo)
+            AnalyzeSimpleType(eLang, Trim(reg.Split(strType)(1)), tInfo)
+
+        Else
+            Dim reg As New RegularExpressions.Regex("\*{1,2}", RegularExpressions.RegexOptions.Compiled)
+
+            If reg.IsMatch(strType) Then
+
+                Dim value As RegularExpressions.Match = reg.Match(strType)
+                tInfo.ilevel = value.Groups(0).Value.Length
                 AnalyzeSimpleType(eLang, Trim(reg.Split(strType)(0)), tInfo)
                 AnalyzeSimpleType(eLang, Trim(reg.Split(strType)(1)), tInfo)
 
+            ElseIf InStr(strType, Chr(38)) > 0 Then
+                tInfo.bReference = True
+                AnalyzeSimpleType(eLang, Trim(strType.Split(Chr(38))(0)), tInfo)
+
+            ElseIf strType.StartsWith("refid:") Then
+                tInfo.strIdref = strType.Substring(Len("refid:"))
+                tInfo.strTypeName = Nothing
             Else
-                Dim reg As New RegularExpressions.Regex("\*{1,2}", RegularExpressions.RegexOptions.Compiled)
-
-                If reg.IsMatch(strType) Then
-
-                    Dim value As RegularExpressions.Match = reg.Match(strType)
-                    tInfo.ilevel = value.Groups(0).Value.Length
-                    AnalyzeSimpleType(eLang, Trim(reg.Split(strType)(0)), tInfo)
-                    AnalyzeSimpleType(eLang, Trim(reg.Split(strType)(1)), tInfo)
-
-                ElseIf InStr(strType, Chr(38)) > 0 Then
-                    tInfo.bReference = True
-                    AnalyzeSimpleType(eLang, Trim(strType.Split(Chr(38))(0)), tInfo)
-
-                ElseIf strType.StartsWith("refid:") Then
-                    tInfo.strIdref = strType.Substring(Len("refid:"))
-                    tInfo.strTypeName = Nothing
-                Else
-                    tInfo.strIdref = Nothing
-                    tInfo.strTypeName = strType
-                End If
+                tInfo.strIdref = Nothing
+                tInfo.strTypeName = strType
             End If
-            Return True
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return False
+        End If
+        Return True
     End Function
 
     Private Shared Function AnalyzeContainerType(ByVal eLang As ELanguage, ByVal strType As String, _
@@ -1077,87 +1035,80 @@ Public Class UmlNodesManager
                                         ByRef tContainer As TSimpleDeclaration, _
                                         Optional ByVal bAlertOk As Boolean = True) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strSplit As String()
-            Dim strContainer, strData, strIndex As String
 
-            Select Case eLang
+        Dim strSplit As String()
+        Dim strContainer, strData, strIndex As String
 
-                Case ELanguage.Language_CplusPlus, ELanguage.Language_Java
-                    Dim reg As New RegularExpressions.Regex("\<.*\>", RegularExpressions.RegexOptions.Compiled)
+        Select Case eLang
 
-                    If reg.IsMatch(strType) = False _
-                    Then
-                        If bAlertOk Then
-                            MsgBox("Sorry but, doesn't describe a " + eLang.ToString + " implemented template", MsgBoxStyle.Exclamation, "Convert Doxygen file index")
-                        End If
+            Case ELanguage.Language_CplusPlus, ELanguage.Language_Java
+                Dim reg As New RegularExpressions.Regex("\<.*\>", RegularExpressions.RegexOptions.Compiled)
 
-                        bResult = False
-                    Else
-                        reg = New RegularExpressions.Regex("\<|\,|>$", RegularExpressions.RegexOptions.Compiled)
-
-                        strSplit = reg.Split(strType)
-                        strContainer = Trim(strSplit(0))
-
-                        AnalyzeSimpleType(eLang, strContainer, tContainer)
-
-                        If strSplit.Length = 4 Then
-                            strIndex = Trim(strSplit(1))
-                            strData = Trim(strSplit(2))
-                            AnalyzeSimpleType(eLang, strIndex, tIndex)
-                        Else
-                            strData = Trim(strSplit(1))
-                        End If
-
-                        AnalyzeSimpleType(eLang, strData, tData)
-
-                        bResult = True
+                If reg.IsMatch(strType) = False _
+                Then
+                    If bAlertOk Then
+                        MsgBox("Sorry but, doesn't describe a " + eLang.ToString + " implemented template", MsgBoxStyle.Exclamation, "Convert Doxygen file index")
                     End If
 
-                Case Else
-                    Throw New Exception("Sorry but, this function is not implemented for this language (" + eLang.ToString + ")")
-            End Select
+                    bResult = False
+                Else
+                    reg = New RegularExpressions.Regex("\<|\,|>$", RegularExpressions.RegexOptions.Compiled)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+                    strSplit = reg.Split(strType)
+                    strContainer = Trim(strSplit(0))
+
+                    AnalyzeSimpleType(eLang, strContainer, tContainer)
+
+                    If strSplit.Length = 4 Then
+                        strIndex = Trim(strSplit(1))
+                        strData = Trim(strSplit(2))
+                        AnalyzeSimpleType(eLang, strIndex, tIndex)
+                    Else
+                        strData = Trim(strSplit(1))
+                    End If
+
+                    AnalyzeSimpleType(eLang, strData, tData)
+
+                    bResult = True
+                End If
+
+            Case Else
+                Throw New Exception("Sorry but, this function is not implemented for this language (" + eLang.ToString + ")")
+        End Select
+
         Return bResult
     End Function
 
     Private Shared Function CreateSimpletype(ByVal treeNode As XmlNode, ByVal tData As TSimpleDeclaration, Optional ByVal bAddAttributes As Boolean = False) As XmlNode
         Dim source As New XmlDocument
-        Try
-            Dim strXML As String
+        Dim strXML As String
 
-            strXML = "<type "
+        strXML = "<type "
 
-            If tData.bReference Then
-                strXML += " by='ref'"
-            Else
-                strXML += " by='val'"
-            End If
+        If tData.bReference Then
+            strXML += " by='ref'"
+        Else
+            strXML += " by='val'"
+        End If
 
-            strXML += " level='" + CStr(tData.ilevel) + "'"
+        strXML += " level='" + CStr(tData.ilevel) + "'"
 
-            If tData.bConst Then
-                strXML += " modifier='const'"
-            Else
-                strXML += " modifier='var'"
-            End If
+        If tData.bConst Then
+            strXML += " modifier='const'"
+        Else
+            strXML += " modifier='var'"
+        End If
 
-            If tData.strTypeName <> "" Then
-                strXML += " desc='" + tData.strTypeName + "'"
-            Else
-                strXML += " idref='" + tData.strIdref + "'"
-            End If
+        If tData.strTypeName <> "" Then
+            strXML += " desc='" + tData.strTypeName + "'"
+        Else
+            strXML += " idref='" + tData.strIdref + "'"
+        End If
 
-            strXML += "/>"
+        strXML += "/>"
 
-            source.LoadXml(strXML)
+        source.LoadXml(strXML)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return source.FirstChild
     End Function
 
@@ -1166,125 +1117,114 @@ Public Class UmlNodesManager
                                         ByVal tIndex As TSimpleDeclaration, _
                                         ByVal tContainer As TSimpleDeclaration) As XmlNode
         Dim source As New XmlDocument
-        Try
-            Dim strXML As String
 
-            strXML = "<type modifier='var' struct='container' by='val'"
+        Dim strXML As String
 
-            If tData.strIdref = "" Then
-                strXML += " desc='" + tData.strTypeName + "'"
-            Else
-                strXML += " idref='" + tData.strIdref + "'"
-            End If
+        strXML = "<type modifier='var' struct='container' by='val'"
 
-            strXML += " level='" + CStr(tData.ilevel) + "'>" + vbCrLf
+        If tData.strIdref = "" Then
+            strXML += " desc='" + tData.strTypeName + "'"
+        Else
+            strXML += " idref='" + tData.strIdref + "'"
+        End If
 
-            strXML += "<list "
+        strXML += " level='" + CStr(tData.ilevel) + "'>" + vbCrLf
 
-            If tContainer.strTypeName <> "" Then
-                strXML += " desc='" + tContainer.strTypeName + "'"
-            Else
-                strXML += " idref='" + tContainer.strIdref + "'"
-            End If
+        strXML += "<list "
 
-            If tIndex.strTypeName <> "" _
-            Then
-                strXML += " type='indexed'"
-                strXML += " index-desc='" + tIndex.strTypeName + "'"
-                strXML += " level='" + CStr(tIndex.ilevel) + "'"
+        If tContainer.strTypeName <> "" Then
+            strXML += " desc='" + tContainer.strTypeName + "'"
+        Else
+            strXML += " idref='" + tContainer.strIdref + "'"
+        End If
 
-            ElseIf tIndex.strIdref <> "" _
-            Then
-                strXML += " type='indexed'"
-                strXML += " index-idref='" + tIndex.strIdref + "'"
-                strXML += " level='" + CStr(tIndex.ilevel) + "'"
-            Else
-                strXML += " type='simple'"
-            End If
+        If tIndex.strTypeName <> "" _
+        Then
+            strXML += " type='indexed'"
+            strXML += " index-desc='" + tIndex.strTypeName + "'"
+            strXML += " level='" + CStr(tIndex.ilevel) + "'"
+
+        ElseIf tIndex.strIdref <> "" _
+        Then
+            strXML += " type='indexed'"
+            strXML += " index-idref='" + tIndex.strIdref + "'"
+            strXML += " level='" + CStr(tIndex.ilevel) + "'"
+        Else
+            strXML += " type='simple'"
+        End If
 
 
-            strXML += " iterator='no' />" + vbCrLf
-            strXML += "</type>" + vbCrLf
+        strXML += " iterator='no' />" + vbCrLf
+        strXML += "</type>" + vbCrLf
 
-            source.LoadXml(strXML)
+        source.LoadXml(strXML)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return source.FirstChild
     End Function
 
     Private Shared Function GetIdFromFullpathName(ByVal strFullpathName As String, ByVal treeNode As XmlNode) As String
         Dim strResult As String = Nothing
-        Try
-            Dim node As XmlNode
-            Dim strName As String
-            Dim iIndex As Integer
 
-            iIndex = InStr(strFullpathName, "::")
+        Dim node As XmlNode
+        Dim strName As String
+        Dim iIndex As Integer
 
-            If iIndex = 0 Then
-                node = GetNode(treeNode, "//class[@name='" + strFullpathName + "']")
+        iIndex = InStr(strFullpathName, "::")
+
+        If iIndex = 0 Then
+            node = GetNode(treeNode, "//class[@name='" + strFullpathName + "']")
+        Else
+            strName = Left(strFullpathName, iIndex - 1)
+            strFullpathName = Mid(strFullpathName, iIndex + 2)
+
+            node = GetNode(treeNode, "//package[@name='" + strName + "']")
+
+            If node Is Nothing Then
+                node = GetNode(treeNode, "//class[@name='" + strName + "']/typedef[@name='" + strFullpathName + "']")
+
             Else
-                strName = Left(strFullpathName, iIndex - 1)
-                strFullpathName = Mid(strFullpathName, iIndex + 2)
+                iIndex = InStr(strFullpathName, "::")
 
-                node = GetNode(treeNode, "//package[@name='" + strName + "']")
-
-                If node Is Nothing Then
-                    node = GetNode(treeNode, "//class[@name='" + strName + "']/typedef[@name='" + strFullpathName + "']")
-
+                If iIndex = 0 Then
+                    node = GetNode(node, "class[@name='" + strFullpathName + "']")
                 Else
-                    iIndex = InStr(strFullpathName, "::")
+                    strName = Left(strFullpathName, iIndex - 1)
+                    strFullpathName = Mid(strFullpathName, iIndex + 2)
 
-                    If iIndex = 0 Then
-                        node = GetNode(node, "class[@name='" + strFullpathName + "']")
-                    Else
-                        strName = Left(strFullpathName, iIndex - 1)
-                        strFullpathName = Mid(strFullpathName, iIndex + 2)
-
-                        node = GetNode(node, "class[@name='" + strName + "']/typedef[@name='" + strFullpathName + "']")
-                    End If
+                    node = GetNode(node, "class[@name='" + strName + "']/typedef[@name='" + strFullpathName + "']")
                 End If
+            End If
 
-            End If
-            If Not node Is Nothing Then
-                strResult = GetID(node)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+        If Not node Is Nothing Then
+            strResult = GetID(node)
+        End If
+
         Return strResult
     End Function
 #End If
 
     Private Shared Sub RenumberElement(ByRef node As XmlNode, ByVal index As Integer, ByVal Prefix As String)
-        Try
-            Dim szOldID As String = GetID(node)
-            Dim szNewID As String = Prefix + CStr(index)
-            SetID(node, szNewID)
 
-            RenumberRefElement(node, "overrides", szOldID, szNewID)
-            RenumberRefElement(node, "idref", szOldID, szNewID)
-            RenumberRefElement(node, "index-idref", szOldID, szNewID)
+        Dim szOldID As String = GetID(node)
+        Dim szNewID As String = Prefix + CStr(index)
+        SetID(node, szNewID)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        RenumberRefElement(node, "overrides", szOldID, szNewID)
+        RenumberRefElement(node, "idref", szOldID, szNewID)
+        RenumberRefElement(node, "index-idref", szOldID, szNewID)
+
     End Sub
 
     Private Shared Sub RenumberRefElement(ByRef node As XmlNode, ByVal szIDREF As String, ByVal szOldID As String, ByVal szNewID As String)
-        Try
-            Dim listIDREF As XmlNodeList
-            Dim child As XmlNode
 
-            listIDREF = node.SelectNodes("//@" + szIDREF + "[.='" + szOldID + "']")
-            For Each child In listIDREF
-                child.Value = szNewID
-            Next child
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim listIDREF As XmlNodeList
+        Dim child As XmlNode
+
+        listIDREF = node.SelectNodes("//@" + szIDREF + "[.='" + szOldID + "']")
+        For Each child In listIDREF
+            child.Value = szNewID
+        Next child
     End Sub
 #End Region
 End Class

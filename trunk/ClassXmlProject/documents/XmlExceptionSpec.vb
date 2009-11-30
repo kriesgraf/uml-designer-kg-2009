@@ -58,11 +58,9 @@ Public Class XmlExceptionSpec
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
-        Try
-            ChangeReferences(bLoadChildren)
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        ChangeReferences(bLoadChildren)
+
     End Sub
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
@@ -72,8 +70,6 @@ Public Class XmlExceptionSpec
             ChangeReferences()
             Idref = "class0"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try

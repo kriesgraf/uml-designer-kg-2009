@@ -6,11 +6,9 @@ Public Class XmlContainerSpec
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
-        Try
-            ChangeReferences(bLoadChildren)
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        ChangeReferences(bLoadChildren)
+
     End Sub
 
     Protected Friend Overrides Function CreateNode(ByVal name As String) As XmlNode
@@ -33,8 +31,7 @@ Public Class XmlContainerSpec
             ' Range is initialized in class XmlTypeVarSpec, see m_xmlType member
             Id = "class0"
             Comment = "Insert here a comment"
-        Catch ex As Exception
-            Throw ex
+
         Finally
             m_bCreateNodeNow = False
         End Try

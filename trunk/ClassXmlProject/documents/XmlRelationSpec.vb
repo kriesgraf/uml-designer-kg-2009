@@ -147,9 +147,6 @@ Public Class XmlRelationSpec
             Action = "New_Action"
             Kind = EKindRelation.Assembly
 
-        Catch ex As Exception
-            ' Debug.Print(ex.StackTrace)
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
@@ -175,26 +172,23 @@ Public Class XmlRelationSpec
     End Sub
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
-        Try
-            MyBase.ChangeReferences(bLoadChildren)
-            Dim nodeXml As XmlNode = GetNode("father")
 
-            If nodeXml Is Nothing And m_bCreateNodeNow Then
-                nodeXml = CreateAppendNode("father")
-            End If
-            m_xmlFather = CreateDocument(nodeXml, bLoadChildren)
-            If m_xmlFather IsNot Nothing Then m_xmlFather.GenerationLanguage = Me.GenerationLanguage
+        MyBase.ChangeReferences(bLoadChildren)
+        Dim nodeXml As XmlNode = GetNode("father")
 
-            nodeXml = GetNode("child")
-            If nodeXml Is Nothing And m_bCreateNodeNow Then
-                nodeXml = CreateAppendNode("child")
-            End If
-            m_xmlChild = CreateDocument(nodeXml, bLoadChildren)
-            If m_xmlChild IsNot Nothing Then m_xmlChild.GenerationLanguage = Me.GenerationLanguage
+        If nodeXml Is Nothing And m_bCreateNodeNow Then
+            nodeXml = CreateAppendNode("father")
+        End If
+        m_xmlFather = CreateDocument(nodeXml, bLoadChildren)
+        If m_xmlFather IsNot Nothing Then m_xmlFather.GenerationLanguage = Me.GenerationLanguage
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        nodeXml = GetNode("child")
+        If nodeXml Is Nothing And m_bCreateNodeNow Then
+            nodeXml = CreateAppendNode("child")
+        End If
+        m_xmlChild = CreateDocument(nodeXml, bLoadChildren)
+        If m_xmlChild IsNot Nothing Then m_xmlChild.GenerationLanguage = Me.GenerationLanguage
+
     End Sub
 
     Protected Friend Overrides Function RemoveMe() As Boolean

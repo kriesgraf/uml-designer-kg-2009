@@ -103,24 +103,22 @@ Public Class XmlInterfaceSpec
     End Function
 
     Public Overrides Function CanRemove(ByVal removeNode As XmlComponent) As Boolean
-        Try
-            Select Case removeNode.NodeName
-                Case "property"
-                    If CanRemoveOverridedProperty(Me, removeNode) Then
-                        Return True
-                    End If
 
-                Case "method"
-                    If CanRemoveOverridedMethod(Me, removeNode) Then
-                        Return True
-                    End If
+        Select Case removeNode.NodeName
+            Case "property"
+                If CanRemoveOverridedProperty(Me, removeNode) Then
+                    Return True
+                End If
 
-                Case Else
-                    Return MyBase.CanRemove(removeNode)
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+            Case "method"
+                If CanRemoveOverridedMethod(Me, removeNode) Then
+                    Return True
+                End If
+
+            Case Else
+                Return MyBase.CanRemove(removeNode)
+        End Select
+
         Return False
     End Function
 
@@ -152,8 +150,6 @@ Public Class XmlInterfaceSpec
             Package = ""
             Root = False
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try

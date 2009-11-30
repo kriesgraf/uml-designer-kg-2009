@@ -37,42 +37,29 @@ Public Class XmlReferenceView
     End Function
 
     Public Sub InitBindingName(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
+
     End Sub
 
     Public Sub InitBindingParentClass(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "ParentClass")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "ParentClass")
+
     End Sub
 
     Public Sub InitBindingPackage(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Package")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Package")
+
     End Sub
 
     Public Sub InitBindingContainer(ByVal combo As ComboBox)
-        Try
-            combo.DropDownStyle = ComboBoxStyle.DropDownList
-            combo.Items.AddRange(New Object() {"none", "simple", "indexed", "object-based"})
 
-            m_xmlBindingsList.AddBinding(combo, Me, "Container", "SelectedIndex")
+        combo.DropDownStyle = ComboBoxStyle.DropDownList
+        combo.Items.AddRange(New Object() {"none", "simple", "indexed", "object-based"})
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(combo, Me, "Container", "SelectedIndex")
     End Sub
 
     Public Sub CancelEnum(ByVal combo As ComboBox)
@@ -88,21 +75,17 @@ Public Class XmlReferenceView
     End Sub
 
     Public Sub InitBindingType(ByVal combo As ComboBox)
-        Try
-            combo.DropDownStyle = ComboBoxStyle.DropDownList
-            combo.Sorted = True
 
-            If Me.GetNode("enumvalue") IsNot Nothing Then
-                combo.Items.Add("enumeration")
-                combo.Enabled = False
-                combo.SelectedItem = "enumeration"
-            Else
-                combo.Items.AddRange(New Object() {"class", "typedef", "enumeration", "exception"})
-                m_xmlBindingsList.AddBinding(combo, Me, "Kind", "SelectedItem")
-            End If
+        combo.DropDownStyle = ComboBoxStyle.DropDownList
+        combo.Sorted = True
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If Me.GetNode("enumvalue") IsNot Nothing Then
+            combo.Items.Add("enumeration")
+            combo.Enabled = False
+            combo.SelectedItem = "enumeration"
+        Else
+            combo.Items.AddRange(New Object() {"class", "typedef", "enumeration", "exception"})
+            m_xmlBindingsList.AddBinding(combo, Me, "Kind", "SelectedItem")
+        End If
     End Sub
 End Class

@@ -64,86 +64,82 @@ Public Class XmlRefRedundancyView
 
     Public Function UpdateValues(ByVal listRemoved As ListBox, ByVal listRemained As ListBox) As Boolean
         Dim bResult As Boolean = False
-        Try
-            If listRemained.SelectedIndex <> -1 Then
-                With CType(listRemained.SelectedItem, XmlNodeListView)
-                    Dim myList As ArrayList = CType(listRemoved.DataSource, ArrayList)
 
-                    For Each child As XmlNodeListView In myList
-                        If child.CheckedView = False Then
-                            Select Case child.NodeName
-                                Case "typedef", "property", "return"
-                                    If XmlProjectTools.ChangeTypeDesc(child.Node, .Id) Then
-                                        bResult = True
+        If listRemained.SelectedIndex <> -1 Then
+            With CType(listRemained.SelectedItem, XmlNodeListView)
+                Dim myList As ArrayList = CType(listRemoved.DataSource, ArrayList)
+
+                For Each child As XmlNodeListView In myList
+                    If child.CheckedView = False Then
+                        Select Case child.NodeName
+                            Case "typedef", "property", "return"
+                                If XmlProjectTools.ChangeTypeDesc(child.Node, .Id) Then
+                                    bResult = True
+                                End If
+                            Case Else
+                                Dim bHashTypedef As Boolean = (child.SelectNodes("typedef").Count > 0)
+                                If .NodeName = "reference" And .IsClassNode And bHashTypedef Then
+                                    If MsgBox("Can't replace object: '" + child.FullpathClassName + "'" + vbCrLf + _
+                                              "With remaining reference: '" + .FullpathClassName + "'" + vbCrLf + _
+                                              "Because '" + child.FullpathClassName + "' has 'typedef' children." + vbCrLf + _
+                                              "Would you want to continue?", XmlProjectTools.cstMsgYesNoQuestion, "Remove redundancies") _
+                                              = MsgBoxResult.No Then
+                                        Exit For
                                     End If
-                                Case Else
-                                    Dim bHashTypedef As Boolean = (child.SelectNodes("typedef").Count > 0)
-                                    If .NodeName = "reference" And .IsClassNode And bHashTypedef Then
-                                        If MsgBox("Can't replace object: '" + child.FullpathClassName + "'" + vbCrLf + _
-                                                  "With remaining reference: '" + .FullpathClassName + "'" + vbCrLf + _
-                                                  "Because '" + child.FullpathClassName + "' has 'typedef' children." + vbCrLf + _
-                                                  "Would you want to continue?", XmlProjectTools.cstMsgYesNoQuestion, "Remove redundancies") _
-                                                  = MsgBoxResult.No Then
-                                            Exit For
-                                        End If
-                                    ElseIf XmlProjectTools.ChangeClassIDs(child.Node, .Node) Then
-                                        bResult = True
-                                    End If
-                                    If child.RemoveMe() Then
-                                        bResult = True
-                                    End If
-                            End Select
-                        End If
-                    Next
-                End With
-            Else
-                MsgBox("No replaced object selected, please select one or press 'Ignore'", MsgBoxStyle.Exclamation)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+                                ElseIf XmlProjectTools.ChangeClassIDs(child.Node, .Node) Then
+                                    bResult = True
+                                End If
+                                If child.RemoveMe() Then
+                                    bResult = True
+                                End If
+                        End Select
+                    End If
+                Next
+            End With
+        Else
+            MsgBox("No replaced object selected, please select one or press 'Ignore'", MsgBoxStyle.Exclamation)
+        End If
+
         Return bResult
     End Function
 
     Public Function LoadNodes(ByVal listbox As ListBox, Optional ByVal strDisplayMember As String = XmlNodeListView.cstFullUmlPathName, _
                               Optional ByVal bClear As Boolean = False) As Boolean
-        Try
-            Dim listResult As New ArrayList
 
-            If bClear Then
-                listbox.DataSource = Nothing
-                listbox.Items.Clear()
-            End If
+        Dim listResult As New ArrayList
 
-            If XmlNodeListView.GetListRedundancies(m_xmlProjectNode, Me.Node, listResult) _
-            Then
-                ' We add current redundant node to propose user to choose wide list
-                Dim xmlcpnt As XmlNodeListView = Nothing
-                If m_strImportName = "" Then
-                    xmlcpnt = New XmlNodeListView(Me.Node)
-                Else
-                    xmlcpnt = New XmlNodeListView("; file -->" + m_strImportName)
-                    xmlcpnt.Node = Me.Node
-                End If
+        If bClear Then
+            listbox.DataSource = Nothing
+            listbox.Items.Clear()
+        End If
 
-                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
-                listResult.Add(xmlcpnt)
-
-                XmlNodeListView.SortNodeList(listResult)
-
-                listbox.SelectionMode = SelectionMode.MultiSimple
-                listbox.DisplayMember = strDisplayMember
-                listbox.ValueMember = "Id"
-                listbox.DataSource = listResult
-                listbox.SetSelected(0, False)
-                Return True
+        If XmlNodeListView.GetListRedundancies(m_xmlProjectNode, Me.Node, listResult) _
+        Then
+            ' We add current redundant node to propose user to choose wide list
+            Dim xmlcpnt As XmlNodeListView = Nothing
+            If m_strImportName = "" Then
+                xmlcpnt = New XmlNodeListView(Me.Node)
             Else
-                listbox.Items.Add("No redundancy detected.")
-                listbox.Enabled = False
+                xmlcpnt = New XmlNodeListView("; file -->" + m_strImportName)
+                xmlcpnt.Node = Me.Node
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
+            listResult.Add(xmlcpnt)
+
+            XmlNodeListView.SortNodeList(listResult)
+
+            listbox.SelectionMode = SelectionMode.MultiSimple
+            listbox.DisplayMember = strDisplayMember
+            listbox.ValueMember = "Id"
+            listbox.DataSource = listResult
+            listbox.SetSelected(0, False)
+            Return True
+        Else
+            listbox.Items.Add("No redundancy detected.")
+            listbox.Enabled = False
+        End If
+
         Return False
     End Function
 End Class

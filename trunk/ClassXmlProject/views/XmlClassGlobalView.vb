@@ -59,38 +59,35 @@ Public Class XmlClassGlobalView
 
     Public Function UpdateValues() As Boolean
         Dim bResult As Boolean = False
-        Try
-            If MustCheckTemplate() _
+
+        If MustCheckTemplate() _
             Then
-                If Me.ModelCount <> m_cmbParamInline.SelectedIndex _
+            If Me.ModelCount <> m_cmbParamInline.SelectedIndex _
+            Then
+                If CheckTemplate(True) _
                 Then
-                    If CheckTemplate(True) _
-                    Then
-                        Me.ModelCount = m_cmbParamInline.SelectedIndex
-                        bResult = True
-                    End If
-                Else
+                    Me.ModelCount = m_cmbParamInline.SelectedIndex
                     bResult = True
                 End If
-            ElseIf CheckTemplate(True) = True _
-            Then
-                Me.Inline = CType(m_cmbParamInline.SelectedItem, String)
+            Else
                 bResult = True
             End If
+        ElseIf CheckTemplate(True) = True _
+        Then
+            Me.Inline = CType(m_cmbParamInline.SelectedItem, String)
+            bResult = True
+        End If
 
-            If bResult Then
-                m_gridMembers.Binding.UpdateRows()   ' We must change implementation of members if necessary
-                m_xmlBindingsList.UpdateValues()
-            End If
+        If bResult Then
+            m_gridMembers.Binding.UpdateRows()   ' We must change implementation of members if necessary
+            m_xmlBindingsList.UpdateValues()
+        End If
 
-            ' Check data changed in grids
-            If Me.Updated Then
-                bResult = True
-            End If
+        ' Check data changed in grids
+        If Me.Updated Then
+            bResult = True
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return bResult
     End Function
 
@@ -103,75 +100,61 @@ Public Class XmlClassGlobalView
     End Sub
 
     Public Function SearchDependencies(ByVal component As XmlComponent) As Boolean
-        Try
-            If component Is Nothing Then Return False
 
-            Dim bIsEmpty As Boolean = False
-            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, component, bIsEmpty) _
-            Then
-                Me.Updated = True
-                Return True
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If component Is Nothing Then Return False
+
+        Dim bIsEmpty As Boolean = False
+        If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, component, bIsEmpty) _
+        Then
+            Me.Updated = True
+            Return True
+        End If
+
         Return False
     End Function
 
     Public Sub InitBindingName(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
+
     End Sub
 
     Public Sub InitBindingBriefComment(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "BriefComment")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "BriefComment")
+
     End Sub
 
     Public Sub InitBindingComment(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
+
     End Sub
 
     Public Sub InitBindingConstructor(ByVal titleControl As Label, ByVal dataControl As ComboBox)
-        Try
-            m_cmdConstructor.Combo = dataControl
-            m_cmdConstructor.Title = titleControl
 
-            Select Case MyBase.GenerationLanguage
-                Case ELanguage.Language_CplusPlus
-                    titleControl.Text = "Default constructor:"
+        m_cmdConstructor.Combo = dataControl
+        m_cmdConstructor.Title = titleControl
 
-                Case ELanguage.Language_Vbasic
-                    titleControl.Text = "Default New method:"
+        Select Case MyBase.GenerationLanguage
+            Case ELanguage.Language_CplusPlus
+                titleControl.Text = "Default constructor:"
 
-                Case ELanguage.Language_Java
-                    titleControl.Text = "Default constructor:"
-            End Select
+            Case ELanguage.Language_Vbasic
+                titleControl.Text = "Default New method:"
 
-            With dataControl
-                .DropDownStyle = ComboBoxStyle.DropDownList
-                .Items.AddRange(New Object() {"no", "private", "protected", "public"})
-            End With
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Constructor", "SelectedItem")
+            Case ELanguage.Language_Java
+                titleControl.Text = "Default constructor:"
+        End Select
 
-            UpdateConstructorControl()
+        With dataControl
+            .DropDownStyle = ComboBoxStyle.DropDownList
+            .Items.AddRange(New Object() {"no", "private", "protected", "public"})
+        End With
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Constructor", "SelectedItem")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        UpdateConstructorControl()
+
     End Sub
 
     Public Sub InitBindingDestructor(ByVal titleControl As Label, ByVal dataControl As ComboBox)
@@ -341,65 +324,59 @@ Public Class XmlClassGlobalView
     End Function
 
     Public Sub ExportReferences(ByVal fen As Form, ByVal component As XmlComponent)
-        Try
-            Dim dlgSaveFile As New SaveFileDialog
-            Dim strFullPackage As String
 
-            dlgSaveFile.InitialDirectory = My.Settings.ExportFolder
+        Dim dlgSaveFile As New SaveFileDialog
+        Dim strFullPackage As String
 
-            Dim strFilename As String = component.Name
-            If XmlProjectTools.GetValidFilename(strFilename) Then
-                MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "Rename file")
+        dlgSaveFile.InitialDirectory = My.Settings.ExportFolder
+
+        Dim strFilename As String = component.Name
+        If XmlProjectTools.GetValidFilename(strFilename) Then
+            MsgBox("The filename was not valid, we propose to rename:" + vbCrLf + strFilename, "Rename file")
+        End If
+        dlgSaveFile.FileName = strFilename
+        dlgSaveFile.Filter = "Package references (*.ximp)|*.ximp"
+
+        If dlgSaveFile.ShowDialog() = DialogResult.OK Then
+
+            strFilename = dlgSaveFile.FileName
+            If strFilename.EndsWith(".ximp") = False Then
+                strFilename += ".ximp"
             End If
-            dlgSaveFile.FileName = strFilename
-            dlgSaveFile.Filter = "Package references (*.ximp)|*.ximp"
 
-            If dlgSaveFile.ShowDialog() = DialogResult.OK Then
+            My.Settings.ExportFolder = Path.GetDirectoryName(strFilename)
 
-                strFilename = dlgSaveFile.FileName
-                If strFilename.EndsWith(".ximp") = False Then
-                    strFilename += ".ximp"
-                End If
+            Dim eLang As ELanguage = Me.GenerationLanguage
 
-                My.Settings.ExportFolder = Path.GetDirectoryName(strFilename)
+            Select Case component.NodeName
+                Case "typedef"
+                    strFullPackage = GetFullpathPackage(component.Node.ParentNode, eLang)
 
-                Dim eLang As ELanguage = Me.GenerationLanguage
-
-                Select Case component.NodeName
-                    Case "typedef"
-                        strFullPackage = GetFullpathPackage(component.Node.ParentNode, eLang)
-
-                        If component.GetAttribute("visibility", "parent::class") = "package" Then
-                            If component.GetAttribute("range", "variable") = "public" Then
-                                ExportTypedefReferences(fen, component.Node, strFilename, strFullPackage)
-                            Else
-                                MsgBox("Typedef " + component.GetAttribute("name", "parent::class") + " is not public", vbExclamation, "'Export' command")
-                            End If
+                    If component.GetAttribute("visibility", "parent::class") = "package" Then
+                        If component.GetAttribute("range", "variable") = "public" Then
+                            ExportTypedefReferences(fen, component.Node, strFilename, strFullPackage)
                         Else
-                            MsgBox("Class " + component.GetAttribute("name", "parent::class") + " has not a package visibility", vbExclamation, "'Export' command")
+                            MsgBox("Typedef " + component.GetAttribute("name", "parent::class") + " is not public", vbExclamation, "'Export' command")
                         End If
+                    Else
+                        MsgBox("Class " + component.GetAttribute("name", "parent::class") + " has not a package visibility", vbExclamation, "'Export' command")
+                    End If
 
-                    Case Else
-                        MsgBox("Can't export this node", MsgBoxStyle.Exclamation, "'Export references' command")
-                End Select
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+                Case Else
+                    MsgBox("Can't export this node", MsgBoxStyle.Exclamation, "'Export references' command")
+            End Select
+        End If
     End Sub
 
     Private Sub Implementation_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles m_cmbImplementation.SelectedIndexChanged
         If m_bInitProcessing Then Exit Sub
-        Try
-            m_cmbParamInline.Items.Clear()
-            UpdateInlineControl()
-            UpdateConstructorControl()
-            UpdateDestructorControl()
-            m_gridInherited.Binding.UpdateRows()   ' We must checked inherited class with new implementation
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_cmbParamInline.Items.Clear()
+        UpdateInlineControl()
+        UpdateConstructorControl()
+        UpdateDestructorControl()
+        m_gridInherited.Binding.UpdateRows()   ' We must checked inherited class with new implementation
+
     End Sub
 
     Private Sub UpdateConstructorControl()

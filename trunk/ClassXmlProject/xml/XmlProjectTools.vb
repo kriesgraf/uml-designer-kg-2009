@@ -153,12 +153,9 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Sub ReloadPrefixNameDocument(ByVal filename As String)
-        Try
-            PrefixNameDocument.Load(filename)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        PrefixNameDocument.Load(filename)
+
     End Sub
 
     Public Shared Function GetPrefixName(ByVal name As String) As String
@@ -348,81 +345,77 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function CopyRessourcesInUserPath(ByVal strDestinationFolder As String) As Boolean
-        Try
-            If Not CopyDocTypeDeclarationFile(strDestinationFolder, True) Then
-                Return False
-            ElseIf Not CopyLanguagePrefix(strDestinationFolder) Then
-                Return False
-            ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_CplusPlus) Then
-                Return False
-            ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_Vbasic) Then
-                Return False
-            ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_Java) Then
-                Return False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If Not CopyDocTypeDeclarationFile(strDestinationFolder, True) Then
+            Return False
+        ElseIf Not CopyLanguagePrefix(strDestinationFolder) Then
+            Return False
+        ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_CplusPlus) Then
+            Return False
+        ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_Vbasic) Then
+            Return False
+        ElseIf Not CopyLanguageSimpleTypes(strDestinationFolder, ELanguage.Language_Java) Then
+            Return False
+        End If
+
         Return True
     End Function
 
     Public Shared Function CopyDocTypeDeclarationFile(ByVal strDestinationFolder As String, Optional ByVal bNoAdvertising As Boolean = False) As Boolean
         ' With Xml Schema, we won't save document structure file into project folder.
         Dim bResult As Boolean = False
-        Try
-            Select Case CheckDocTypeDeclarationFile(strDestinationFolder)
-                Case EDtdFileExist.EqualButDifferent
+
+        Select Case CheckDocTypeDeclarationFile(strDestinationFolder)
+            Case EDtdFileExist.EqualButDifferent
+                CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
+                bResult = True
+
+            Case EDtdFileExist.SourceNotFound
+                MsgBox("The resource " + GetDtdResource() + " is missing. " + _
+                       vbCrLf + "Please retry installation to replace missing files. ", MsgBoxStyle.Critical, "DTD resources")
+                Return False
+
+            Case EDtdFileExist.NotFound
+                CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
+                bResult = True
+
+            Case EDtdFileExist.MoreRecent
+                If bNoAdvertising _
+                Then
                     CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
                     bResult = True
 
-                Case EDtdFileExist.SourceNotFound
-                    MsgBox("The resource " + GetDtdResource() + " is missing. " + _
-                           vbCrLf + "Please retry installation to replace missing files. ", MsgBoxStyle.Critical, "DTD resources")
-                    Return False
+                ElseIf MsgBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more recent than application resource." + vbCrLf + _
+                          "Please confirm overwrite this file ?", _
+                           cstMsgOkCancelCritical, strDestinationFolder) _
+                            = MsgBoxResult.Ok _
+                Then
+                    CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
+                    bResult = True
+                End If
 
-                Case EDtdFileExist.NotFound
+            Case EDtdFileExist.Older
+                If bNoAdvertising _
+                Then
                     CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
                     bResult = True
 
-                Case EDtdFileExist.MoreRecent
-                    If bNoAdvertising _
-                    Then
-                        CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
-                        bResult = True
-
-                    ElseIf MsgBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more recent than application resource." + vbCrLf + _
-                              "Please confirm overwrite this file ?", _
-                               cstMsgOkCancelCritical, strDestinationFolder) _
-                                = MsgBoxResult.Ok _
-                    Then
-                        CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
-                        bResult = True
-                    End If
-
-                Case EDtdFileExist.Older
-                    If bNoAdvertising _
-                    Then
-                        CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
-                        bResult = True
-
-                    ElseIf MsgWarningBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more older than application resource. " + vbCrLf + _
-                        "Maybe oldest version projects remain in this folder. Overwrite this file would corrupt these projects." + vbCrLf + _
-                        "Also, we recommend you to choose an other folder and press Cancel now. !") _
-                        = DialogResult.OK _
-                    Then
-                        CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
-                        bResult = True
-                    End If
-
-                Case EDtdFileExist.Equal
+                ElseIf MsgWarningBox("File '" + GetDestinationDtdFile(strDestinationFolder) + "'," + vbCrLf + "is more older than application resource. " + vbCrLf + _
+                    "Maybe oldest version projects remain in this folder. Overwrite this file would corrupt these projects." + vbCrLf + _
+                    "Also, we recommend you to choose an other folder and press Cancel now. !") _
+                    = DialogResult.OK _
+                Then
+                    CopyResourceFile(cstSchemaName + ".xml", GetDestinationDtdFile(strDestinationFolder))
                     bResult = True
+                End If
 
-                Case Else
-                    Throw New Exception("method 'CheckDocTypeDeclarationFile' has returned a wrong value")
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+            Case EDtdFileExist.Equal
+                bResult = True
+
+            Case Else
+                Throw New Exception("method 'CheckDocTypeDeclarationFile' has returned a wrong value")
+        End Select
+
         Return bResult
     End Function
 
@@ -478,9 +471,6 @@ Public Class XmlProjectTools
 
             styleXsl.Transform(document.DocumentElement, fileName, argList)
             observer.Increment(2)
-
-        Catch ex As Exception
-            Throw ex
         Finally
             form.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -981,9 +971,6 @@ Public Class XmlProjectTools
             ' This transformation generates a metafile 80% compliant with end-generated file
             styleXsl.Transform(strFilename, strTempFile)
             observer.Increment(2)
-
-        Catch ex As Exception
-            Throw ex
         Finally
             form.Cursor = oldCursor
             observer.ProgressBarVisible = False
@@ -1043,12 +1030,9 @@ Public Class XmlProjectTools
     End Sub
 
     Public Shared Function LoadDocument(ByVal document As XmlDocument, ByVal strFilename As String) As EResult
-        Try
-            document.Load(strFilename)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        document.Load(strFilename)
+
         Return XmlProjectTools.EResult.Completed
     End Function
 
@@ -1107,9 +1091,6 @@ Public Class XmlProjectTools
                                             ex)
 
                         If bThrowsException Then Throw currentException
-
-                    Catch ex As Exception
-                        Throw ex
                     End Try
                 End Using
             End If
@@ -1117,9 +1098,6 @@ Public Class XmlProjectTools
             If bDtdError Then
                 eResult = ConvertAndCorrectErrors(form, document, strFilename, bDtdError, currentException)
             End If
-
-        Catch ex As Exception
-            Throw ex
         Finally
             form.Cursor = oldCursor
             observer.Log = "Ready"
@@ -1129,28 +1107,26 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function GetSignature(ByVal node As XmlNode) As String
-        Try
-            If node IsNot Nothing Then
-                Select Case node.Name
-                    Case "property"
-                        Return GetName(node) + "(" + GetAttributeValue(node.SelectSingleNode("type"), "desc") _
-                                + GetIDREF(node.SelectSingleNode("type")) + ")"
-                    Case "method"
-                        Dim tempo As String = ""
-                        For Each child As XmlNode In node.SelectNodes("param")
-                            tempo += " " + GetAttributeValue(child.SelectSingleNode("type"), "desc") _
-                                        + GetIDREF(child.SelectSingleNode("type"))
-                        Next
-                        tempo = GetName(node) + "(" + tempo.Trim + ")"
-                        Return tempo
 
-                    Case Else
-                        Return node.Name
-                End Select
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If node IsNot Nothing Then
+            Select Case node.Name
+                Case "property"
+                    Return GetName(node) + "(" + GetAttributeValue(node.SelectSingleNode("type"), "desc") _
+                            + GetIDREF(node.SelectSingleNode("type")) + ")"
+                Case "method"
+                    Dim tempo As String = ""
+                    For Each child As XmlNode In node.SelectNodes("param")
+                        tempo += " " + GetAttributeValue(child.SelectSingleNode("type"), "desc") _
+                                    + GetIDREF(child.SelectSingleNode("type"))
+                    Next
+                    tempo = GetName(node) + "(" + tempo.Trim + ")"
+                    Return tempo
+
+                Case Else
+                    Return node.Name
+            End Select
+        End If
+
         Return node.Name
     End Function
 
@@ -1161,82 +1137,69 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Sub RemoveAttribute(ByRef node As XmlNode, ByVal strAttribute As String)
-        Try
-            Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
 
-            If attrib IsNot Nothing Then
-                attrib = node.OwnerDocument.CreateAttribute(strAttribute)
-                node.Attributes.RemoveNamedItem(strAttribute)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
+
+        If attrib IsNot Nothing Then
+            attrib = node.OwnerDocument.CreateAttribute(strAttribute)
+            node.Attributes.RemoveNamedItem(strAttribute)
+        End If
     End Sub
 
     Public Shared Function CanRemoveOverridedProperty(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = True
-        Try
-            Dim strQuery As String = "//property[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
-            If parentNode.SelectNodes(strQuery).Count > 0 Then
-                MsgBox("Sorry but this property is overridden", MsgBoxStyle.Critical, "'Remove' command")
-                bResult = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Dim strQuery As String = "//property[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
+        If parentNode.SelectNodes(strQuery).Count > 0 Then
+            MsgBox("Sorry but this property is overridden", MsgBoxStyle.Critical, "'Remove' command")
+            bResult = False
+        End If
+
         Return bResult
     End Function
 
     Public Shared Function CanRemoveOverridedMethod(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = True
-        Try
-            Dim strQuery As String = "//method[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
-            If parentNode.SelectNodes(strQuery).Count > 0 Then
-                MsgBox("Sorry but this method is overridden", MsgBoxStyle.Critical, "'Remove' command")
-                bResult = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Dim strQuery As String = "//method[@name='" + removeNode.GetAttribute("name") + "' and @overrides='" + GetID(parentNode.Node) + "']"
+        If parentNode.SelectNodes(strQuery).Count > 0 Then
+            MsgBox("Sorry but this method is overridden", MsgBoxStyle.Critical, "'Remove' command")
+            bResult = False
+        End If
+
         Return bResult
     End Function
 
     Public Shared Function RemoveInheritedProperties(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim listID As New List(Of String)
-            LoadTreeInherited(removeNode.Node, listID)
 
-            For Each strId As String In listID
-                Dim listProperty As XmlNodeList = parentNode.SelectNodes("property[@overrides='" + strId + "']")
-                For Each method As XmlNode In listProperty
-                    parentNode.Node.RemoveChild(method)
-                    bResult = True
-                Next
+        Dim listID As New List(Of String)
+        LoadTreeInherited(removeNode.Node, listID)
+
+        For Each strId As String In listID
+            Dim listProperty As XmlNodeList = parentNode.SelectNodes("property[@overrides='" + strId + "']")
+            For Each method As XmlNode In listProperty
+                parentNode.Node.RemoveChild(method)
+                bResult = True
             Next
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Next
 
         Return bResult
     End Function
 
     Public Shared Function RemoveInheritedMethods(ByVal parentNode As XmlComposite, ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim listID As New List(Of String)
-            LoadTreeInherited(removeNode.Node, listID)
 
-            For Each strId As String In listID
-                Dim listMethod As XmlNodeList = parentNode.SelectNodes("method[@overrides='" + strId + "']")
-                For Each method As XmlNode In listMethod
-                    parentNode.Node.RemoveChild(method)
-                    bResult = True
-                Next
+        Dim listID As New List(Of String)
+        LoadTreeInherited(removeNode.Node, listID)
+
+        For Each strId As String In listID
+            Dim listMethod As XmlNodeList = parentNode.SelectNodes("method[@overrides='" + strId + "']")
+            For Each method As XmlNode In listMethod
+                parentNode.Node.RemoveChild(method)
+                bResult = True
             Next
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Next
 
         Return bResult
     End Function
@@ -1277,12 +1240,9 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function GetFather(ByVal node As XmlNode) As XmlNode
-        Try
-            Return GetNode(node, "father")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return GetNode(node, "father")
+
     End Function
 
     Public Shared Function GetMasterNode(ByVal current As XmlNode) As XmlNode
@@ -1305,82 +1265,60 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function GetID(ByVal node As XmlNode, Optional ByVal strID As String = "id") As String
-        Try
-            Return GetAttributeValue(node, strID)
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return GetAttributeValue(node, strID)
     End Function
 
     Public Shared Function GetCurrentIDREF(ByVal iterator As IEnumerator, Optional ByVal strIdref As String = "idref") As String
-        Try
-            Return GetAttributeValue(CType(iterator.Current, XmlNode), strIdref)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return GetAttributeValue(CType(iterator.Current, XmlNode), strIdref)
+
     End Function
 
     Public Shared Function GetIDREF(ByVal node As XmlNode, Optional ByVal strIdref As String = "idref") As String
-        Try
-            Return GetAttributeValue(node, strIdref)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return GetAttributeValue(node, strIdref)
+
     End Function
 
     Public Shared Function SelectNodes(ByVal node As XmlNode, ByVal strElement As String, Optional ByVal strExcludeId As String = "", Optional ByVal strSubElement As String = "") As XmlNodeList
-        Try
-            Dim strQuery As String
 
-            If Len(strExcludeId) > 0 Then
-                strQuery = strElement + "[@id!='" + strExcludeId + "']" + strSubElement
-            Else
-                strQuery = strElement
-            End If
-            Return node.SelectNodes(strQuery)
+        Dim strQuery As String
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If Len(strExcludeId) > 0 Then
+            strQuery = strElement + "[@id!='" + strExcludeId + "']" + strSubElement
+        Else
+            strQuery = strElement
+        End If
+        Return node.SelectNodes(strQuery)
     End Function
 
     Public Shared Sub SetNodeString(ByRef node As XmlNode, ByVal strValue As String)
-        Try
-            If strValue IsNot Nothing Then
-                node.InnerText = strValue
-            Else
-                node.InnerText = ""
-            End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If strValue IsNot Nothing Then
+            node.InnerText = strValue
+        Else
+            node.InnerText = ""
+        End If
     End Sub
 
     Public Shared Function GetNodeString(ByRef node As XmlNode, ByVal strElement As String, Optional ByVal strDefault As String = "") As String
         Dim strNodeString As String = Nothing
-        Try
-            Dim child As XmlNode
 
-            If node Is Nothing _
-            Then
-                strNodeString = strDefault
-            Else
-                strNodeString = strDefault
+        Dim child As XmlNode
 
-                child = GetNode(node, strElement)
-                If Not child Is Nothing Then
-                    strNodeString = child.InnerText
-                End If
+        If node Is Nothing _
+        Then
+            strNodeString = strDefault
+        Else
+            strNodeString = strDefault
+
+            child = GetNode(node, strElement)
+            If Not child Is Nothing Then
+                strNodeString = child.InnerText
             End If
-            Return strNodeString
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return strNodeString
     End Function
 
     Public Shared Function GetPackage(ByVal node As XmlNode) As String
@@ -1432,31 +1370,26 @@ Public Class XmlProjectTools
     End Function
 
     Public Shared Function SelectNodeId(ByVal nodeXML As XmlNode, Optional ByVal TreeNodeXML As XmlNode = Nothing, Optional ByVal strIdref As String = "@idref") As XmlNode
-        Try
-            Dim child As XmlNode
 
-            If TreeNodeXML Is Nothing Then
-                TreeNodeXML = nodeXML
-            End If
+        Dim child As XmlNode
 
-            child = GetNode(nodeXML, strIdref)
+        If TreeNodeXML Is Nothing Then
+            TreeNodeXML = nodeXML
+        End If
 
-            If Not child Is Nothing Then
-                Return SelectNodeStringId(TreeNodeXML, child.Value)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        child = GetNode(nodeXML, strIdref)
+
+        If Not child Is Nothing Then
+            Return SelectNodeStringId(TreeNodeXML, child.Value)
+        End If
+
         Return Nothing
     End Function
 
     Public Shared Function SelectNodeStringId(ByVal TreeNodeXML As XmlNode, ByVal strID As String) As XmlNode
-        Try
-            Return TreeNodeXML.OwnerDocument.GetElementById(strID)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return TreeNodeXML.OwnerDocument.GetElementById(strID)
+
     End Function
 
     Public Shared Function ConvertDtdToEnumImpl(ByVal strImpl As String) As EImplementation
@@ -1630,19 +1563,17 @@ Public Class XmlProjectTools
 
     Public Shared Function GetFullpathPackage(ByVal current As XmlNode, ByVal eTag As ELanguage, Optional ByVal strPackage As String = "") As String
         Dim strResult As String = strPackage
-        Try
-            Dim strSeparator As String = GetSeparator(eTag)
-            While current.ParentNode IsNot current.OwnerDocument
-                If strResult <> "" Then
-                    strResult = GetName(current.ParentNode) + strSeparator + strResult
-                Else
-                    strResult = GetName(current.ParentNode)
-                End If
-                current = current.ParentNode
-            End While
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Dim strSeparator As String = GetSeparator(eTag)
+        While current.ParentNode IsNot current.OwnerDocument
+            If strResult <> "" Then
+                strResult = GetName(current.ParentNode) + strSeparator + strResult
+            Else
+                strResult = GetName(current.ParentNode)
+            End If
+            current = current.ParentNode
+        End While
+
         Return strResult
     End Function
 
@@ -1650,130 +1581,128 @@ Public Class XmlProjectTools
                                                     Optional ByVal strCurrentPath As String = "") As String
 
         Dim strResult As String = ""
-        Try
-            Dim strSeparator As String
-            If eTag <> ELanguage.Language_CplusPlus Then
-                strSeparator = "."
-            Else
-                strSeparator = "::"
-            End If
 
-            If current IsNot Nothing Then
-                strResult = GetName(current)
+        Dim strSeparator As String
+        If eTag <> ELanguage.Language_CplusPlus Then
+            strSeparator = "."
+        Else
+            strSeparator = "::"
+        End If
 
-                Select Case current.Name
-                    Case "import"
-                        strResult = GetName(current)
+        If current IsNot Nothing Then
+            strResult = GetName(current)
 
-                    Case "father", "child"
-                        current = current.ParentNode
-                        strResult = GetFullpathDescription(current, eTag)
+            Select Case current.Name
+                Case "import"
+                    strResult = GetName(current)
 
-                    Case "relationship"
-                        strResult = "Relationship (" + GetAttributeValue(current, "action") + ")"
+                Case "father", "child"
+                    current = current.ParentNode
+                    strResult = GetFullpathDescription(current, eTag)
 
-                    Case "enumvalue"
-                        If current.SelectSingleNode("ancestor::typedef") Is Nothing _
-                        Then
-                            current = current.SelectSingleNode("parent::reference")
+                Case "relationship"
+                    strResult = "Relationship (" + GetAttributeValue(current, "action") + ")"
+
+                Case "enumvalue"
+                    If current.SelectSingleNode("ancestor::typedef") Is Nothing _
+                    Then
+                        current = current.SelectSingleNode("parent::reference")
+                    Else
+                        current = current.SelectSingleNode("ancestor::typedef")
+                    End If
+                    strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
+
+                Case "list"
+                    current = current.ParentNode
+
+                    Select Case current.Name
+                        Case "father", "child"
+                            current = current.ParentNode
+                            strResult = GetFullpathDescription(current, eTag)
+
+                        Case Else
+                            strResult = GetFullpathDescription(current, eTag)
+                    End Select
+
+                Case "type", "variable"
+                    current = current.ParentNode
+
+                    Select Case current.Name
+                        Case "return"
+                            current = current.ParentNode
+                            strResult = GetFullpathDescription(current, eTag)
+
+                        Case "param"
+                            strResult = GetName(current)
+                            current = current.ParentNode
+                            strResult = GetFullpathDescription(current, eTag) + "(" + strResult + ")"
+
+                        Case Else
+                            strResult = GetFullpathDescription(current, eTag)
+                    End Select
+
+                Case "collaboration", "dependency", "inherited"
+                    current = current.ParentNode
+                    strResult = GetFullpathDescription(current, eTag)
+
+                Case "typedef"
+                    current = current.ParentNode
+                    strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
+
+                Case "reference", "interface"
+                    If GetAttributeValue(current, "type") = "typedef" Then
+                        If GetAttributeValue(current, "class") IsNot Nothing Then
+                            strResult = GetAttributeValue(current, "class") + strSeparator + strResult
+                        End If
+                    End If
+                    Dim strTempo As String = GetPackage(current)
+                    If String.IsNullOrEmpty(strTempo) = False _
+                    Then
+                        strResult = strTempo + strSeparator + strResult
+                    End If
+
+                    current = current.SelectSingleNode("ancestor::import")
+
+                    strTempo = GetAttributeValue(current, "param")
+                    If strCurrentPath <> "" _
+                    Then
+                        If eTag = ELanguage.Language_CplusPlus Then
+                            strResult = strResult + " (Include """ + strCurrentPath + """)"
                         Else
-                            current = current.SelectSingleNode("ancestor::typedef")
+                            strResult = strCurrentPath + strSeparator + strResult
                         End If
-                        strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
-
-                    Case "list"
-                        current = current.ParentNode
-
-                        Select Case current.Name
-                            Case "father", "child"
-                                current = current.ParentNode
-                                strResult = GetFullpathDescription(current, eTag)
-
-                            Case Else
-                                strResult = GetFullpathDescription(current, eTag)
-                        End Select
-
-                    Case "type", "variable"
-                        current = current.ParentNode
-
-                        Select Case current.Name
-                            Case "return"
-                                current = current.ParentNode
-                                strResult = GetFullpathDescription(current, eTag)
-
-                            Case "param"
-                                strResult = GetName(current)
-                                current = current.ParentNode
-                                strResult = GetFullpathDescription(current, eTag) + "(" + strResult + ")"
-
-                            Case Else
-                                strResult = GetFullpathDescription(current, eTag)
-                        End Select
-
-                    Case "collaboration", "dependency", "inherited"
-                        current = current.ParentNode
-                        strResult = GetFullpathDescription(current, eTag)
-
-                    Case "typedef"
-                        current = current.ParentNode
-                        strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
-
-                    Case "reference", "interface"
-                        If GetAttributeValue(current, "type") = "typedef" Then
-                            If GetAttributeValue(current, "class") IsNot Nothing Then
-                                strResult = GetAttributeValue(current, "class") + strSeparator + strResult
-                            End If
-                        End If
-                        Dim strTempo As String = GetPackage(current)
-                        If String.IsNullOrEmpty(strTempo) = False _
-                        Then
+                    ElseIf strTempo IsNot Nothing _
+                    Then
+                        If eTag = ELanguage.Language_CplusPlus Then
+                            strResult = strResult + " (Include """ + strTempo + """)"
+                        Else
                             strResult = strTempo + strSeparator + strResult
                         End If
+                    End If
 
-                        current = current.SelectSingleNode("ancestor::import")
+                Case "model"
+                    strResult = "Model " + GetName(current)
 
-                        strTempo = GetAttributeValue(current, "param")
-                        If strCurrentPath <> "" _
-                        Then
-                            If eTag = ELanguage.Language_CplusPlus Then
-                                strResult = strResult + " (Include """ + strCurrentPath + """)"
-                            Else
-                                strResult = strCurrentPath + strSeparator + strResult
-                            End If
-                        ElseIf strTempo IsNot Nothing _
-                        Then
-                            If eTag = ELanguage.Language_CplusPlus Then
-                                strResult = strResult + " (Include """ + strTempo + """)"
-                            Else
-                                strResult = strTempo + strSeparator + strResult
-                            End If
-                        End If
+                Case "param"
+                    Dim tempo As String = GetName(current)
+                    current = current.ParentNode
+                    strResult = GetMethodName(current, eTag)
+                    current = current.ParentNode
+                    strResult = tempo + " in method " + GetFullpathDescription(current, eTag) + strSeparator + strResult
 
-                    Case "model"
-                        strResult = "Model " + GetName(current)
+                Case "method"
+                    strResult = GetMethodName(current, eTag)
+                    current = current.ParentNode
+                    strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
 
-                    Case "param"
-                        Dim tempo As String = GetName(current)
-                        current = current.ParentNode
-                        strResult = GetMethodName(current, eTag)
-                        current = current.ParentNode
-                        strResult = tempo + " in method " + GetFullpathDescription(current, eTag) + strSeparator + strResult
+                Case Else
+                    current = current.ParentNode
+                    If current.Name <> "root" Then
+                        strResult = GetName(current) + strSeparator + strResult
+                    End If
+            End Select
+        End If
 
-                    Case "method"
-                        strResult = GetMethodName(current, eTag)
-                        current = current.ParentNode
-                        strResult = GetFullpathDescription(current, eTag) + strSeparator + strResult
-
-                    Case Else
-                        current = current.ParentNode
-                        If current.Name <> "root" Then
-                            strResult = GetName(current) + strSeparator + strResult
-                        End If
-                End Select
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return strResult
     End Function
 
@@ -1852,68 +1781,63 @@ Public Class XmlProjectTools
         If eTag <> ELanguage.Language_CplusPlus Then Return ""
 
         Dim strResult As String = ""
-        Try
-            Select Case level
-                Case 1
-                    strResult = "*"
-                Case 2
-                    strResult = "**"
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Select Case level
+            Case 1
+                strResult = "*"
+            Case 2
+                strResult = "**"
+        End Select
+
         Return strResult
     End Function
 
     Public Shared Sub StartInsertion(ByVal import As XmlDocument, ByVal oRefCounter As XmlReferenceNodeCounter)
-        Try
-            Dim child As XmlNode
-            Dim parent As XmlNode
-            Dim strID As String
-            'Dim numID As Integer
-            Dim oImportCounter As New XmlReferenceNodeCounter(import)
 
-            For Each child In SelectNodes(import, "//*[@id]")
+        Dim child As XmlNode
+        Dim parent As XmlNode
+        Dim strID As String
+        'Dim numID As Integer
+        Dim oImportCounter As New XmlReferenceNodeCounter(import)
 
-                Select Case child.Name
-                    Case "package"
-                        strID = XmlComponent.UID
-                        'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
-                        SetID(child, strID)
+        For Each child In SelectNodes(import, "//*[@id]")
 
-                    Case "export"
-                        'Debug.Print("StartInsertion: no renumber (" + GetID(child) + ") " + child.Name)
+            Select Case child.Name
+                Case "package"
+                    strID = XmlComponent.UID
+                    'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
+                    SetID(child, strID)
 
-                    Case "relationship"
-                        strID = XmlComponent.UID
-                        'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
-                        ChangeID(child, import, strID)
+                Case "export"
+                    'Debug.Print("StartInsertion: no renumber (" + GetID(child) + ") " + child.Name)
 
-                    Case "enumvalue"
-                        parent = GetNode(child, "parent::type/parent::*")
-                        Dim strPrefix As String = ""
+                Case "relationship"
+                    strID = XmlComponent.UID
+                    'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
+                    ChangeID(child, import, strID)
 
-                        Select Case parent.Name
-                            Case "typedef"
-                                strPrefix += XmlNodeCounter.AfterStr(GetID(parent), "class") + "_"
-                            Case "property"
-                                strPrefix = GetNodeString(parent, "@num-id") + "_"
-                                parent = GetNode(parent, "parent::class")
-                                strPrefix = XmlNodeCounter.AfterStr(GetID(parent), "class") + "_" + strPrefix
-                        End Select
-                        strPrefix = "enum" + strPrefix
-                        strID = XmlReferenceNodeCounter.GenerateNumericId(child.ParentNode, "enumvalue", strPrefix, "id")
-                        ChangeID(child, import, strID)
+                Case "enumvalue"
+                    parent = GetNode(child, "parent::type/parent::*")
+                    Dim strPrefix As String = ""
 
-                    Case Else
-                        strID = CStr(oRefCounter.GetNewClassId(oImportCounter))
-                        'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
-                        ChangeID(child, import, strID)
-                End Select
-            Next child
-        Catch ex As Exception
-            Throw ex
-        End Try
+                    Select Case parent.Name
+                        Case "typedef"
+                            strPrefix += XmlNodeCounter.AfterStr(GetID(parent), "class") + "_"
+                        Case "property"
+                            strPrefix = GetNodeString(parent, "@num-id") + "_"
+                            parent = GetNode(parent, "parent::class")
+                            strPrefix = XmlNodeCounter.AfterStr(GetID(parent), "class") + "_" + strPrefix
+                    End Select
+                    strPrefix = "enum" + strPrefix
+                    strID = XmlReferenceNodeCounter.GenerateNumericId(child.ParentNode, "enumvalue", strPrefix, "id")
+                    ChangeID(child, import, strID)
+
+                Case Else
+                    strID = CStr(oRefCounter.GetNewClassId(oImportCounter))
+                    'Debug.Print("StartInsertion: renumber (" + GetID(child) + ") " + child.Name + "-->" + strID)
+                    ChangeID(child, import, strID)
+            End Select
+        Next child
     End Sub
 
     Public Shared Function ChangeTypeDesc(ByVal nodeReference As XmlNode, ByVal szNewID As String) As Boolean
@@ -2072,13 +1996,8 @@ Public Class XmlProjectTools
     End Sub
 
     Public Shared Sub LoadTreeInherited(ByVal parent As XmlNode, ByVal list As List(Of String))
-        Try
-            Dim iteration As Integer = 0
-            SelectInherited(iteration, SelectNodeId(parent), list)
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim iteration As Integer = 0
+        SelectInherited(iteration, SelectNodeId(parent), list)
     End Sub
 
     Public Shared Function CreateNode(ByVal doc As XmlDocument, ByVal strElement As String) As XmlNode
@@ -2091,130 +2010,120 @@ Public Class XmlProjectTools
 
     Public Shared Sub SelectInheritedMethods(ByRef iteration As Integer, ByVal eImplementation As EImplementation, _
                                              ByRef node As XmlNode, ByVal list As SortedList)
-        Try
-            iteration += 1
-            If iteration > cstMaxCircularReferences Then
-                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical, "Circular references")
-                Return
-            End If
-            ' We add "final" methods to be sure to avoid adding method from "root" node
-            For Each child In SelectNodes(node, "method[@constructor!='no' or @implementation='final' or @implementation='virtual' or @implementation='root' or @implementation='abstract']")
-                'Debug.Print("virtual=" + GetName(child))
-                Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
-                xmlcpnt.CheckedView = True
+        iteration += 1
+        If iteration > cstMaxCircularReferences Then
+            MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical, "Circular references")
+            Return
+        End If
+        ' We add "final" methods to be sure to avoid adding method from "root" node
+        For Each child In SelectNodes(node, "method[@constructor!='no' or @implementation='final' or @implementation='virtual' or @implementation='root' or @implementation='abstract']")
+            'Debug.Print("virtual=" + GetName(child))
+            Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
+            xmlcpnt.CheckedView = True
 
-                Dim bAddNode As Boolean = False
-
-                Select Case eImplementation
-                    Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
-                        bAddNode = (xmlcpnt.Implementation = eImplementation.Interf)
-
-                    Case Else
-                        bAddNode = True
-                End Select
-                Dim signature As String = xmlcpnt.Signature
-                If list.ContainsKey(signature) = False And bAddNode Then
-                    list.Add(signature, xmlcpnt)
-                End If
-            Next child
+            Dim bAddNode As Boolean = False
 
             Select Case eImplementation
                 Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
-                    ' Ignore inheritance tree
+                    bAddNode = (xmlcpnt.Implementation = eImplementation.Interf)
 
                 Case Else
-                    For Each child In SelectNodes(node, "inherited")
-                        Dim inherited As XmlNode = SelectNodeId(child, node)
-                        'Debug.Print("inherited=" + GetName(inherited))
-                        SelectInheritedMethods(iteration, eImplementation, inherited, list)
-                    Next child
+                    bAddNode = True
             End Select
+            Dim signature As String = xmlcpnt.Signature
+            If list.ContainsKey(signature) = False And bAddNode Then
+                list.Add(signature, xmlcpnt)
+            End If
+        Next child
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Select Case eImplementation
+            Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
+                ' Ignore inheritance tree
+
+            Case Else
+                For Each child In SelectNodes(node, "inherited")
+                    Dim inherited As XmlNode = SelectNodeId(child, node)
+                    'Debug.Print("inherited=" + GetName(inherited))
+                    SelectInheritedMethods(iteration, eImplementation, inherited, list)
+                Next child
+        End Select
     End Sub
 
     Public Shared Sub SelectInheritedProperties(ByRef iteration As Integer, ByVal eImplementation As EImplementation, _
                                                 ByRef node As XmlNode, ByVal list As ArrayList)
-        Try
-            iteration += 1
-            If iteration > cstMaxCircularReferences Then
-                MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical, "Circular references")
-                Return
-            End If
-            For Each child As XmlNode In SelectNodes(node, "property[@overridable='yes' or @overrides!='']")
-                'Debug.Print("virtual=" + GetName(child))
-                Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
-                xmlcpnt.CheckedView = True
 
-                Dim bAddNode As Boolean = False
+        iteration += 1
+        If iteration > cstMaxCircularReferences Then
+            MsgBox("Inherited tree deepth is too big, or has circular references!", MsgBoxStyle.Critical, "Circular references")
+            Return
+        End If
+        For Each child As XmlNode In SelectNodes(node, "property[@overridable='yes' or @overrides!='']")
+            'Debug.Print("virtual=" + GetName(child))
+            Dim xmlcpnt As XmlOverrideMemberView = New XmlOverrideMemberView(child)
+            xmlcpnt.CheckedView = True
 
-                Select Case eImplementation
-                    Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
-                        bAddNode = (xmlcpnt.Implementation = eImplementation.Interf)
-
-                    Case Else
-                        bAddNode = True
-                End Select
-
-                If list.Contains(xmlcpnt) = False And bAddNode Then
-                    list.Add(xmlcpnt)
-                End If
-            Next child
+            Dim bAddNode As Boolean = False
 
             Select Case eImplementation
                 Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
-                    ' Ignore inheritance tree
+                    bAddNode = (xmlcpnt.Implementation = eImplementation.Interf)
 
                 Case Else
-                    For Each child As XmlNode In SelectNodes(node, "inherited")
-                        Dim inherited As XmlNode = SelectNodeId(child, node)
-                        'Debug.Print("inherited=" + GetName(inherited))
-                        SelectInheritedProperties(iteration, eImplementation, inherited, list)
-                    Next child
+                    bAddNode = True
             End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+            If list.Contains(xmlcpnt) = False And bAddNode Then
+                list.Add(xmlcpnt)
+            End If
+        Next child
+
+        Select Case eImplementation
+            Case eImplementation.Container, eImplementation.Exception, eImplementation.Simple
+                ' Ignore inheritance tree
+
+            Case Else
+                For Each child As XmlNode In SelectNodes(node, "inherited")
+                    Dim inherited As XmlNode = SelectNodeId(child, node)
+                    'Debug.Print("inherited=" + GetName(inherited))
+                    SelectInheritedProperties(iteration, eImplementation, inherited, list)
+                Next child
+        End Select
     End Sub
 
     Public Shared Function IsInvalidProjectName(ByRef dataControl As TextBox, ByVal provider As ErrorProvider, ByVal eLang As ELanguage, _
                                                 Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strErrorMsg As String = "No error"
 
-            If eLang = ELanguage.Language_Vbasic _
-            Then
-                If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
-                Then
-                    strErrorMsg = "Must contains characters compliant with project name:" + vbCrLf + _
-                                  "name1 or name1.name2"
-                    bResult = True
-                End If
+        Dim strErrorMsg As String = "No error"
 
-            ElseIf eLang = ELanguage.Language_Java _
-            Then
-                bResult = False
-
-            ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
+        If eLang = ELanguage.Language_Vbasic _
+        Then
+            If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
             Then
                 strErrorMsg = "Must contains characters compliant with project name:" + vbCrLf + _
-                                  "name1 or name1::name2"
+                              "name1 or name1.name2"
                 bResult = True
             End If
 
-            If bResult = True Then
-                dataControl.Select(0, dataControl.Text.Length)
+        ElseIf eLang = ELanguage.Language_Java _
+        Then
+            bResult = False
 
-                provider.SetIconPadding(dataControl, 0)
-                provider.SetIconAlignment(dataControl, eAlignment)
-                provider.SetError(dataControl, strErrorMsg)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
+        Then
+            strErrorMsg = "Must contains characters compliant with project name:" + vbCrLf + _
+                              "name1 or name1::name2"
+            bResult = True
+        End If
+
+        If bResult = True Then
+            dataControl.Select(0, dataControl.Text.Length)
+
+            provider.SetIconPadding(dataControl, 0)
+            provider.SetIconAlignment(dataControl, eAlignment)
+            provider.SetError(dataControl, strErrorMsg)
+        End If
+
         Return bResult
     End Function
 
@@ -2222,61 +2131,59 @@ Public Class XmlProjectTools
                                                 ByVal eLang As ELanguage, Optional ByVal bNoHeaderFile As Boolean = False, _
                                                 Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strErrorMsg As String = ""
-            If dataControl.Text = "" Then
-                ' Ignore
 
-            ElseIf eLang = ELanguage.Language_Vbasic _
-            Then
-                If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
-                Then
-                    strErrorMsg = "Must contains characters compliant with namespace:" + vbCrLf + _
-                                  "name1 or name1.name2"
-                    bResult = True
-                End If
+        Dim strErrorMsg As String = ""
+        If dataControl.Text = "" Then
+            ' Ignore
 
-            ElseIf eLang = ELanguage.Language_Java _
+        ElseIf eLang = ELanguage.Language_Vbasic _
+        Then
+            If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
             Then
-                If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
-                Then
-                    strErrorMsg = "Must contains characters compliant with package name:" + vbCrLf + _
-                                  "name1 or name1.name2"
-                    bResult = True
-                End If
-
-            ElseIf regCppHeader.IsMatch(dataControl.Text) = True _
-            Then
-                If bNoHeaderFile Then
-                    If regCppPackage.IsMatch(dataControl.Text) = False Then
-                        strErrorMsg = "Must contains characters compliant with namespace: name1 or name1::name2"
-                        bResult = True
-                    End If
-                End If
-
-            ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
-            Then
-                If bNoHeaderFile Then
-                    strErrorMsg = "Must contains characters compliant with namespace: name1 or name1::name2"
-                Else
-                    strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
-                                  "name1 or name1::name2" + vbCrLf + _
-                                  "name.h or name.hpp" + vbCrLf + _
-                                  "include/name1/name2.h  or include\name1\name2.h"
-                End If
+                strErrorMsg = "Must contains characters compliant with namespace:" + vbCrLf + _
+                              "name1 or name1.name2"
                 bResult = True
             End If
 
-            If bResult = True Then
-                dataControl.Select(0, dataControl.Text.Length)
-
-                provider.SetIconPadding(dataControl, 0)
-                provider.SetIconAlignment(dataControl, eAlignment)
-                provider.SetError(dataControl, strErrorMsg)
+        ElseIf eLang = ELanguage.Language_Java _
+        Then
+            If regVbAndJavaPackage.IsMatch(dataControl.Text) = False _
+            Then
+                strErrorMsg = "Must contains characters compliant with package name:" + vbCrLf + _
+                              "name1 or name1.name2"
+                bResult = True
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        ElseIf regCppHeader.IsMatch(dataControl.Text) = True _
+        Then
+            If bNoHeaderFile Then
+                If regCppPackage.IsMatch(dataControl.Text) = False Then
+                    strErrorMsg = "Must contains characters compliant with namespace: name1 or name1::name2"
+                    bResult = True
+                End If
+            End If
+
+        ElseIf regCppPackage.IsMatch(dataControl.Text) = False _
+        Then
+            If bNoHeaderFile Then
+                strErrorMsg = "Must contains characters compliant with namespace: name1 or name1::name2"
+            Else
+                strErrorMsg = "Must contains characters compliant with namespace or header files:" + vbCrLf + _
+                              "name1 or name1::name2" + vbCrLf + _
+                              "name.h or name.hpp" + vbCrLf + _
+                              "include/name1/name2.h  or include\name1\name2.h"
+            End If
+            bResult = True
+        End If
+
+        If bResult = True Then
+            dataControl.Select(0, dataControl.Text.Length)
+
+            provider.SetIconPadding(dataControl, 0)
+            provider.SetIconAlignment(dataControl, eAlignment)
+            provider.SetError(dataControl, strErrorMsg)
+        End If
+
         Return bResult
     End Function
 
@@ -2286,83 +2193,81 @@ Public Class XmlProjectTools
                                                  Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft, _
                                                  Optional ByVal strDataPropertyName As String = "Name") As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strErrorMsg As String = ""
-            Dim strFormattedValue As String = e.FormattedValue
-            If strDataPropertyName <> dataControl.Columns(e.ColumnIndex).DataPropertyName _
-            Then
-                bResult = False
 
-            ElseIf strFormattedValue.Length = 0 _
-            Then
-                bResult = True
+        Dim strErrorMsg As String = ""
+        Dim strFormattedValue As String = e.FormattedValue
+        If strDataPropertyName <> dataControl.Columns(e.ColumnIndex).DataPropertyName _
+        Then
+            bResult = False
 
-            Else
-                Dim component As XmlComponent = CType(dataControl.Rows(e.RowIndex).DataBoundItem, XmlComponent)
-                Dim eLang As ELanguage = component.GenerationLanguage
+        ElseIf strFormattedValue.Length = 0 _
+        Then
+            bResult = True
+
+        Else
+            Dim component As XmlComponent = CType(dataControl.Rows(e.RowIndex).DataBoundItem, XmlComponent)
+            Dim eLang As ELanguage = component.GenerationLanguage
 
 
-                Select Case component.NodeName
-                    Case "method"
-                        If component.GetAttribute("operator") IsNot Nothing Then
-                            If regOperator.IsMatch(strFormattedValue) = False _
-                            Then
-                                If eLang = ELanguage.Language_Vbasic _
-                                Then
-                                    strErrorMsg = "Please enter an operator: " _
-                                                + vbCrLf + "Unary: +, -, IsFalse, IsTrue, Not" + vbCrLf _
-                                                + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
-                                                + "Conversion:  CType"
-                                Else
-                                    strErrorMsg = "Please enter an operator: +, ++, --, -, !, *, /, >>, <<, ==, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
-                                End If
-                                bResult = True
-                            End If
-                        ElseIf regVariableName.IsMatch(strFormattedValue) = False _
+            Select Case component.NodeName
+                Case "method"
+                    If component.GetAttribute("operator") IsNot Nothing Then
+                        If regOperator.IsMatch(strFormattedValue) = False _
                         Then
-                            strErrorMsg = "Must contains characters compliant with variable, function, or class name"
+                            If eLang = ELanguage.Language_Vbasic _
+                            Then
+                                strErrorMsg = "Please enter an operator: " _
+                                            + vbCrLf + "Unary: +, -, IsFalse, IsTrue, Not" + vbCrLf _
+                                            + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
+                                            + "Conversion:  CType"
+                            Else
+                                strErrorMsg = "Please enter an operator: +, ++, --, -, !, *, /, >>, <<, ==, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
+                            End If
                             bResult = True
                         End If
+                    ElseIf regVariableName.IsMatch(strFormattedValue) = False _
+                    Then
+                        strErrorMsg = "Must contains characters compliant with variable, function, or class name"
+                        bResult = True
+                    End If
 
-                    Case "import", "package"
-                        If eLang = ELanguage.Language_CplusPlus _
-                        Then
-                            If regVariableName.IsMatch(strFormattedValue) = False _
-                            And regCppHeader.IsMatch(strFormattedValue) = False _
-                            And regCppPackage.IsMatch(strFormattedValue) = False _
-                            Then
-                                strErrorMsg = "Must contains characters compliant with package, qualified name or C++ header file name"
-                                bResult = True
-                            End If
-                        ElseIf regVariableName.IsMatch(strFormattedValue) = False _
-                            And regVbAndJavaPackage.IsMatch(strFormattedValue) = False _
-                        Then
-                            strErrorMsg = "Must contains characters compliant with package, or qualified name"
-                            bResult = True
-                        End If
-
-                    Case Else
+                Case "import", "package"
+                    If eLang = ELanguage.Language_CplusPlus _
+                    Then
                         If regVariableName.IsMatch(strFormattedValue) = False _
+                        And regCppHeader.IsMatch(strFormattedValue) = False _
+                        And regCppPackage.IsMatch(strFormattedValue) = False _
                         Then
-                            strErrorMsg = "Must contains characters compliant with variable, function, or class name"
+                            strErrorMsg = "Must contains characters compliant with package, qualified name or C++ header file name"
                             bResult = True
                         End If
-                End Select
-            End If
+                    ElseIf regVariableName.IsMatch(strFormattedValue) = False _
+                        And regVbAndJavaPackage.IsMatch(strFormattedValue) = False _
+                    Then
+                        strErrorMsg = "Must contains characters compliant with package, or qualified name"
+                        bResult = True
+                    End If
 
-            If bResult = True Then
-                provider.SetIconPadding(dataControl, 0)
-                provider.SetIconAlignment(dataControl, eAlignment)
-                provider.SetError(dataControl, strErrorMsg)
-                dataControl.Rows(e.RowIndex).ErrorText = strErrorMsg
-                dataControl.Rows(e.RowIndex).Cells(e.ColumnIndex).ErrorText = strErrorMsg
-            Else
-                dataControl.Rows(e.RowIndex).ErrorText = ""
-                dataControl.Rows(e.RowIndex).Cells(e.ColumnIndex).ErrorText = ""
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+                Case Else
+                    If regVariableName.IsMatch(strFormattedValue) = False _
+                    Then
+                        strErrorMsg = "Must contains characters compliant with variable, function, or class name"
+                        bResult = True
+                    End If
+            End Select
+        End If
+
+        If bResult = True Then
+            provider.SetIconPadding(dataControl, 0)
+            provider.SetIconAlignment(dataControl, eAlignment)
+            provider.SetError(dataControl, strErrorMsg)
+            dataControl.Rows(e.RowIndex).ErrorText = strErrorMsg
+            dataControl.Rows(e.RowIndex).Cells(e.ColumnIndex).ErrorText = strErrorMsg
+        Else
+            dataControl.Rows(e.RowIndex).ErrorText = ""
+            dataControl.Rows(e.RowIndex).Cells(e.ColumnIndex).ErrorText = ""
+        End If
+
         Return bResult
     End Function
 
@@ -2370,38 +2275,36 @@ Public Class XmlProjectTools
                                          Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopRight) As Boolean
 
         Dim bResult As Boolean = False
-        Try
-            If String.IsNullOrEmpty(combo.Text) = False _
+
+        If String.IsNullOrEmpty(combo.Text) = False _
             Then
-                bResult = False
+            bResult = False
 
-            ElseIf String.IsNullOrEmpty(combo.SelectedText) = False _
-            Then
-                bResult = False
+        ElseIf String.IsNullOrEmpty(combo.SelectedText) = False _
+        Then
+            bResult = False
 
-            ElseIf combo.SelectedItem IsNot Nothing _
-            Then
-                bResult = False
+        ElseIf combo.SelectedItem IsNot Nothing _
+        Then
+            bResult = False
 
-            ElseIf combo.SelectedValue IsNot Nothing _
-            Then
-                bResult = False
-            Else
-                bResult = True
-            End If
+        ElseIf combo.SelectedValue IsNot Nothing _
+        Then
+            bResult = False
+        Else
+            bResult = True
+        End If
 
-            If bResult = True Then
-                combo.Select(0, combo.Text.Length)
+        If bResult = True Then
+            combo.Select(0, combo.Text.Length)
 
-                ' Set the ErrorProvider error with the text to display. 
-                Dim errorMsg As String = "Data types can't be empty !"
-                provider.SetIconPadding(combo, 0)
-                provider.SetIconAlignment(combo, eAlignment)
-                provider.SetError(combo, errorMsg)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+            ' Set the ErrorProvider error with the text to display. 
+            Dim errorMsg As String = "Data types can't be empty !"
+            provider.SetIconPadding(combo, 0)
+            provider.SetIconAlignment(combo, eAlignment)
+            provider.SetError(combo, errorMsg)
+        End If
+
         Return bResult
     End Function
 
@@ -2409,98 +2312,90 @@ Public Class XmlProjectTools
                                              ByVal eLang As ELanguage, _
                                              Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
         Dim bResult As Boolean = False
-        Try
-            If name.Text.Length = 0 _
+
+        If name.Text.Length = 0 _
             Then
-                bResult = True
+            bResult = True
 
-            ElseIf regOperator.IsMatch(name.Text) = False _
+        ElseIf regOperator.IsMatch(name.Text) = False _
+        Then
+            bResult = True
+        End If
+
+        If bResult = True Then
+            name.Select(0, name.Text.Length)
+
+            ' Set the ErrorProvider error with the text to display. 
+            If eLang = ELanguage.Language_Vbasic _
             Then
-                bResult = True
+                Dim errorMsg As String = "Unary: +, -, IsFalse, IsTrue, Not" + vbCrLf _
+                                        + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
+                                        + "Conversion:  CType"
+
+                provider.SetError(name, errorMsg)
+            Else
+                Dim errorMsg As String = "+, ++, --, -, !, *, /, >>, <<, ==, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
+
+                provider.SetError(name, errorMsg)
             End If
+        End If
 
-            If bResult = True Then
-                name.Select(0, name.Text.Length)
-
-                ' Set the ErrorProvider error with the text to display. 
-                If eLang = ELanguage.Language_Vbasic _
-                Then
-                    Dim errorMsg As String = "Unary: +, -, IsFalse, IsTrue, Not" + vbCrLf _
-                                            + "Binary: +, -, *, /, \, " + Chr(38) + ", ^, >>, <<, =, <>, >, >=, <, <=, And, Like, Mod, Or, Xor" + vbCrLf _
-                                            + "Conversion:  CType"
-
-                    provider.SetError(name, errorMsg)
-                Else
-                    Dim errorMsg As String = "+, ++, --, -, !, *, /, >>, <<, ==, =, !=, >, >=, <, <=, " + Chr(38) + ", " + Chr(38) + Chr(38) + ", %, |, ||, ^"
-
-                    provider.SetError(name, errorMsg)
-                End If
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return bResult
     End Function
 
     Public Shared Function IsInvalidVariableName(ByRef name As TextBox, ByVal provider As ErrorProvider, _
                                                  Optional ByVal eAlignment As ErrorIconAlignment = ErrorIconAlignment.TopLeft) As Boolean
         Dim bResult As Boolean = False
-        Try
-            If name.Text.Length = 0 _
+
+        If name.Text.Length = 0 _
             Then
-                bResult = True
+            bResult = True
 
-            ElseIf regVariableName.IsMatch(name.Text) = False _
-            Then
-                bResult = True
-            End If
+        ElseIf regVariableName.IsMatch(name.Text) = False _
+        Then
+            bResult = True
+        End If
 
-            If bResult = True Then
-                name.Select(0, name.Text.Length)
+        If bResult = True Then
+            name.Select(0, name.Text.Length)
 
-                ' Set the ErrorProvider error with the text to display. 
-                provider.SetIconPadding(name, 0)
-                provider.SetIconAlignment(name, eAlignment)
-                provider.SetError(name, "Must contains characters compliant with variable, function, or class name")
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+            ' Set the ErrorProvider error with the text to display. 
+            provider.SetIconPadding(name, 0)
+            provider.SetIconAlignment(name, eAlignment)
+            provider.SetError(name, "Must contains characters compliant with variable, function, or class name")
+        End If
+
         Return bResult
     End Function
 
     Public Shared Function GetValidFilename(ByRef filename As String) As Boolean
         Dim bResult As Boolean = False
-        Try
 
-            If filename Is Nothing Then
-                filename = "ValidFilename"
-                Return True
-            End If
+        If filename Is Nothing Then
+            filename = "ValidFilename"
+            Return True
+        End If
 
-            Dim index As Integer = InStr(filename, "/")
+        Dim index As Integer = InStr(filename, "/")
+        If index > 0 Then
+            bResult = True
+            filename = filename.Substring(0, index - 1) + "-" + filename.Substring(index)
+        End If
+
+        index = InStr(filename, "\")
+        If index > 0 Then
+            bResult = True
+            filename = filename.Substring(0, index - 1) + "-" + filename.Substring(index)
+        End If
+
+        ' Determines if there are bad characters in the name.
+        For Each badChar As Char In System.IO.Path.GetInvalidPathChars
+            index = InStr(filename, badChar)
             If index > 0 Then
                 bResult = True
                 filename = filename.Substring(0, index - 1) + "-" + filename.Substring(index)
             End If
-
-            index = InStr(filename, "\")
-            If index > 0 Then
-                bResult = True
-                filename = filename.Substring(0, index - 1) + "-" + filename.Substring(index)
-            End If
-
-            ' Determines if there are bad characters in the name.
-            For Each badChar As Char In System.IO.Path.GetInvalidPathChars
-                index = InStr(filename, badChar)
-                If index > 0 Then
-                    bResult = True
-                    filename = filename.Substring(0, index - 1) + "-" + filename.Substring(index)
-                End If
-            Next
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Next
 
         ' The name passes basic validation.
         Return bResult
@@ -2508,78 +2403,69 @@ Public Class XmlProjectTools
 
     Public Shared Function GetTypeRelation(ByVal node As XmlNode, ByVal eTag As ELanguage) As String
         Dim strResult As String = Nothing
-        Try
-            Dim parent As XmlNode
-            Dim method As XmlNode
-            Dim strSeparator As String = "::"
-            If eTag <> ELanguage.Language_CplusPlus Then
-                strSeparator = "."
-            End If
 
-            parent = node.ParentNode
-            Select Case parent.Name
-                Case "param"
+        Dim parent As XmlNode
+        Dim method As XmlNode
+        Dim strSeparator As String = "::"
+        If eTag <> ELanguage.Language_CplusPlus Then
+            strSeparator = "."
+        End If
 
-                    method = parent.ParentNode
-                    Dim classNode As XmlNode = method.ParentNode
+        parent = node.ParentNode
+        Select Case parent.Name
+            Case "param"
 
-                    If GetName(method) = "" Then
-                        strResult = GetFullpathDescription(classNode, eTag) + strSeparator + "<Constructor>, argument " + GetName(method)
-                    Else
-                        strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", argument " + GetName(parent)
-                    End If
+                method = parent.ParentNode
+                Dim classNode As XmlNode = method.ParentNode
 
-                Case "return"
+                If GetName(method) = "" Then
+                    strResult = GetFullpathDescription(classNode, eTag) + strSeparator + "<Constructor>, argument " + GetName(method)
+                Else
+                    strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", argument " + GetName(parent)
+                End If
 
-                    method = parent.ParentNode
-                    Dim classNode As XmlNode = method.ParentNode
-                    strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", return value"
+            Case "return"
 
-                Case "property"
+                method = parent.ParentNode
+                Dim classNode As XmlNode = method.ParentNode
+                strResult = GetFullpathDescription(classNode, eTag) + strSeparator + GetName(method) + ", return value"
 
-                    strResult = GetFullpathDescription(GetNode(parent, "ancestor::class"), eTag) + strSeparator + GetName(parent)
+            Case "property"
 
-                Case Else
+                strResult = GetFullpathDescription(GetNode(parent, "ancestor::class"), eTag) + strSeparator + GetName(parent)
 
-                    strResult = GetFullpathDescription(parent, eTag)
+            Case Else
 
-            End Select
+                strResult = GetFullpathDescription(parent, eTag)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End Select
+
         Return strResult
     End Function
 
     Public Shared Function GetFatherRelation(ByVal father As XmlNode) As String
         Dim strResult As String = Nothing
-        Try
-            Dim parent As XmlNode
-            Dim sibbling As XmlNode
 
-            parent = father.ParentNode
-            sibbling = SelectNodeId(GetNode(parent, "child"))
-            strResult = "Relation '" + GetAttributeValue(parent, "action") + "' to " + GetName(sibbling)
+        Dim parent As XmlNode
+        Dim sibbling As XmlNode
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        parent = father.ParentNode
+        sibbling = SelectNodeId(GetNode(parent, "child"))
+        strResult = "Relation '" + GetAttributeValue(parent, "action") + "' to " + GetName(sibbling)
+
         Return strResult
     End Function
 
     Public Shared Function GetChildRelation(ByVal father As XmlNode) As String
         Dim strResult As String = Nothing
-        Try
-            Dim parent As XmlNode
-            Dim sibbling As XmlNode
 
-            parent = father.ParentNode
-            sibbling = SelectNodeId(GetFather(parent))
-            strResult = "Relation '" + GetAttributeValue(parent, "action") + "' to " + GetName(sibbling)
+        Dim parent As XmlNode
+        Dim sibbling As XmlNode
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        parent = father.ParentNode
+        sibbling = SelectNodeId(GetFather(parent))
+        strResult = "Relation '" + GetAttributeValue(parent, "action") + "' to " + GetName(sibbling)
+
         Return strResult
     End Function
 
@@ -2589,42 +2475,32 @@ Public Class XmlProjectTools
 
     Public Shared Function GetAttributeValue(ByVal nodeXml As XmlNode, ByVal name As String) As String
         Dim strResult As String = Nothing
-        Try
+
+        If nodeXml IsNot Nothing Then
+            nodeXml = nodeXml.Attributes.ItemOf(name)
             If nodeXml IsNot Nothing Then
-                nodeXml = nodeXml.Attributes.ItemOf(name)
-                If nodeXml IsNot Nothing Then
-                    strResult = nodeXml.Value
-                End If
+                strResult = nodeXml.Value
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return strResult
     End Function
 
     Public Shared Function GetNode(ByVal node As XmlNode, ByVal strElement As String) As XmlNode
-        Try
-            Return node.SelectSingleNode(strElement)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return node.SelectSingleNode(strElement)
+
     End Function
 
     Public Shared Sub AddAttributeValue(ByRef node As XmlNode, ByVal strAttribute As String, Optional ByVal strValue As String = "")
-        Try
-            Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
+        Dim attrib As XmlAttribute = node.Attributes.ItemOf(strAttribute)
 
-            If attrib Is Nothing Then
-                attrib = node.OwnerDocument.CreateAttribute(strAttribute)
-                node.Attributes.SetNamedItem(attrib)
-            End If
+        If attrib Is Nothing Then
+            attrib = node.OwnerDocument.CreateAttribute(strAttribute)
+            node.Attributes.SetNamedItem(attrib)
+        End If
 
-            attrib.Value = strValue
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+        attrib.Value = strValue
     End Sub
 
     Public Shared Sub TrimComments(ByVal document As XmlNode)
@@ -2673,143 +2549,138 @@ Public Class XmlProjectTools
                                                ByVal prefixGet As String, _
                                                ByVal prefixSet As String, _
                                                Optional ByVal bFilterImports As Boolean = False)
-        Try
-            'Dim Accessor As XmlNode = Nothing
-            Dim nodeProperty As XmlNode = Nothing
-            Dim Getter, Setter As XmlNode
-            Dim node, child As XmlNode
-            Dim numID As Integer = 1
-            Dim tempo As String
+        'Dim Accessor As XmlNode = Nothing
+        Dim nodeProperty As XmlNode = Nothing
+        Dim Getter, Setter As XmlNode
+        Dim node, child As XmlNode
+        Dim numID As Integer = 1
+        Dim tempo As String
 
-            If bFilterImports Then
-                For Each node In document.SelectNodes("//interface[method[starts-with(@name,'" + prefixGet + "')]]")
+        If bFilterImports Then
+            For Each node In document.SelectNodes("//interface[method[starts-with(@name,'" + prefixGet + "')]]")
 
-                    For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixGet + "')]")
-
-                        nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "yes", numID, child)
-
-                        tempo = "public"
-
-                        If child.SelectSingleNode("return") IsNot Nothing Then
-                            tempo = child.SelectSingleNode("return/variable/@range").Value
-                            If tempo = "private" Then tempo = "protected"
-                        End If
-
-                        Getter = nodeProperty.SelectSingleNode("get")
-                        AddAttributeValue(Getter, "range", tempo)
-
-                        node.RemoveChild(child)
-                        numID += 1
-
-                    Next
-                Next
-            End If
-
-            Dim strName As String = ""
-            numID = 1
-
-            For Each node In document.SelectNodes("//class[(method[starts-with(@name,'" + prefixGet + "') or starts-with(@name,'" + prefixSet + "')])]")
                 For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixGet + "')]")
-                    strName = GetName(child).Substring(prefixGet.Length)
-                    nodeProperty = node.SelectSingleNode("property[@name='" + strName + "']")
 
-                    If nodeProperty Is Nothing Then
-                        nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixGet.Length), "no", "no", numID, child)
-                        numID += 1
+                    nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "yes", numID, child)
+
+                    tempo = "public"
+
+                    If child.SelectSingleNode("return") IsNot Nothing Then
+                        tempo = child.SelectSingleNode("return/variable/@range").Value
+                        If tempo = "private" Then tempo = "protected"
                     End If
-                Next
-                For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixSet + "')]")
-                    strName = GetName(child).Substring(prefixGet.Length)
-                    nodeProperty = node.SelectSingleNode("property[@name='" + strName + "']")
-                    If nodeProperty Is Nothing Then
-                        nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "no", numID, child)
-                        numID += 1
-                    End If
+
+                    Getter = nodeProperty.SelectSingleNode("get")
+                    AddAttributeValue(Getter, "range", tempo)
+
+                    node.RemoveChild(child)
+                    numID += 1
+
                 Next
             Next
+        End If
 
-            Dim strImplementation As String = Nothing
+        Dim strName As String = ""
+        numID = 1
 
-            For Each child In document.SelectNodes("//property")
-                Getter = child.ParentNode.SelectSingleNode("method[@name='" + prefixGet + GetName(child) + "']")
-                If Getter IsNot Nothing Then
+        For Each node In document.SelectNodes("//class[(method[starts-with(@name,'" + prefixGet + "') or starts-with(@name,'" + prefixSet + "')])]")
+            For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixGet + "')]")
+                strName = GetName(child).Substring(prefixGet.Length)
+                nodeProperty = node.SelectSingleNode("property[@name='" + strName + "']")
+
+                If nodeProperty Is Nothing Then
+                    nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixGet.Length), "no", "no", numID, child)
+                    numID += 1
+                End If
+            Next
+            For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixSet + "')]")
+                strName = GetName(child).Substring(prefixGet.Length)
+                nodeProperty = node.SelectSingleNode("property[@name='" + strName + "']")
+                If nodeProperty Is Nothing Then
+                    nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "no", numID, child)
+                    numID += 1
+                End If
+            Next
+        Next
+
+        Dim strImplementation As String = Nothing
+
+        For Each child In document.SelectNodes("//property")
+            Getter = child.ParentNode.SelectSingleNode("method[@name='" + prefixGet + GetName(child) + "']")
+            If Getter IsNot Nothing Then
+                Select Case ConvertDtdToEnumImpl(GetAttributeValue(Getter, "implementation"))
+                    Case EImplementation.Interf, EImplementation.Node, EImplementation.Root
+                        strImplementation = "yes"
+                    Case Else
+                        strImplementation = "no"
+                End Select
+
+                AddAttributeValue(child, "overridable", strImplementation)
+                tempo = GetAttributeValue(GetNode(Getter, "descendant::return/variable"), "range")
+                If tempo = "private" Then tempo = "protected"
+
+                AddAttributeValue(GetNode(child, "get"), "range", tempo)
+                tempo = GetAttributeValue(GetNode(Getter, "descendant::return/type"), "by")
+                If tempo = "" Then
+                    tempo = "val"
+                End If
+
+                AddAttributeValue(GetNode(child, "get"), "by", tempo)
+                AddAttributeValue(GetNode(child, "get"), "modifier", GetAttributeValue(GetNode(Getter, "descendant::return/type"), "modifier"))
+                child.ParentNode.RemoveChild(Getter)
+            End If
+            Setter = child.ParentNode.SelectSingleNode("method[@name='" + prefixSet + GetName(child) + "']")
+            If Setter IsNot Nothing Then
+                If strImplementation Is Nothing Then
                     Select Case ConvertDtdToEnumImpl(GetAttributeValue(Getter, "implementation"))
                         Case EImplementation.Interf, EImplementation.Node, EImplementation.Root
                             strImplementation = "yes"
                         Case Else
                             strImplementation = "no"
                     End Select
-
                     AddAttributeValue(child, "overridable", strImplementation)
-                    tempo = GetAttributeValue(GetNode(Getter, "descendant::return/variable"), "range")
-                    If tempo = "private" Then tempo = "protected"
-
-                    AddAttributeValue(GetNode(child, "get"), "range", tempo)
-                    tempo = GetAttributeValue(GetNode(Getter, "descendant::return/type"), "by")
-                    If tempo = "" Then
-                        tempo = "val"
-                    End If
-
-                    AddAttributeValue(GetNode(child, "get"), "by", tempo)
-                    AddAttributeValue(GetNode(child, "get"), "modifier", GetAttributeValue(GetNode(Getter, "descendant::return/type"), "modifier"))
-                    child.ParentNode.RemoveChild(Getter)
                 End If
-                Setter = child.ParentNode.SelectSingleNode("method[@name='" + prefixSet + GetName(child) + "']")
-                If Setter IsNot Nothing Then
-                    If strImplementation Is Nothing Then
-                        Select Case ConvertDtdToEnumImpl(GetAttributeValue(Getter, "implementation"))
-                            Case EImplementation.Interf, EImplementation.Node, EImplementation.Root
-                                strImplementation = "yes"
-                            Case Else
-                                strImplementation = "no"
-                        End Select
-                        AddAttributeValue(child, "overridable", strImplementation)
-                    End If
 
-                    tempo = GetAttributeValue(GetNode(Setter, "descendant::return/variable"), "range")
-                    If tempo = "private" Then tempo = "protected"
+                tempo = GetAttributeValue(GetNode(Setter, "descendant::return/variable"), "range")
+                If tempo = "private" Then tempo = "protected"
 
-                    AddAttributeValue(GetNode(child, "set"), "range", tempo)
-                    tempo = GetAttributeValue(GetNode(Setter, "descendant::param/type"), "by")
-                    If tempo = "" Then
-                        tempo = "val"
-                    End If
-
-                    AddAttributeValue(GetNode(child, "get"), "by", tempo)
-                    child.ParentNode.RemoveChild(Setter)
+                AddAttributeValue(GetNode(child, "set"), "range", tempo)
+                tempo = GetAttributeValue(GetNode(Setter, "descendant::param/type"), "by")
+                If tempo = "" Then
+                    tempo = "val"
                 End If
-            Next
 
-            If bFilterImports Then
-                numID = 1
-                For Each node In document.SelectNodes("//interface[method[starts-with(@name,'" + prefixSet + "')]]")
-
-                    For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixSet + "')]")
-
-                        '                    Debug.Print(child.OuterXml)
-
-                        nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "yes", numID, child)
-
-                        tempo = "public"
-
-                        If child.SelectSingleNode("return") IsNot Nothing Then
-                            tempo = child.SelectSingleNode("return/variable/@range").Value
-                            If tempo = "private" Then tempo = "protected"
-                        End If
-
-                        Setter = nodeProperty.SelectSingleNode("set")
-                        AddAttributeValue(Setter, "range", tempo)
-
-                        node.RemoveChild(child)
-                        numID += 1
-
-                    Next
-                Next
+                AddAttributeValue(GetNode(child, "get"), "by", tempo)
+                child.ParentNode.RemoveChild(Setter)
             End If
+        Next
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If bFilterImports Then
+            numID = 1
+            For Each node In document.SelectNodes("//interface[method[starts-with(@name,'" + prefixSet + "')]]")
+
+                For Each child In node.SelectNodes("method[starts-with(@name,'" + prefixSet + "')]")
+
+                    '                    Debug.Print(child.OuterXml)
+
+                    nodeProperty = AddNewProperty(node, GetName(child).Substring(prefixSet.Length), "no", "yes", numID, child)
+
+                    tempo = "public"
+
+                    If child.SelectSingleNode("return") IsNot Nothing Then
+                        tempo = child.SelectSingleNode("return/variable/@range").Value
+                        If tempo = "private" Then tempo = "protected"
+                    End If
+
+                    Setter = nodeProperty.SelectSingleNode("set")
+                    AddAttributeValue(Setter, "range", tempo)
+
+                    node.RemoveChild(child)
+                    numID += 1
+
+                Next
+            Next
+        End If
     End Sub
 
     Public Shared Sub OpenFileExplorer(ByVal folder As String)
@@ -2848,41 +2719,38 @@ Public Class XmlProjectTools
                                     ByVal numID As Integer, ByVal method As XmlNode) As XmlNode
 
         Dim xmlResult As XmlNode = Nothing
-        Try
-            xmlResult = node.OwnerDocument.CreateNode(XmlNodeType.Element, "property", "")
-            AddAttributeValue(xmlResult, "attribute", attribute)
-            AddAttributeValue(xmlResult, "overridable", strOverridable)
-            AddAttributeValue(xmlResult, "name", name)
-            AddAttributeValue(xmlResult, "member", "object")
-            AddAttributeValue(xmlResult, "num-id", numID.ToString)
 
-            If method.SelectSingleNode("return") IsNot Nothing Then
-                Dim element As XmlNode = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/type"), True)
-                xmlResult.AppendChild(element)
-                element = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/variable"), True)
-                xmlResult.AppendChild(element)
-                element = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/comment"), True)
-                xmlResult.AppendChild(element)
-            End If
+        xmlResult = node.OwnerDocument.CreateNode(XmlNodeType.Element, "property", "")
+        AddAttributeValue(xmlResult, "attribute", attribute)
+        AddAttributeValue(xmlResult, "overridable", strOverridable)
+        AddAttributeValue(xmlResult, "name", name)
+        AddAttributeValue(xmlResult, "member", "object")
+        AddAttributeValue(xmlResult, "num-id", numID.ToString)
 
-            Dim Getter As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, "get", "")
-            AddAttributeValue(Getter, "inline", "no")
-            AddAttributeValue(Getter, "by", "val")
-            AddAttributeValue(Getter, "modifier", "var")
-            AddAttributeValue(Getter, "range", "no")
-            xmlResult.AppendChild(Getter)
+        If method.SelectSingleNode("return") IsNot Nothing Then
+            Dim element As XmlNode = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/type"), True)
+            xmlResult.AppendChild(element)
+            element = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/variable"), True)
+            xmlResult.AppendChild(element)
+            element = method.OwnerDocument.ImportNode(method.SelectSingleNode("return/comment"), True)
+            xmlResult.AppendChild(element)
+        End If
 
-            Dim Setter As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, "set", "")
-            AddAttributeValue(Setter, "inline", "no")
-            AddAttributeValue(Setter, "by", "val")
-            AddAttributeValue(Setter, "range", "no")
-            xmlResult.AppendChild(Setter)
+        Dim Getter As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, "get", "")
+        AddAttributeValue(Getter, "inline", "no")
+        AddAttributeValue(Getter, "by", "val")
+        AddAttributeValue(Getter, "modifier", "var")
+        AddAttributeValue(Getter, "range", "no")
+        xmlResult.AppendChild(Getter)
 
-            node.InsertBefore(xmlResult, node.SelectSingleNode("method"))
+        Dim Setter As XmlNode = node.OwnerDocument.CreateNode(XmlNodeType.Element, "set", "")
+        AddAttributeValue(Setter, "inline", "no")
+        AddAttributeValue(Setter, "by", "val")
+        AddAttributeValue(Setter, "range", "no")
+        xmlResult.AppendChild(Setter)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        node.InsertBefore(xmlResult, node.SelectSingleNode("method"))
+
         Return xmlResult
     End Function
 
@@ -2987,21 +2855,17 @@ Public Class XmlProjectTools
     End Function
 
     Private Shared Sub FindTemplateClasses(ByVal document As XmlDocument, ByVal eLanguage As ELanguage)
-        Try
-            If eLanguage = ClassXmlProject.ELanguage.Language_Vbasic Then Return
+        If eLanguage = ClassXmlProject.ELanguage.Language_Vbasic Then Return
 
-            Dim i As Integer
-            For Each classNode As XmlNode In document.SelectNodes("//class[@implementation='container']")
-                i = 1
-                For Each model As XmlNode In classNode.SelectNodes("model")
-                    ReplaceTemplateType(i, GetName(model), classNode)
-                    AddAttributeValue(model, "id", "templ" + CStr(i))
-                    i += 1
-                Next
+        Dim i As Integer
+        For Each classNode As XmlNode In document.SelectNodes("//class[@implementation='container']")
+            i = 1
+            For Each model As XmlNode In classNode.SelectNodes("model")
+                ReplaceTemplateType(i, GetName(model), classNode)
+                AddAttributeValue(model, "id", "templ" + CStr(i))
+                i += 1
             Next
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Next
     End Sub
 
     Private Shared Sub ReplaceTemplateType(ByVal index As Integer, ByVal strLabel As String, ByVal classNode As XmlNode)
@@ -3034,34 +2898,30 @@ Public Class XmlProjectTools
 
         Dim regex As New Regex(regexPrefixMember, RegexOptions.Compiled)
 
-        Try
-            For Each name As XmlNode In document.SelectNodes("//property/@name")
-                Dim strName As String = name.InnerText
-                If strName.StartsWith(prefixMember) Then
-                    strName = strName.Substring(Len(prefixMember))
-                    If regex.IsMatch(strName) Then
-                        Dim groups As GroupCollection = regex.Match(strName).Groups
-                        strName = groups(1).ToString
-                    End If
-                End If
-                If strName.Length > 0 Then
-                    name.InnerText = strName
-                End If
-            Next
-
-            For Each name As XmlNode In document.SelectNodes("//element/@name")
-                Dim strName As String = name.InnerText
+        For Each name As XmlNode In document.SelectNodes("//property/@name")
+            Dim strName As String = name.InnerText
+            If strName.StartsWith(prefixMember) Then
+                strName = strName.Substring(Len(prefixMember))
                 If regex.IsMatch(strName) Then
                     Dim groups As GroupCollection = regex.Match(strName).Groups
                     strName = groups(1).ToString
-                    If strName.Length > 0 Then
-                        name.InnerText = strName
-                    End If
                 End If
-            Next
-        Catch ex As Exception
-            Throw ex
-        End Try
+            End If
+            If strName.Length > 0 Then
+                name.InnerText = strName
+            End If
+        Next
+
+        For Each name As XmlNode In document.SelectNodes("//element/@name")
+            Dim strName As String = name.InnerText
+            If regex.IsMatch(strName) Then
+                Dim groups As GroupCollection = regex.Match(strName).Groups
+                strName = groups(1).ToString
+                If strName.Length > 0 Then
+                    name.InnerText = strName
+                End If
+            End If
+        Next
     End Sub
 
     Private Shared Sub ConvertDoxygenComments(ByVal document As XmlDocument)
@@ -3122,28 +2982,24 @@ Public Class XmlProjectTools
     End Sub
 
     Private Shared Sub FindCollaborations(ByVal document As XmlDocument)
-        Try
-            Dim list As XmlNodeList = document.SelectNodes("//property[id(type/@idref)[name()!='typedef']]")
-            Dim propNode As XmlNode
 
-            For Each propNode In list
-                CreateRelationShip(propNode, document)
-            Next
+        Dim list As XmlNodeList = document.SelectNodes("//property[id(type/@idref)[name()!='typedef']]")
+        Dim propNode As XmlNode
 
-            list = document.SelectNodes("//typedef[id(type/@idref)[name()!='typedef'] and type/@struct='container']")
+        For Each propNode In list
+            CreateRelationShip(propNode, document)
+        Next
 
-            For Each typeNode As XmlNode In list
-                propNode = typeNode.ParentNode.SelectSingleNode("property[type/@idref='" + GetID(typeNode) + "']")
-                If propNode IsNot Nothing Then
-                    CreateRelationShipFromType(propNode, typeNode, document)
-                End If
-            Next
+        list = document.SelectNodes("//typedef[id(type/@idref)[name()!='typedef'] and type/@struct='container']")
 
-            UpdatesCollaborations(document)
+        For Each typeNode As XmlNode In list
+            propNode = typeNode.ParentNode.SelectSingleNode("property[type/@idref='" + GetID(typeNode) + "']")
+            If propNode IsNot Nothing Then
+                CreateRelationShipFromType(propNode, typeNode, document)
+            End If
+        Next
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        UpdatesCollaborations(document)
     End Sub
 
     Private Shared Function CreateRelationShip(ByVal propNode As XmlNode, ByVal document As XmlDocument) As Boolean
@@ -3232,38 +3088,31 @@ Public Class XmlProjectTools
     End Function
 
     Private Shared Sub MergeIteratorContainer(ByVal document As XmlDocument, Optional ByVal strIterator As String = "::iterator")
-        Try
-            For Each container As XmlNode In document.SelectNodes("//typedef[type/@struct='container']")
-                Dim query As String = "typedef[type/@desc='" + GetName(container) + strIterator + "']"
-                Dim iterNode As XmlNode = container.ParentNode.SelectSingleNode(query)
-                If iterNode IsNot Nothing Then
-                    AddAttributeValue(GetNode(container, "type/list"), "iterator", "yes")
-                    iterNode.ParentNode.RemoveChild(iterNode)
-                End If
-            Next
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        For Each container As XmlNode In document.SelectNodes("//typedef[type/@struct='container']")
+            Dim query As String = "typedef[type/@desc='" + GetName(container) + strIterator + "']"
+            Dim iterNode As XmlNode = container.ParentNode.SelectSingleNode(query)
+            If iterNode IsNot Nothing Then
+                AddAttributeValue(GetNode(container, "type/list"), "iterator", "yes")
+                iterNode.ParentNode.RemoveChild(iterNode)
+            End If
+        Next
     End Sub
 
     Private Shared Sub SelectInherited(ByRef iteration As Integer, ByRef parent As XmlNode, ByVal list As List(Of String))
-        Try
-            iteration += 1
-            If iteration > cstMaxCircularReferences Then
-                ' Inherited tree deepth is too big, or has circular references
-                Return
-            End If
-            'Debug.Print("inherited=" + GetName(parent))
-            list.Add(GetID(parent))
 
-            For Each child As XmlNode In SelectNodes(parent, "inherited")
-                Dim inherited As XmlNode = SelectNodeId(child, parent)
-                SelectInherited(iteration, inherited, list)
-            Next child
-        Catch ex As Exception
-            Throw ex
-        End Try
+        iteration += 1
+        If iteration > cstMaxCircularReferences Then
+            ' Inherited tree deepth is too big, or has circular references
+            Return
+        End If
+        'Debug.Print("inherited=" + GetName(parent))
+        list.Add(GetID(parent))
+
+        For Each child As XmlNode In SelectNodes(parent, "inherited")
+            Dim inherited As XmlNode = SelectNodeId(child, parent)
+            SelectInherited(iteration, inherited, list)
+        Next child
     End Sub
 
     Private Shared Sub CopyResourceFile(ByVal strResource As String, ByVal strDestinationFile As String)
@@ -3290,8 +3139,6 @@ Public Class XmlProjectTools
             xslStylesheet.Transform(strOldFile, strNewFile)
             observer.Increment(1)
 
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.Log = "Ready"
         End Try
@@ -3330,104 +3177,85 @@ Public Class XmlProjectTools
     End Sub
 
     Private Shared Sub RenameTypeDoxygenResultFile(ByVal eLang As ELanguage, ByVal document As XmlDocument)
-        Try
-            Dim list As XmlNodeList
-            Dim child As XmlNode
-            Dim new_child As XmlNode
+        Dim list As XmlNodeList
+        Dim child As XmlNode
+        Dim new_child As XmlNode
 
-            child = document.SelectSingleNode("//generation")
-            new_child = document.CreateNode(XmlNodeType.Element, "generation", "")
+        child = document.SelectSingleNode("//generation")
+        new_child = document.CreateNode(XmlNodeType.Element, "generation", "")
 
-            Dim strProjectPath As String = "c:\" 'GetProjectPath(child.FirstChild.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
-            If child.FirstChild IsNot Nothing Then
-                strProjectPath = GetProjectPath(child.FirstChild.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
-            End If
-            AddAttributeValue(new_child, "language", CStr(CType(eLang, Integer)))
-            AddAttributeValue(new_child, "destination", strProjectPath)
-            child.ParentNode.ReplaceChild(new_child, child)
+        Dim strProjectPath As String = "c:\" 'GetProjectPath(child.FirstChild.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
+        If child.FirstChild IsNot Nothing Then
+            strProjectPath = GetProjectPath(child.FirstChild.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
+        End If
+        AddAttributeValue(new_child, "language", CStr(CType(eLang, Integer)))
+        AddAttributeValue(new_child, "destination", strProjectPath)
+        child.ParentNode.ReplaceChild(new_child, child)
 
-            list = SelectNodes(document, "//package")
+        list = SelectNodes(document, "//package")
 
-            Dim strCurrentPath As String
-            For Each child In list
-                new_child = GetNode(child, "location")
-                If new_child IsNot Nothing Then
-                    strCurrentPath = GetProjectPath(new_child.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
-                    child.RemoveChild(new_child)
-                    strCurrentPath = ComputeRelativePath(strProjectPath, strCurrentPath)
-                    If GetName(child) <> strCurrentPath Then
-                        AddAttributeValue(child, "folder", strCurrentPath)
-                    End If
+        Dim strCurrentPath As String
+        For Each child In list
+            new_child = GetNode(child, "location")
+            If new_child IsNot Nothing Then
+                strCurrentPath = GetProjectPath(new_child.InnerText.Replace("/", Path.DirectorySeparatorChar.ToString))
+                child.RemoveChild(new_child)
+                strCurrentPath = ComputeRelativePath(strProjectPath, strCurrentPath)
+                If GetName(child) <> strCurrentPath Then
+                    AddAttributeValue(child, "folder", strCurrentPath)
                 End If
-            Next
+            End If
+        Next
 
-            list = SelectNodes(document, "//*[type]")
+        list = SelectNodes(document, "//*[type]")
 
-            For Each child In list
-                RenameType(eLang, child)
-            Next child
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+        For Each child In list
+            RenameType(eLang, child)
+        Next child
     End Sub
 
     Private Shared Function CopyLanguagePrefix(ByVal strDestinationFolder As String) As Boolean
-        Try
-            Dim srcFile As String = My.Settings.ToolsFolder
-            srcFile = My.Computer.FileSystem.CombinePath(Application.StartupPath, srcFile)
-            srcFile = My.Computer.FileSystem.CombinePath(srcFile, "language.xml")
 
-            Dim dstFile As String = My.Computer.FileSystem.CombinePath(strDestinationFolder, Path.GetFileName(srcFile))
+        Dim srcFile As String = My.Settings.ToolsFolder
+        srcFile = My.Computer.FileSystem.CombinePath(Application.StartupPath, srcFile)
+        srcFile = My.Computer.FileSystem.CombinePath(srcFile, "language.xml")
 
-            If My.Computer.FileSystem.FileExists(dstFile) _
-            Then
-                CorrectCodePrefix(srcFile, dstFile)
-            Else
-                File.Copy(srcFile, dstFile, True)
-            End If
+        Dim dstFile As String = My.Computer.FileSystem.CombinePath(strDestinationFolder, Path.GetFileName(srcFile))
 
-            ReloadPrefixNameDocument(dstFile)
+        If My.Computer.FileSystem.FileExists(dstFile) _
+        Then
+            CorrectCodePrefix(srcFile, dstFile)
+        Else
+            File.Copy(srcFile, dstFile, True)
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        ReloadPrefixNameDocument(dstFile)
+
         Return True
     End Function
 
     Private Shared Function CopyLanguageSimpleTypes(ByVal strDestinationFolder As String, ByVal eLang As ELanguage) As Boolean
-        Try
-            Dim strFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
-            Dim srcFile As String = GetSimpleTypesFilename(eLang, strFolder)
-            Dim dstFile As String = GetSimpleTypesFilename(eLang, strDestinationFolder)
 
-            If My.Computer.FileSystem.FileExists(dstFile) _
-            Then
-                CorrectSimpleType(srcFile, dstFile)
-            Else
-                File.Copy(srcFile, dstFile, True)
-            End If
+        Dim strFolder As String = My.Computer.FileSystem.CombinePath(Application.StartupPath, My.Settings.ToolsFolder)
+        Dim srcFile As String = GetSimpleTypesFilename(eLang, strFolder)
+        Dim dstFile As String = GetSimpleTypesFilename(eLang, strDestinationFolder)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If My.Computer.FileSystem.FileExists(dstFile) _
+        Then
+            CorrectSimpleType(srcFile, dstFile)
+        Else
+            File.Copy(srcFile, dstFile, True)
+        End If
+
         Return True
     End Function
 
     Private Shared Function CorrectSimpleType(ByVal srcFile As String, ByVal dstFile As String) As Boolean
-        Try
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+        ' TODO : implement here method when simple type version will be upgraded
     End Function
 
     Private Shared Function CorrectCodePrefix(ByVal srcFile As String, ByVal dstFile As String) As Boolean
-        Try
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+        ' TODO : implement here method when simple type version will be upgraded
     End Function
 #End If
 #End Region

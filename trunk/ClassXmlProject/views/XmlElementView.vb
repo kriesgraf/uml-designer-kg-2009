@@ -42,24 +42,18 @@ Public Class XmlElementView
     End Sub
 
     Public Sub InitBindingType(ByVal dataControl As ComboBox)
-        Try
-            InitTypedefCombo(Me, dataControl)
-            m_xmlComboTypedef = New XmlBindingCombo(dataControl, Me, "Descriptor", "Reference")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        InitTypedefCombo(Me, dataControl)
+        m_xmlComboTypedef = New XmlBindingCombo(dataControl, Me, "Descriptor", "Reference")
+
     End Sub
 
     Public Sub InitBindingSize(ByVal dataControl As ComboBox)
-        Try
-            InitValueCombo(Me, dataControl)
 
-            m_xmlComboSize = New XmlBindingCombo(dataControl, Me, "VarSize", "SizeRef")
+        InitValueCombo(Me, dataControl)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlComboSize = New XmlBindingCombo(dataControl, Me, "VarSize", "SizeRef")
+
     End Sub
 
     Public Sub InitBindingModifier(ByVal control As Control)
@@ -86,22 +80,20 @@ Public Class XmlElementView
     Public ReadOnly Property FullpathTypeDescription() As String
         Get
             Dim strResult As String = ""
-            Try
-                If Me.Node IsNot Nothing Then
-                    strResult = MyBase.Descriptor + GetReferenceTypeDescription(MyBase.Reference, True)
 
-                    If MyBase.Modifier Then strResult = "const " + strResult
+            If Me.Node IsNot Nothing Then
+                strResult = MyBase.Descriptor + GetReferenceTypeDescription(MyBase.Reference, True)
 
-                    strResult = strResult + DisplayLevel(MyBase.Level)
+                If MyBase.Modifier Then strResult = "const " + strResult
 
-                    If MyBase.VarSize <> "" Or MyBase.SizeRef <> "" _
-                    Then
-                        strResult = strResult + " " + GetArrayString(Me.GenerationLanguage)
-                    End If
+                strResult = strResult + DisplayLevel(MyBase.Level)
+
+                If MyBase.VarSize <> "" Or MyBase.SizeRef <> "" _
+                Then
+                    strResult = strResult + " " + GetArrayString(Me.GenerationLanguage)
                 End If
-            Catch ex As Exception
-                Throw ex
-            End Try
+            End If
+
             Return strResult
         End Get
     End Property
@@ -184,16 +176,14 @@ Public Class XmlElementView
 
     Private Function DisplayLevel(ByVal level As Integer) As String
         Dim strResult As String = ""
-        Try
-            Select Case level
-                Case 1
-                    strResult = "*"
-                Case 2
-                    strResult = "**"
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Select Case level
+            Case 1
+                strResult = "*"
+            Case 2
+                strResult = "**"
+        End Select
+
         Return strResult
     End Function
 
@@ -206,35 +196,31 @@ Public Class XmlElementView
             Return ""
         End If
 
-        Try
-            Dim child As XmlNode = GetElementById(szReferenceId)
-            strResult = GetName(child)
+        Dim child As XmlNode = GetElementById(szReferenceId)
+        strResult = GetName(child)
 
-            Dim strSeparator As String = "::"
-            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
-                strSeparator = "."
-            End If
+        Dim strSeparator As String = "::"
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
+            strSeparator = "."
+        End If
 
-            If bShorter Then
-                ' nothing to do 
-            ElseIf child.Name = "reference" Or child.Name = "interface" Then
-                strResult = GetPackage(child) + strSeparator + strResult
+        If bShorter Then
+            ' nothing to do 
+        ElseIf child.Name = "reference" Or child.Name = "interface" Then
+            strResult = GetPackage(child) + strSeparator + strResult
+        Else
+            If child.Name = "typedef" Then
+                child = child.ParentNode
+                strResult = GetName(child) + strSeparator + strResult
+                child = child.ParentNode
             Else
-                If child.Name = "typedef" Then
-                    child = child.ParentNode
-                    strResult = GetName(child) + strSeparator + strResult
-                    child = child.ParentNode
-                Else
-                    strResult = GetName(child)
-                    child = child.ParentNode
-                End If
-                If child.Name <> "root" Then
-                    strResult = GetName(child) + strSeparator + strResult
-                End If
+                strResult = GetName(child)
+                child = child.ParentNode
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+            If child.Name <> "root" Then
+                strResult = GetName(child) + strSeparator + strResult
+            End If
+        End If
         Return strResult
     End Function
 

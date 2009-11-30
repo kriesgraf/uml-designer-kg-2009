@@ -100,138 +100,104 @@ Public Class XmlRelationView
     End Sub
 
     Public Sub UpdateValues()
-        Try
-            m_xmlBindingsList.UpdateValues()
 
-            ' To avoid an instability
-            Me.Father.Cardinal = CType(Me.m_cmbFatherCardinal.SelectedIndex, ECardinal)
-            Me.Child.Cardinal = CType(Me.m_cmbChildCardinal.SelectedIndex, ECardinal)
+        m_xmlBindingsList.UpdateValues()
 
-            Dim bParentDifferent As Boolean = (Me.Child.Idref <> Me.Father.Idref)
-            Dim bFatherChanged As Boolean = (Me.Father.Idref <> m_strOldFather)
-            Dim bChildChanged As Boolean = (Me.Child.Idref <> m_strOldChild)
+        ' To avoid an instability
+        Me.Father.Cardinal = CType(Me.m_cmbFatherCardinal.SelectedIndex, ECardinal)
+        Me.Child.Cardinal = CType(Me.m_cmbChildCardinal.SelectedIndex, ECardinal)
 
-            If bFatherChanged Then
-                XmlProjectTools.UpdateOneCollaboration(Me.Document, m_strOldFather)
-                XmlProjectTools.UpdateOneCollaboration(Me.Document, Me.Father.Idref)
-            End If
+        Dim bParentDifferent As Boolean = (Me.Child.Idref <> Me.Father.Idref)
+        Dim bFatherChanged As Boolean = (Me.Father.Idref <> m_strOldFather)
+        Dim bChildChanged As Boolean = (Me.Child.Idref <> m_strOldChild)
 
-            If bChildChanged And m_strOldChild <> m_strOldFather Then
-                XmlProjectTools.UpdateOneCollaboration(Me.Document, m_strOldChild)
-            End If
+        If bFatherChanged Then
+            XmlProjectTools.UpdateOneCollaboration(Me.Document, m_strOldFather)
+            XmlProjectTools.UpdateOneCollaboration(Me.Document, Me.Father.Idref)
+        End If
 
-            If bChildChanged And bParentDifferent Then
-                XmlProjectTools.UpdateOneCollaboration(Me.Document, Me.Child.Idref)
-            End If
+        If bChildChanged And m_strOldChild <> m_strOldFather Then
+            XmlProjectTools.UpdateOneCollaboration(Me.Document, m_strOldChild)
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If bChildChanged And bParentDifferent Then
+            XmlProjectTools.UpdateOneCollaboration(Me.Document, Me.Child.Idref)
+        End If
     End Sub
 
     Public Sub InitBindingAction(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Action")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Action")
+
     End Sub
 
     Public Sub InitBindingTypeComposition(ByVal control As ComboBox)
-        Try
-            control.DropDownStyle = ComboBoxStyle.DropDownList
-            control.Items.AddRange(New Object() {"Composition", "Aggregation", "Assembly"})
 
-            m_xmlBindingsList.AddBinding(control, Me, "KindIndex", "SelectedIndex")
+        control.DropDownStyle = ComboBoxStyle.DropDownList
+        control.Items.AddRange(New Object() {"Composition", "Aggregation", "Assembly"})
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(control, Me, "KindIndex", "SelectedIndex")
+
     End Sub
 
 #Region "Child methods"
 
     Public Sub InitBindingChildName(ByVal dataControl As Control)
-        Try
-            InitBindingParentName(Me.Child, dataControl)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        InitBindingParentName(Me.Child, dataControl)
+
     End Sub
 
     Public Sub InitBindingChildRange(ByVal control As ComboBox, ByVal button As Button)
-        Try
-            m_btnChildType = button
-            InitBindingParentRange(Me.Child, control)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_btnChildType = button
+        InitBindingParentRange(Me.Child, control)
+
     End Sub
 
     Public Sub InitBindingChildCardinal(ByVal control As ComboBox, ByVal label As Label)
-        Try
-            m_cmbChildCardinal = control
-            m_cmdChildCardinal.Combo = control
-            m_cmdChildCardinal.Title = label
 
-            InitBindingParentCardinal(Me.Child, m_cmdChildCardinal)
+        m_cmbChildCardinal = control
+        m_cmdChildCardinal.Combo = control
+        m_cmdChildCardinal.Title = label
 
-            HandleParentCardinal(Me.Child, m_cmdChildCardinal, m_cmdChildClass, m_cmdChildLevel, m_btnChildType, m_chkChildAccessors)
+        InitBindingParentCardinal(Me.Child, m_cmdChildCardinal)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        HandleParentCardinal(Me.Child, m_cmdChildCardinal, m_cmdChildClass, m_cmdChildLevel, m_btnChildType, m_chkChildAccessors)
+
     End Sub
 
     Public Sub InitBindingChildMember(ByVal dataControl As Control)
-        Try
-            InitBindingParentMember(Me.Child, dataControl)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        InitBindingParentMember(Me.Child, dataControl)
+
     End Sub
 
     Public Sub InitBindingChildAccessors(ByVal dataControlGet As Control, ByVal dataControlSet As Control)
-        Try
-            m_chkChildAccessors.GetAccessor = dataControlGet
-            m_chkChildAccessors.SetAccessor = dataControlSet
 
-            InitBindingParentAccessors(Me.Child, m_chkChildAccessors)
+        m_chkChildAccessors.GetAccessor = dataControlGet
+        m_chkChildAccessors.SetAccessor = dataControlSet
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        InitBindingParentAccessors(Me.Child, m_chkChildAccessors)
     End Sub
 
     Public Sub InitBindingChildLevel(ByVal control As ComboBox, ByVal label As Label)
-        Try
-            m_cmdChildLevel.Combo = control
-            m_cmdChildLevel.Title = label
+        m_cmdChildLevel.Combo = control
+        m_cmdChildLevel.Title = label
 
-            InitBindingParentLevel(Me.Child, m_cmdChildLevel)
+        InitBindingParentLevel(Me.Child, m_cmdChildLevel)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
     End Sub
 
     Public Sub InitBindingChildClassList(ByVal control As ComboBox, ByVal label As Label)
-        Try
-            m_cmdChildClass.Combo = control
-            m_cmdChildClass.Title = label
-            InitBindingParentClassList(Me.Child, m_cmdChildClass)
 
-            If m_bChildDisabled Then
-                m_cmdChildClass.Enabled = False
-            End If
+        m_cmdChildClass.Combo = control
+        m_cmdChildClass.Title = label
+        InitBindingParentClassList(Me.Child, m_cmdChildClass)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If m_bChildDisabled Then
+            m_cmdChildClass.Enabled = False
+        End If
     End Sub
 
 #End Region
@@ -239,86 +205,64 @@ Public Class XmlRelationView
 #Region "Father methods"
 
     Public Sub InitBindingFatherName(ByVal dataControl As Control)
-        Try
-            InitBindingParentName(Me.Father, dataControl)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        InitBindingParentName(Me.Father, dataControl)
+
     End Sub
 
     Public Sub InitBindingFatherRange(ByVal control As ComboBox)
-        Try
-            m_cmbFatherRange = control
-            InitBindingParentRange(Me.Father, control)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_cmbFatherRange = control
+        InitBindingParentRange(Me.Father, control)
+
     End Sub
 
     Public Sub InitBindingFatherCardinal(ByVal control As ComboBox, ByVal label As Label, ByVal button As Button)
-        Try
-            m_btnFatherType = button
-            m_cmbFatherCardinal = control
-            m_cmdFatherCardinal.Combo = control
-            m_cmdFatherCardinal.Title = label
 
-            InitBindingParentCardinal(Me.Father, m_cmdFatherCardinal)
+        m_btnFatherType = button
+        m_cmbFatherCardinal = control
+        m_cmdFatherCardinal.Combo = control
+        m_cmdFatherCardinal.Title = label
 
-            HandleParentCardinal(Me.Father, m_cmdFatherCardinal, m_cmdFatherClass, m_cmdFatherLevel, m_btnFatherType, m_chkFatherAccessors)
+        InitBindingParentCardinal(Me.Father, m_cmdFatherCardinal)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        HandleParentCardinal(Me.Father, m_cmdFatherCardinal, m_cmdFatherClass, m_cmdFatherLevel, m_btnFatherType, m_chkFatherAccessors)
+
     End Sub
 
     Public Sub InitBindingFatherMember(ByVal dataControl As Control)
-        Try
-            m_chkFatherMember = dataControl
-            InitBindingParentMember(Me.Father, dataControl)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_chkFatherMember = dataControl
+        InitBindingParentMember(Me.Father, dataControl)
+
     End Sub
 
     Public Sub InitBindingFatherAccessors(ByVal dataControlGet As Control, ByVal dataControlSet As Control)
-        Try
-            m_chkFatherAccessors.GetAccessor = dataControlGet
-            m_chkFatherAccessors.SetAccessor = dataControlSet
 
-            InitBindingParentAccessors(Me.Father, m_chkFatherAccessors)
+        m_chkFatherAccessors.GetAccessor = dataControlGet
+        m_chkFatherAccessors.SetAccessor = dataControlSet
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        InitBindingParentAccessors(Me.Father, m_chkFatherAccessors)
     End Sub
 
     Public Sub InitBindingFatherLevel(ByVal control As ComboBox, ByVal label As Label)
-        Try
-            m_cmdFatherLevel.Combo = control
-            m_cmdFatherLevel.Title = label
 
-            InitBindingParentLevel(Me.Father, m_cmdFatherLevel)
+        m_cmdFatherLevel.Combo = control
+        m_cmdFatherLevel.Title = label
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        InitBindingParentLevel(Me.Father, m_cmdFatherLevel)
+
     End Sub
 
     Public Sub InitBindingFatherClassList(ByVal control As ComboBox, ByVal label As Label)
-        Try
-            m_cmdFatherClass.Combo = control
-            m_cmdFatherClass.Title = label
-            InitBindingParentClassList(Me.Father, m_cmdFatherClass)
 
-            If m_bFatherDisabled Then
-                m_cmdFatherClass.Enabled = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_cmdFatherClass.Combo = control
+        m_cmdFatherClass.Title = label
+        InitBindingParentClassList(Me.Father, m_cmdFatherClass)
+
+        If m_bFatherDisabled Then
+            m_cmdFatherClass.Enabled = False
+        End If
     End Sub
 
 #End Region
@@ -327,51 +271,40 @@ Public Class XmlRelationView
 
 #Region "Private Methods"
     Private Sub InitBindingParentName(ByVal xmlParent As XmlRelationParentSpec, ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, xmlParent, "Name")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, xmlParent, "Name")
+
     End Sub
 
     Private Sub InitBindingParentRange(ByVal xmlParent As XmlRelationParentSpec, ByVal control As ComboBox)
-        Try
-            control.DropDownStyle = ComboBoxStyle.DropDownList
-            If xmlParent.NodeName = "child" Then
-                control.Items.AddRange(New Object() {"private", "protected", "public"})
-            Else
-                control.Items.AddRange(New Object() {"no", "private", "protected", "public"})
-            End If
 
-            m_xmlBindingsList.AddBinding(control, xmlParent, "Range")
+        control.DropDownStyle = ComboBoxStyle.DropDownList
+        If xmlParent.NodeName = "child" Then
+            control.Items.AddRange(New Object() {"private", "protected", "public"})
+        Else
+            control.Items.AddRange(New Object() {"no", "private", "protected", "public"})
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(control, xmlParent, "Range")
+
     End Sub
 
     Private Sub InitBindingParentCardinal(ByVal xmlParent As XmlRelationParentSpec, ByVal control As ComboCommand)
-        Try
-            With control
-                .Combo.DropDownStyle = ComboBoxStyle.DropDownList
-                .Combo.Items.AddRange(New Object() {"1", "0 or 1", "0 to n", "1 to n"})
 
-                m_xmlBindingsList.AddBinding(.Combo, xmlParent, "Cardinal", "SelectedIndex")
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
+        With control
+            .Combo.DropDownStyle = ComboBoxStyle.DropDownList
+            .Combo.Items.AddRange(New Object() {"1", "0 or 1", "0 to n", "1 to n"})
+
+            m_xmlBindingsList.AddBinding(.Combo, xmlParent, "Cardinal", "SelectedIndex")
+        End With
+
     End Sub
 
     Private Sub InitBindingParentAccessors(ByVal xmlParent As XmlRelationParentSpec, ByVal dataControl As CheckAccessorCommand)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl.GetAccessor, xmlParent, "AccessorGet", "Checked")
-            m_xmlBindingsList.AddBinding(dataControl.SetAccessor, xmlParent, "AccessorSet", "Checked")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl.GetAccessor, xmlParent, "AccessorGet", "Checked")
+        m_xmlBindingsList.AddBinding(dataControl.SetAccessor, xmlParent, "AccessorSet", "Checked")
+
     End Sub
 
     Private Function CheckCardinal(ByVal xmlParent As XmlRelationParentSpec, ByVal cmbCardinal As ComboCommand) As Boolean
@@ -393,21 +326,19 @@ Public Class XmlRelationView
     End Function
 
     Private Function ChangeParentCardinal(ByVal xmlParent As XmlRelationParentSpec, ByVal cmbCardinal As ComboCommand) As Boolean
-        Try
-            If CheckCardinal(xmlParent, cmbCardinal) Then
-                If MsgBox("This operation will remove accessors or container implementation, would you want to continue ?" _
-                          , cstMsgYesNoExclamation, "Cardinal") _
-                                = MsgBoxResult.No _
-                Then
-                    CancelCardinal(xmlParent, cmbCardinal)
-                    Return False
-                Else
-                    ConfirmCardinal(xmlParent, cmbCardinal)
-                End If
+
+        If CheckCardinal(xmlParent, cmbCardinal) Then
+            If MsgBox("This operation will remove accessors or container implementation, would you want to continue ?" _
+                      , cstMsgYesNoExclamation, "Cardinal") _
+                            = MsgBoxResult.No _
+            Then
+                CancelCardinal(xmlParent, cmbCardinal)
+                Return False
+            Else
+                ConfirmCardinal(xmlParent, cmbCardinal)
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return True
     End Function
 
@@ -431,14 +362,12 @@ Public Class XmlRelationView
 
     Private Function InitBindingParentClassList(ByVal xmlParent As XmlRelationParentSpec, ByVal control As ComboCommand) As Binding
         Dim bindingResult As Binding = Nothing
-        Try
-            With control
-                InitTypedefCombo(Me, .Combo)
-                bindingResult = m_xmlBindingsList.AddBinding(.Combo, xmlParent, "Idref", "SelectedValue")
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        With control
+            InitTypedefCombo(Me, .Combo)
+            bindingResult = m_xmlBindingsList.AddBinding(.Combo, xmlParent, "Idref", "SelectedValue")
+        End With
+
         Return bindingResult
     End Function
 
@@ -469,30 +398,24 @@ Public Class XmlRelationView
     End Function
 
     Private Sub InitBindingParentMember(ByVal xmlParent As XmlRelationParentSpec, ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, xmlParent, "Member", "Checked")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, xmlParent, "Member", "Checked")
+
     End Sub
 
     Private Sub InitBindingParentLevel(ByVal xmlParent As XmlRelationParentSpec, ByVal control As ComboCommand)
-        Try
-            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
-                control.Enabled = False
-                control.Visible = False
-            End If
 
-            With control
-                .Combo.DropDownStyle = ComboBoxStyle.DropDownList
-                .Combo.Items.AddRange(New Object() {"Value", "Pointer", "Handler"})
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
+            control.Enabled = False
+            control.Visible = False
+        End If
 
-                m_xmlBindingsList.AddBinding(.Combo, xmlParent, "Level", "SelectedIndex")
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
+        With control
+            .Combo.DropDownStyle = ComboBoxStyle.DropDownList
+            .Combo.Items.AddRange(New Object() {"Value", "Pointer", "Handler"})
+
+            m_xmlBindingsList.AddBinding(.Combo, xmlParent, "Level", "SelectedIndex")
+        End With
     End Sub
 
     Private Sub HandleParentCardinal(ByVal xmlParent As XmlRelationParentSpec, ByVal cardinal As ComboCommand, _

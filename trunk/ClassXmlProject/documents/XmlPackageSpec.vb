@@ -108,75 +108,66 @@ Public Class XmlPackageSpec
             Comment = "Insert here details"
             BriefComment = "Insert here a brief comment"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
     End Sub
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
-        Try
-            AddChildren(SelectNodes("*[name()!='comment']"), strViewName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        AddChildren(SelectNodes("*[name()!='comment']"), strViewName)
+
     End Sub
 
     Public Overrides Function CanRemove(ByVal removeNode As XmlComponent) As Boolean
-        Try
-            Select Case removeNode.NodeName
 
-                Case "package", "import"
-                    ' Search children from removed node
-                    If removeNode.SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 Then
-                        MsgBox("This element is not empty", MsgBoxStyle.Exclamation, removeNode.Name)
-                    Else
-                        Return True
-                    End If
+        Select Case removeNode.NodeName
 
-                Case Else
-                    If SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 _
+            Case "package", "import"
+                ' Search children from removed node
+                If removeNode.SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 Then
+                    MsgBox("This element is not empty", MsgBoxStyle.Exclamation, removeNode.Name)
+                Else
+                    Return True
+                End If
+
+            Case Else
+                If SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 _
+                Then
+                    If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
+                              vbCrLf + "Do you want to proceed", _
+                                cstMsgYesNoQuestion, _
+                                removeNode.Name) = MsgBoxResult.Yes _
                     Then
-                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
-                                  vbCrLf + "Do you want to proceed", _
-                                    cstMsgYesNoQuestion, _
-                                    removeNode.Name) = MsgBoxResult.Yes _
-                        Then
-                            Dim bIsEmpty As Boolean = False
+                        Dim bIsEmpty As Boolean = False
 
-                            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
-                                Me.Updated = True
-                            End If
-
-                            Return bIsEmpty
+                        If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
+                            Me.Updated = True
                         End If
-                    Else
-                        Return True
+
+                        Return bIsEmpty
                     End If
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+                Else
+                    Return True
+                End If
+        End Select
+
         Return False
     End Function
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strName As String = removeNode.Name
-            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
-                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
-            Then
-                Dim strNodeName As String = removeNode.NodeName
-                If MyBase.RemoveComponent(removeNode) Then
-                    bResult = True
-                End If
+
+        Dim strName As String = removeNode.Name
+        If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
+                   cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
+        Then
+            Dim strNodeName As String = removeNode.NodeName
+            If MyBase.RemoveComponent(removeNode) Then
+                bResult = True
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return bResult
     End Function
 

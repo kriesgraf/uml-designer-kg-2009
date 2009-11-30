@@ -83,27 +83,24 @@ Public Class XmlPropertyView
     End Function
 
     Public Sub InitBindingOption(ByVal control As RadioButtonArray)
-        Try
-            m_ArrayButton = control
-            Select Case Me.TypeVarDefinition.Kind
-                Case XmlTypeVarSpec.EKindDeclaration.EK_Container
-                    control.Item(1).Checked = True
-                Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
-                    control.Item(2).Checked = True
-                Case XmlTypeVarSpec.EKindDeclaration.EK_Union
-                    control.Item(2).Checked = True
-                Case Else
-                    control.Item(0).Checked = True
-            End Select
 
-            If OverridesProperty <> "" Or Me.Node.ParentNode.Name = "interface" Then
-                For i As Short = 0 To CType(control.Count - 1, Short)
-                    control.Item(i).Enabled = False
-                Next i
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_ArrayButton = control
+        Select Case Me.TypeVarDefinition.Kind
+            Case XmlTypeVarSpec.EKindDeclaration.EK_Container
+                control.Item(1).Checked = True
+            Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
+                control.Item(2).Checked = True
+            Case XmlTypeVarSpec.EKindDeclaration.EK_Union
+                control.Item(2).Checked = True
+            Case Else
+                control.Item(0).Checked = True
+        End Select
+
+        If OverridesProperty <> "" Or Me.Node.ParentNode.Name = "interface" Then
+            For i As Short = 0 To CType(control.Count - 1, Short)
+                control.Item(i).Enabled = False
+            Next i
+        End If
     End Sub
 
     Public Sub UpdateOption(ByVal control As RadioButtonArray)
@@ -153,52 +150,41 @@ Public Class XmlPropertyView
     End Sub
 
     Public Sub InitBindingName(ByVal dataControl As TextBox, ByVal label As Label)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 
-            If OverridesProperty <> "" Then
-                label.Enabled = False
-                dataControl.Enabled = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
+
+        If OverridesProperty <> "" Then
+            label.Enabled = False
+            dataControl.Enabled = False
+        End If
     End Sub
 
     Public Sub InitBindingBriefComment(ByVal dataControl As TextBox)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
+
     End Sub
 
     Public Sub InitBindingRange(ByVal dataControl As ComboBox)
-        Try
-            m_cmbRange = dataControl
-            dataControl.DropDownStyle = ComboBoxStyle.DropDownList
-            dataControl.Items.AddRange(New Object() {"private", "protected", "public"})
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Range")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_cmbRange = dataControl
+        dataControl.DropDownStyle = ComboBoxStyle.DropDownList
+        dataControl.Items.AddRange(New Object() {"private", "protected", "public"})
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Range")
+
     End Sub
 
     Public Sub InitBindingMember(ByVal dataControl As CheckBox)
-        Try
-            m_chkMember = dataControl
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Member", "Checked")
 
-            If Me.OverridesProperty <> "" _
-            Then
-                dataControl.Checked = False
-                dataControl.Enabled = False
-                dataControl.Visible = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_chkMember = dataControl
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Member", "Checked")
+
+        If Me.OverridesProperty <> "" _
+        Then
+            dataControl.Checked = False
+            dataControl.Enabled = False
+            dataControl.Visible = False
+        End If
     End Sub
 
     Public Sub InitBindingAttribute(ByVal dataControl As CheckBox)
@@ -217,53 +203,42 @@ Public Class XmlPropertyView
                         m_chkAttribute.Enabled = False
                     End If
             End Select
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = True
         End Try
     End Sub
 
     Public Sub InitBindingGetModifier(ByVal dataControl As CheckBox)
-        Try
-            dataControl.ThreeState = False
-            m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetModifier", "Checked")
 
-            If Me.GenerationLanguage = ELanguage.Language_Vbasic _
-            Then
-                dataControl.Checked = False
-                dataControl.Enabled = False
-                dataControl.Visible = False
+        dataControl.ThreeState = False
+        m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetModifier", "Checked")
 
-            ElseIf Me.OverridesProperty <> "" _
-            Then
-                dataControl.Enabled = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If Me.GenerationLanguage = ELanguage.Language_Vbasic _
+        Then
+            dataControl.Checked = False
+            dataControl.Enabled = False
+            dataControl.Visible = False
+
+        ElseIf Me.OverridesProperty <> "" _
+        Then
+            dataControl.Enabled = False
+        End If
     End Sub
 
     Public Sub InitBindingGetInline(ByVal dataControl As CheckBox)
-        Try
-            m_chkGetInline = dataControl
-            dataControl.ThreeState = False
-            m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetInline", "Checked")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_chkGetInline = dataControl
+        dataControl.ThreeState = False
+        m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetInline", "Checked")
+
     End Sub
 
     Public Sub InitBindingSetInline(ByVal dataControl As CheckBox)
-        Try
-            m_chkSetInline = dataControl
-            dataControl.ThreeState = False
-            m_xmlBindingsList.AddBinding(dataControl, Me, "AccessSetInline", "Checked")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_chkSetInline = dataControl
+        dataControl.ThreeState = False
+        m_xmlBindingsList.AddBinding(dataControl, Me, "AccessSetInline", "Checked")
+
     End Sub
 
     Public Sub InitBindingOverridable(ByVal control As CheckBox)
@@ -299,9 +274,6 @@ Public Class XmlPropertyView
                     control.Checked = False
                     control.Enabled = False
             End Select
-
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = True
         End Try
@@ -320,34 +292,28 @@ Public Class XmlPropertyView
                 dataControl.Enabled = False
                 label.Enabled = False
             End If
-
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = True
         End Try
     End Sub
 
     Public Sub InitBindingGetBy(ByVal dataControl As ComboBox, ByVal label As Label)
-        Try
-            dataControl.DropDownStyle = ComboBoxStyle.DropDownList
-            dataControl.Items.AddRange(New Object() {"ref", "val"})
-            m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetBy", "SelectedItem")
 
-            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus _
-            Then
-                dataControl.Enabled = False
-                dataControl.Visible = False
-                label.Visible = False
+        dataControl.DropDownStyle = ComboBoxStyle.DropDownList
+        dataControl.Items.AddRange(New Object() {"ref", "val"})
+        m_xmlBindingsList.AddBinding(dataControl, Me, "AccessGetBy", "SelectedItem")
 
-            ElseIf Me.OverridesProperty <> "" _
-            Then
-                dataControl.Enabled = False
-                label.Enabled = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus _
+        Then
+            dataControl.Enabled = False
+            dataControl.Visible = False
+            label.Visible = False
+
+        ElseIf Me.OverridesProperty <> "" _
+        Then
+            dataControl.Enabled = False
+            label.Enabled = False
+        End If
     End Sub
 
     Public Sub InitBindingSetAccess(ByVal dataControl As ComboBox, ByVal label As Label)
@@ -363,71 +329,63 @@ Public Class XmlPropertyView
                 dataControl.Enabled = False
                 label.Enabled = False
             End If
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = True
         End Try
     End Sub
 
     Public Sub InitBindingSetby(ByVal dataControl As ComboBox, ByVal label As Label)
-        Try
-            dataControl.DropDownStyle = ComboBoxStyle.DropDownList
-            dataControl.Items.AddRange(New Object() {"ref", "val"})
-            m_xmlBindingsList.AddBinding(dataControl, Me, "AccessSetBy", "SelectedItem")
 
-            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus _
-            Then
-                dataControl.Enabled = False
-                dataControl.Visible = False
-                label.Visible = False
+        dataControl.DropDownStyle = ComboBoxStyle.DropDownList
+        dataControl.Items.AddRange(New Object() {"ref", "val"})
+        m_xmlBindingsList.AddBinding(dataControl, Me, "AccessSetBy", "SelectedItem")
 
-            ElseIf Me.OverridesProperty <> "" _
-            Then
-                dataControl.Enabled = False
-                label.Enabled = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If Me.GenerationLanguage <> ELanguage.Language_CplusPlus _
+        Then
+            dataControl.Enabled = False
+            dataControl.Visible = False
+            label.Visible = False
+
+        ElseIf Me.OverridesProperty <> "" _
+        Then
+            dataControl.Enabled = False
+            label.Enabled = False
+        End If
     End Sub
 
     Public Sub InitBindingBehaviour(ByVal dataControl As ComboBox, ByVal label As Label)
-        Try
-            m_cmdBehaviour.Combo = dataControl
-            m_cmdBehaviour.Title = label
 
-            With m_cmdBehaviour
-                .Combo.DropDownStyle = ComboBoxStyle.DropDownList
+        m_cmdBehaviour.Combo = dataControl
+        m_cmdBehaviour.Title = label
 
-                .Combo.Items.AddRange(New Object() {"Normal", "Default", "WithEvents"})
-                m_xmlBindingsList.AddBinding(dataControl, Me, "Behaviour", "SelectedItem")
+        With m_cmdBehaviour
+            .Combo.DropDownStyle = ComboBoxStyle.DropDownList
 
-                If Me.GenerationLanguage <> ELanguage.Language_Vbasic _
-                Then
-                    .Combo.SelectedIndex = 0
-                    .Enabled = False
-                    .Visible = False
+            .Combo.Items.AddRange(New Object() {"Normal", "Default", "WithEvents"})
+            m_xmlBindingsList.AddBinding(dataControl, Me, "Behaviour", "SelectedItem")
 
-                ElseIf m_eClassImplementation = EImplementation.Interf _
-                Then
-                    .Combo.SelectedIndex = 0
-                    .Enabled = False
+            If Me.GenerationLanguage <> ELanguage.Language_Vbasic _
+            Then
+                .Combo.SelectedIndex = 0
+                .Enabled = False
+                .Visible = False
 
-                ElseIf m_eClassImplementation = EImplementation.Root And Me.Node.ParentNode.Name = "interface" _
-                Then
-                    .Combo.SelectedIndex = 0
-                    .Enabled = False
+            ElseIf m_eClassImplementation = EImplementation.Interf _
+            Then
+                .Combo.SelectedIndex = 0
+                .Enabled = False
 
-                ElseIf Me.OverridesProperty <> "" _
-                Then
-                    .Combo.SelectedIndex = 0
-                    .Enabled = False
-                End If
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
+            ElseIf m_eClassImplementation = EImplementation.Root And Me.Node.ParentNode.Name = "interface" _
+            Then
+                .Combo.SelectedIndex = 0
+                .Enabled = False
+
+            ElseIf Me.OverridesProperty <> "" _
+            Then
+                .Combo.SelectedIndex = 0
+                .Enabled = False
+            End If
+        End With
     End Sub
 
     Private Sub chkAttribute_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles m_chkAttribute.CheckedChanged

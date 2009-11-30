@@ -34,9 +34,6 @@ Public Class XmlCodeInline
 
             Kind = "method"
             CodeSource = "/* Insert code here */"
-
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
@@ -44,43 +41,38 @@ Public Class XmlCodeInline
 
     Private Function ConvertCodeText() As String
         Dim strCode As String = ""
-        Try
-            Dim child As XmlNode
 
-            If Me.Node IsNot Nothing Then
-                For Each child In SelectNodes()
-                    strCode = strCode + GetAttributeValue(child, "value") + vbCrLf
-                Next child
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim child As XmlNode
+
+        If Me.Node IsNot Nothing Then
+            For Each child In SelectNodes()
+                strCode = strCode + GetAttributeValue(child, "value") + vbCrLf
+            Next child
+        End If
+
         Return strCode
     End Function
 
     Private Sub ConvertTextCode(ByVal value As String)
         Dim strTempo As String
-        Try
-            Dim i As Integer
 
-            RemoveAllNodes("line")
+        Dim i As Integer
 
-            strTempo = value
+        RemoveAllNodes("line")
+
+        strTempo = value
+        i = InStr(strTempo, vbCrLf)
+
+        While i > 0
+            CreateAppendNode("line")
+            AddAttribute("value", Left(strTempo, i - 1), "line[last()]")
+            strTempo = Mid(strTempo, i + 2)
             i = InStr(strTempo, vbCrLf)
+        End While
 
-            While i > 0
-                CreateAppendNode("line")
-                AddAttribute("value", Left(strTempo, i - 1), "line[last()]")
-                strTempo = Mid(strTempo, i + 2)
-                i = InStr(strTempo, vbCrLf)
-            End While
-
-            If Len(strTempo) > 0 Then
-                CreateAppendNode("line")
-                AddAttribute("value", strTempo, "line[last()]")
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If Len(strTempo) > 0 Then
+            CreateAppendNode("line")
+            AddAttribute("value", strTempo, "line[last()]")
+        End If
     End Sub
 End Class

@@ -265,12 +265,9 @@ Public Class XmlMethodSpec
     End Function
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
-        Try
-            AddChildren(SelectNodes("exception | param"), strViewName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        AddChildren(SelectNodes("exception | param"), strViewName)
+
     End Sub
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
@@ -321,8 +318,6 @@ Public Class XmlMethodSpec
             ReturnComment = "Return comment"
             Range = "public"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
@@ -330,28 +325,25 @@ Public Class XmlMethodSpec
 
     Public Overrides Function Clone(ByVal nodeXml As XmlNode, Optional ByVal bLoadChildren As Boolean = False) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
-        Try
-            If nodeXml Is Nothing _
+
+        If nodeXml Is Nothing _
             Then
-                xmlResult = MyBase.Clone(Nothing, bLoadChildren)
+            xmlResult = MyBase.Clone(Nothing, bLoadChildren)
+        Else
+            Dim xmlAttribut As XmlNode = nodeXml.SelectSingleNode("@constructor")
+            If xmlAttribut Is Nothing _
+            Then
+                xmlResult = MyBase.Clone(nodeXml, bLoadChildren)
+            ElseIf xmlAttribut.Value <> "no" _
+            Then
+                xmlResult = New XmlConstructorSpec(nodeXml, bLoadChildren)
             Else
-                Dim xmlAttribut As XmlNode = nodeXml.SelectSingleNode("@constructor")
-                If xmlAttribut Is Nothing _
-                Then
-                    xmlResult = MyBase.Clone(nodeXml, bLoadChildren)
-                ElseIf xmlAttribut.Value <> "no" _
-                Then
-                    xmlResult = New XmlConstructorSpec(nodeXml, bLoadChildren)
-                Else
-                    xmlResult = MyBase.Clone(nodeXml, bLoadChildren)
-                End If
+                xmlResult = MyBase.Clone(nodeXml, bLoadChildren)
             End If
+        End If
 
-            If xmlResult IsNot Nothing Then xmlResult.GenerationLanguage = Me.GenerationLanguage
+        If xmlResult IsNot Nothing Then xmlResult.GenerationLanguage = Me.GenerationLanguage
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return xmlResult
     End Function
 
@@ -360,19 +352,16 @@ Public Class XmlMethodSpec
 #Region "Protected & private methods"
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
-        Try
-            MyBase.ChangeReferences(bLoadChildren)
 
-            Dim nodeXml As XmlNode = Nothing
+        MyBase.ChangeReferences(bLoadChildren)
 
-            If TestNode("return") Then
-                Dim nodeType As XmlNode = GetNode("return/type")
-                m_xmlReturnValue = TryCast(CreateDocument(nodeType, bLoadChildren), XmlTypeVarSpec)
-                If m_xmlReturnValue IsNot Nothing Then m_xmlReturnValue.GenerationLanguage = Me.GenerationLanguage
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim nodeXml As XmlNode = Nothing
+
+        If TestNode("return") Then
+            Dim nodeType As XmlNode = GetNode("return/type")
+            m_xmlReturnValue = TryCast(CreateDocument(nodeType, bLoadChildren), XmlTypeVarSpec)
+            If m_xmlReturnValue IsNot Nothing Then m_xmlReturnValue.GenerationLanguage = Me.GenerationLanguage
+        End If
     End Sub
 
     Protected Friend Overrides Function AppendNode(ByVal nodeXml As XmlNode, Optional ByVal observer As Object = Nothing) As XmlNode
@@ -412,39 +401,36 @@ Public Class XmlMethodSpec
     End Function
 
     Private Sub UpdateNodes(ByVal eValue As EKindMethod)
-        Try
-            Dim nodeXml As XmlNode
-            Select Case eValue
-                Case EKindMethod.EK_Constructor
-                    RemoveSingleNode("return")
-                    SetAttribute("constructor", "public")
-                    RemoveAttribute("operator")
 
-                Case EKindMethod.EK_Method
-                    If TestNode("return") = False Then
-                        nodeXml = CreateAppendNode("return")
-                        nodeXml.AppendChild(CreateNode("type"))
-                        nodeXml.AppendChild(CreateNode("variable"))
-                    End If
-                    SetAttribute("constructor", "no")
-                    RemoveAttribute("operator")
+        Dim nodeXml As XmlNode
+        Select Case eValue
+            Case EKindMethod.EK_Constructor
+                RemoveSingleNode("return")
+                SetAttribute("constructor", "public")
+                RemoveAttribute("operator")
 
-                Case EKindMethod.EK_Operator
-                    If TestNode("return") = False Then
-                        nodeXml = CreateAppendNode("return")
-                        nodeXml.AppendChild(CreateNode("type"))
-                        nodeXml.AppendChild(CreateNode("variable"))
-                    End If
-                    SetAttribute("constructor", "no")
-                    SetAttribute("name", cstOperator)
-                    SetAttribute("operator", "Operand")
+            Case EKindMethod.EK_Method
+                If TestNode("return") = False Then
+                    nodeXml = CreateAppendNode("return")
+                    nodeXml.AppendChild(CreateNode("type"))
+                    nodeXml.AppendChild(CreateNode("variable"))
+                End If
+                SetAttribute("constructor", "no")
+                RemoveAttribute("operator")
 
-                Case Else
-                    Throw New Exception("Unknown method")
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+            Case EKindMethod.EK_Operator
+                If TestNode("return") = False Then
+                    nodeXml = CreateAppendNode("return")
+                    nodeXml.AppendChild(CreateNode("type"))
+                    nodeXml.AppendChild(CreateNode("variable"))
+                End If
+                SetAttribute("constructor", "no")
+                SetAttribute("name", cstOperator)
+                SetAttribute("operator", "Operand")
+
+            Case Else
+                Throw New Exception("Unknown method")
+        End Select
     End Sub
 
 #End Region

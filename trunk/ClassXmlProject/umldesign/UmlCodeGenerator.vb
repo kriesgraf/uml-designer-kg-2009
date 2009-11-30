@@ -191,9 +191,6 @@ Public Class UmlCodeGenerator
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
-
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.ProgressBarVisible = False
             fen.Cursor = oldCursor
@@ -249,9 +246,6 @@ Public Class UmlCodeGenerator
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
-
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.ProgressBarVisible = False
             fen.Cursor = oldCursor
@@ -304,9 +298,6 @@ Public Class UmlCodeGenerator
                           My.Settings.DiffToolArguments, lstFileList)
                 bResult = True
             End If
-
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.ProgressBarVisible = False
             fen.Cursor = oldCursor
@@ -363,9 +354,6 @@ Public Class UmlCodeGenerator
 
                 bResult = True
             End If
-
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.ProgressBarVisible = False
             fen.Cursor = oldCursor
@@ -376,58 +364,51 @@ Public Class UmlCodeGenerator
     End Function
 
     Private Shared Sub ConvertXslParams(ByVal argList As Dictionary(Of String, String), ByVal strArguments As String)
-        Try
-            Dim regex As New Regex("\-(\w+)\=(\b[a-zA-Z0-9.\-_]+\b)")
-            If String.IsNullOrEmpty(strArguments) Then
-                Return
-            ElseIf regex.IsMatch(strArguments) _
-            Then
-                Dim m As Match = regex.Match(strArguments)
-                While (m.Success)
-                    Dim param As Group = m.Groups(1)
-                    Dim value As Group = m.Groups(2)
-                    If argList.ContainsKey(param.Value) _
-                    Then
-                        MsgBox("XSL param '" + param.Value + "' already defined or reserved!", MsgBoxStyle.Exclamation, "XSL transformation parameters")
-                    Else
-                        argList.Add(param.Value, value.Value)
-                    End If
-                    m = m.NextMatch()
-                End While
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Dim regex As New Regex("\-(\w+)\=(\b[a-zA-Z0-9.\-_]+\b)")
+        If String.IsNullOrEmpty(strArguments) Then
+            Return
+        ElseIf regex.IsMatch(strArguments) _
+        Then
+            Dim m As Match = regex.Match(strArguments)
+            While (m.Success)
+                Dim param As Group = m.Groups(1)
+                Dim value As Group = m.Groups(2)
+                If argList.ContainsKey(param.Value) _
+                Then
+                    MsgBox("XSL param '" + param.Value + "' already defined or reserved!", MsgBoxStyle.Exclamation, "XSL transformation parameters")
+                Else
+                    argList.Add(param.Value, value.Value)
+                End If
+                m = m.NextMatch()
+            End While
+        End If
     End Sub
 
     Private Shared Function ConvertFileListArgs(ByVal FileList As ArrayList, ByVal strArguments As String) As String
         Dim strResult As String = strArguments
-        Try
-            Dim regex As New Regex("(\{[0-9]\})")
-            If String.IsNullOrEmpty(strArguments) Then
-                Return ""
-            ElseIf regex.IsMatch(strArguments) Then
-                Dim tempo() As Object = FileList.ToArray()
-                strResult = String.Format(strArguments, tempo)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Dim regex As New Regex("(\{[0-9]\})")
+        If String.IsNullOrEmpty(strArguments) Then
+            Return ""
+        ElseIf regex.IsMatch(strArguments) Then
+            Dim tempo() As Object = FileList.ToArray()
+            strResult = String.Format(strArguments, tempo)
+        End If
+
         Return strResult
     End Function
 
     Private Shared Function ConvertArguments(ByVal strArguments As String, ByVal strProgramFolder As String) As String
         Dim strResult As String = strArguments
-        Try
-            Dim regex As New Regex("(\{\$ProjectFolder\})")
-            If String.IsNullOrEmpty(strArguments) Then
-                Return ""
-            ElseIf regex.IsMatch(strArguments) Then
-                strResult = regex.Replace(strArguments, Chr(34) + strProgramFolder + Chr(34))
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Dim regex As New Regex("(\{\$ProjectFolder\})")
+        If String.IsNullOrEmpty(strArguments) Then
+            Return ""
+        ElseIf regex.IsMatch(strArguments) Then
+            strResult = regex.Replace(strArguments, Chr(34) + strProgramFolder + Chr(34))
+        End If
+
         Return strResult
     End Function
 #End If
@@ -465,8 +446,6 @@ Public Class UmlCodeGenerator
             End If
             bResult = True
 
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.ProgressBarVisible = False
             fen.Cursor = oldCursor
@@ -522,53 +501,49 @@ Public Class UmlCodeGenerator
             End Using
         Catch ex As Exception
             Throw New Exception("Code extraction failed, see inner exception and temporary file bellow:" + vbCrLf + vbCrLf + strTransformation, ex)
-            Throw ex
         End Try
     End Sub
 
     Private Shared Function ReadFileDescriptor(ByVal reader As XmlTextReader, ByVal currentFolder As String) As CodeInfo
         Dim fileDescriptor As New CodeInfo
-        Try
-            fileDescriptor.bCodeMerge = False
-            fileDescriptor.bCodeMerge = False
-            fileDescriptor.bSourceExists = False
 
-            reader.MoveToFirstAttribute()
-            Do
-                Select Case reader.Name
-                    Case "name"
-                        Try
-                            fileDescriptor.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, reader.Value.Trim())
+        fileDescriptor.bCodeMerge = False
+        fileDescriptor.bCodeMerge = False
+        fileDescriptor.bSourceExists = False
 
-                        Catch ex As Exception
-                            Throw New Exception("Filename '" + reader.Value + "' or current folder '" + currentFolder + "' is not available", ex)
-                        End Try
+        reader.MoveToFirstAttribute()
+        Do
+            Select Case reader.Name
+                Case "name"
+                    Try
+                        fileDescriptor.strTempFile = My.Computer.FileSystem.CombinePath(currentFolder, reader.Value.Trim())
 
-                    Case "Merge"
-                        fileDescriptor.bCodeMerge = (reader.Value.Trim() = "yes")
-                End Select
-            Loop While reader.MoveToNextAttribute
+                    Catch ex As Exception
+                        Throw New Exception("Filename '" + reader.Value + "' or current folder '" + currentFolder + "' is not available", ex)
+                    End Try
 
-            If String.IsNullOrEmpty(fileDescriptor.strTempFile) = False _
-            Then
-                'Debug.Print("ExtractClass:=" + currentFolder + strNewFile)
-                Dim strNewFile As String = Path.GetFileName(fileDescriptor.strTempFile)
-                fileDescriptor.strReleaseFile = fileDescriptor.strTempFile
-                fileDescriptor.bSourceExists = My.Computer.FileSystem.FileExists(fileDescriptor.strReleaseFile)
+                Case "Merge"
+                    fileDescriptor.bCodeMerge = (reader.Value.Trim() = "yes")
+            End Select
+        Loop While reader.MoveToNextAttribute
 
-                If fileDescriptor.bSourceExists Then
-                    fileDescriptor.strTempFile = My.Computer.FileSystem.CombinePath(CreateTempFolder(currentFolder), _
-                                                                                    strNewFile + ".new")
-                End If
-            Else
-                Throw New Exception("Attribute 'name' missed in a 'code' node !")
+        If String.IsNullOrEmpty(fileDescriptor.strTempFile) = False _
+        Then
+            'Debug.Print("ExtractClass:=" + currentFolder + strNewFile)
+            Dim strNewFile As String = Path.GetFileName(fileDescriptor.strTempFile)
+            fileDescriptor.strReleaseFile = fileDescriptor.strTempFile
+            fileDescriptor.bSourceExists = My.Computer.FileSystem.FileExists(fileDescriptor.strReleaseFile)
+
+            If fileDescriptor.bSourceExists Then
+                fileDescriptor.strTempFile = My.Computer.FileSystem.CombinePath(CreateTempFolder(currentFolder), _
+                                                                                strNewFile + ".new")
             End If
+        Else
+            Throw New Exception("Attribute 'name' missed in a 'code' node !")
+        End If
 
-            reader.MoveToElement()
+        reader.MoveToElement()
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return fileDescriptor
     End Function
 
@@ -586,75 +561,67 @@ Public Class UmlCodeGenerator
     Private Shared Sub ExtractPackageFolder(ByVal observer As InterfProgression, _
                                       ByVal currentFolder As String, ByVal reader As XmlTextReader, _
                                       ByVal lstFileList As ArrayList)
-        Try
-            observer.Increment(1)
+        observer.Increment(1)
 
-            reader.MoveToFirstAttribute()
-            If reader.Name <> "name" Then
-                Exit Sub
-            End If
+        reader.MoveToFirstAttribute()
+        If reader.Name <> "name" Then
+            Exit Sub
+        End If
 
-            Dim strNewFolder As String = reader.Value.Trim()
-            reader.MoveToElement()
+        Dim strNewFolder As String = reader.Value.Trim()
+        reader.MoveToElement()
 
-            strNewFolder = CreateBranch(currentFolder, strNewFolder)
+        strNewFolder = CreateBranch(currentFolder, strNewFolder)
 
-            While reader.Read()
-                Select Case reader.NodeType
-                    Case XmlNodeType.Element
-                        Select Case reader.Name
-                            Case cstFolderElement
-                                ExtractPackageFolder(observer, strNewFolder, reader, lstFileList)
+        While reader.Read()
+            Select Case reader.NodeType
+                Case XmlNodeType.Element
+                    Select Case reader.Name
+                        Case cstFolderElement
+                            ExtractPackageFolder(observer, strNewFolder, reader, lstFileList)
 
-                            Case cstFileElement
-                                ExtractFileNode(observer, strNewFolder, reader, lstFileList)
+                        Case cstFileElement
+                            ExtractFileNode(observer, strNewFolder, reader, lstFileList)
 
-                            Case Else
-                                'Debug.Print("Node ignored:=" + reader.Name)
-                        End Select
-                    Case XmlNodeType.EndElement
-                        'Debug.Print("End Node:=" + reader.Name)
-                        If reader.Name = cstFolderElement Then Exit While
-                End Select
-            End While
-        Catch ex As Exception
-            Throw ex
-        End Try
+                        Case Else
+                            'Debug.Print("Node ignored:=" + reader.Name)
+                    End Select
+                Case XmlNodeType.EndElement
+                    'Debug.Print("End Node:=" + reader.Name)
+                    If reader.Name = cstFolderElement Then Exit While
+            End Select
+        End While
     End Sub
 
     Private Shared Sub ExtractFileNode(ByVal observer As InterfProgression, _
                                     ByVal currentFolder As String, ByVal reader As XmlTextReader, _
                                     ByVal lstFileList As ArrayList)
-        Try
-            observer.Increment(1)
 
-            Dim bCodeMerge As Boolean = False
-            Dim fileInfo As CodeInfo = ReadFileDescriptor(reader, currentFolder)
+        observer.Increment(1)
 
-            Using streamWriter As StreamWriter = New StreamWriter(fileInfo.strTempFile)
-                While reader.Read()
-                    Select Case reader.NodeType
-                        Case XmlNodeType.Element
+        Dim bCodeMerge As Boolean = False
+        Dim fileInfo As CodeInfo = ReadFileDescriptor(reader, currentFolder)
 
-                        Case XmlNodeType.CDATA
-                            streamWriter.Write(reader.Value)
+        Using streamWriter As StreamWriter = New StreamWriter(fileInfo.strTempFile)
+            While reader.Read()
+                Select Case reader.NodeType
+                    Case XmlNodeType.Element
 
-                        Case XmlNodeType.EndElement
-                            If reader.Name = "code" Then
-                                Exit While
-                            End If
-                    End Select
-                End While
-                streamWriter.Close()
-            End Using
+                    Case XmlNodeType.CDATA
+                        streamWriter.Write(reader.Value)
 
-            If lstFileList IsNot Nothing Then
-                lstFileList.Add(fileInfo)
-            End If
+                    Case XmlNodeType.EndElement
+                        If reader.Name = "code" Then
+                            Exit While
+                        End If
+                End Select
+            End While
+            streamWriter.Close()
+        End Using
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If lstFileList IsNot Nothing Then
+            lstFileList.Add(fileInfo)
+        End If
     End Sub
 
 #If _APP_UML = "1" Then
@@ -663,84 +630,79 @@ Public Class UmlCodeGenerator
                                  ByVal strExternalMerger As String, _
                                  ByVal strArguments As String, ByVal lstFileList As ArrayList, _
                                  Optional ByVal bPostGeneration As Boolean = False)
-        Try
-            Dim lstFilesToMerge As New ArrayList
-            For Each fileInfo As CodeInfo In lstFileList
-                If MergeNode(eLang, (strExternalMerger.Length > 0), fileInfo) Then
-                    fileInfo.Filename = strFolder
-                    lstFilesToMerge.Add(fileInfo)
-                End If
-            Next
 
-            lstFileList.Clear()
-
-            If lstFilesToMerge.Count = 1 _
-            Then
-                Dim fileInfo As CodeInfo = CType(lstFilesToMerge.Item(0), CodeInfo)
-                CompareAndMergeFiles(strExternalMerger, strArguments, _
-                                     fileInfo.strTempFile, fileInfo.strReleaseFile, _
-                                     bPostGeneration)
-
-            ElseIf lstFilesToMerge.Count > 1 _
-            Then
-                Dim fen As New dlgMergeFileList
-                fen.ProjectFolder = strFolder
-                fen.FileList = lstFilesToMerge
-                fen.ExternalMerger = strExternalMerger
-                fen.Arguments = strArguments
-                fen.Show()
+        Dim lstFilesToMerge As New ArrayList
+        For Each fileInfo As CodeInfo In lstFileList
+            If MergeNode(eLang, (strExternalMerger.Length > 0), fileInfo) Then
+                fileInfo.Filename = strFolder
+                lstFilesToMerge.Add(fileInfo)
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Next
+
+        lstFileList.Clear()
+
+        If lstFilesToMerge.Count = 1 _
+        Then
+            Dim fileInfo As CodeInfo = CType(lstFilesToMerge.Item(0), CodeInfo)
+            CompareAndMergeFiles(strExternalMerger, strArguments, _
+                                 fileInfo.strTempFile, fileInfo.strReleaseFile, _
+                                 bPostGeneration)
+
+        ElseIf lstFilesToMerge.Count > 1 _
+        Then
+            Dim fen As New dlgMergeFileList
+            fen.ProjectFolder = strFolder
+            fen.FileList = lstFilesToMerge
+            fen.ExternalMerger = strExternalMerger
+            fen.Arguments = strArguments
+            fen.Show()
+        End If
     End Sub
 
     Private Shared Function MergeNode(ByVal eLang As ELanguage, ByVal bExternalMerger As Boolean, ByVal fileInfo As CodeInfo) As Boolean
 
         Dim bResult As Boolean = True
-        Try
-            Select Case eLang
-                Case ELanguage.Language_Vbasic
-                    If fileInfo.bSourceExists Then
-                        ' User can choose between automatic and manual external merger
-                        If My.Settings.VbMergeTool Then
-                            VbCodeMerger.Merge(fileInfo, cstTempExport)
-                            bResult = False
 
-                        ElseIf bExternalMerger Then
-                            ' Use an external merger to add/remove code as user ask it
-                            bResult = True
-                            '                           CompareAndMergeFiles(strExternalMerger, strArguments, fileInfo.strTempFile, fileInfo.strReleaseFile)
-                        Else
-                            ' Can't merge, tool unavailable
-                            BackupFile(fileInfo.strTempFile, fileInfo.strReleaseFile)
-                            bResult = False
-                        End If
+        Select Case eLang
+            Case ELanguage.Language_Vbasic
+                If fileInfo.bSourceExists Then
+                    ' User can choose between automatic and manual external merger
+                    If My.Settings.VbMergeTool Then
+                        VbCodeMerger.Merge(fileInfo, cstTempExport)
+                        bResult = False
+
+                    ElseIf bExternalMerger Then
+                        ' Use an external merger to add/remove code as user ask it
+                        bResult = True
+                        '                           CompareAndMergeFiles(strExternalMerger, strArguments, fileInfo.strTempFile, fileInfo.strReleaseFile)
                     Else
-                        ' No need to merge or backup
+                        ' Can't merge, tool unavailable
+                        BackupFile(fileInfo.strTempFile, fileInfo.strReleaseFile)
                         bResult = False
                     End If
+                Else
+                    ' No need to merge or backup
+                    bResult = False
+                End If
 
-                Case Else
-                    If fileInfo.bSourceExists Then
-                        If fileInfo.bCodeMerge And bExternalMerger Then
-                            ' Use an external merger to add/remove code as user ask it
-                            bResult = True
-                            '                        CompareAndMergeFiles(strExternalMerger, strArguments, fileInfo.strTempFile, fileInfo.strReleaseFile)
+            Case Else
+                If fileInfo.bSourceExists Then
+                    If fileInfo.bCodeMerge And bExternalMerger Then
+                        ' Use an external merger to add/remove code as user ask it
+                        bResult = True
+                        '                        CompareAndMergeFiles(strExternalMerger, strArguments, fileInfo.strTempFile, fileInfo.strReleaseFile)
 
-                        Else
-                            ' No need to merge
-                            BackupFile(fileInfo.strTempFile, fileInfo.strReleaseFile)
-                            bResult = False
-                        End If
                     Else
-                        ' No need to merge or backup
+                        ' No need to merge
+                        BackupFile(fileInfo.strTempFile, fileInfo.strReleaseFile)
                         bResult = False
                     End If
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+                Else
+                    ' No need to merge or backup
+                    bResult = False
+                End If
+        End Select
+
         Return bResult
     End Function
 #End If
@@ -780,13 +742,10 @@ Public Class UmlCodeGenerator
     End Function
 
     Private Shared Sub BackupFile(ByVal strTempFile As String, ByVal strReleaseFile As String)
-        Try
-            My.Computer.FileSystem.MoveFile(strReleaseFile, strReleaseFile + ".bak", True)
-            My.Computer.FileSystem.MoveFile(strTempFile, strReleaseFile)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        My.Computer.FileSystem.MoveFile(strReleaseFile, strReleaseFile + ".bak", True)
+        My.Computer.FileSystem.MoveFile(strTempFile, strReleaseFile)
+
     End Sub
 
 #If _APP_UML = "1" Then

@@ -154,31 +154,25 @@ Public Class XmlImportSpec
                 Case ELanguage.Language_Java
                     Parameter = "Package1"
             End Select
-
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
     End Sub
 
     Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
-        Try
-            If xmlRefNodeCounter Is Nothing Then
-                Throw New Exception("Argument 'xmlRefNodeCounter' is null")
-            End If
-            Select Case eRename
-                Case ENameReplacement.NewName
-                    ' We call a second time this method to rename import according to language
-                    SetDefaultValues(False)
-                Case Else
-            End Select
-            If Me.ChildExportNode IsNot Nothing Then
-                Me.ChildExportNode.SetIdReference(xmlRefNodeCounter, eRename, bSetIdrefChildren)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If xmlRefNodeCounter Is Nothing Then
+            Throw New Exception("Argument 'xmlRefNodeCounter' is null")
+        End If
+        Select Case eRename
+            Case ENameReplacement.NewName
+                ' We call a second time this method to rename import according to language
+                SetDefaultValues(False)
+            Case Else
+        End Select
+        If Me.ChildExportNode IsNot Nothing Then
+            Me.ChildExportNode.SetIdReference(xmlRefNodeCounter, eRename, bSetIdrefChildren)
+        End If
     End Sub
 
     Public Overrides Function AppendComponent(ByVal document As XmlComponent, Optional ByVal observer As Object = Nothing) As XmlNode
@@ -206,12 +200,9 @@ Public Class XmlImportSpec
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
-        Try
-            ChangeReferences(bLoadChildren)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        ChangeReferences(bLoadChildren)
+
     End Sub
 
     Public Function CanDropItem(ByVal child As XmlComponent, Optional ByVal bCheckOnly As Boolean = True) As Boolean
@@ -237,119 +228,109 @@ Public Class XmlImportSpec
     End Function
 
     Public Overrides Function CanRemove(ByVal removeNode As XmlComponent) As Boolean
-        Try
-            Select Case removeNode.NodeName
-                Case "reference", "interface"
-                    If SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 _
+
+        Select Case removeNode.NodeName
+            Case "reference", "interface"
+                If SelectNodes(GetQueryListDependencies(removeNode)).Count > 0 _
+                Then
+                    If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
+                              vbCrLf + "Do you want to proceed", _
+                                cstMsgYesNoQuestion, _
+                                removeNode.Name) = MsgBoxResult.Yes _
                     Then
-                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
-                                  vbCrLf + "Do you want to proceed", _
-                                    cstMsgYesNoQuestion, _
-                                    removeNode.Name) = MsgBoxResult.Yes _
-                        Then
-                            Dim bIsEmpty As Boolean = False
+                        Dim bIsEmpty As Boolean = False
 
-                            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
-                                Me.Updated = True
-                            End If
-
-                            Return bIsEmpty
+                        If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removeNode, bIsEmpty, "Remove references to " + removeNode.Name) Then
+                            Me.Updated = True
                         End If
-                    Else
-                        Return True
-                    End If
 
-                Case Else
-                    Return MyBase.CanRemove(removeNode)
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+                        Return bIsEmpty
+                    End If
+                Else
+                    Return True
+                End If
+
+            Case Else
+                Return MyBase.CanRemove(removeNode)
+        End Select
+
         Return False
     End Function
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strName As String = removeNode.Name
-            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
-                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
-            Then
-                Select Case removeNode.NodeName
-                    Case "reference", "interface"
-                        ' Don't use return value that returns "true" only when export is empty
-                        RemoveReference(removeNode)
-                        Return True
 
-                    Case "export"
-                        Return RemoveImport()
-                End Select
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim strName As String = removeNode.Name
+        If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
+                   cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
+        Then
+            Select Case removeNode.NodeName
+                Case "reference", "interface"
+                    ' Don't use return value that returns "true" only when export is empty
+                    RemoveReference(removeNode)
+                    Return True
+
+                Case "export"
+                    Return RemoveImport()
+            End Select
+        End If
+
         Return bResult
     End Function
 
     Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim import As XmlImportSpec = CreateDocument("import")
-            import.GenerationLanguage = Me.GenerationLanguage
-            import.SetDefaultValues(False)
-            import.Name = "MovedUp" + import.GetHashCode().ToString
 
-            Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
+        Dim import As XmlImportSpec = CreateDocument("import")
+        import.GenerationLanguage = Me.GenerationLanguage
+        import.SetDefaultValues(False)
+        import.Name = "MovedUp" + import.GetHashCode().ToString
 
-            If parent.AppendComponent(import) IsNot Nothing Then
-                If import.AppendComponent(child) IsNot Nothing Then
-                    MsgBox("Moved into a new 'import' node named '" + import.Name + "'.", MsgBoxStyle.Information, "'Move up' command")
-                    bResult = True
-                Else
-                    MsgBox("Failed to moved up node '" + child.Name + "' !", MsgBoxStyle.Information, "'Move up' command")
-                End If
+        Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
 
+        If parent.AppendComponent(import) IsNot Nothing Then
+            If import.AppendComponent(child) IsNot Nothing Then
+                MsgBox("Moved into a new 'import' node named '" + import.Name + "'.", MsgBoxStyle.Information, "'Move up' command")
+                bResult = True
             Else
-                MsgBox("Failed to moved up up node '" + child.Name + "' !", MsgBoxStyle.Information, "'Move up' command")
+                MsgBox("Failed to moved up node '" + child.Name + "' !", MsgBoxStyle.Information, "'Move up' command")
             End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Else
+            MsgBox("Failed to moved up up node '" + child.Name + "' !", MsgBoxStyle.Information, "'Move up' command")
+        End If
+
         Return bResult
     End Function
 
     Public Sub ConvertComponent(ByVal component As XmlComponent)
-        Try
-            If component Is Nothing Then Exit Sub
 
-            Dim ref As XmlReferenceSpec
-            Dim interf As XmlInterfaceSpec
+        If component Is Nothing Then Exit Sub
 
-            Select Case component.NodeName
-                Case "reference"
-                    ref = CreateDocument(component.Node)
-                    interf = CreateDocument("interface")
-                    interf.Name = ref.Name
-                    interf.Id = ref.Id
-                    interf.Package = ref.Package
-                    interf.GenerationLanguage = ref.GenerationLanguage
-                    ref.ReplaceMe(interf)
-                    ref = Nothing
+        Dim ref As XmlReferenceSpec
+        Dim interf As XmlInterfaceSpec
 
-                Case "interface"
-                    interf = CreateDocument(component.Node)
-                    ref = CreateDocument("reference")
-                    ref.Name = interf.Name
-                    ref.Id = interf.Id
-                    ref.Package = interf.Package
-                    ref.GenerationLanguage = interf.GenerationLanguage
-                    interf.ReplaceMe(ref)
-                    interf = Nothing
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Select Case component.NodeName
+            Case "reference"
+                ref = CreateDocument(component.Node)
+                interf = CreateDocument("interface")
+                interf.Name = ref.Name
+                interf.Id = ref.Id
+                interf.Package = ref.Package
+                interf.GenerationLanguage = ref.GenerationLanguage
+                ref.ReplaceMe(interf)
+                ref = Nothing
+
+            Case "interface"
+                interf = CreateDocument(component.Node)
+                ref = CreateDocument("reference")
+                ref.Name = interf.Name
+                ref.Id = interf.Id
+                ref.Package = interf.Package
+                ref.GenerationLanguage = interf.GenerationLanguage
+                interf.ReplaceMe(ref)
+                interf = Nothing
+        End Select
     End Sub
 
     Public Function ExchangeImports() As Boolean
@@ -366,53 +347,47 @@ Public Class XmlImportSpec
 
     Protected Function GetReferences() As String
         Dim strResult As String = ""
-        Try
 
-            If Me.ChildExportNode Is Nothing Then
-                Return ""
-            End If
+        If Me.ChildExportNode Is Nothing Then
+            Return ""
+        End If
 
-            Me.ChildExportNode.LoadChildrenList()
+        Me.ChildExportNode.LoadChildrenList()
 
-            If Me.ChildExportNode.ChildrenList.Count = 0 Then Return ""
+        If Me.ChildExportNode.ChildrenList.Count = 0 Then Return ""
 
-            Dim iterator As IEnumerator = Me.ChildExportNode.ChildrenList.GetEnumerator()
-            iterator.Reset()
+        Dim iterator As IEnumerator = Me.ChildExportNode.ChildrenList.GetEnumerator()
+        iterator.Reset()
 
-            While iterator.MoveNext
-                Dim xmlcpnt As XmlComponent = CType(iterator.Current, XmlComponent)
-                If strResult <> "" Then strResult = strResult + ", "
-                Select Case xmlcpnt.NodeName
-                    Case "reference"
-                        strResult = strResult + CType(xmlcpnt, XmlReferenceSpec).FullpathClassName
-                    Case "interface"
-                        strResult = strResult + CType(xmlcpnt, XmlInterfaceSpec).FullpathClassName
-                End Select
-            End While
-        Catch ex As Exception
-            Throw ex
-        End Try
+        While iterator.MoveNext
+            Dim xmlcpnt As XmlComponent = CType(iterator.Current, XmlComponent)
+            If strResult <> "" Then strResult = strResult + ", "
+            Select Case xmlcpnt.NodeName
+                Case "reference"
+                    strResult = strResult + CType(xmlcpnt, XmlReferenceSpec).FullpathClassName
+                Case "interface"
+                    strResult = strResult + CType(xmlcpnt, XmlInterfaceSpec).FullpathClassName
+            End Select
+        End While
+
         Return strResult
     End Function
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
-        Try
-            MyBase.ChangeReferences(bLoadChildren)
 
-            If TestNode("body") Then
-                m_xmlInline = TryCast(CreateDocument(GetNode("body")), XmlCodeInline)
-                If m_xmlInline IsNot Nothing Then m_xmlInline.GenerationLanguage = Me.GenerationLanguage
+        MyBase.ChangeReferences(bLoadChildren)
 
-            ElseIf TestNode("export") Then
-                m_xmlExport = TryCast(CreateDocument(GetNode("export")), XmlExportSpec)
-                If m_xmlExport IsNot Nothing Then
-                    m_xmlExport.GenerationLanguage = Me.GenerationLanguage
-                    m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
-                End If
+        If TestNode("body") Then
+            m_xmlInline = TryCast(CreateDocument(GetNode("body")), XmlCodeInline)
+            If m_xmlInline IsNot Nothing Then m_xmlInline.GenerationLanguage = Me.GenerationLanguage
+
+        ElseIf TestNode("export") Then
+            m_xmlExport = TryCast(CreateDocument(GetNode("export")), XmlExportSpec)
+            If m_xmlExport IsNot Nothing Then
+                m_xmlExport.GenerationLanguage = Me.GenerationLanguage
+                m_xmlExport.NodeCounter = m_xmlReferenceNodeCounter
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
     End Sub
 
 #End Region
@@ -421,18 +396,16 @@ Public Class XmlImportSpec
 
     Protected Friend Overrides Function RemoveRedundant(ByVal component As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            If component IsNot Nothing Then
-                If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node) _
-                    = dlgRedundancy.EResult.RedundancyChanged _
-                Then
-                    Me.Updated = True
-                    bResult = True
-                End If
+
+        If component IsNot Nothing Then
+            If dlgRedundancy.VerifyRedundancy(Me, "Check redundancies...", component.Node) _
+                = dlgRedundancy.EResult.RedundancyChanged _
+            Then
+                Me.Updated = True
+                bResult = True
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return bResult
     End Function
 
@@ -440,48 +413,41 @@ Public Class XmlImportSpec
                                            Optional ByVal eMode As EImportMode = EImportMode.ReplaceReferences) As Boolean
         Dim bResult As Boolean = False
         Dim bDoxygenTagFile As Boolean = (Filename.Extension.ToLower = ".tag")
-        Try
-            Select Case eMode
-                Case EImportMode.ReplaceReferences
-                    bResult = ReplaceFileReferences(form, Filename.FullName, bDoxygenTagFile)
-                Case EImportMode.MergeReferences
-                    bResult = MergeFileReferences(form, Filename.FullName, False, bDoxygenTagFile)
-                Case Else
-                    bResult = MergeFileReferences(form, Filename.FullName, True, bDoxygenTagFile)
-            End Select
 
-            If bResult Then
-                Me.Parameter = ChildExportNode.Source
-                Me.Name = ChildExportNode.Name
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Select Case eMode
+            Case EImportMode.ReplaceReferences
+                bResult = ReplaceFileReferences(form, Filename.FullName, bDoxygenTagFile)
+            Case EImportMode.MergeReferences
+                bResult = MergeFileReferences(form, Filename.FullName, False, bDoxygenTagFile)
+            Case Else
+                bResult = MergeFileReferences(form, Filename.FullName, True, bDoxygenTagFile)
+        End Select
+
+        If bResult Then
+            Me.Parameter = ChildExportNode.Source
+            Me.Name = ChildExportNode.Name
+        End If
+
         Return bResult
     End Function
 
     Protected Friend Function LoadXml(ByVal strXML As String) As Boolean
         Dim bResult As Boolean = False
-        Try
-            bResult = ReplaceStringReferences(strXML)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        bResult = ReplaceStringReferences(strXML)
+
         Return bResult
     End Function
 
     Protected Friend Function CheckReferences() As Boolean
         Dim bResult As Boolean = False
-        Try
-            If Me.ChildExportNode.SelectNodes().Count = 0 Then
-                Me.ChildExportNode.RemoveMe()
-                m_xmlExport = Nothing
-                bResult = True
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If Me.ChildExportNode.SelectNodes().Count = 0 Then
+            Me.ChildExportNode.RemoveMe()
+            m_xmlExport = Nothing
+            bResult = True
+        End If
+
         Return bResult
     End Function
 
@@ -491,40 +457,35 @@ Public Class XmlImportSpec
 
     Private Function RemoveReference(ByVal component As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            component.RemoveMe()
-            bResult = CheckReferences()
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        component.RemoveMe()
+        bResult = CheckReferences()
+
         Return bResult
     End Function
 
     Private Function ReplaceStringReferences(ByVal strXML As String) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim bImportOk As Boolean = True
 
-            If m_xmlExport Is Nothing Then
-                m_xmlExport = New XmlExportSpec()
-                Me.ChildExportNode.Document = Me.Document
-            Else
-                bImportOk = Me.ChildExportNode.RemoveReferences()
+        Dim bImportOk As Boolean = True
+
+        If m_xmlExport Is Nothing Then
+            m_xmlExport = New XmlExportSpec()
+            Me.ChildExportNode.Document = Me.Document
+        Else
+            bImportOk = Me.ChildExportNode.RemoveReferences()
+        End If
+
+        If bImportOk _
+        Then
+            Me.ChildExportNode.NodeCounter = m_xmlReferenceNodeCounter
+
+            If Me.ChildExportNode.LoadStringImport(strXML) Then
+                Me.AppendComponent(Me.ChildExportNode)
+                bResult = True
             End If
+        End If
 
-            If bImportOk _
-            Then
-                Me.ChildExportNode.NodeCounter = m_xmlReferenceNodeCounter
-
-                If Me.ChildExportNode.LoadStringImport(strXML) Then
-                    Me.AppendComponent(Me.ChildExportNode)
-                    bResult = True
-                End If
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return bResult
     End Function
 
@@ -605,8 +566,6 @@ Public Class XmlImportSpec
                     End If
                 End If
             End If
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.ProgressBarVisible = False
         End Try
@@ -649,8 +608,6 @@ Public Class XmlImportSpec
                     bResult = True
                 End If
             End If
-        Catch ex As Exception
-            Throw ex
         Finally
             observer.ProgressBarVisible = False
         End Try
@@ -659,14 +616,12 @@ Public Class XmlImportSpec
 
     Private Function RemoveImport() As Boolean
         Dim bResult As Boolean = False
-        Try
-            If Me.ChildExportNode.RemoveReferences() Then
-                m_xmlExport = Nothing
-                bResult = True
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If Me.ChildExportNode.RemoveReferences() Then
+            m_xmlExport = Nothing
+            bResult = True
+        End If
+
         Return bResult
     End Function
 

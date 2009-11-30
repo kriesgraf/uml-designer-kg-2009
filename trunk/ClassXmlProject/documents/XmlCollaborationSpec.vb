@@ -96,11 +96,9 @@ Public Class XmlCollaborationSpec
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
-        Try
-            ChangeReferences(bLoadChildren)
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        ChangeReferences(bLoadChildren)
+
     End Sub
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
@@ -112,33 +110,28 @@ Public Class XmlCollaborationSpec
             Me.RelationSpec.SetDefaultValues(bCreateNodeNow)
             RelationId = Me.RelationSpec.Id
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
     End Sub
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
-        Try
-            MyBase.ChangeReferences(bLoadChildren)
 
-            Dim nodeXml As XmlNode = GetNodeRef()
+        MyBase.ChangeReferences(bLoadChildren)
 
-            If nodeXml Is Nothing Then
-                If m_bCreateNodeNow Then
-                    nodeXml = Me.Document.DocumentElement.AppendChild(CreateNode("relationship"))
-                    m_xmlRelation = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlRelationSpec)
-                End If
-            Else
+        Dim nodeXml As XmlNode = GetNodeRef()
+
+        If nodeXml Is Nothing Then
+            If m_bCreateNodeNow Then
+                nodeXml = Me.Document.DocumentElement.AppendChild(CreateNode("relationship"))
                 m_xmlRelation = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlRelationSpec)
             End If
+        Else
+            m_xmlRelation = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlRelationSpec)
+        End If
 
-            If m_xmlRelation IsNot Nothing Then m_xmlRelation.GenerationLanguage = Me.GenerationLanguage
+        If m_xmlRelation IsNot Nothing Then m_xmlRelation.GenerationLanguage = Me.GenerationLanguage
 
-        Catch ex As Exception
-            Throw ex
-        End Try
     End Sub
 
     Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, _

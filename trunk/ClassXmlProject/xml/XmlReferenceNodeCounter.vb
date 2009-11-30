@@ -16,15 +16,13 @@ Public Class XmlReferenceNodeCounter
 
     Public Function GetNewClassId(Optional ByRef oCounter As XmlReferenceNodeCounter = Nothing) As String
         Dim strResult As String = cstPrefixClass
-        Try
-            If oCounter Is Nothing Then
-                strResult = strResult + CStr(m_ClassCounter.GetNewId())
-            Else
-                strResult = strResult + CStr(m_ClassCounter.GetNewId(oCounter.m_ClassCounter))
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        If oCounter Is Nothing Then
+            strResult = strResult + CStr(m_ClassCounter.GetNewId())
+        Else
+            strResult = strResult + CStr(m_ClassCounter.GetNewId(oCounter.m_ClassCounter))
+        End If
+
         Return strResult
     End Function
 
@@ -51,59 +49,54 @@ Public Class XmlReferenceNodeCounter
                                              Optional ByVal bRaiseException As Boolean = True) As String
         Dim iResult As Integer = 0
 
-        Try
-            Dim child As XmlNode
-            Dim Id As Integer
-            Dim list As XmlNodeList
-            Dim tempo As String
+        Dim child As XmlNode
+        Dim Id As Integer
+        Dim list As XmlNodeList
+        Dim tempo As String
+
+        If prefix <> "" Then
+            list = node.SelectNodes(xpath + "[contains(@" + attribute + ",'" + prefix + "')]/@" + attribute + "")
+        Else
+            list = node.SelectNodes(xpath + "[@" + attribute + "]/@" + attribute + "")
+        End If
+
+        For Each child In list
 
             If prefix <> "" Then
-                list = node.SelectNodes(xpath + "[contains(@" + attribute + ",'" + prefix + "')]/@" + attribute + "")
-            Else
-                list = node.SelectNodes(xpath + "[@" + attribute + "]/@" + attribute + "")
+                If child.Value.StartsWith(prefix) = False Then
+                    If bRaiseException Then
+                        Throw New Exception("In Node '" + node.Name + "' with name '" + GetName(node) + "'" + vbCrLf + vbCrLf + "has a child node with attribute '" + attribute + "' that does not start with prefix '" + prefix + "'")
+                    Else
+                        Id = 0
+                    End If
+                Else
+                    tempo = AfterStr(child.Value, prefix)
+                    If IsNumeric(tempo) Then
+                        Id = CInt(tempo)
+                    Else
+                        Id = 0
+                    End If
+                End If
+
+            ElseIf child.Value.StartsWith("CONST") = False _
+            Then
+                If IsNumeric(child.Value) = False Then
+                    If bRaiseException Then
+                        Throw New Exception("In Node '" + node.Name + "' with name '" + GetName(node) + "'" + vbCrLf + vbCrLf + "has a child node with attribute '" + attribute + "' that is not numeric")
+                    Else
+                        Id = 0
+                    End If
+                Else
+                    Id = CInt(child.Value)
+                End If
             End If
 
-            For Each child In list
+            If Id > iResult Then
+                iResult = Id
+            End If
+        Next child
 
-                If prefix <> "" Then
-                    If child.Value.StartsWith(prefix) = False Then
-                        If bRaiseException Then
-                            Throw New Exception("In Node '" + node.Name + "' with name '" + GetName(node) + "'" + vbCrLf + vbCrLf + "has a child node with attribute '" + attribute + "' that does not start with prefix '" + prefix + "'")
-                        Else
-                            Id = 0
-                        End If
-                    Else
-                        tempo = AfterStr(child.Value, prefix)
-                        If IsNumeric(tempo) Then
-                            Id = CInt(tempo)
-                        Else
-                            Id = 0
-                        End If
-                    End If
-
-                ElseIf child.Value.StartsWith("CONST") = False _
-                Then
-                    If IsNumeric(child.Value) = False Then
-                        If bRaiseException Then
-                            Throw New Exception("In Node '" + node.Name + "' with name '" + GetName(node) + "'" + vbCrLf + vbCrLf + "has a child node with attribute '" + attribute + "' that is not numeric")
-                        Else
-                            Id = 0
-                        End If
-                    Else
-                        Id = CInt(child.Value)
-                    End If
-                End If
-
-                If Id > iResult Then
-                    iResult = Id
-                End If
-            Next child
-
-            iResult = iResult + 1
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+        iResult = iResult + 1
         Return prefix + CStr(iResult)
     End Function
 

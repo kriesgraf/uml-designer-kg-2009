@@ -122,18 +122,15 @@ Public Class dlgExternalTools
 
     Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) _
             Handles txtName.Validated, txtStylesheet.Validated
-        Try
-            Me.errorProvider.SetError(sender, "")
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Me.errorProvider.SetError(sender, "")
+
     End Sub
 
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) _
             Handles txtName.Validating, txtStylesheet.Validating
 
-        Try
-            e.Cancel = False
+        e.Cancel = False
 
             If m_bInitOk Or m_bSelectionChanges Then Exit Sub
 
@@ -145,9 +142,6 @@ Public Class dlgExternalTools
                 errorProvider.SetError(sender, "Name can't be empty!" + vbCrLf + "Press on left button to create one from a predefined template." + vbCrLf + "Press on right button to select exsiting one." + vbCrLf + "Press on Cancel button to quit.")
                 e.Cancel = True
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
@@ -213,8 +207,6 @@ Public Class dlgExternalTools
             m_xmlControl.RefreshList(lsbExternalTools, True)
             UpdateLayout()
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = False
         End Try
@@ -265,8 +257,6 @@ Public Class dlgExternalTools
                 m_bItemChanged = True
                 m_bNameChanged = True
             End If
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitOk = False
         End Try
@@ -384,13 +374,10 @@ Public Class dlgExternalTools
     End Sub
 
     Private Sub SelectItemControl(ByVal dataControl As Control, ByVal item As MenuItemNode, ByVal strMember As String)
-        Try
-            m_xmlBindingsList.RemoveBinding(dataControl, strMember)
-            m_xmlBindingsList.AddBinding(dataControl, item, strMember)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.RemoveBinding(dataControl, strMember)
+        m_xmlBindingsList.AddBinding(dataControl, item, strMember)
+
     End Sub
 
     Private Sub btnDiffArgs_Click(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles btnDiffArgs.Click
