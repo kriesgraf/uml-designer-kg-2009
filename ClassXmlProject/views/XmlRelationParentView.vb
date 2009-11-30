@@ -38,19 +38,16 @@ Public Class XmlRelationParentView
     End Sub
 
     Public Sub InitBindingOption(ByVal control As RadioButtonArray)
-        Try
-            m_ArrayRadioButtons = control
-            Select Case MyBase.Kind
-                Case EKindParent.Array
-                    control.Item(0).Checked = True
-                Case EKindParent.Container
-                    control.Item(1).Checked = True
-                Case Else
-                    Throw New Exception("Kind:=" + MyBase.Kind.ToString + " not allowed")
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        m_ArrayRadioButtons = control
+        Select Case MyBase.Kind
+            Case EKindParent.Array
+                control.Item(0).Checked = True
+            Case EKindParent.Container
+                control.Item(1).Checked = True
+            Case Else
+                Throw New Exception("Kind:=" + MyBase.Kind.ToString + " not allowed")
+        End Select
     End Sub
 
     Public Sub InitBindingContainer(ByVal dataControl As ComboBox)
@@ -63,13 +60,10 @@ Public Class XmlRelationParentView
     End Sub
 
     Public Sub InitBindingArraySize(ByVal control As ComboBox)
-        Try
-            InitValueCombo(Me, control)
-            m_xmlComboSize = New XmlBindingCombo(control, Me, "VarSize", "SizeRef")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        InitValueCombo(Me, control)
+        m_xmlComboSize = New XmlBindingCombo(control, Me, "VarSize", "SizeRef")
+
     End Sub
 
     Public Sub InitBindingComboIndex(ByVal dataControl As ComboBox)
@@ -104,18 +98,15 @@ Public Class XmlRelationParentView
 
     Public Function CheckOption() As Boolean
         Dim bChanged As Boolean = True
-        Try
-            Select Case MyBase.Kind
-                Case EKindParent.Container
-                    If m_ArrayRadioButtons.Item(1).Checked Then bChanged = False
-                Case EKindParent.Array
-                    If m_ArrayRadioButtons.Item(0).Checked Then bChanged = False
-                Case Else
-                    Throw New Exception("Kind:=" + MyBase.Kind.ToString + " not allowed")
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Select Case MyBase.Kind
+            Case EKindParent.Container
+                If m_ArrayRadioButtons.Item(1).Checked Then bChanged = False
+            Case EKindParent.Array
+                If m_ArrayRadioButtons.Item(0).Checked Then bChanged = False
+            Case Else
+                Throw New Exception("Kind:=" + MyBase.Kind.ToString + " not allowed")
+        End Select
 
         Return bChanged
     End Function

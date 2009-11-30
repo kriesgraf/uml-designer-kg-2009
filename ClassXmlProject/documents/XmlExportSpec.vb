@@ -36,12 +36,9 @@ Public Class XmlExportSpec
 #Region "Public methods"
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
-        Try
-            AddChildren(SelectNodes("reference | interface"), strViewName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        AddChildren(SelectNodes("reference | interface"), strViewName)
+
     End Sub
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
@@ -66,18 +63,15 @@ Public Class XmlExportSpec
     End Function
 
     Protected Friend Overrides Sub SetIdReference(ByVal xmlRefNodeCounter As XmlReferenceNodeCounter, Optional ByVal eRename As XmlComponent.ENameReplacement = XmlComponent.ENameReplacement.NewName, Optional ByVal bSetIdrefChildren As Boolean = False)
-        Try
-            If xmlRefNodeCounter Is Nothing Then
-                Throw New Exception("Argument 'xmlRefNodeCounter' is null")
-            End If
-            Me.LoadChildrenList()
 
-            For Each child As XmlComponent In Me.ChildrenList
-                child.SetIdReference(xmlRefNodeCounter, ENameReplacement.NoReplacement, bSetIdrefChildren)
-            Next
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If xmlRefNodeCounter Is Nothing Then
+            Throw New Exception("Argument 'xmlRefNodeCounter' is null")
+        End If
+        Me.LoadChildrenList()
+
+        For Each child As XmlComponent In Me.ChildrenList
+            child.SetIdReference(xmlRefNodeCounter, ENameReplacement.NoReplacement, bSetIdrefChildren)
+        Next
     End Sub
 #End Region
 
@@ -103,8 +97,6 @@ Public Class XmlExportSpec
                         If interf IsNot Nothing Then interf.Increment(1)
                     Next
             End Select
-        Catch ex As Exception
-            Throw ex
         Finally
             If interf IsNot Nothing Then interf.ProgressBarVisible = False
         End Try
@@ -212,86 +204,84 @@ Public Class XmlExportSpec
 
     Public Function GetNodeRefCount(ByVal node As XmlNode, ByRef strList As String, ByVal eTag As ELanguage) As Integer
         Dim iResult As Integer = -1
-        Try
-            Dim list As XmlNodeList
-            Dim child As XmlNode
-            Dim parent As XmlNode
-            Dim strQuery As String
 
-            iResult = 0
-            strQuery = "//*[@idref='" + GetID(node) + "' or @index-idref='" + GetID(node) + "']"
-            list = Me.SelectNodes(strQuery)
+        Dim list As XmlNodeList
+        Dim child As XmlNode
+        Dim parent As XmlNode
+        Dim strQuery As String
 
-            For Each child In list
-                Select Case child.Name
-                    Case "father"
-                        strList = strList + vbCrLf + GetFatherRelation(child)
-                        iResult = iResult + 1
+        iResult = 0
+        strQuery = "//*[@idref='" + GetID(node) + "' or @index-idref='" + GetID(node) + "']"
+        list = Me.SelectNodes(strQuery)
 
-                    Case "child"
-                        strList = strList + vbCrLf + GetChildRelation(child)
-                        iResult = iResult + 1
+        For Each child In list
+            Select Case child.Name
+                Case "father"
+                    strList = strList + vbCrLf + GetFatherRelation(child)
+                    iResult = iResult + 1
 
-                    Case "dependency"
-                        parent = XmlProjectTools.GetNode(child, "parent::class")
-                        strList = strList + vbCrLf + "Dependency '" + GetAttributeValue(child, "action") + "' with " + GetFullpathDescription(parent, eTag)
-                        iResult = iResult + 1
+                Case "child"
+                    strList = strList + vbCrLf + GetChildRelation(child)
+                    iResult = iResult + 1
 
-                    Case "inherited"
-                        parent = XmlProjectTools.GetNode(child, "parent::class")
-                        strList = strList + vbCrLf + "Customize by " + GetFullpathDescription(parent, eTag)
-                        iResult = iResult + 1
+                Case "dependency"
+                    parent = XmlProjectTools.GetNode(child, "parent::class")
+                    strList = strList + vbCrLf + "Dependency '" + GetAttributeValue(child, "action") + "' with " + GetFullpathDescription(parent, eTag)
+                    iResult = iResult + 1
 
-                    Case "list"
-                        parent = child.ParentNode
-                        If GetID(node) = GetAttributeValue(child, "index-idref") Then
-                            strList = strList + vbCrLf + "Used as index in container "
-                        Else
-                            strList = strList + vbCrLf + "Used as container in "
-                        End If
-                        Select Case parent.Name
-                            Case "type"
-                                strList = strList + GetTypeRelation(parent, eTag)
-                            Case "child"
-                                strList = strList + GetChildRelation(parent)
-                            Case "father"
-                                strList = strList + GetFatherRelation(parent)
-                        End Select
+                Case "inherited"
+                    parent = XmlProjectTools.GetNode(child, "parent::class")
+                    strList = strList + vbCrLf + "Customize by " + GetFullpathDescription(parent, eTag)
+                    iResult = iResult + 1
 
-                        iResult = iResult + 1
+                Case "list"
+                    parent = child.ParentNode
+                    If GetID(node) = GetAttributeValue(child, "index-idref") Then
+                        strList = strList + vbCrLf + "Used as index in container "
+                    Else
+                        strList = strList + vbCrLf + "Used as container in "
+                    End If
+                    Select Case parent.Name
+                        Case "type"
+                            strList = strList + GetTypeRelation(parent, eTag)
+                        Case "child"
+                            strList = strList + GetChildRelation(parent)
+                        Case "father"
+                            strList = strList + GetFatherRelation(parent)
+                    End Select
 
-                    Case "type"
-                        parent = XmlProjectTools.GetNode(child, "ancestor::interface")
-                        If parent IsNot Nothing Then
-                            If parent.ParentNode IsNot Me.Node Then
-                                strList = strList + vbCrLf + "Used as type in " + GetTypeRelation(child, eTag)
-                                iResult = iResult + 1
-                            End If
-                        Else
+                    iResult = iResult + 1
+
+                Case "type"
+                    parent = XmlProjectTools.GetNode(child, "ancestor::interface")
+                    If parent IsNot Nothing Then
+                        If parent.ParentNode IsNot Me.Node Then
                             strList = strList + vbCrLf + "Used as type in " + GetTypeRelation(child, eTag)
                             iResult = iResult + 1
                         End If
-
-                    Case "element"
-                        strList = strList + vbCrLf + "Used as type in " + GetTypeRelation(child.ParentNode, eTag) + ", attribute '" + GetName(child) + "'"
+                    Else
+                        strList = strList + vbCrLf + "Used as type in " + GetTypeRelation(child, eTag)
                         iResult = iResult + 1
+                    End If
 
-                    Case "reference", "interface"
-                        parent = child.ParentNode
-                        If parent IsNot Me.Node Then
-                            strList = strList + vbCrLf + "Referenced by node '" + child.Name + "' (" + GetName(child) + ")"
-                            iResult = iResult + 1
-                        End If
+                Case "element"
+                    strList = strList + vbCrLf + "Used as type in " + GetTypeRelation(child.ParentNode, eTag) + ", attribute '" + GetName(child) + "'"
+                    iResult = iResult + 1
 
-                    Case Else
+                Case "reference", "interface"
+                    parent = child.ParentNode
+                    If parent IsNot Me.Node Then
                         strList = strList + vbCrLf + "Referenced by node '" + child.Name + "' (" + GetName(child) + ")"
                         iResult = iResult + 1
+                    End If
 
-                End Select
-            Next child
-        Catch ex As Exception
-            Throw ex
-        End Try
+                Case Else
+                    strList = strList + vbCrLf + "Referenced by node '" + child.Name + "' (" + GetName(child) + ")"
+                    iResult = iResult + 1
+
+            End Select
+        Next child
+
         Return iResult
     End Function
 

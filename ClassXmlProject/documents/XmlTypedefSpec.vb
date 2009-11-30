@@ -77,41 +77,34 @@ Public Class XmlTypedefSpec
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
-        Try
-            ChangeReferences(bLoadChildren)
-        Catch ex As Exception
-            Throw ex
-        End Try
+        ChangeReferences(bLoadChildren)
     End Sub
 
     Public Overrides Function Clone(ByVal nodeXml As XmlNode, Optional ByVal bLoadChildren As Boolean = False) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
-        Try
-            If nodeXml Is Nothing _
+
+        If nodeXml Is Nothing _
             Then
-                xmlResult = MyBase.Clone(Nothing, bLoadChildren)
+            xmlResult = MyBase.Clone(Nothing, bLoadChildren)
+        Else
+            Dim xmlAttribut As XmlNode = nodeXml.SelectSingleNode("type/@struct")
+            If xmlAttribut Is Nothing _
+            Then
+                xmlResult = MyBase.Clone(nodeXml, bLoadChildren)
             Else
-                Dim xmlAttribut As XmlNode = nodeXml.SelectSingleNode("type/@struct")
-                If xmlAttribut Is Nothing _
-                Then
-                    xmlResult = MyBase.Clone(nodeXml, bLoadChildren)
-                Else
-                    Select Case xmlAttribut.Value
-                        Case "union"
-                            xmlResult = New XmlStructureSpec(nodeXml, bLoadChildren)
-                        Case "struct"
-                            xmlResult = New XmlStructureSpec(nodeXml, bLoadChildren)
-                        Case "container"
-                            xmlResult = New XmlContainerSpec(nodeXml, bLoadChildren)
-                    End Select
-                End If
+                Select Case xmlAttribut.Value
+                    Case "union"
+                        xmlResult = New XmlStructureSpec(nodeXml, bLoadChildren)
+                    Case "struct"
+                        xmlResult = New XmlStructureSpec(nodeXml, bLoadChildren)
+                    Case "container"
+                        xmlResult = New XmlContainerSpec(nodeXml, bLoadChildren)
+                End Select
             End If
+        End If
 
-            If xmlResult IsNot Nothing Then xmlResult.GenerationLanguage = Me.GenerationLanguage
+        If xmlResult IsNot Nothing Then xmlResult.GenerationLanguage = Me.GenerationLanguage
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return xmlResult
     End Function
 
@@ -129,10 +122,10 @@ Public Class XmlTypedefSpec
     End Function
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
-        Try
-            ' This method reset m_bCreateNodeNow !
-            MyBase.SetDefaultValues(bCreateNodeNow)
 
+        ' This method reset m_bCreateNodeNow !
+        MyBase.SetDefaultValues(bCreateNodeNow)
+        Try
             m_bCreateNodeNow = bCreateNodeNow
 
             ChangeReferences()
@@ -144,8 +137,6 @@ Public Class XmlTypedefSpec
             Id = "class0"
             Comment = "Insert here a comment"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
@@ -184,21 +175,18 @@ Public Class XmlTypedefSpec
     End Sub
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
-        Try
-            MyBase.ChangeReferences(bLoadChildren)
 
-            Dim nodeXml As XmlNode
-            If TestNode("type") = False And m_bCreateNodeNow Then
-                nodeXml = CreateAppendNode("type")
-            Else
-                nodeXml = GetNode("type")
-            End If
-            m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
-            If m_xmlType IsNot Nothing Then m_xmlType.GenerationLanguage = Me.GenerationLanguage
+        MyBase.ChangeReferences(bLoadChildren)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim nodeXml As XmlNode
+        If TestNode("type") = False And m_bCreateNodeNow Then
+            nodeXml = CreateAppendNode("type")
+        Else
+            nodeXml = GetNode("type")
+        End If
+        m_xmlType = TryCast(CreateDocument(nodeXml, bLoadChildren), XmlTypeVarSpec)
+        If m_xmlType IsNot Nothing Then m_xmlType.GenerationLanguage = Me.GenerationLanguage
+
     End Sub
 End Class
 

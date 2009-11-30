@@ -21,68 +21,62 @@ Public Class XmlConstructorSpec
 
     Public Sub New(Optional ByRef xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
-        Try
-            ChangeReferences(bLoadChildren)
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        ChangeReferences(bLoadChildren)
+
     End Sub
 
     Protected Friend Function CheckCopyConstructor() As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strClassId As String = MyBase.GetAttribute("id", "ancestor::class")
 
-            If MyBase.SelectNodes("param").Count = 1 Then
-                Dim xmlcpnt As XmlParamSpec = MyBase.CreateDocument(MyBase.GetNode("param"))
-                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
-                If xmlcpnt.TypeVarDefinition.Modifier = True And _
-                    xmlcpnt.TypeVarDefinition.By = True And _
-                    xmlcpnt.TypeVarDefinition.Level = 0 And _
-                    xmlcpnt.TypeVarDefinition.Value = "" And _
-                    xmlcpnt.TypeVarDefinition.ValRef = "" And _
-                    xmlcpnt.TypeVarDefinition.VarSize = "" And _
-                    xmlcpnt.TypeVarDefinition.SizeRef = "" And _
-                    xmlcpnt.TypeVarDefinition.Reference = strClassId _
-                Then
-                    bResult = True
-                End If
+        Dim strClassId As String = MyBase.GetAttribute("id", "ancestor::class")
+
+        If MyBase.SelectNodes("param").Count = 1 Then
+            Dim xmlcpnt As XmlParamSpec = MyBase.CreateDocument(MyBase.GetNode("param"))
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
+            If xmlcpnt.TypeVarDefinition.Modifier = True And _
+                xmlcpnt.TypeVarDefinition.By = True And _
+                xmlcpnt.TypeVarDefinition.Level = 0 And _
+                xmlcpnt.TypeVarDefinition.Value = "" And _
+                xmlcpnt.TypeVarDefinition.ValRef = "" And _
+                xmlcpnt.TypeVarDefinition.VarSize = "" And _
+                xmlcpnt.TypeVarDefinition.SizeRef = "" And _
+                xmlcpnt.TypeVarDefinition.Reference = strClassId _
+            Then
+                bResult = True
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return bResult
     End Function
 
     Protected Friend Sub ReplaceCopyConstructor()
-        Try
-            Dim strClassId As String = MyBase.GetAttribute("id", "ancestor::class")
-            Dim xmlcpnt As XmlParamSpec
 
-            If MyBase.SelectNodes("param").Count = 1 Then
-                xmlcpnt = MyBase.CreateDocument(MyBase.GetNode("param"))
-                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
-            Else
-                MyBase.RemoveAllNodes("param")
-                xmlcpnt = CreateDocument(CreateAppendNode("param"))
-                xmlcpnt.GenerationLanguage = Me.GenerationLanguage
-                xmlcpnt.SetDefaultValues(True)
-                xmlcpnt.NumId = "1"
-            End If
+        Dim strClassId As String = MyBase.GetAttribute("id", "ancestor::class")
+        Dim xmlcpnt As XmlParamSpec
 
-            With xmlcpnt.TypeVarDefinition
-                .Kind = XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
-                .Level = 0
-                .Modifier = True
-                .By = True
-                .Reference = strClassId
-                .Value = ""
-                .VarSize = ""
-            End With
-            Me.Updated = True
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If MyBase.SelectNodes("param").Count = 1 Then
+            xmlcpnt = MyBase.CreateDocument(MyBase.GetNode("param"))
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
+        Else
+            MyBase.RemoveAllNodes("param")
+            xmlcpnt = CreateDocument(CreateAppendNode("param"))
+            xmlcpnt.GenerationLanguage = Me.GenerationLanguage
+            xmlcpnt.SetDefaultValues(True)
+            xmlcpnt.NumId = "1"
+        End If
+
+        With xmlcpnt.TypeVarDefinition
+            .Kind = XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
+            .Level = 0
+            .Modifier = True
+            .By = True
+            .Reference = strClassId
+            .Value = ""
+            .VarSize = ""
+        End With
+        Me.Updated = True
+
     End Sub
 
     Public Overrides Sub SetDefaultValues(Optional ByVal bCreateNodeNow As Boolean = True)
@@ -109,8 +103,6 @@ Public Class XmlConstructorSpec
             BriefComment = "Brief comment"
             Range = "public"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try

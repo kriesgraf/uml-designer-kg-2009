@@ -123,8 +123,6 @@ Public Class frmProject
             Me.Cursor = Cursors.WaitCursor
             docvwProjectDisplay.DataSource = CType(component, XmlComponent).Node
 
-        Catch ex As Exception
-            Throw ex
         Finally
             Me.Cursor = oldCursor
         End Try

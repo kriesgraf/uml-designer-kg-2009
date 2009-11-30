@@ -12,35 +12,25 @@ Public Class XmlBindingsList
     End Sub
 
     Public Sub UpdateValues()
-        Try
-            Dim iterator As IEnumerator = m_BindingManager.GetEnumerator()
-            iterator.Reset()
-            While iterator.MoveNext
-                Dim binding As Binding = CType(iterator.Current, Binding)
-                'Debug.Print("Control=" + binding.Control.Name + ";property=" + binding.PropertyName + ";Data=" + binding.BindingMemberInfo.BindingField)
-                binding.WriteValue()
-            End While
 
-        Catch ex As Exception
-            Throw ex
-            'Finally
-            '   m_BindingManager = Nothing
-        End Try
+        Dim iterator As IEnumerator = m_BindingManager.GetEnumerator()
+        iterator.Reset()
+        While iterator.MoveNext
+            Dim binding As Binding = CType(iterator.Current, Binding)
+            'Debug.Print("Control=" + binding.Control.Name + ";property=" + binding.PropertyName + ";Data=" + binding.BindingMemberInfo.BindingField)
+            binding.WriteValue()
+        End While
     End Sub
 
     Public Sub ResetValues()
-        Try
-            Dim iterator As IEnumerator = m_BindingManager.GetEnumerator()
-            iterator.Reset()
-            While iterator.MoveNext
-                Dim binding As Binding = CType(iterator.Current, Binding)
-                '                Debug.Print("Control=" + binding.Control.Name + ";property=" + binding.PropertyName + ";Data=" + binding.BindingMemberInfo.BindingField)
-                binding.ReadValue()
-            End While
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim iterator As IEnumerator = m_BindingManager.GetEnumerator()
+        iterator.Reset()
+        While iterator.MoveNext
+            Dim binding As Binding = CType(iterator.Current, Binding)
+            '                Debug.Print("Control=" + binding.Control.Name + ";property=" + binding.PropertyName + ";Data=" + binding.BindingMemberInfo.BindingField)
+            binding.ReadValue()
+        End While
     End Sub
 
     Public Function AddBinding(ByVal dataControl As Control, _

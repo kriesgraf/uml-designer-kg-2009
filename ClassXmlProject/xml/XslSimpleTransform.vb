@@ -140,8 +140,6 @@ Public Class XslSimpleTransform
             Else
                 Throw ex1
             End If
-        Catch ex As Exception
-            Throw ex
         End Try
     End Sub
 

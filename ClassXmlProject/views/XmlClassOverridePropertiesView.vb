@@ -25,100 +25,87 @@ Public Class XmlClassOverridePropertiesView
     End Sub
 
     Public Sub LoadProperties(ByVal listbox As ListBox)
-        Try
-            listbox.DisplayMember = "FullDescription"
-            listbox.DataSource = m_listArray
-            listbox.SelectionMode = SelectionMode.MultiSimple
 
-            Dim i As Integer = 0
+        listbox.DisplayMember = "FullDescription"
+        listbox.DataSource = m_listArray
+        listbox.SelectionMode = SelectionMode.MultiSimple
 
-            For Each nodeXml As XmlOverrideMemberView In m_listArray
-                If nodeXml.CheckedView Then
-                    listbox.SetSelected(i, True)
-                End If
-                i += 1
-            Next
+        Dim i As Integer = 0
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        For Each nodeXml As XmlOverrideMemberView In m_listArray
+            If nodeXml.CheckedView Then
+                listbox.SetSelected(i, True)
+            End If
+            i += 1
+        Next
     End Sub
 
     Public Function InitListProperties(ByVal strIgnoredClasses As String) As Boolean
-        Try
-            m_listArray = New ArrayList
-            Dim iteration As Integer = 0
-            Dim nodeList As XmlNodeList
-            If strIgnoredClasses = "" Then
-                nodeList = SelectNodes("inherited")
-            Else
-                nodeList = SelectNodes("inherited[not(contains('" + strIgnoredClasses + "',concat(@idref,';')))]")
-            End If
-            For Each child As XmlNode In nodeList
-                SelectInheritedProperties(iteration, m_eImplementation, SelectNodeId(child), m_listArray)
-            Next
 
-            Dim i As Integer = 0
-            Dim jSecure As Integer = m_listArray.Count     ' Use to exit loop in case of errors
-            While jSecure > 0
-                jSecure -= 1
-                If i < m_listArray.Count Then
-                    Dim xmlcpnt As XmlOverrideMemberView = CType(m_listArray.Item(i), XmlOverrideMemberView)
-                    If xmlcpnt.OverridableMember = False Then
-                        m_listArray.Remove(xmlcpnt)
-                    Else
-                        i += 1
-                    End If
+        m_listArray = New ArrayList
+        Dim iteration As Integer = 0
+        Dim nodeList As XmlNodeList
+        If strIgnoredClasses = "" Then
+            nodeList = SelectNodes("inherited")
+        Else
+            nodeList = SelectNodes("inherited[not(contains('" + strIgnoredClasses + "',concat(@idref,';')))]")
+        End If
+        For Each child As XmlNode In nodeList
+            SelectInheritedProperties(iteration, m_eImplementation, SelectNodeId(child), m_listArray)
+        Next
+
+        Dim i As Integer = 0
+        Dim jSecure As Integer = m_listArray.Count     ' Use to exit loop in case of errors
+        While jSecure > 0
+            jSecure -= 1
+            If i < m_listArray.Count Then
+                Dim xmlcpnt As XmlOverrideMemberView = CType(m_listArray.Item(i), XmlOverrideMemberView)
+                If xmlcpnt.OverridableMember = False Then
+                    m_listArray.Remove(xmlcpnt)
+                Else
+                    i += 1
                 End If
-            End While
-        Catch ex As Exception
-            Throw ex
-        End Try
+            End If
+        End While
+
         Return (m_listArray.Count > 0)
     End Function
 
     Public Function AddProperties(ByVal listbox As ListBox) As Boolean
-        Try
-            For Each element As XmlOverrideMemberView In listbox.SelectedItems()
-                'Debug.Print(element.FullDescription)
-                AppendVirtualProperty(element)
-            Next
-            Return True
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        For Each element As XmlOverrideMemberView In listbox.SelectedItems()
+            'Debug.Print(element.FullDescription)
+            AppendVirtualProperty(element)
+        Next
+        Return True
     End Function
 
     Private Sub AppendVirtualProperty(ByVal virtualClassMember As XmlOverrideMemberView)
-        Try
-            Dim oldClassMember As XmlNode
-            Dim newClassMember As XmlNode
 
-            oldClassMember = GetNode("property[@name='" + virtualClassMember.Name + "' and @overrides='" + virtualClassMember.ClassId + "']")
+        Dim oldClassMember As XmlNode
+        Dim newClassMember As XmlNode
 
-            If oldClassMember Is Nothing _
-            Then
-                newClassMember = AppendNewProperty(virtualClassMember)
-            Else
-                newClassMember = ReplaceVirtualProperty(oldClassMember, virtualClassMember)
-            End If
+        oldClassMember = GetNode("property[@name='" + virtualClassMember.Name + "' and @overrides='" + virtualClassMember.ClassId + "']")
 
-            AddAttributeValue(newClassMember, "overrides", virtualClassMember.ClassId)
+        If oldClassMember Is Nothing _
+        Then
+            newClassMember = AppendNewProperty(virtualClassMember)
+        Else
+            newClassMember = ReplaceVirtualProperty(oldClassMember, virtualClassMember)
+        End If
 
-            Select Case m_eImplementation
-                Case EImplementation.Leaf
-                    AddAttributeValue(newClassMember, "overridable", "no")
+        AddAttributeValue(newClassMember, "overrides", virtualClassMember.ClassId)
 
-                Case EImplementation.Root, EImplementation.Node
-                    AddAttributeValue(newClassMember, "overridable", "yes")
+        Select Case m_eImplementation
+            Case EImplementation.Leaf
+                AddAttributeValue(newClassMember, "overridable", "no")
 
-                Case Else
-                    AddAttributeValue(newClassMember, "overridable", "no")
-            End Select
+            Case EImplementation.Root, EImplementation.Node
+                AddAttributeValue(newClassMember, "overridable", "yes")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+            Case Else
+                AddAttributeValue(newClassMember, "overridable", "no")
+        End Select
     End Sub
 
     Private Function AppendNewProperty(ByVal virtualClassMember As XmlOverrideMemberView) As XmlNode

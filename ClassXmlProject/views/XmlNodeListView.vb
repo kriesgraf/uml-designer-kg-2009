@@ -201,84 +201,78 @@ Public Class XmlNodeListView
     Public Shared Sub InitTypedefCombo(ByVal document As XmlComponent, ByVal dataControl As ComboBox, _
                                  Optional ByVal iContainer As Integer = 0, _
                                  Optional ByVal bClear As Boolean = False)
-        Try
-            Dim myList As New ArrayList
-            Dim bIsNotTypedef = (document.GetNode("parent::typedef") Is Nothing)
 
-            If document.GenerationLanguage = ELanguage.Language_CplusPlus Then
-                bIsNotTypedef = True
-            End If
+        Dim myList As New ArrayList
+        Dim bIsNotTypedef = (document.GetNode("parent::typedef") Is Nothing)
 
-            If bClear Then
-                dataControl.DataSource = Nothing
-                dataControl.Items().Clear()
-            End If
+        If document.GenerationLanguage = ELanguage.Language_CplusPlus Then
+            bIsNotTypedef = True
+        End If
 
-            Select Case (CType(iContainer, EComboList))
+        If bClear Then
+            dataControl.DataSource = Nothing
+            dataControl.Items().Clear()
+        End If
 
-                Case EComboList.Type_index
-                    ' Specific index type
-                    AddNodeList(document, myList, "//class[@implementation!='container']")
-                    If bIsNotTypedef Then AddNodeList(document, myList, "//typedef[type[@desc and not(list)] or type[@idref and not(id(@idref)/type/list)] or type/enumvalue]")
-                    AddNodeList(document, myList, "//interface")
-                    AddNodeList(document, myList, "//reference[@container='0' or not(@container)]")
+        Select Case (CType(iContainer, EComboList))
 
-                    AddSimpleTypesList(myList, document.GenerationLanguage)
+            Case EComboList.Type_index
+                ' Specific index type
+                AddNodeList(document, myList, "//class[@implementation!='container']")
+                If bIsNotTypedef Then AddNodeList(document, myList, "//typedef[type[@desc and not(list)] or type[@idref and not(id(@idref)/type/list)] or type/enumvalue]")
+                AddNodeList(document, myList, "//interface")
+                AddNodeList(document, myList, "//reference[@container='0' or not(@container)]")
 
-                Case EComboList.Container_single
-                    ' Specific container type
-                    AddNodeList(document, myList, "//class[@implementation='container' and model[last()=1]]")
-                    AddNodeList(document, myList, "//reference[@container='3' or @container='1']")
+                AddSimpleTypesList(myList, document.GenerationLanguage)
 
-                Case EComboList.Container_indexed
-                    ' Specific container type
-                    AddNodeList(document, myList, "//class[@implementation='container' and model[last()=2]]")
-                    AddNodeList(document, myList, "//reference[@container='2']")
+            Case EComboList.Container_single
+                ' Specific container type
+                AddNodeList(document, myList, "//class[@implementation='container' and model[last()=1]]")
+                AddNodeList(document, myList, "//reference[@container='3' or @container='1']")
 
-                Case Else
-                    ' Simple value type
-                    AddNodeList(document, myList, "ancestor::class/model")
-                    AddNodeList(document, myList, "//class[@implementation!='container']")
-                    If bIsNotTypedef Then AddNodeList(document, myList, "//typedef")
-                    AddNodeList(document, myList, "//interface")
-                    AddNodeList(document, myList, "//reference[@container='0' or not(@container)]")
+            Case EComboList.Container_indexed
+                ' Specific container type
+                AddNodeList(document, myList, "//class[@implementation='container' and model[last()=2]]")
+                AddNodeList(document, myList, "//reference[@container='2']")
 
-                    AddSimpleTypesList(myList, document.GenerationLanguage)
-            End Select
+            Case Else
+                ' Simple value type
+                AddNodeList(document, myList, "ancestor::class/model")
+                AddNodeList(document, myList, "//class[@implementation!='container']")
+                If bIsNotTypedef Then AddNodeList(document, myList, "//typedef")
+                AddNodeList(document, myList, "//interface")
+                AddNodeList(document, myList, "//reference[@container='0' or not(@container)]")
 
-            SortNodeList(myList)
+                AddSimpleTypesList(myList, document.GenerationLanguage)
+        End Select
 
-            With dataControl
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = cstFullpathClassName
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
+        SortNodeList(myList)
+
+        With dataControl
+            .DropDownStyle = ComboBoxStyle.DropDown
+            .DisplayMember = cstFullpathClassName
+            .ValueMember = "Id"
+            .DataSource = myList
+        End With
     End Sub
 
     Public Shared Sub InitValueCombo(ByVal document As XmlComponent, ByVal control As ComboBox, _
                                     Optional ByVal bProperty As Boolean = False)
-        Try
-            Dim myList As New ArrayList
 
-            If bProperty And document.SelectNodes("enumvalue").Count > 0 Then
-                AddNodeList(document, myList, "descendant::enumvalue")
-            Else
-                AddNodeList(document, myList, "//enumvalue[ancestor::typedef or ancestor::reference]")
-            End If
+        Dim myList As New ArrayList
 
-            With control
-                .DropDownStyle = ComboBoxStyle.DropDown
-                .DisplayMember = cstFullpathClassName
-                .ValueMember = "Id"
-                .DataSource = myList
-            End With
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If bProperty And document.SelectNodes("enumvalue").Count > 0 Then
+            AddNodeList(document, myList, "descendant::enumvalue")
+        Else
+            AddNodeList(document, myList, "//enumvalue[ancestor::typedef or ancestor::reference]")
+        End If
+
+        With control
+            .DropDownStyle = ComboBoxStyle.DropDown
+            .DisplayMember = cstFullpathClassName
+            .ValueMember = "Id"
+            .DataSource = myList
+        End With
     End Sub
 
     Public Shared Function AddComponentList(ByVal component As XmlComponent, _
@@ -515,206 +509,193 @@ Public Class XmlNodeListView
 
     Public Shared Function GetListRedundancies(ByVal parent As XmlComponent, ByVal child As XmlNode, ByRef listResult As ArrayList) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim elang As ELanguage = parent.GenerationLanguage
-            Dim separator As String = GetSeparator(elang)
-            Dim strName As String = GetName(child)
-            If InStr(strName, separator) > 0 Then
-                Dim blocks As String() = strName.Split(separator)
-                strName = blocks(blocks.Length - 1)
-            End If
-            Dim strID As String = GetID(child)
-            Dim strQuery As String = "//*[(@name='" + strName + "' or type/@desc='" + strName + "' or contains(type/@desc,'" + separator + strName + "') or contains(@name,'" + separator + strName + "')) and @id!='" + strID + "']"
 
-            If listResult Is Nothing Then
-                Dim listNode As XmlNodeList = parent.SelectNodes(strQuery)
-                Return (listNode.Count > 0)
-            End If
+        Dim elang As ELanguage = parent.GenerationLanguage
+        Dim separator As String = GetSeparator(elang)
+        Dim strName As String = GetName(child)
+        If InStr(strName, separator) > 0 Then
+            Dim blocks As String() = strName.Split(separator)
+            strName = blocks(blocks.Length - 1)
+        End If
+        Dim strID As String = GetID(child)
+        Dim strQuery As String = "//*[(@name='" + strName + "' or type/@desc='" + strName + "' or contains(type/@desc,'" + separator + strName + "') or contains(@name,'" + separator + strName + "')) and @id!='" + strID + "']"
 
-            strQuery = "//*[(@name='" + strName + "' or contains(@name,'" + separator + strName + "')) and @id!='" + strID + "']"
-            AddNodeList(parent, listResult, strQuery)
+        If listResult Is Nothing Then
+            Dim listNode As XmlNodeList = parent.SelectNodes(strQuery)
+            Return (listNode.Count > 0)
+        End If
 
-            strQuery = "//*[type/@desc='" + strName + "' or contains(type/@desc,'" + separator + strName + "')]"
-            AddNodeList(parent, listResult, strQuery)
+        strQuery = "//*[(@name='" + strName + "' or contains(@name,'" + separator + strName + "')) and @id!='" + strID + "']"
+        AddNodeList(parent, listResult, strQuery)
 
-            Return (listResult.Count > 0)
+        strQuery = "//*[type/@desc='" + strName + "' or contains(type/@desc,'" + separator + strName + "')]"
+        AddNodeList(parent, listResult, strQuery)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
-        Return False
+        Return (listResult.Count > 0)
     End Function
 
 
     Private Function GetFullFullInfo() As String
-        Try
-            Dim tempo As String
-            Dim child As XmlNode
 
-            Select Case Me.NodeName
-                Case "#document"
-                    Return ""
+        Dim tempo As String
+        Dim child As XmlNode
 
-                Case "package"
-                    tempo = ""
-                    For Each child In Me.SelectNodes("import | class | package")
-                        tempo += GetName(child) + ", "
-                    Next
-                    Return tempo
+        Select Case Me.NodeName
+            Case "#document"
+                Return ""
 
-                Case "class"
-                    Dim component1 As XmlClassSpec = Me.CreateDocument(Me.Node)
-                    tempo = ConvertEnumImplToView(XmlProjectTools.ConvertDtdToEnumImpl(component1.Implementation))
-                    For Each child In Me.SelectNodes("typedef | property | method")
-                        tempo += ", " + GetName(child)
-                    Next
-                    Return tempo
+            Case "package"
+                tempo = ""
+                For Each child In Me.SelectNodes("import | class | package")
+                    tempo += GetName(child) + ", "
+                Next
+                Return tempo
 
-                Case "interface"
-                    Dim component2 As XmlInterfaceSpec = Me.CreateDocument(Me.Node)
-                    tempo = ConvertEnumImplToView(component2.Implementation)
-                    For Each child In Me.SelectNodes("typedef | property | method")
-                        tempo += ", " + GetName(child)
-                    Next
-                    Return tempo
+            Case "class"
+                Dim component1 As XmlClassSpec = Me.CreateDocument(Me.Node)
+                tempo = ConvertEnumImplToView(XmlProjectTools.ConvertDtdToEnumImpl(component1.Implementation))
+                For Each child In Me.SelectNodes("typedef | property | method")
+                    tempo += ", " + GetName(child)
+                Next
+                Return tempo
 
-                Case "reference"
-                    Dim component3 As XmlReferenceSpec = Me.CreateDocument(Me.Node)
-                    tempo = ConvertEnumImplToView(component3.Implementation)
-                    For Each child In Me.SelectNodes("enumvalue")
-                        tempo += ", " + GetName(child)
-                    Next
-                    Return tempo
+            Case "interface"
+                Dim component2 As XmlInterfaceSpec = Me.CreateDocument(Me.Node)
+                tempo = ConvertEnumImplToView(component2.Implementation)
+                For Each child In Me.SelectNodes("typedef | property | method")
+                    tempo += ", " + GetName(child)
+                Next
+                Return tempo
 
-                Case "import", "export"
-                    tempo = ""
-                    For Each child In Me.SelectNodes("descendant::reference | descendant::interface")
-                        tempo += GetName(child) + ", "
-                    Next
-                    Return tempo
+            Case "reference"
+                Dim component3 As XmlReferenceSpec = Me.CreateDocument(Me.Node)
+                tempo = ConvertEnumImplToView(component3.Implementation)
+                For Each child In Me.SelectNodes("enumvalue")
+                    tempo += ", " + GetName(child)
+                Next
+                Return tempo
 
-                Case "param"
-                    Dim component4 As XmlParamSpec = Me.CreateDocument(Me.Node)
-                    component4.GenerationLanguage = Me.GenerationLanguage
-                    Return component4.TypeVarDefinition.DetailedDescription
+            Case "import", "export"
+                tempo = ""
+                For Each child In Me.SelectNodes("descendant::reference | descendant::interface")
+                    tempo += GetName(child) + ", "
+                Next
+                Return tempo
 
-                Case "property"
-                    Dim component5 As XmlPropertySpec = Me.CreateDocument(Me.Node)
-                    component5.GenerationLanguage = Me.GenerationLanguage
-                    Return component5.TypeVarDefinition.DetailedDescription
+            Case "param"
+                Dim component4 As XmlParamSpec = Me.CreateDocument(Me.Node)
+                component4.GenerationLanguage = Me.GenerationLanguage
+                Return component4.TypeVarDefinition.DetailedDescription
 
-                Case "typedef"
-                    Dim component As XmlTypedefSpec = Me.CreateDocument(Me.Node)
-                    component.GenerationLanguage = Me.GenerationLanguage
-                    Return component.DetailedDescription
+            Case "property"
+                Dim component5 As XmlPropertySpec = Me.CreateDocument(Me.Node)
+                component5.GenerationLanguage = Me.GenerationLanguage
+                Return component5.TypeVarDefinition.DetailedDescription
 
-                Case "method"
-                    tempo = ""
-                    For Each child In Me.SelectNodes("property | method")
-                        tempo += GetName(child) + ", "
-                    Next
-                    Return tempo
+            Case "typedef"
+                Dim component As XmlTypedefSpec = Me.CreateDocument(Me.Node)
+                component.GenerationLanguage = Me.GenerationLanguage
+                Return component.DetailedDescription
 
-                Case Else
-                    Return Me.Name
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+            Case "method"
+                tempo = ""
+                For Each child In Me.SelectNodes("property | method")
+                    tempo += GetName(child) + ", "
+                Next
+                Return tempo
+
+            Case Else
+                Return Me.Name
+        End Select
     End Function
 
     Private Shared Sub AddSimpleTypesList(ByVal myList As ArrayList, ByVal eTag As ELanguage)
-        Try
-            Dim doc As New XmlDocument
-            LoadDocument(doc, GetSimpleTypesFilename(eTag))
 
-            Dim iterator As IEnumerator = doc.SelectNodes("//type").GetEnumerator()
-            iterator.Reset()
+        Dim doc As New XmlDocument
+        LoadDocument(doc, GetSimpleTypesFilename(eTag))
 
-            While iterator.MoveNext()
-                myList.Add(New XmlNodeListView(GetCurrentName(iterator)))
-            End While
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim iterator As IEnumerator = doc.SelectNodes("//type").GetEnumerator()
+        iterator.Reset()
+
+        While iterator.MoveNext()
+            myList.Add(New XmlNodeListView(GetCurrentName(iterator)))
+        End While
     End Sub
 
     Private Shared Function GetFullUmlPath(ByVal current As XmlNode) As String
         Dim strResult As String = ""
-        Try
-            If current Is Nothing Then Return strResult
 
-            Dim tempo, tempo2 As String
+        If current Is Nothing Then Return strResult
 
-            Select Case current.Name
-                Case "#document"
-                    strResult = ""
+        Dim tempo, tempo2 As String
 
-                Case "package", "class", "import", "typedef"
+        Select Case current.Name
+            Case "#document"
+                strResult = ""
+
+            Case "package", "class", "import", "typedef"
+                strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+
+            Case "interface"
+                tempo = GetAttributeValue(current, "package")
+                If tempo <> "" Then
+                    strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + GetName(current)
+                Else
                     strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+                End If
 
-                Case "interface"
-                    tempo = GetAttributeValue(current, "package")
-                    If tempo <> "" Then
-                        strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + GetName(current)
-                    Else
-                        strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
-                    End If
+            Case "reference"
+                If GetAttributeValue(current, "type") = "typedef" Then
+                    tempo2 = GetAttributeValue(current, "class") + "/" + GetName(current)
+                Else
+                    tempo2 = GetName(current)
+                End If
 
-                Case "reference"
-                    If GetAttributeValue(current, "type") = "typedef" Then
-                        tempo2 = GetAttributeValue(current, "class") + "/" + GetName(current)
-                    Else
-                        tempo2 = GetName(current)
-                    End If
+                tempo = GetAttributeValue(current, "package")
+                If tempo <> "" Then
+                    strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + tempo2
+                Else
+                    strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo2
+                End If
 
-                    tempo = GetAttributeValue(current, "package")
-                    If tempo <> "" Then
-                        strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo + "/" + tempo2
-                    Else
-                        strResult = GetFullUmlPath(current.ParentNode) + "/" + tempo2
-                    End If
-
-                Case "export"
-                    If current.ParentNode Is Nothing _
-                    Then
-                        strResult = "/" + GetName(current)
-
-                    ElseIf current.ParentNode.Name = "#document" _
-                    Then
-                        strResult = "/" + GetName(current)
-                    Else
-                        strResult = GetFullUmlPath(current.ParentNode)
-                    End If
-
-                Case "enumvalue"
-                    If current.ParentNode IsNot Nothing Then
-                        If current.ParentNode.Name = "reference" Then
-                            strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
-                        Else
-                            strResult = GetFullUmlPath(current.ParentNode.ParentNode) + "/" + GetName(current)
-                        End If
-                    Else
-                        strResult = "/" + GetName(current)
-                    End If
-
-
-                Case "root"
+            Case "export"
+                If current.ParentNode Is Nothing _
+                Then
                     strResult = "/" + GetName(current)
 
-                Case "method"
-                    If GetName(current) Is Nothing Then
-                        strResult = GetFullUmlPath(current.ParentNode) + "/#method"
-                    Else
-                        strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
-                    End If
+                ElseIf current.ParentNode.Name = "#document" _
+                Then
+                    strResult = "/" + GetName(current)
+                Else
+                    strResult = GetFullUmlPath(current.ParentNode)
+                End If
 
-                Case Else
+            Case "enumvalue"
+                If current.ParentNode IsNot Nothing Then
+                    If current.ParentNode.Name = "reference" Then
+                        strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+                    Else
+                        strResult = GetFullUmlPath(current.ParentNode.ParentNode) + "/" + GetName(current)
+                    End If
+                Else
+                    strResult = "/" + GetName(current)
+                End If
+
+
+            Case "root"
+                strResult = "/" + GetName(current)
+
+            Case "method"
+                If GetName(current) Is Nothing Then
+                    strResult = GetFullUmlPath(current.ParentNode) + "/#method"
+                Else
                     strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+                End If
+
+            Case Else
+                strResult = GetFullUmlPath(current.ParentNode) + "/" + GetName(current)
+        End Select
+
         Return strResult
     End Function
 End Class

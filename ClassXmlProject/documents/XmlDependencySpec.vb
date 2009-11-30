@@ -122,8 +122,6 @@ Public Class XmlDependencySpec
             Action = "New_dependency"
             Idref = "class0"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try

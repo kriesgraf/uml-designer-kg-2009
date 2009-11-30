@@ -119,40 +119,37 @@ Public Class dlgDependencies
     End Sub
 
     Private Sub RefreshList()
-        Try
-            Dim MyList As New ArrayList
 
-            If m_bNoTitle Then Me.Text = m_xmlDataSource.Name + " dependencies"
+        Dim MyList As New ArrayList
 
-            Dim strQuery As String = GetQueryListDependencies(m_xmlDataSource)
+        If m_bNoTitle Then Me.Text = m_xmlDataSource.Name + " dependencies"
 
-            If strQuery Is Nothing _
+        Dim strQuery As String = GetQueryListDependencies(m_xmlDataSource)
+
+        If strQuery Is Nothing _
+        Then
+            lsbDependencies.Items.Add("Sorry this node can't be referenced")
+            lsbDependencies.Enabled = False
+        Else
+            AddNodeList(m_xmlDataSource, MyList, strQuery)
+
+            If MyList.Count = 0 _
             Then
-                lsbDependencies.Items.Add("Sorry this node can't be referenced")
+                lsbDependencies.DataSource = Nothing
                 lsbDependencies.Enabled = False
-            Else
-                AddNodeList(m_xmlDataSource, MyList, strQuery)
+                m_bEmpty = True
 
-                If MyList.Count = 0 _
-                Then
-                    lsbDependencies.DataSource = Nothing
-                    lsbDependencies.Enabled = False
-                    m_bEmpty = True
-
-                    If m_bNoTitle Then
-                        lsbDependencies.Items.Add("Sorry no dependencies found")
-                    Else
-                        lsbDependencies.Items.Add("Close this dialog box to complete the operation")
-                    End If
+                If m_bNoTitle Then
+                    lsbDependencies.Items.Add("Sorry no dependencies found")
                 Else
-                    XmlNodeListView.SortNodeList(MyList)
-                    lsbDependencies.DataSource = MyList
-                    lsbDependencies.DisplayMember = "FullUmlPathName"
-                    m_bEmpty = False
+                    lsbDependencies.Items.Add("Close this dialog box to complete the operation")
                 End If
+            Else
+                XmlNodeListView.SortNodeList(MyList)
+                lsbDependencies.DataSource = MyList
+                lsbDependencies.DisplayMember = "FullUmlPathName"
+                m_bEmpty = False
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
     End Sub
 End Class

@@ -126,86 +126,77 @@ Public Class XmlProjectProperties
             Comment = "Insert here details"
             BriefComment = "Insert here a brief comment"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
     End Sub
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
-        Try
-            AddChildren(SelectNodes("import | class | package | relationship"), strViewName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        AddChildren(SelectNodes("import | class | package | relationship"), strViewName)
+
     End Sub
 
     Public Overrides Function CanRemove(ByVal removedNode As XmlComponent) As Boolean
-        Try
-            Select Case removedNode.NodeName
-                Case "class"
-                    ' Search link from parent node
-                    If SelectNodes(GetQueryListDependencies(removedNode)).Count > 0 Then
 
-                        If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
-                              vbCrLf + "Do you want to proceed ?", _
-                            cstMsgYesNoQuestion, _
-                            removedNode.Name) = MsgBoxResult.Yes _
-                        Then
-                            Dim bIsEmpty As Boolean = False
+        Select Case removedNode.NodeName
+            Case "class"
+                ' Search link from parent node
+                If SelectNodes(GetQueryListDependencies(removedNode)).Count > 0 Then
 
-                            If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removedNode, bIsEmpty, "Remove references to " + removedNode.Name) Then
-                                Me.Updated = True
-                            End If
+                    If MsgBox("Some elements reference this, you can dereference them and then this will be deleted." + _
+                          vbCrLf + "Do you want to proceed ?", _
+                        cstMsgYesNoQuestion, _
+                        removedNode.Name) = MsgBoxResult.Yes _
+                    Then
+                        Dim bIsEmpty As Boolean = False
 
-                            Return bIsEmpty
+                        If dlgDependencies.ShowDependencies(m_xmlReferenceNodeCounter, removedNode, bIsEmpty, "Remove references to " + removedNode.Name) Then
+                            Me.Updated = True
                         End If
-                    Else
-                        Return True
-                    End If
 
-                Case "package", "import"
-                    ' Search children from removed node
-                    If removedNode.SelectNodes(GetQueryListDependencies(removedNode)).Count > 0 Then
-                        MsgBox("This element is not empty", MsgBoxStyle.Exclamation, removedNode.Name)
-                    Else
-                        Return True
+                        Return bIsEmpty
                     End If
-                Case "relationship"
+                Else
                     Return True
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+                End If
+
+            Case "package", "import"
+                ' Search children from removed node
+                If removedNode.SelectNodes(GetQueryListDependencies(removedNode)).Count > 0 Then
+                    MsgBox("This element is not empty", MsgBoxStyle.Exclamation, removedNode.Name)
+                Else
+                    Return True
+                End If
+            Case "relationship"
+                Return True
+        End Select
+
         Return False
     End Function
 
     Public Overrides Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim strName As String = removeNode.Name
 
-            If removeNode.NodeName = "relationship" Then
-                Dim element As XmlProjectMemberView = TryCast(removeNode, XmlProjectMemberView)
-                If element IsNot Nothing Then
-                    strName = "Relation '" + element.Label(0) + "'" + vbCrLf + element.ToolTipText
-                End If
+        Dim strName As String = removeNode.Name
+
+        If removeNode.NodeName = "relationship" Then
+            Dim element As XmlProjectMemberView = TryCast(removeNode, XmlProjectMemberView)
+            If element IsNot Nothing Then
+                strName = "Relation '" + element.Label(0) + "'" + vbCrLf + element.ToolTipText
             End If
+        End If
 
-            If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
-                       cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
+        If MsgBox("Confirm to delete:" + vbCrLf + "Name: " + strName, _
+                   cstMsgYesNoQuestion, "'Delete' command") = MsgBoxResult.Yes _
+        Then
+            Dim strNodeName As String = removeNode.NodeName
+            If MyBase.RemoveComponent(removeNode) _
             Then
-                Dim strNodeName As String = removeNode.NodeName
-                If MyBase.RemoveComponent(removeNode) _
-                Then
-                    bResult = True
-                End If
+                bResult = True
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
+
         Return bResult
     End Function
 

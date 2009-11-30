@@ -28,11 +28,8 @@ Public Class XmlComposite
 
     Public Sub New(Optional ByVal xmlNode As XmlNode = Nothing, Optional ByVal bLoadChildren As Boolean = False)
         MyBase.New(xmlNode)
-        Try
-            ChangeReferences(bLoadChildren)
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        ChangeReferences(bLoadChildren)
     End Sub
 #End Region
 
@@ -45,24 +42,20 @@ Public Class XmlComposite
     End Function
 
     Public Overridable Function DropAppendComponent(ByRef child As XmlComponent, ByRef bImportData As Boolean) As Boolean
-        Try
-            If child.Document IsNot Me.Document Then
-                ' We must call "ImportDocument" when dropped node comes from a different project
-                child = Me.ImportDocument(child)
-                bImportData = True
-            Else
-                ' Notionally, child will be removed from first location by command Append
-                ' But is some case, "AppendComponent" moved only children and not current, 
-                ' also, we must remove current node manually
-                XmlProjectTools.RemoveNode(child.Node)
-                bImportData = False
-            End If
 
-            Return (AppendComponent(child) IsNot Nothing)
+        If child.Document IsNot Me.Document Then
+            ' We must call "ImportDocument" when dropped node comes from a different project
+            child = Me.ImportDocument(child)
+            bImportData = True
+        Else
+            ' Notionally, child will be removed from first location by command Append
+            ' But is some case, "AppendComponent" moved only children and not current, 
+            ' also, we must remove current node manually
+            XmlProjectTools.RemoveNode(child.Node)
+            bImportData = False
+        End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return (AppendComponent(child) IsNot Nothing)
     End Function
 
     Public Overridable Function DuplicateComponent(ByVal component As XmlComponent) As XmlComponent
@@ -74,12 +67,9 @@ Public Class XmlComposite
     End Function
 
     Public Overridable Function RemoveComponent(ByVal removeNode As XmlComponent) As Boolean
-        Try
-            Return removeNode.RemoveMe()
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Return removeNode.RemoveMe()
+
     End Function
 
     Public Overridable Function CanPasteItem(ByVal child As XmlComponent) As Boolean
@@ -87,29 +77,22 @@ Public Class XmlComposite
     End Function
 
     Public Overridable Function GetNameNewComponent(ByVal strDocName As String) As String
-        Try
-            If strDocName Is Nothing _
-            Then
-                strDocName = Me.Node.LastChild.Name
 
-            ElseIf strDocName = "" _
+        If strDocName Is Nothing _
             Then
-                strDocName = Me.Node.LastChild.Name
-            End If
+            strDocName = Me.Node.LastChild.Name
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        ElseIf strDocName = "" _
+        Then
+            strDocName = Me.Node.LastChild.Name
+        End If
+
         Return strDocName
     End Function
 
     Public Overridable Sub LoadChildrenList(Optional ByVal strViewName As String = "")
-        Try
-            AddChildren(SelectNodes(), strViewName)
+        AddChildren(SelectNodes(), strViewName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
     End Sub
 
 #End Region
@@ -118,50 +101,42 @@ Public Class XmlComposite
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
         MyBase.ChangeReferences(bLoadChildren)
-        Try
-            'm_xmlChildrenList.Clear()
-            If bLoadChildren Then LoadChildrenList()
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        'm_xmlChildrenList.Clear()
+        If bLoadChildren Then LoadChildrenList()
+
     End Sub
 
     Protected Sub AddChildren(ByVal list As XmlNodeList, ByVal strViewName As String)
-        Try
-            'Debug.Print("(AddChildren)" + Me.ToString + ":=" + Str(Me.Tag))
-            m_xmlChildrenList = New ArrayList
-            If list Is Nothing Then
-                ' do nothing
-            ElseIf list.Count > 0 Then
-                Dim iterator As IEnumerator = list.GetEnumerator()
-                Dim xcpnt As XmlComponent
-                iterator.Reset()
-                While iterator.MoveNext()
-                    If strViewName <> "" Then
-                        xcpnt = CreateView(strViewName, TryCast(iterator.Current, XmlNode))
-                    Else
-                        xcpnt = CreateDocument(TryCast(iterator.Current, XmlNode))
-                    End If
-                    xcpnt.GenerationLanguage = Me.GenerationLanguage
-                    'Debug.Print("(AddChildren,'" + strViewName + "')" + xcpnt.ToString + ":=" + Str(xcpnt.GenerationLanguage))
-                    m_xmlChildrenList.Add(xcpnt)
-                End While
-            End If
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        'Debug.Print("(AddChildren)" + Me.ToString + ":=" + Str(Me.Tag))
+        m_xmlChildrenList = New ArrayList
+        If list Is Nothing Then
+            ' do nothing
+        ElseIf list.Count > 0 Then
+            Dim iterator As IEnumerator = list.GetEnumerator()
+            Dim xcpnt As XmlComponent
+            iterator.Reset()
+            While iterator.MoveNext()
+                If strViewName <> "" Then
+                    xcpnt = CreateView(strViewName, TryCast(iterator.Current, XmlNode))
+                Else
+                    xcpnt = CreateDocument(TryCast(iterator.Current, XmlNode))
+                End If
+                xcpnt.GenerationLanguage = Me.GenerationLanguage
+                'Debug.Print("(AddChildren,'" + strViewName + "')" + xcpnt.ToString + ":=" + Str(xcpnt.GenerationLanguage))
+                m_xmlChildrenList.Add(xcpnt)
+            End While
+        End If
     End Sub
 
     Protected Function CreateView(ByVal strViewName As String, Optional ByVal nodeXml As XmlNode = Nothing, Optional ByVal docXml As XmlDocument = Nothing) As XmlComponent
         Dim xmlResult As XmlComponent = Nothing
-        Try
-            If nodeXml IsNot Nothing Then
-                xmlResult = XmlNodeManager.GetInstance().CreateView(nodeXml, strViewName, docXml)
-            End If
-        Catch ex As Exception
-            Throw (ex)
-        End Try
+
+        If nodeXml IsNot Nothing Then
+            xmlResult = XmlNodeManager.GetInstance().CreateView(nodeXml, strViewName, docXml)
+        End If
+
         Return xmlResult
     End Function
 #End Region

@@ -156,8 +156,6 @@ Public Class XmlReferenceSpec
             Package = ""
             ParentClass = ""
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try

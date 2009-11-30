@@ -90,8 +90,6 @@ Public Class MenuItemCommand
                 Me.DiffTool = My.Settings.DiffTool
                 Me.DiffArguments = My.Settings.DiffToolArguments
 
-            Catch ex As Exception
-                Throw ex
             Finally
                 m_bCreateNodeNow = False
             End Try
@@ -120,95 +118,77 @@ Public Class MenuItemCommand
     End Sub
 
     Public Function LoadTools() As Boolean
-        Try
-            m_xmlDocument = New XmlDocument
 
-            Dim filename As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath, cstExternalToolsFile)
-            If My.Computer.FileSystem.FileExists(filename) Then
-                m_xmlDocument.Load(filename)
-                If GetAttributeValue(m_xmlDocument.DocumentElement, "version") <> cstExternalToolsFileVersion _
-                Then
-                    m_xmlDocument.LoadXml(CreateToolsFile())
-                    m_xmlDocument.Save(filename)
-                End If
-            Else
+        m_xmlDocument = New XmlDocument
+
+        Dim filename As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath, cstExternalToolsFile)
+        If My.Computer.FileSystem.FileExists(filename) Then
+            m_xmlDocument.Load(filename)
+            If GetAttributeValue(m_xmlDocument.DocumentElement, "version") <> cstExternalToolsFileVersion _
+            Then
                 m_xmlDocument.LoadXml(CreateToolsFile())
                 m_xmlDocument.Save(filename)
             End If
+        Else
+            m_xmlDocument.LoadXml(CreateToolsFile())
+            m_xmlDocument.Save(filename)
+        End If
 
-            RefreshList()
+        RefreshList()
 
-        Catch ex As Exception
-            Throw ex
-        End Try
         Return True
     End Function
 
     Public Function SaveTools() As Boolean
-        Try
-            Dim filename As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath, cstExternalToolsFile)
-            m_xmlDocument.Save(filename)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Dim filename As String = My.Computer.FileSystem.CombinePath(Application.LocalUserAppDataPath, cstExternalToolsFile)
+        m_xmlDocument.Save(filename)
+
         Return True
     End Function
 
     Public Function CreateCommand() As MenuItemNode
         Dim xmlResult As MenuItemNode = Nothing
-        Try
-            xmlResult = New MenuItemNode
-            xmlResult.Document = m_xmlDocument
-            xmlResult.Node = xmlResult.CreateNode(MenuItemCommand.cstElement)
 
-            xmlResult.SetDefaultValues(True)
+        xmlResult = New MenuItemNode
+        xmlResult.Document = m_xmlDocument
+        xmlResult.Node = xmlResult.CreateNode(MenuItemCommand.cstElement)
 
-            m_xmlDocument.DocumentElement.AppendChild(xmlResult.Node)
-            xmlResult.RefIndex = m_xmlNodeList.Add(xmlResult)
-            xmlResult.Name += xmlResult.RefIndex.ToString
+        xmlResult.SetDefaultValues(True)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlDocument.DocumentElement.AppendChild(xmlResult.Node)
+        xmlResult.RefIndex = m_xmlNodeList.Add(xmlResult)
+        xmlResult.Name += xmlResult.RefIndex.ToString
+
         Return xmlResult
     End Function
 
     Public Sub AddCommand(ByVal itemNode As MenuItemNode)
-        Try
-            m_xmlDocument.DocumentElement.AppendChild(itemNode.Node)
-            itemNode.RefIndex = m_xmlNodeList.Add(itemNode)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlDocument.DocumentElement.AppendChild(itemNode.Node)
+        itemNode.RefIndex = m_xmlNodeList.Add(itemNode)
+
     End Sub
 
     Public Sub DeleteCommand(ByVal itemNode As MenuItemNode)
-        Try
-            itemNode.RemoveMe()
-            m_xmlNodeList.Remove(itemNode)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        itemNode.RemoveMe()
+        m_xmlNodeList.Remove(itemNode)
+
     End Sub
 
     Public Function InsertCommand(ByVal node As Object) As ToolStripMenuItem
         Dim newItem As ToolStripMenuItem = Nothing
-        Try
-            Dim element As MenuItemNode = CType(node, MenuItemNode)
-            Dim index As Integer = m_mnuParent.DropDownItems.IndexOf(m_mnuCustomize)
 
-            newItem = New ToolStripMenuItem(element.Name)
-            newItem.Tag = element.RefIndex
+        Dim element As MenuItemNode = CType(node, MenuItemNode)
+        Dim index As Integer = m_mnuParent.DropDownItems.IndexOf(m_mnuCustomize)
 
-            m_mnuParent.DropDownItems.Insert(index, newItem)
-            m_lstMenuItems.Add(newItem) ' To remove item later
+        newItem = New ToolStripMenuItem(element.Name)
+        newItem.Tag = element.RefIndex
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_mnuParent.DropDownItems.Insert(index, newItem)
+        m_lstMenuItems.Add(newItem) ' To remove item later
+
         Return newItem
     End Function
 
@@ -220,23 +200,20 @@ Public Class MenuItemCommand
     End Function
 
     Public Sub RefreshList(ByVal list As ListBox, Optional ByVal bSelectLastItem As Boolean = False)
-        Try
-            list.DataSource = Nothing
-            list.Items.Clear()
 
-            'Second overload member
-            RefreshList()
+        list.DataSource = Nothing
+        list.Items.Clear()
 
-            If m_xmlNodeList.Count > 0 Then
-                list.DisplayMember = "Name"
-                list.DataSource = m_xmlNodeList
-                If bSelectLastItem Then
-                    list.SelectedIndex = list.Items.Count - 1
-                End If
+        'Second overload member
+        RefreshList()
+
+        If m_xmlNodeList.Count > 0 Then
+            list.DisplayMember = "Name"
+            list.DataSource = m_xmlNodeList
+            If bSelectLastItem Then
+                list.SelectedIndex = list.Items.Count - 1
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
     End Sub
 
     Public Sub RefreshMenu()
@@ -274,22 +251,19 @@ Public Class MenuItemCommand
     End Sub
 
     Private Sub RefreshList()
-        Try
-            If m_xmlNodeList IsNot Nothing Then
-                m_xmlNodeList.Clear()
-            End If
 
-            m_xmlNodeList = New ArrayList
-            m_xmlNodeEnumerator = Nothing
+        If m_xmlNodeList IsNot Nothing Then
+            m_xmlNodeList.Clear()
+        End If
 
-            For Each node As XmlNode In m_xmlDocument.SelectNodes("//menuitem")
-                Dim itemNode As MenuItemNode = New MenuItemNode(node)
-                itemNode.RefIndex = m_xmlNodeList.Add(itemNode)
-            Next
-            m_xmlNodeEnumerator = m_xmlNodeList.GetEnumerator
+        m_xmlNodeList = New ArrayList
+        m_xmlNodeEnumerator = Nothing
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        For Each node As XmlNode In m_xmlDocument.SelectNodes("//menuitem")
+            Dim itemNode As MenuItemNode = New MenuItemNode(node)
+            itemNode.RefIndex = m_xmlNodeList.Add(itemNode)
+        Next
+        m_xmlNodeEnumerator = m_xmlNodeList.GetEnumerator
+
     End Sub
 End Class

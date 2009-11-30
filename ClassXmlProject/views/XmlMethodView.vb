@@ -153,9 +153,6 @@ Public Class XmlMethodView
             If Me.OverridesMethod <> "" Then
                 dataControl.Enabled = False
             End If
-
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bInitProceed = False
         End Try
@@ -206,19 +203,15 @@ Public Class XmlMethodView
     End Sub
 
     Public Sub InitBindingRange(ByVal dataControl As ComboBox, ByVal label As Label)
-        Try
 
-            dataControl.DropDownStyle = ComboBoxStyle.DropDownList
-            UpdateRange(dataControl, False)
-            m_xmlBindingsList.AddBinding(dataControl, Me.ReturnValue, "Range")
+        dataControl.DropDownStyle = ComboBoxStyle.DropDownList
+        UpdateRange(dataControl, False)
+        m_xmlBindingsList.AddBinding(dataControl, Me.ReturnValue, "Range")
 
-            If OverridesMethod <> "" Then
-                dataControl.Enabled = False
-                label.Enabled = False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If OverridesMethod <> "" Then
+            dataControl.Enabled = False
+            label.Enabled = False
+        End If
     End Sub
 
     Public Sub InitBindingBrief(ByVal dataControl As TextBox)
@@ -271,28 +264,25 @@ Public Class XmlMethodView
     End Sub
 
     Public Sub InitBindingBehaviour(ByVal dataControl As ComboBox, ByVal label As Label)
-        Try
-            m_cmdBehaviour.Combo = dataControl
-            m_cmdBehaviour.Title = label
 
-            If Me.GenerationLanguage <> ELanguage.Language_Vbasic Then
+        m_cmdBehaviour.Combo = dataControl
+        m_cmdBehaviour.Title = label
+
+        If Me.GenerationLanguage <> ELanguage.Language_Vbasic Then
+            m_cmdBehaviour.Enabled = False
+            m_cmdBehaviour.Visible = False
+        Else
+            dataControl.DropDownStyle = ComboBoxStyle.DropDownList
+
+            dataControl.Items.AddRange(New Object() {"Normal", "Widening", "Narrowing", "Event", "Overloads", _
+                                                     "Delegate", "Partial", "Shadows"})
+
+            m_xmlBindingsList.AddBinding(dataControl, Me, "Behaviour", "SelectedItem")
+
+            If OverridesMethod <> "" Then
                 m_cmdBehaviour.Enabled = False
-                m_cmdBehaviour.Visible = False
-            Else
-                dataControl.DropDownStyle = ComboBoxStyle.DropDownList
-
-                dataControl.Items.AddRange(New Object() {"Normal", "Widening", "Narrowing", "Event", "Overloads", _
-                                                         "Delegate", "Partial", "Shadows"})
-
-                m_xmlBindingsList.AddBinding(dataControl, Me, "Behaviour", "SelectedItem")
-
-                If OverridesMethod <> "" Then
-                    m_cmdBehaviour.Enabled = False
-                End If
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        End If
     End Sub
 
     Public Sub InitBindingMember(ByVal dataControl As ComboBox, ByVal label As Label)

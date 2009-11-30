@@ -34,30 +34,21 @@ Public Class XmlProjectPropertiesView
     End Function
 
     Public Sub InitBindingName(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Name")
+
     End Sub
 
     Public Sub InitBindingBriefComment(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "BriefComment")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "BriefComment")
+
     End Sub
 
     Public Sub InitBindingComment(ByVal dataControl As Control)
-        Try
-            m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
+
     End Sub
 
     Public Sub InitBindingLanguage(ByVal cmbLanguage As ComboBox)

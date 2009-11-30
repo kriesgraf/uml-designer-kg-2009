@@ -359,14 +359,11 @@ Public Class XmlProjectMemberView
     End Function
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
-        Try
-            Debug.Print("(LoadChildrenList)" + Me.ToString + ":=" + Str(Me.GenerationLanguage))
-            AddChildren(SelectNodes("import | class | export/reference | export/interface | package | relationship | typedef | property | method"), strViewName)
-            MyBase.ChildrenList.Sort(Me)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Debug.Print("(LoadChildrenList)" + Me.ToString + ":=" + Str(Me.GenerationLanguage))
+        AddChildren(SelectNodes("import | class | export/reference | export/interface | package | relationship | typedef | property | method"), strViewName)
+        MyBase.ChildrenList.Sort(Me)
+
     End Sub
 
     Public Overrides Function DuplicateComponent(ByVal component As XmlComponent) As XmlComponent
@@ -473,63 +470,59 @@ Public Class XmlProjectMemberView
     End Function
 
     Public Function MoveUpComponent(ByVal child As XmlComponent) As Boolean
-        Try
-            'Not necessary to remove node, command Append will do it for us
-            Dim member As XmlComposite = TryCast(CreateDocument(Me.Node), XmlComposite)
-            If member IsNot Nothing Then
-                member.GenerationLanguage = Me.GenerationLanguage
-                Select Case member.NodeName
-                    Case "import"
-                        Return CType(member, XmlImportSpec).MoveUpComponent(child)
 
-                    Case Else
-                        Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
-                        If parent IsNot Nothing Then
-                            parent.GenerationLanguage = Me.GenerationLanguage
-                            Return (parent.AppendComponent(child) IsNot Nothing)
-                        End If
-                End Select
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        'Not necessary to remove node, command Append will do it for us
+        Dim member As XmlComposite = TryCast(CreateDocument(Me.Node), XmlComposite)
+        If member IsNot Nothing Then
+            member.GenerationLanguage = Me.GenerationLanguage
+            Select Case member.NodeName
+                Case "import"
+                    Return CType(member, XmlImportSpec).MoveUpComponent(child)
+
+                Case Else
+                    Dim parent As XmlComposite = CreateDocument(Me.Node.ParentNode)
+                    If parent IsNot Nothing Then
+                        parent.GenerationLanguage = Me.GenerationLanguage
+                        Return (parent.AppendComponent(child) IsNot Nothing)
+                    End If
+            End Select
+        End If
+
         Return False
     End Function
 
     Public Function ImportReferences(ByVal fen As Form, ByVal fileName As String) As Boolean
         Dim bResult As Boolean = False
-        Try
-            Dim import As XmlImportSpec = Nothing
 
-            Select Case Me.NodeName
-                Case "root"
-                    Dim root As XmlProjectProperties = CreateDocument(Me.Node)
-                    import = CreateDocument("import")
-                    import.GenerationLanguage = Me.GenerationLanguage
-                    root.AppendComponent(import)
+        Dim import As XmlImportSpec = Nothing
 
-                Case "package"
-                    Dim package As XmlPackageSpec = CreateDocument(Me.Node)
-                    import = CreateDocument("import")
-                    import.GenerationLanguage = Me.GenerationLanguage
-                    package.AppendComponent(import)
-            End Select
+        Select Case Me.NodeName
+            Case "root"
+                Dim root As XmlProjectProperties = CreateDocument(Me.Node)
+                import = CreateDocument("import")
+                import.GenerationLanguage = Me.GenerationLanguage
+                root.AppendComponent(import)
 
-            If import IsNot Nothing Then
-                import.NodeCounter = m_xmlReferenceNodeCounter
-                Dim FileInfo As FileInfo = My.Computer.FileSystem.GetFileInfo(fileName)
-                If import.LoadDocument(fen, FileInfo) Then
-                    ExtractExternalReferences(Me.Node, import.ChildExportNode.Node)
-                    bResult = True
-                End If
+            Case "package"
+                Dim package As XmlPackageSpec = CreateDocument(Me.Node)
+                import = CreateDocument("import")
+                import.GenerationLanguage = Me.GenerationLanguage
+                package.AppendComponent(import)
+        End Select
+
+        If import IsNot Nothing Then
+            import.NodeCounter = m_xmlReferenceNodeCounter
+            Dim FileInfo As FileInfo = My.Computer.FileSystem.GetFileInfo(fileName)
+            If import.LoadDocument(fen, FileInfo) Then
+                ExtractExternalReferences(Me.Node, import.ChildExportNode.Node)
+                bResult = True
             End If
+        End If
 
-            If bResult Then
-                Me.Updated = True
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If bResult Then
+            Me.Updated = True
+        End If
+
         Return bResult
     End Function
 

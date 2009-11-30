@@ -66,8 +66,6 @@ Public Class XmlEnumSpec
             Id = "enum0"
             Comment = "Brief comment"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try

@@ -302,9 +302,6 @@ Public Class XmlRelationParentSpec
 
             Kind = EKindParent.Reference
 
-        Catch ex As Exception
-            'Debug.Print(ex.StackTrace)
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
@@ -349,37 +346,34 @@ Public Class XmlRelationParentSpec
 #End Region
 
     Private Sub UpdateNodes(ByVal eKind As EKindParent)
-        Try
-            Select Case eKind
-                Case EKindParent.Reference
-                    RemoveSingleNode("list")
-                    AppendNode(CreateNode("get"))
-                    AddAttribute("range", "no", "get")
-                    AddAttribute("by", "val", "get")
-                    AddAttribute("modifier", "var", "get")
-                    AppendNode(CreateNode("set"))
-                    AddAttribute("range", "no", "set")
-                    AddAttribute("by", "val", "set")
 
-                Case EKindParent.Container
-                    RemoveAllNodes("array")
-                    RemoveAllNodes("get")
-                    RemoveAllNodes("set")
-                    AppendNode(CreateNode("list"))
-                    SetAttribute("type", "simple", "list")
-                    AddAttribute("iterator", "no", "list")
-                    ContainerType = "simple"
-                    ContainerDesc = "undef_template"
+        Select Case eKind
+            Case EKindParent.Reference
+                RemoveSingleNode("list")
+                AppendNode(CreateNode("get"))
+                AddAttribute("range", "no", "get")
+                AddAttribute("by", "val", "get")
+                AddAttribute("modifier", "var", "get")
+                AppendNode(CreateNode("set"))
+                AddAttribute("range", "no", "set")
+                AddAttribute("by", "val", "set")
 
-                Case EKindParent.Array
-                    RemoveAttribute("get")
-                    RemoveAttribute("set")
-                    RemoveSingleNode("list")
-                    AppendNode(CreateNode("array"))
-                    VarSize = "99999"
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+            Case EKindParent.Container
+                RemoveAllNodes("array")
+                RemoveAllNodes("get")
+                RemoveAllNodes("set")
+                AppendNode(CreateNode("list"))
+                SetAttribute("type", "simple", "list")
+                AddAttribute("iterator", "no", "list")
+                ContainerType = "simple"
+                ContainerDesc = "undef_template"
+
+            Case EKindParent.Array
+                RemoveAttribute("get")
+                RemoveAttribute("set")
+                RemoveSingleNode("list")
+                AppendNode(CreateNode("array"))
+                VarSize = "99999"
+        End Select
     End Sub
 End Class

@@ -83,8 +83,6 @@ Public Class XmlInheritSpec
             Range = "public"
             Idref = "class0"
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try

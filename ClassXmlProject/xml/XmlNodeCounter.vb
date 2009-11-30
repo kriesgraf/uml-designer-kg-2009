@@ -15,11 +15,9 @@ Public Class XmlNodeCounter
     End Sub
 
     Private Sub Clear()
-        Try
-            m_CountDeletedList.Clear()
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        m_CountDeletedList.Clear()
+
     End Sub
 
     Public WriteOnly Property Prefix() As String
@@ -51,38 +49,34 @@ Public Class XmlNodeCounter
         ' simutanément les ID des deux arbres et toujours prendre le plus grand
         ' pour être sûr de ne pas rependre la référence d'un élément existant dans
         ' l'un des deux arbres
-        Try
 
-            If Not oCounter Is Nothing Then
-                iResult = GetMaxId()
-                If iResult <= CInt(oCounter.CurrentId) Then
-                    iResult = oCounter.GetMaxId()
-                    m_iCounter = iResult + 1
-                End If
-            Else
-                If m_CountDeletedList.Count > 0 Then
 
-                    ' Si il y a des "trous" dans la liste des ID, on en prend dans cette collection
-                    iResult = CInt(m_CountDeletedList.Item(1))
-                    m_CountDeletedList.Remove(1)
-                Else
-                    ' Sinon on prend l'index suivant...
-                    iResult = GetMaxId()
-                End If
+        If Not oCounter Is Nothing Then
+            iResult = GetMaxId()
+            If iResult <= CInt(oCounter.CurrentId) Then
+                iResult = oCounter.GetMaxId()
+                m_iCounter = iResult + 1
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Else
+            If m_CountDeletedList.Count > 0 Then
+
+                ' Si il y a des "trous" dans la liste des ID, on en prend dans cette collection
+                iResult = CInt(m_CountDeletedList.Item(1))
+                m_CountDeletedList.Remove(1)
+            Else
+                ' Sinon on prend l'index suivant...
+                iResult = GetMaxId()
+            End If
+        End If
+
         Return iResult
     End Function
 
     Public Sub Init(ByVal docXML As XmlDocument, ByVal strQuery As String)
-        Try
-            Clear()
-            m_iCounter = GetNextId(docXML, m_CountDeletedList, docXML.SelectNodes(strQuery), m_strPrefix)
-        Catch ex As Exception
-            Throw ex
-        End Try
+
+        Clear()
+        m_iCounter = GetNextId(docXML, m_CountDeletedList, docXML.SelectNodes(strQuery), m_strPrefix)
+
     End Sub
 
     Private Shared Function GetNextId(ByVal docXML As XmlDocument, ByRef deleteList As Collection, ByRef list As XmlNodeList, ByVal m_strPrefix As String) As Integer
@@ -93,45 +87,40 @@ Public Class XmlNodeCounter
         Dim Id As Integer
         Dim iResult As Integer
 
-        Try
-            iResult = 0
+        iResult = 0
 
-            For Each child In list
-                Dim strID As String = GetID(child)
+        For Each child In list
+            Dim strID As String = GetID(child)
 
-                If strID.StartsWith(m_strPrefix) = False Then
-                    Throw New Exception("In Node: " + child.OuterXml + vbCrLf + vbCrLf + "Attribute 'id' does not start with prefix '" + m_strPrefix + "'")
-                End If
-
-                tempo = AfterStr(strID, m_strPrefix)
-                If IsNumeric(tempo) Then
-                    Id = CInt(tempo)
-                Else
-                    Id = 0
-                End If
-
-                If Id > iResult Then
-                    iResult = Id
-                End If
-            Next child
-
-            If list.Count > 0 Then
-
-                node = list.Item(0)
-
-                For Id = 1 To iResult
-                    child = docXML.GetElementById(m_strPrefix + CStr(Id))
-
-                    If child Is Nothing Then
-                        deleteList.Add(Id, CStr(Id))
-                    End If
-                Next Id
+            If strID.StartsWith(m_strPrefix) = False Then
+                Throw New Exception("In Node: " + child.OuterXml + vbCrLf + vbCrLf + "Attribute 'id' does not start with prefix '" + m_strPrefix + "'")
             End If
-            iResult = iResult + 1
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+            tempo = AfterStr(strID, m_strPrefix)
+            If IsNumeric(tempo) Then
+                Id = CInt(tempo)
+            Else
+                Id = 0
+            End If
+
+            If Id > iResult Then
+                iResult = Id
+            End If
+        Next child
+
+        If list.Count > 0 Then
+
+            node = list.Item(0)
+
+            For Id = 1 To iResult
+                child = docXML.GetElementById(m_strPrefix + CStr(Id))
+
+                If child Is Nothing Then
+                    deleteList.Add(Id, CStr(Id))
+                End If
+            Next Id
+        End If
+        iResult = iResult + 1
 
         Return iResult
     End Function

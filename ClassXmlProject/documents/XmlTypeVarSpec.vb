@@ -72,25 +72,23 @@ Public Class XmlTypeVarSpec
     Public ReadOnly Property FullpathTypeDescription() As String
         Get
             Dim strResult As String = ""
-            Try
-                If Me.Node IsNot Nothing Then
-                    Select Case Kind
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Union
-                            strResult = "union {" + GetStructureName(True) + "}"
 
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
-                            strResult = strResult + GetBeginStruct(Me.GenerationLanguage) + GetStructureName(True) + GetEndStruct(Me.GenerationLanguage)
+            If Me.Node IsNot Nothing Then
+                Select Case Kind
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Union
+                        strResult = "union {" + GetStructureName(True) + "}"
 
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Container
-                            strResult = GetContainer(GetTypeName())
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
+                        strResult = strResult + GetBeginStruct(Me.GenerationLanguage) + GetStructureName(True) + GetEndStruct(Me.GenerationLanguage)
 
-                        Case Else
-                            strResult = GetTypeName(True)
-                    End Select
-                End If
-            Catch ex As Exception
-                Throw ex
-            End Try
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Container
+                        strResult = GetContainer(GetTypeName())
+
+                    Case Else
+                        strResult = GetTypeName(True)
+                End Select
+            End If
+
             Return strResult
         End Get
     End Property
@@ -98,25 +96,23 @@ Public Class XmlTypeVarSpec
     Public ReadOnly Property DetailedDescription() As String
         Get
             Dim strResult As String = ""
-            Try
-                If Me.Node IsNot Nothing Then
-                    Select Case Kind
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Union
-                            strResult = "union {" + GetStructureName() + "}"
 
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
-                            strResult = strResult + GetBeginStruct(Me.GenerationLanguage) + GetStructureName() + GetEndStruct(Me.GenerationLanguage)
+            If Me.Node IsNot Nothing Then
+                Select Case Kind
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Union
+                        strResult = "union {" + GetStructureName() + "}"
 
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Container
-                            strResult = GetContainer(GetTypeName())
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
+                        strResult = strResult + GetBeginStruct(Me.GenerationLanguage) + GetStructureName() + GetEndStruct(Me.GenerationLanguage)
 
-                        Case Else
-                            strResult = GetTypeName()
-                    End Select
-                End If
-            Catch ex As Exception
-                Throw ex
-            End Try
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Container
+                        strResult = GetContainer(GetTypeName())
+
+                    Case Else
+                        strResult = GetTypeName()
+                End Select
+            End If
+
             Return strResult
         End Get
     End Property
@@ -406,8 +402,7 @@ Public Class XmlTypeVarSpec
             Level = 0
             By = False
             Modifier = False
-        Catch ex As Exception
-            Throw ex
+
         Finally
             m_bCreateNodeNow = False
         End Try
@@ -430,8 +425,6 @@ Public Class XmlTypeVarSpec
             ContainerDesc = "undef_template"
             Iterator = False
 
-        Catch ex As Exception
-            Throw ex
         Finally
             m_bCreateNodeNow = False
         End Try
@@ -443,140 +436,128 @@ Public Class XmlTypeVarSpec
             m_bCreateNodeNow = bCreateNodeNow
             ChangeReferences()
             Me.VariableDefinition.SetDefaultValues(bCreateNodeNow)
-        Catch ex As Exception
-            Throw ex
+
         Finally
             m_bCreateNodeNow = False
         End Try
     End Sub
 
     Protected Friend Overrides Sub ChangeReferences(Optional ByVal bLoadChildren As Boolean = False)
-        Try
-            Dim nodeXml As XmlNode
-            MyBase.ChangeReferences(bLoadChildren)
-            If TestNode("following-sibling::variable") = False And m_bCreateNodeNow Then
-                nodeXml = CreateAppendNode("following-sibling::variable")
-            Else
-                nodeXml = GetNode("following-sibling::variable")
-            End If
+        Dim nodeXml As XmlNode
+        MyBase.ChangeReferences(bLoadChildren)
+        If TestNode("following-sibling::variable") = False And m_bCreateNodeNow Then
+            nodeXml = CreateAppendNode("following-sibling::variable")
+        Else
+            nodeXml = GetNode("following-sibling::variable")
+        End If
 
-            m_xmlVariable = CreateDocument(nodeXml)
-            If m_xmlVariable IsNot Nothing Then m_xmlVariable.GenerationLanguage = Me.GenerationLanguage
-
-        Catch ex As Exception
-            Throw ex
-        End Try
+        m_xmlVariable = CreateDocument(nodeXml)
+        If m_xmlVariable IsNot Nothing Then m_xmlVariable.GenerationLanguage = Me.GenerationLanguage
     End Sub
 
     Public Overrides Sub LoadChildrenList(Optional ByVal strViewName As String = "")
-        Try
-            AddChildren(SelectNodes("enumvalue | element"), strViewName)
 
-        Catch ex As Exception
-            Throw ex
-        End Try
+        AddChildren(SelectNodes("enumvalue | element"), strViewName)
+
     End Sub
 #End Region
 
 #Region "Private methods"
 
     Private Sub UpdateNodes(ByVal eKind As EKindDeclaration, ByVal eOldKind As EKindDeclaration)
-        Try
-            Select Case eKind
-                Case XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
-                    Select Case eOldKind
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Union Or XmlTypeVarSpec.EKindDeclaration.EK_Structure
-                            RemoveAttribute("struct")
-                            RemoveAllNodes("element")
 
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
-                            RemoveAllNodes("enumvalue")
-                            AddAttribute("desc", "int16")
+        Select Case eKind
+            Case XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
+                Select Case eOldKind
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Union Or XmlTypeVarSpec.EKindDeclaration.EK_Structure
+                        RemoveAttribute("struct")
+                        RemoveAllNodes("element")
 
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Container
-                            RemoveAttribute("struct")
-                            RemoveSingleNode("list")
-                    End Select
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
+                        RemoveAllNodes("enumvalue")
+                        AddAttribute("desc", "int16")
 
-                Case XmlTypeVarSpec.EKindDeclaration.EK_Container
-                    AddAttribute("struct", "container")
-                    AppendNode(CreateNode("list"))
-                    ContainerType = "simple"
-                    ContainerDesc = "undef_template"
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Container
+                        RemoveAttribute("struct")
+                        RemoveSingleNode("list")
+                End Select
+
+            Case XmlTypeVarSpec.EKindDeclaration.EK_Container
+                AddAttribute("struct", "container")
+                AppendNode(CreateNode("list"))
+                ContainerType = "simple"
+                ContainerDesc = "undef_template"
+                Value = ""
+                VarSize = ""
+
+                Select Case eOldKind
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
+                        RemoveAllNodes("enumvalue")
+                        AddAttribute("desc", "int16")
+
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
+                        Value = ""
+                        VarSize = ""
+
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Structure Or XmlTypeVarSpec.EKindDeclaration.EK_Union
+                        RemoveAllNodes("element")
+                        AddAttribute("desc", "int16")
+                End Select
+
+            Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
+                AddAttribute("struct", "struct")
+
+                If eOldKind <> XmlTypeVarSpec.EKindDeclaration.EK_Union Then
+                    RemoveAttribute("desc")
+                    RemoveAttribute("idref")
+                    RemoveSingleNode("list")
+                    RemoveAllNodes("enumvalue")
                     Value = ""
                     VarSize = ""
+                    Dim xmlcpnt As XmlElementSpec = New XmlElementSpec(AppendNode(CreateNode("element")))
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
+                    xmlcpnt.SetDefaultValues(True)
+                End If
 
-                    Select Case eOldKind
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
-                            RemoveAllNodes("enumvalue")
-                            AddAttribute("desc", "int16")
+            Case XmlTypeVarSpec.EKindDeclaration.EK_Union
+                AddAttribute("struct", "union")
 
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
-                            Value = ""
-                            VarSize = ""
+                If eOldKind <> XmlTypeVarSpec.EKindDeclaration.EK_Structure Then
+                    RemoveAttribute("desc")
+                    RemoveAttribute("idref")
+                    RemoveSingleNode("list")
+                    RemoveAllNodes("enumvalue")
+                    Value = ""
+                    VarSize = ""
+                    Dim xmlcpnt As XmlElementSpec = New XmlElementSpec(AppendNode(CreateNode("element")))
+                    xmlcpnt.GenerationLanguage = Me.GenerationLanguage
+                    xmlcpnt.SetDefaultValues(True)
+                End If
 
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Structure Or XmlTypeVarSpec.EKindDeclaration.EK_Union
-                            RemoveAllNodes("element")
-                            AddAttribute("desc", "int16")
-                    End Select
+            Case XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
 
-                Case XmlTypeVarSpec.EKindDeclaration.EK_Structure
-                    AddAttribute("struct", "struct")
+                If eOldKind <> EKindDeclaration.EK_Enumeration Then
+                    Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
+                    element.GenerationLanguage = Me.GenerationLanguage
+                    AppendComponent(element)
+                End If
 
-                    If eOldKind <> XmlTypeVarSpec.EKindDeclaration.EK_Union Then
+                Select Case eOldKind
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Container
+                        RemoveAttribute("struct")
+                        RemoveSingleNode("list")
+
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
                         RemoveAttribute("desc")
                         RemoveAttribute("idref")
-                        RemoveSingleNode("list")
-                        RemoveAllNodes("enumvalue")
                         Value = ""
                         VarSize = ""
-                        Dim xmlcpnt As XmlElementSpec = New XmlElementSpec(AppendNode(CreateNode("element")))
-                        xmlcpnt.GenerationLanguage = Me.GenerationLanguage
-                        xmlcpnt.SetDefaultValues(True)
-                    End If
 
-                Case XmlTypeVarSpec.EKindDeclaration.EK_Union
-                    AddAttribute("struct", "union")
-
-                    If eOldKind <> XmlTypeVarSpec.EKindDeclaration.EK_Structure Then
-                        RemoveAttribute("desc")
-                        RemoveAttribute("idref")
-                        RemoveSingleNode("list")
-                        RemoveAllNodes("enumvalue")
-                        Value = ""
-                        VarSize = ""
-                        Dim xmlcpnt As XmlElementSpec = New XmlElementSpec(AppendNode(CreateNode("element")))
-                        xmlcpnt.GenerationLanguage = Me.GenerationLanguage
-                        xmlcpnt.SetDefaultValues(True)
-                    End If
-
-                Case XmlTypeVarSpec.EKindDeclaration.EK_Enumeration
-
-                    If eOldKind <> EKindDeclaration.EK_Enumeration Then
-                        Dim element As XmlEnumSpec = CreateDocument("enumvalue", Me.Document)
-                        element.GenerationLanguage = Me.GenerationLanguage
-                        AppendComponent(element)
-                    End If
-
-                    Select Case eOldKind
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Container
-                            RemoveAttribute("struct")
-                            RemoveSingleNode("list")
-
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_SimpleType
-                            RemoveAttribute("desc")
-                            RemoveAttribute("idref")
-                            Value = ""
-                            VarSize = ""
-
-                        Case XmlTypeVarSpec.EKindDeclaration.EK_Structure Or XmlTypeVarSpec.EKindDeclaration.EK_Union
-                            RemoveAttribute("struct")
-                            RemoveAllNodes("element")
-                    End Select
-            End Select
-        Catch ex As Exception
-            Throw ex
-        End Try
+                    Case XmlTypeVarSpec.EKindDeclaration.EK_Structure Or XmlTypeVarSpec.EKindDeclaration.EK_Union
+                        RemoveAttribute("struct")
+                        RemoveAllNodes("element")
+                End Select
+        End Select
     End Sub
 
     Private Function GetStructureName(Optional ByVal bAbreviated As Boolean = False) As String
@@ -597,83 +578,79 @@ Public Class XmlTypeVarSpec
 
     Private Function GetTypeName(Optional ByVal bAbreviated As Boolean = False) As String
         Dim strResult As String = ""
-        Try
-            If Reference IsNot Nothing Then
-                strResult = XmlTypeVarSpec.GetReferenceTypeDescription(Me.GetElementById(Reference), Me.GenerationLanguage, True)
-            ElseIf Descriptor IsNot Nothing Then
-                strResult = Descriptor
-            End If
 
-            If strResult = "" Then
-                strResult += GetBeginEnum(Me.GenerationLanguage)
-                If bAbreviated = False Then
-                    Dim list As XmlNodeList = SelectNodes("enumvalue")
-                    For Each child As XmlNode In list
-                        strResult += GetName(child)
-                        If child IsNot list.Item(list.Count - 1) Then
-                            strResult += ", "
-                        End If
-                    Next
-                Else
-                    strResult += GetAttribute("name", "enumvalue") + ",..."
-                End If
-                strResult += GetEndStruct(Me.GenerationLanguage)
-            End If
+        If Reference IsNot Nothing Then
+            strResult = XmlTypeVarSpec.GetReferenceTypeDescription(Me.GetElementById(Reference), Me.GenerationLanguage, True)
+        ElseIf Descriptor IsNot Nothing Then
+            strResult = Descriptor
+        End If
 
-            If Modifier Then
-                If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
-                    strResult = "Const " + strResult
-                Else
-                    strResult = "const " + strResult
-                End If
-            End If
-
-            strResult = strResult + DisplayLevel(Level, Me.GenerationLanguage)
-
-            If By Then
-                If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
-                    If Me.ParentNodeName = "param" Then
-                        strResult = "ByRef As " + strResult
+        If strResult = "" Then
+            strResult += GetBeginEnum(Me.GenerationLanguage)
+            If bAbreviated = False Then
+                Dim list As XmlNodeList = SelectNodes("enumvalue")
+                For Each child As XmlNode In list
+                    strResult += GetName(child)
+                    If child IsNot list.Item(list.Count - 1) Then
+                        strResult += ", "
                     End If
-                Else
-                    strResult = strResult + Chr(38)
+                Next
+            Else
+                strResult += GetAttribute("name", "enumvalue") + ",..."
+            End If
+            strResult += GetEndStruct(Me.GenerationLanguage)
+        End If
+
+        If Modifier Then
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
+                strResult = "Const " + strResult
+            Else
+                strResult = "const " + strResult
+            End If
+        End If
+
+        strResult = strResult + DisplayLevel(Level, Me.GenerationLanguage)
+
+        If By Then
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
+                If Me.ParentNodeName = "param" Then
+                    strResult = "ByRef As " + strResult
                 End If
             Else
-                If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
-                    If Me.ParentNodeName = "param" Then
-                        strResult = "ByVal As " + strResult
-                    End If
+                strResult = strResult + Chr(38)
+            End If
+        Else
+            If Me.GenerationLanguage <> ELanguage.Language_CplusPlus Then
+                If Me.ParentNodeName = "param" Then
+                    strResult = "ByVal As " + strResult
                 End If
             End If
+        End If
 
-            If VarSize <> "" Or SizeRef <> "" _
-            Then
-                strResult = strResult + " " + GetArrayString(Me.GenerationLanguage)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If VarSize <> "" Or SizeRef <> "" _
+        Then
+            strResult = strResult + " " + GetArrayString(Me.GenerationLanguage)
+        End If
+
         Return strResult
     End Function
 
     Private Function GetContainer(ByVal szFullpathTypeDescription As String) As String
         Dim strResult As String = ""
-        Try
-            strResult = GetBeginContainer(Me.GenerationLanguage)
 
-            If ContainerType = "indexed" Then
-                If IndexRef IsNot Nothing Then
-                    strResult = strResult + GetReferenceTypeDescription(Me.GetElementById(IndexRef), Me.GenerationLanguage, True)
-                ElseIf IndexDesc IsNot Nothing Then
-                    strResult = strResult + IndexDesc
-                End If
-                strResult = strResult + DisplayLevel(Level, Me.GenerationLanguage) + ", "
+        strResult = GetBeginContainer(Me.GenerationLanguage)
+
+        If ContainerType = "indexed" Then
+            If IndexRef IsNot Nothing Then
+                strResult = strResult + GetReferenceTypeDescription(Me.GetElementById(IndexRef), Me.GenerationLanguage, True)
+            ElseIf IndexDesc IsNot Nothing Then
+                strResult = strResult + IndexDesc
             End If
+            strResult = strResult + DisplayLevel(Level, Me.GenerationLanguage) + ", "
+        End If
 
-            strResult = strResult + szFullpathTypeDescription + GetEndContainer(Me.GenerationLanguage)
-        Catch ex As Exception
-            Throw ex
-        End Try
+        strResult = strResult + szFullpathTypeDescription + GetEndContainer(Me.GenerationLanguage)
+
         Return strResult
     End Function
 
@@ -685,16 +662,13 @@ Public Class XmlTypeVarSpec
             Return ""
         End If
 
-        Try
-            If bShorter Then
-                strResult = GetName(child)
+        If bShorter Then
+            strResult = GetName(child)
 
-            Else
-                strResult = GetFullpathDescription(child, eTag)
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        Else
+            strResult = GetFullpathDescription(child, eTag)
+        End If
+
         Return strResult
     End Function
 #End Region

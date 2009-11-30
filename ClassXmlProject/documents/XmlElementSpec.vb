@@ -141,8 +141,7 @@ Public Class XmlElementSpec
             Level = 0
             Modifier = False
             Comment = "Insert brief comment"
-        Catch ex As Exception
-            Throw ex
+
         Finally
             m_bCreateNodeNow = False
         End Try
