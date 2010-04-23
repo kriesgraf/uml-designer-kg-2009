@@ -210,6 +210,15 @@ Public Class frmProject
 
             With m_xmlProject
                 .ListViewControl = lvwProjectMembers
+
+                ' Specific option relative Java language
+                If m_xmlProject.Properties.GenerationLanguage = ELanguage.Language_Java Then
+                    mnuAddClass.Visible = False
+                    mnuPackageAddPackage.Visible = False
+                    mnuPackageAddImport.Visible = False
+                    AddClassImport.Visible = False
+                End If
+
                 .AddMenuProject(mnuProjectList)
                 .AddMenuPackage(mnuPackageList)
                 .AddMenuClass(mnuClassMembers)

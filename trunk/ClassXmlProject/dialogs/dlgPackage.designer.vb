@@ -36,7 +36,7 @@ Partial Class dlgPackage
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel
         Me.btnFolder = New System.Windows.Forms.Button
         Me.txtFolder = New System.Windows.Forms.TextBox
-        Me.mnuClass = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.mnuPackage = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.mnuAdd = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuAddImport = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuAddClass = New System.Windows.Forms.ToolStripMenuItem
@@ -69,7 +69,7 @@ Partial Class dlgPackage
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.FlowLayoutPanel1.SuspendLayout()
-        Me.mnuClass.SuspendLayout()
+        Me.mnuPackage.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -262,11 +262,11 @@ Partial Class dlgPackage
         Me.txtFolder.Size = New System.Drawing.Size(427, 20)
         Me.txtFolder.TabIndex = 1
         '
-        'mnuClass
+        'mnuPackage
         '
-        Me.mnuClass.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.mnuExchangeImports, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportReferences, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.mnuExportNodes, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
-        Me.mnuClass.Name = "mnuClass"
-        Me.mnuClass.Size = New System.Drawing.Size(246, 364)
+        Me.mnuPackage.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdd, Me.mnuEdit, Me.mnuExchangeImports, Me.ToolStripSeparator4, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator3, Me.mnuDependencies, Me.ToolStripSeparator5, Me.mnuImportReferences, Me.mnuExportReferences, Me.ToolStripSeparator2, Me.mnuExportNodes, Me.mnuImportNodes, Me.mnuUpdateNodes, Me.ToolStripSeparator1, Me.mnuRedundancies, Me.mnuDelete})
+        Me.mnuPackage.Name = "mnuClass"
+        Me.mnuPackage.Size = New System.Drawing.Size(246, 386)
         '
         'mnuAdd
         '
@@ -280,7 +280,7 @@ Partial Class dlgPackage
         Me.mnuAddImport.Image = Global.ClassXmlProject.My.Resources.Resources.library
         Me.mnuAddImport.Name = "mnuAddImport"
         Me.mnuAddImport.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.I), System.Windows.Forms.Keys)
-        Me.mnuAddImport.Size = New System.Drawing.Size(148, 22)
+        Me.mnuAddImport.Size = New System.Drawing.Size(152, 22)
         Me.mnuAddImport.Tag = "import"
         Me.mnuAddImport.Text = "Import"
         '
@@ -289,7 +289,7 @@ Partial Class dlgPackage
         Me.mnuAddClass.Image = Global.ClassXmlProject.My.Resources.Resources.Address_Book
         Me.mnuAddClass.Name = "mnuAddClass"
         Me.mnuAddClass.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-        Me.mnuAddClass.Size = New System.Drawing.Size(148, 22)
+        Me.mnuAddClass.Size = New System.Drawing.Size(152, 22)
         Me.mnuAddClass.Tag = "class"
         Me.mnuAddClass.Text = "Class"
         '
@@ -298,7 +298,7 @@ Partial Class dlgPackage
         Me.mnuAddPackage.Image = Global.ClassXmlProject.My.Resources.Resources.my_Documents
         Me.mnuAddPackage.Name = "mnuAddPackage"
         Me.mnuAddPackage.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
-        Me.mnuAddPackage.Size = New System.Drawing.Size(148, 22)
+        Me.mnuAddPackage.Size = New System.Drawing.Size(152, 22)
         Me.mnuAddPackage.Tag = "package"
         Me.mnuAddPackage.Text = "Package"
         '
@@ -469,7 +469,7 @@ Partial Class dlgPackage
         '
         Me.gridClasses.ColumnDragStart = 0
         Me.gridClasses.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.gridClasses.ContextMenuStrip = Me.mnuClass
+        Me.gridClasses.ContextMenuStrip = Me.mnuPackage
         Me.gridClasses.Dock = System.Windows.Forms.DockStyle.Fill
         Me.gridClasses.Location = New System.Drawing.Point(0, 0)
         Me.gridClasses.Name = "gridClasses"
@@ -498,7 +498,7 @@ Partial Class dlgPackage
         Me.TableLayoutPanel3.PerformLayout()
         Me.FlowLayoutPanel1.ResumeLayout(False)
         Me.FlowLayoutPanel1.PerformLayout()
-        Me.mnuClass.ResumeLayout(False)
+        Me.mnuPackage.ResumeLayout(False)
         Me.TableLayoutPanel2.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
@@ -518,7 +518,7 @@ Partial Class dlgPackage
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents txtDetails As System.Windows.Forms.TextBox
     Friend WithEvents TableLayoutPanel3 As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents mnuClass As System.Windows.Forms.ContextMenuStrip
+    Friend WithEvents mnuPackage As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents mnuAdd As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuEdit As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator

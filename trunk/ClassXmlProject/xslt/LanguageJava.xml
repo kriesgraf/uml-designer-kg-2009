@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root version="1.0">
 <type name="bool" prefix="b" implementation="boolean"/>
-<type name="char" prefix="uc" implementation="unsigned byte"/>
+<type name="char8" prefix="uc" implementation="byte"/>
 <type name="float32" prefix="f" implementation="float"/>
 <type name="float64" prefix="d" implementation="double"/>
-<type name="int" prefix="i" implementation="int"/>
-<type name="int16" prefix="us" implementation="unsigned short"/>
-<type name="int32" prefix="ui" implementation="unsigned int"/>
-<type name="int64" prefix="ul" implementation="unsigned long"/>
-<type name="schar" prefix="c" implementation="byte"/>
-<type name="char16" prefix="uc" implementation="char"/>
-<type name="sint16" prefix="s" implementation="short"/>
-<type name="sint32" prefix="i" implementation="int"/>
-<type name="sint64" prefix="l" implementation="long"/>
+<type name="int16" prefix="s" implementation="short"/>
+<type name="int32" prefix="i" implementation="int"/>
+<type name="int64" prefix="l" implementation="long"/>
+<type name="char16" prefix="c" implementation="char"/>
 <type name="string" prefix="str" implementation="String" import="java.lang"/>
 <type name="void" prefix="" implementation="void"/>
 </root>
+
 
 
 
