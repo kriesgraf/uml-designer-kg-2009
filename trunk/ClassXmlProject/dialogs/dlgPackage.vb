@@ -73,7 +73,6 @@ Public Class dlgPackage
 #Region "Private methods"
 
     Public Sub DisableMemberAttributes() Implements InterfFormDocument.DisableMemberAttributes
-
     End Sub
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
@@ -120,6 +119,13 @@ Public Class dlgPackage
                 ' Load document values into controls
                 .LoadClasses(gridClasses)
 
+                If .GenerationLanguage = ELanguage.Language_Java Then
+                    Me.chkFolder.Checked = True
+                    Me.txtFolder.Text = m_xmlView.ComputeJavaPackageFolder(.Name)
+                    Me.mnuPackage.Items.Insert(0, mnuAddClass)
+                    mnuAddClass.Text = mnuAdd.Text + " " + mnuAddClass.Text
+                    Me.mnuPackage.Items.RemoveAt(1)
+                End If
                 Me.Text = .Name
             End With
 
@@ -147,8 +153,14 @@ Public Class dlgPackage
 
     Private Sub chkFolder_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkFolder.CheckedChanged
         If chkFolder.Checked Then
-            txtFolder.Enabled = True
-            btnFolder.Enabled = True
+            If m_xmlView.GenerationLanguage = ELanguage.Language_Java Then
+                btnFolder.Enabled = False
+                chkFolder.Enabled = False
+                txtFolder.Enabled = False
+            Else
+                txtFolder.Enabled = True
+                btnFolder.Enabled = True
+            End If
         Else
             txtFolder.Text = ""
             txtFolder.Enabled = False
@@ -241,6 +253,9 @@ Public Class dlgPackage
 
     Private Sub txtName_Validated(ByVal sender As TextBox, ByVal e As System.EventArgs) Handles txtName.Validated
         Me.errorProvider.SetError(sender, "")
+        If m_xmlView.GenerationLanguage = ELanguage.Language_Java Then
+            txtFolder.Text = m_xmlView.ComputeJavaPackageFolder(txtName.Text)
+        End If
     End Sub
 
     Private Sub txtName_Validating(ByVal sender As TextBox, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtName.Validating
