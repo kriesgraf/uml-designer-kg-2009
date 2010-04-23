@@ -37,7 +37,9 @@ Public Class XmlPackageView
 
     Public Sub UpdateValues()
         Debug.Print(Me.ToString + ".UpdateValues")
-
+        If Me.GenerationLanguage = ELanguage.Language_Java Then
+            m_txtFolder.Enabled = True
+        End If
         If m_chkFolder.Checked = False Then
             m_txtFolder.Text = ""
         End If
@@ -269,6 +271,10 @@ Public Class XmlPackageView
             End If
         End If
         Return False
+    End Function
+
+    Public Function ComputeJavaPackageFolder(ByVal strPackageName As String) As String
+        Return strPackageName.Replace(Chr(46), Path.DirectorySeparatorChar)
     End Function
 
     Private Function LoadImport(ByVal fen As Form, ByVal fileName As String) As Boolean

@@ -564,14 +564,18 @@ Public Class UmlCodeGenerator
         observer.Increment(1)
 
         reader.MoveToFirstAttribute()
-        If reader.Name <> "name" Then
-            Exit Sub
-        End If
-
-        Dim strNewFolder As String = reader.Value.Trim()
+        Dim strNewFolder As String = ""
+        Do
+            Select Case reader.Name
+                Case "name"
+                    strNewFolder = reader.Value.Trim()
+            End Select
+        Loop While reader.MoveToNextAttribute
         reader.MoveToElement()
 
-        strNewFolder = CreateBranch(currentFolder, strNewFolder)
+        If strNewFolder.Length > 0 Then
+            strNewFolder = CreateBranch(currentFolder, strNewFolder)
+        End If
 
         While reader.Read()
             Select Case reader.NodeType
