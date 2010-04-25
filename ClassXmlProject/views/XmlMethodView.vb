@@ -215,15 +215,27 @@ Public Class XmlMethodView
     End Sub
 
     Public Sub InitBindingBrief(ByVal dataControl As TextBox)
-        m_xmlBindingsList.AddBinding(dataControl, Me, "BriefComment")
+        If OverridesMethod <> "" And GenerationLanguage <> ELanguage.Language_Vbasic Then
+            dataControl.Enabled = False
+        Else
+            m_xmlBindingsList.AddBinding(dataControl, Me, "BriefComment")
+        End If
     End Sub
 
     Public Sub InitBindingReturnComment(ByVal dataControl As TextBox)
-        m_xmlBindingsList.AddBinding(dataControl, Me, "ReturnComment")
+        If OverridesMethod <> "" And GenerationLanguage <> ELanguage.Language_Vbasic Then
+            dataControl.Enabled = False
+        Else
+            m_xmlBindingsList.AddBinding(dataControl, Me, "ReturnComment")
+        End If
     End Sub
 
     Public Sub InitBindingComment(ByVal dataControl As TextBox)
-        m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
+        If  OverridesMethod <> "" And GenerationLanguage <> ELanguage.Language_Vbasic Then
+            dataControl.Enabled = False
+        Else
+            m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
+        End If
     End Sub
 
     Public Sub InitBindingCheckInline(ByVal dataControl As CheckBox)
