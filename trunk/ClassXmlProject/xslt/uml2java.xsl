@@ -187,10 +187,11 @@ Bundle-ActivationPolicy: lazy
       <xsl:variable name="Request1">
         <xsl:call-template name="FullImportName"/>
       </xsl:variable>
-      <IMPORTS>
+      <!--
+            <IMPORTS>
         <xsl:copy-of select="$Request1"/>
       </IMPORTS>
-      <!--
+
      -->
       <xsl:variable name="CurrentPackage">
         <xsl:value-of select="parent::package/@name"/>
@@ -215,8 +216,11 @@ import </xsl:text>
       <xsl:variable name="Implementation">
         <xsl:apply-templates select="@implementation" mode="Class"/>
       </xsl:variable>
-      <xsl:apply-templates select="comment" mode="Comment"/>
         <xsl:text>
+/**</xsl:text>
+      <xsl:apply-templates select="comment" mode="Comment"/>
+<xsl:text>
+**/
 </xsl:text>
       <xsl:if test="@visibility='package'">
         <xsl:text>public </xsl:text>
@@ -334,10 +338,13 @@ import </xsl:text>
     <xsl:variable name="ConstOk">
       <xsl:if test="type/@modifier='const'">ok</xsl:if>
     </xsl:variable>
-    <xsl:if test="get[@range='no'] and set[@range='no']">
-      <xsl:apply-templates select="comment" mode="Simple"/>
-      <xsl:text/>
-    </xsl:if>
+        <xsl:text>
+    /**</xsl:text>
+      <xsl:apply-templates select="comment" mode="Comment">
+        <xsl:with-param name="Indent" xml:space="preserve" select="'     '"/>
+      </xsl:apply-templates>
+<xsl:text>
+    **/</xsl:text>
     <xsl:apply-templates select="variable/@range" mode="Code"/>
     <xsl:if test="@member='class'">static </xsl:if>
     <xsl:if test="$ConstOk='ok'">final </xsl:if>
@@ -453,35 +460,92 @@ import </xsl:text>
     </xsl:choose>
   </xsl:template>
   <!-- ======================================================================= -->
+  <xsl:template match="property" mode="Comment">
+   <xsl:param name="Indent"/>
+   <xsl:choose>
+     <xsl:when test="@overrides">
+     <xsl:text>
+</xsl:text>
+       <xsl:value-of select="concat($Indent,' {@inheritDoc}')"/>
+     </xsl:when>
+     <xsl:otherwise>
+       <xsl:apply-templates select="comment" mode="Comment">
+         <xsl:with-param name="Indent" select="$Indent"/>
+       </xsl:apply-templates>
+     </xsl:otherwise>
+   </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="method" mode="Comment">
+   <xsl:param name="Indent"/>
+   <xsl:choose>
+     <xsl:when test="@overrides">
+     <xsl:text>
+</xsl:text>
+       <xsl:value-of select="concat($Indent,' {@inheritDoc}')"/>
+     </xsl:when>
+     <xsl:otherwise>
+       <xsl:apply-templates select="comment" mode="Comment">
+         <xsl:with-param name="Indent" select="$Indent"/>
+       </xsl:apply-templates>
+       <xsl:apply-templates select="param" mode="Comment">
+         <xsl:with-param name="Indent" select="$Indent"/>
+       </xsl:apply-templates>
+       <xsl:apply-templates select="return" mode="Comment">
+         <xsl:with-param name="Indent" select="$Indent"/>
+       </xsl:apply-templates>
+     </xsl:otherwise>
+   </xsl:choose>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="param" mode="Comment">
+   <xsl:param name="Indent"/>
+    <xsl:text>
+</xsl:text>
+    <xsl:value-of select="$Indent"/>
+    <xsl:text>@param </xsl:text>
+    <xsl:value-of select="comment/text()"/>
+ </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="return" mode="Comment">
+   <xsl:param name="Indent"/>
+    <xsl:text>
+</xsl:text>
+    <xsl:value-of select="$Indent"/>
+    <xsl:text>@return </xsl:text>
+    <xsl:value-of select="comment/text()"/>
+ </xsl:template>
+  <!-- ======================================================================= -->
   <xsl:template match="comment" mode="Comment">
+  <xsl:param name="Indent"/>
     <xsl:variable name="Brief">
       <xsl:if test="string-length(@brief)=0">
         <xsl:value-of select="text()"/>
       </xsl:if>
       <xsl:value-of select="@brief"/>
     </xsl:variable>
-    <xsl:variable name="Detail">
-      <xsl:if test="string-length(@brief)&gt;0">
-        <xsl:value-of select="text()"/>
-      </xsl:if>
-    </xsl:variable>
     <xsl:text>
-    
-    /**
-      * </xsl:text>
+</xsl:text>
+      <xsl:value-of select="$Indent" xml:space="preserve"/>
     <xsl:value-of select="$Brief"/>
+      <xsl:if test="string-length(@brief)!=0 and string-length(text())!=0">
     <xsl:text>
-      * &lt;p&gt;</xsl:text>
-    <xsl:value-of select="$Detail"/>
-    <xsl:text>&lt;/p&gt;
-    **/</xsl:text>
+</xsl:text>
+      <xsl:value-of select="$Indent" xml:space="preserve"/>
+    <xsl:text>&lt;p&gt;</xsl:text>
+        <xsl:value-of select="text()"/>
+    <xsl:text>&lt;/p&gt;</xsl:text>
+      </xsl:if>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="comment" mode="Simple">
     <xsl:text>
-    // </xsl:text>
+    /**
+     </xsl:text>
     <xsl:value-of select="text()"/>
-  </xsl:template>
+      <xsl:text>
+    **/</xsl:text>
+</xsl:template>
   <!-- ======================================================================= -->
   <xsl:template name="FullImportName">
     <xsl:variable name="ClassID" select="@id"/>
@@ -933,12 +997,20 @@ import </xsl:text>
         </xsl:when>
       </xsl:choose>
     </xsl:variable>
-    <xsl:apply-templates select="comment" mode="Simple"/>
-    <xsl:text/>
+    <!--xsl:apply-templates select="comment" mode="Simple"/-->
     <xsl:variable name="Name">
       <xsl:apply-templates select="@name" mode="Accessor"/>
     </xsl:variable>
     <xsl:if test="get[@range!='no']">
+      <xsl:if test="@attribute='no'">
+        <xsl:text>
+    /**</xsl:text>
+        <xsl:apply-templates select="." mode="Comment">
+          <xsl:with-param name="Indent" xml:space="preserve" select="'     '"/>
+        </xsl:apply-templates>
+        <xsl:text>
+    **/</xsl:text>
+      </xsl:if>
       <xsl:value-of select="$Range"/>
       <xsl:if test="@overridable='no' and @overrides!='' and $InheritedClassImpl!='abstract'">final </xsl:if>
       <xsl:if test="@member='class'">static </xsl:if>
@@ -957,8 +1029,21 @@ import </xsl:text>
     }
     </xsl:text>
       </xsl:if>
+      <xsl:if test="$ClassImpl='abstract'">
+        <xsl:text>;
+</xsl:text>
+      </xsl:if>
     </xsl:if>
     <xsl:if test="set[@range!='no']">
+      <xsl:if test="@attribute='no'">
+        <xsl:text>
+    /**</xsl:text>
+        <xsl:apply-templates select="." mode="Comment">
+          <xsl:with-param name="Indent" xml:space="preserve" select="'     '"/>
+        </xsl:apply-templates>
+        <xsl:text>
+    **/</xsl:text>
+      </xsl:if>
       <xsl:value-of select="$Range"/>
       <xsl:if test="@overridable='no' and @overrides!='' and $InheritedClassImpl!='abstract'">final </xsl:if>
       <xsl:if test="@member='class'">static </xsl:if>
@@ -972,6 +1057,10 @@ import </xsl:text>
         </xsl:if>
         <xsl:text>
     }</xsl:text>
+      </xsl:if>
+      <xsl:if test="$ClassImpl='abstract'">
+        <xsl:text>;
+</xsl:text>
       </xsl:if>
     </xsl:if>
   </xsl:template>
@@ -1049,8 +1138,11 @@ import </xsl:text>
     <xsl:choose>
       <xsl:when test="@cardinal='01' or @cardinal='1'">
           <xsl:text>
-    // </xsl:text>
+    /**
+     </xsl:text>
           <xsl:value-of select="$Comment"/>
+          <xsl:text>
+     **/</xsl:text>
         <xsl:apply-templates select="@range" mode="Code"/>
         <xsl:apply-templates select="id(@idref)" mode="FullPackageName">
           <xsl:with-param name="CurrentPackageName" select="$CurrentPackageName"/>
@@ -1117,9 +1209,9 @@ import </xsl:text>
 <!-- ======================================================================= -->
   <xsl:template match="@constructor">
 <xsl:text>
-    /*
-    * Default constructor
-    */</xsl:text>
+    /**
+    Default constructor
+    **/</xsl:text>
     <xsl:apply-templates select="." mode="Code"/>
     <xsl:value-of select="parent::class/@name"/>
     <xsl:text>() {
@@ -1149,7 +1241,13 @@ import </xsl:text>
 	  </xsl:choose>
     </xsl:variable>
     <xsl:if test="@constructor!='no'">
-      <xsl:apply-templates select="." mode="Comment"/>
+        <xsl:text>
+    /**</xsl:text>
+      <xsl:apply-templates select="." mode="Comment">
+        <xsl:with-param name="Indent" xml:space="preserve" select="'     '"/>
+      </xsl:apply-templates>
+<xsl:text>
+    **/</xsl:text>
 	  <xsl:text>
     </xsl:text>
       <xsl:value-of select="concat($MethodName,'(')"/>
@@ -1169,12 +1267,14 @@ import </xsl:text>
           <xsl:when test="$Type!='Sub' and @name='operator'">Operator </xsl:when>
         </xsl:choose>
       </xsl:variable>
-      <xsl:apply-templates select="." mode="Comment"/>
-	  <xsl:text>
-    </xsl:text>
-      <xsl:if test="$Implementation!='abstract'">
-        <xsl:apply-templates select="return/variable/@range" mode="Code"/>
-      </xsl:if>
+        <xsl:text>
+    /**</xsl:text>
+      <xsl:apply-templates select="." mode="Comment">
+        <xsl:with-param name="Indent" xml:space="preserve" select="'     '"/>
+      </xsl:apply-templates>
+<xsl:text>
+    **/</xsl:text>
+      <xsl:apply-templates select="return/variable/@range" mode="Code"/>
       <xsl:if test="not(@overrides) or not(contains($ImplementedMethods,concat(@overrides,';')))">
         <xsl:apply-templates select="@implementation" mode="Code">
           <xsl:with-param name="Implementation" select="$Implementation"/>
@@ -1191,16 +1291,16 @@ import </xsl:text>
             <xsl:with-param name="Range" select="return/variable/@range"/>
           </xsl:apply-templates>
           <xsl:text>)</xsl:text>
-          <xsl:choose>
-          <xsl:when test="@implementation!='abstract'"><xsl:text> {
-          </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>;</xsl:text></xsl:otherwise>
-          </xsl:choose>
         </xsl:with-param>
         <xsl:with-param name="Type" select="$Type"/>
       </xsl:apply-templates>
-      <xsl:if test="@overrides">
-      </xsl:if>
+      <xsl:apply-templates select="exception" mode="Code"/>
+      <xsl:choose>
+        <xsl:when test="@implementation!='abstract'"><xsl:text> {
+          </xsl:text>
+        </xsl:when>
+        <xsl:otherwise><xsl:text>;</xsl:text></xsl:otherwise>
+      </xsl:choose>
       <xsl:if test="@implementation!='abstract'"><xsl:text>
     }
     </xsl:text>
@@ -1209,6 +1309,13 @@ import </xsl:text>
 	  <xsl:text>
     </xsl:text>
    </xsl:if>
+  </xsl:template>
+  <!-- ======================================================================= -->
+  <xsl:template match="exception" mode="Code">
+    <xsl:if test="position()=1"><xsl:text>
+            throws </xsl:text></xsl:if>
+    <xsl:if test="position()!=1"><xsl:text>, </xsl:text></xsl:if>
+    <xsl:value-of select="id(@idref)/@name"/>
   </xsl:template>
   <!-- ======================================================================= -->
   <xsl:template match="param" mode="Code">
@@ -1269,6 +1376,7 @@ import </xsl:text>
   </xsl:template>
     <!-- ======================================================================= -->
   </xsl:stylesheet>
+
 
 
 

@@ -161,8 +161,11 @@ Public Class XmlPropertyView
 
     Public Sub InitBindingBriefComment(ByVal dataControl As TextBox)
 
-        m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
-
+        If OverridesProperty <> "" And GenerationLanguage <> ELanguage.Language_Vbasic Then
+            dataControl.Enabled = False
+        Else
+            m_xmlBindingsList.AddBinding(dataControl, Me, "Comment")
+        End If
     End Sub
 
     Public Sub InitBindingRange(ByVal dataControl As ComboBox)

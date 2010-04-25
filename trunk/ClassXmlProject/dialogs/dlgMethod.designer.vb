@@ -153,13 +153,13 @@ Partial Class dlgMethod
         Me.lblRange.Text = "Range:"
         Me.lblRange.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'btnType
+        'cmdType
         '
         Me.cmdType.CausesValidation = False
         Me.cmdType.Dock = System.Windows.Forms.DockStyle.Fill
         Me.cmdType.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.cmdType.Location = New System.Drawing.Point(102, 3)
-        Me.cmdType.Name = "btnType"
+        Me.cmdType.Name = "cmdType"
         Me.cmdType.Size = New System.Drawing.Size(501, 27)
         Me.cmdType.TabIndex = 5
         Me.cmdType.Text = "<Type>"
@@ -327,7 +327,7 @@ Partial Class dlgMethod
         '
         Me.mnuMembers.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAddParam, Me.mnuAddException, Me.mnuEditParam, Me.ToolStripSeparator1, Me.mnuCopy, Me.mnuPaste, Me.mnuDuplicate, Me.mnuProperties, Me.ToolStripSeparator2, Me.mnuDelete})
         Me.mnuMembers.Name = "mnuParam"
-        Me.mnuMembers.Size = New System.Drawing.Size(190, 214)
+        Me.mnuMembers.Size = New System.Drawing.Size(190, 192)
         '
         'mnuAddParam
         '
@@ -457,7 +457,7 @@ Partial Class dlgMethod
         Me.TableLayoutPanel3.SetColumnSpan(Me.TableLayoutPanel1, 2)
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.55682!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.44318!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 2, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.btnDelete, 0, 0)
@@ -473,7 +473,7 @@ Partial Class dlgMethod
         '
         Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Cancel_Button.CausesValidation = False
-        Me.Cancel_Button.Location = New System.Drawing.Point(514, 6)
+        Me.Cancel_Button.Location = New System.Drawing.Point(513, 6)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 1
@@ -482,7 +482,7 @@ Partial Class dlgMethod
         'OK_Button
         '
         Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(406, 6)
+        Me.OK_Button.Location = New System.Drawing.Point(405, 6)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 0
